@@ -73,15 +73,15 @@ rcs <- function(){'-'}
 
 # Define UI for dataset viewer app ----
 ui <- fluidPage(
-  tags$head(tags$link(rel="shortcut icon", href="favicon.ico")),
+  #tags$head(tags$link(rel="shortcut icon", href="favicon.ico")),
   # App title ----#"width:104px; height:77px"
   titlePanel(
     title=htmltools::div(
-      htmltools::p(),
-      htmltools::img(src="Transparent Logo No Slogan.png",style="width:72px; height:52px"),
-      htmltools::p(),
-      htmltools::p(),
-      "identifier lookup from address"
+      # htmltools::p(),
+      # htmltools::img(src="Transparent Logo No Slogan.png",style="width:72px; height:52px"),
+      # htmltools::p(),
+      # htmltools::p(),
+      "Identifier lookup from address"
     ),
     windowTitle = "idhash(address)"
   ),
@@ -130,9 +130,9 @@ ui <- fluidPage(
       h6("
          Definitions of saon, paon can be found at https://www.gov.uk/guidance/about-the-price-paid-data
          "),
-      h6("
-         This browser can be used in conjunction with the repeat-sales-from-id app here: https://anest-uk.shinyapps.io/repeat-sale-return/
-         "),
+      # h6("
+      #    This browser can be used in conjunction with the repeat-sales-from-id app here: https://anest-uk.shinyapps.io/repeat-sale-return/
+      #    "),
       h6("
          Source: Land Registry Price Paid Data
          "),

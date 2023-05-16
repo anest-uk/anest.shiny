@@ -5,15 +5,15 @@ library(DT)
 
 # Define UI for dataset viewer app ----
 ui <- fluidPage(
-  tags$head(tags$link(rel="shortcut icon", href="favicon.ico")),
+  #tags$head(tags$link(rel="shortcut icon", href="favicon.ico")),
   # App title ----#"width:104px; height:77px"
   titlePanel(
     title=htmltools::div(
-      htmltools::p(),
-      htmltools::img(src="Transparent Logo No Slogan.png",style="width:72px; height:52px"),
-      htmltools::p(),
-      htmltools::p(),
-      "repeat sales by identifier"
+      # htmltools::p(),
+      # htmltools::img(src="Transparent Logo No Slogan.png",style="width:72px; height:52px"),
+      # htmltools::p(),
+      # htmltools::p(),
+      "Repeat sales by identifier"
     ),
     windowTitle = "repeat.sale"
   ),
@@ -34,9 +34,9 @@ ui <- fluidPage(
       h6("
          This browser is an audit tool to look up repeat returns from idhash, a unique property identifier.
          "),
-      h6("
-         This browser can be used in conjunction with the id-lookup-from-address app here: https://anest-uk.shinyapps.io/id-lookup/
-         "),
+      # h6("
+      #    This browser can be used in conjunction with the id-lookup-from-address app here: https://anest-uk.shinyapps.io/id-lookup/
+      #    "),
       h6("
          Presence of a return does not mean the transactions are present in the analysis dataset after screening.
          "),
