@@ -73,14 +73,15 @@ rcs <- function(){'-'}
 
 # Define UI for dataset viewer app ----
 ui <- fluidPage(
-  #tags$head(tags$link(rel="shortcut icon", href="favicon.ico")),
+  tags$head(tags$link(rel="shortcut icon", href="Favicon Transparent.ico")),
   # App title ----#"width:104px; height:77px"
   titlePanel(
     title=htmltools::div(
-      # htmltools::p(),
-      # htmltools::img(src="Transparent Logo No Slogan.png",style="width:72px; height:52px"),
-      # htmltools::p(),
-      # htmltools::p(),
+      htmltools::p(),
+      #htmltools::img(src="Transparent Logo No Slogan.png",style="width:72px; height:52px"),
+      htmltools::img(src="Transparent Logo.png",style="width:42px; height:42px"),
+      htmltools::p(),
+      htmltools::p(),
       "Identifier lookup from address"
     ),
     windowTitle = "idhash(address)"
