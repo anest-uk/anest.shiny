@@ -19,7 +19,7 @@
       "SA-", "SE-", "SG-", "SK-", "SL-", "SM-", "SN-", "SO-", "SP-", 
       "SR-", "SS-", "ST-", "SW-", "SY-", "TA-", "TF-", "TN-", "TQ-", 
       "TR-", "TS-", "TW-", "UB-", "W--", "WA-", "WC-", "WD-", "WF-", 
-      "WN-", "WR-", "WS-", "WV-", "YO-")%>%
+      "WN-", "WR-", "WS-", "WV-", "YO-")%>% 
     data.table(rc9=.,nx=seq_along(.),lab=.)
 
 accrue2 <-
