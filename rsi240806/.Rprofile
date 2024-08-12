@@ -1,1 +1,0 @@
-print('shinytest rprofile - local')
