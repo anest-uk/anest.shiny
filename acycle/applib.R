@@ -1,5 +1,39 @@
 steprip  <- '../v153/now/ver001/03rip'#'now\\ver001\\03rip'
 
+coread <-
+function( #read data from csv in subdir
+    rcx='AL-', #postcodes to read
+    step='nac', #subdir name
+    colClasses=NULL, #e.g. colClasses=c(deed_date='character'),nrow=10
+    nrows=Inf
+) {
+  x1 <- dir(step)
+  if(length(x1)==0) {stop(paste0('step: ',step,' no files found'))}
+  x2 <- grep(grepstring(rcx,caret=T),x1)
+  x3 <- x1[x2]
+  ext <- tolower(unique(unlist(lapply(strsplit(x3,split='\\.'),`[`,i=2))))
+  stopifnot(length(ext)==1) #csv or rdata
+  x4 <- list(NULL)
+  i <- 1
+  for(i in seq_along(x3)) {
+    fp <- paste0(step,'/',x3[i])
+    if(ext=='rdata') {
+      load(file=fp)
+    } else if(ext=='csv') {
+      x <- fread(file=fp,colClasses=colClasses,nrows=nrows)
+      if(is.data.table(x)&is.null(colClasses)) { #undo autorecognition
+        for(i2 in seq_along(x)) {
+          x[[i2]] <- as.character(x[[i2]])
+        }
+      }
+    } else {
+      stop(paste0('file not found step=',step,'rcx=',paste0(rcx,collapse=',')))
+    }
+    x4[[i]] <- x
+  }
+  rbindlist(x4)
+}
+
 dfnx <-
   structure(c(9130, 9628, 9835, 10012, 10150, 10405, 10687, 10822,
               10939, 10997, 11546, 11792, 11923, 12016, 12136, 12207, 12275,
@@ -7,6 +41,7 @@ dfnx <-
               13878, 14303, 14410, 14639, 15050, 15251, 15537, 15967, 16201,
               16316, 16524, 16725, 16815, 16954, 17083, 17356, 17624, 18266,
               18801, 19111, 19813), class = "Date") #2
+
 geo0 = 
   c("AL-", "B--", "BA-", "BB-", "BD-", "BH-", "BL-", "BN-", "BR-", 
     "BS-", "CA-", "CB-", "CF-", "CH-", "CM-", "CO-", "CR-", "CT-", 
@@ -362,7 +397,7 @@ f231204a <-
   x1
 }
 
-g240823a <- 
+f240823a <- 
   function( #performance table
     x0=z321
   ) {
@@ -391,3 +426,4 @@ g240823a <-
       PerformanceAnalytics::table.CalendarReturns(x6,digits=2)
     x7
   }
+

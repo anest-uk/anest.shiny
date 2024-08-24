@@ -1,32 +1,23 @@
 #----------------------------------shared across sessions
-#setwd("C:/Users/Giles/anest.repo/anest.shiny/acycle")
 pgmt='dotted'
 pgmc='grey50'
 pgms=.2
 
-#---------------------CRAN package
+load('t4dump.Rdata',envir=globalenv())
+
+#---------------------CRAN package for gui
 library(bslib)
-library(data.table)
-library(ggplot2)
-library(gt)
 library(htmltools)
 library(leaflet)
-library(magrittr)
-library(scales)
 library(sp)
-
 library(gridlayout)
 library(shinyWidgets)
 library(shiny)
 
 #---------------------function lib
 source('c-cleanlib.R')
-source('applib.R')
-source('rctree.R')
-rctree <- #selected
-  data.table(x)%>%
-  .[rc3%in%c('SW-','AL-','M--'),]%>%
-  .[.N:1,c('lab','rc6')]#%>%
+source('rctree.R') #for f240824b()
+rcx <<- c('SW-','AL-','M--')
 
 #---------------------function: map colours
 pal <- leaflet::colorNumeric(palette=cobalt()[c(2,4)],domain=0:1)
@@ -38,8 +29,6 @@ ui <- page_sidebar(
     textInput("tgtrc6",label='Target RC6',value='SW15'),
     width=140
   ),
-  
-  
   navset_card_underline(
     nav_panel(
       title = "National",
@@ -119,8 +108,8 @@ ui <- page_sidebar(
           treeInput( #districts
             inputId = "ID1",
             label = "Select districts:",
-            choices = create_tree(rctree),
-            selected = "London-NW-",
+            choices = create_tree(f240824b(rcx)),
+            selected = "St. Albans-AL-",#"London-SW-",
             returnValue = "text",
             closeDepth = 0
           )
@@ -140,7 +129,6 @@ ui <- page_sidebar(
 
 #-------------------------------------------------------------------------------server
 server <- function(input, output) {
-  load('t4dump.Rdata',envir=globalenv())
   x.nat.t4 <- 
     f231204a(2)%>%
     .[,.(
@@ -157,7 +145,7 @@ server <- function(input, output) {
   
   output$perf.nat.t <-  #gt estdt
     render_gt(
-      g240823a(z321)%>%
+      f240823a(z321)%>%
         .[]%>%
         gt(. ,rownames_to_stub = T)
       
@@ -174,7 +162,7 @@ server <- function(input, output) {
         tab_spanner(
           label = html("Bin £/m<sup>2</sup>"),
           columns = c(p.bin, p)
-        )    #%>%
+        ) 
     )
   output$estdt.nat.t <-  #gt estdt
     render_gt(
@@ -213,46 +201,53 @@ server <- function(input, output) {
     )
   #--------------------------------------------------custom
   
-  
   Rselectedrc <- #rc
     eventReactive(
-      input$go.custom.b, { #ok
-        print('**********************************')
-        print(input$ID1)
+      input$go.custom.b, 
+      {
         input$ID1[which(nchar(input$ID1)==6)] 
       }
     )
   
   Rrdt <- #returns
-    eventReactive(input$go.custom.b, {
-      Rselectedrow()
-      coread(Rselectedrc(),'03rip/')[]
-    })
+    eventReactive(
+      input$go.custom.b, 
+      {
+        Rselectedrow()
+        coread(Rselectedrc(),'03rip/')[]
+      }
+    )
   
   Rgeo <- #geo
-    eventReactive(input$go.custom.b, {
-      data.table(
-        rc9=Rselectedrc(),
-        nx=1,
-        lab='lab001'
-      )
-    })
+    eventReactive(
+      input$go.custom.b, 
+      {
+        data.table(
+          rc9=Rselectedrc(),
+          nx=1,
+          lab='lab001'
+        )
+      }
+    )
   
   Rrsi <- 
-    eventReactive(input$go.custom.b, {
-      x <- f230312a(  #solve single nx -> estdt with no pra
-        nxx=1,
-        steprip='03rip/',
-        dfn=dfnx,
-        geo=Rgeo()
-      )
-      rsi.g <<- x
-      ggplot(
-        x,
-        aes(ii,x)
-      )+
-        geom_line()
-    })
+    eventReactive(
+      input$go.custom.b, 
+      {
+        x <- f230312a(  #solve single nx -> estdt with no pra
+          nxx=1,
+          steprip='03rip/',
+          dfn=dfnx,
+          geo=Rgeo()
+        )
+        rsi.g <<- x
+        ggplot(
+          x,
+          aes(ii,x)
+        )+
+          geom_line()
+      }
+    )
   
   output$geo <- 
     render_gt(
@@ -270,9 +265,6 @@ server <- function(input, output) {
         geom_line()%>%
         print(.)
     })
-  
-  
-  
 }
 
 #-------------------------------------------------------------------------------Run
