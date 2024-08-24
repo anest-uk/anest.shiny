@@ -1,9 +1,3 @@
-#----------------------------------shared across sessions
-#setwd("C:/Users/Giles/anest.repo/anest.shiny/acycle")
-pgmt='dotted'
-pgmc='grey50'
-pgms=.2
-
 #---------------------CRAN package
 library(bslib)
 library(data.table)
@@ -12,21 +6,32 @@ library(gt)
 library(htmltools)
 library(leaflet)
 library(magrittr)
+library(reactable)
 library(scales)
 library(sp)
 
 library(gridlayout)
 library(shinyWidgets)
 library(shiny)
+#----------------------------------shared across sessions
+pgmt='dotted'
+pgmc='grey50'
+pgms=.2
+
+source('rctree.R') #postcode tree 'x'
+rctree <- #selected
+  data.table(x)%>%
+  .[rc6%in%substr(dir('03rip/'),1,6)]%>%
+  .[.N:1,c('lab','rc6')]
+
+
+
+
 
 #---------------------function lib
 source('c-cleanlib.R')
+
 source('applib.R')
-source('rctree.R')
-rctree <- #selected
-  data.table(x)%>%
-  .[rc3%in%c('SW-','AL-','M--'),]%>%
-  .[.N:1,c('lab','rc6')]#%>%
 
 #---------------------function: map colours
 pal <- leaflet::colorNumeric(palette=cobalt()[c(2,4)],domain=0:1)
@@ -35,10 +40,9 @@ pal <- leaflet::colorNumeric(palette=cobalt()[c(2,4)],domain=0:1)
 ui <- page_sidebar(
   title = "Index",
   sidebar = sidebar(
-    textInput("tgtrc6",label='Target RC6',value='SW15'),
+    textInput("pcd",label='Target RC6',value='SW15'),
     width=140
   ),
-  
   
   navset_card_underline(
     nav_panel(
@@ -46,8 +50,8 @@ ui <- page_sidebar(
       grid_page(
         layout = c(
           "space1  header     space3     space4",
-          "spacel  estdt-nat-p    geo-nat-l  spacer",
-          "spacel  estdt-nat-t tab4-nat-t  spacer"
+          "spacel  x-nat-p    geo-nat-l  spacer",
+          "spacel  perf-nat-t bin-nat-t  spacer"
         ),
         row_sizes = c(
           "50px",
@@ -65,40 +69,46 @@ ui <- page_sidebar(
           alignment = "start",
           is_title = FALSE
         ),
+        # grid_card_text(
+        #   area = "desc",
+        #   content = html("[how bins constructed]"),
+        #   alignment = "start",
+        #   is_title = FALSE
+        # )
+        # ,
         grid_card(area='space1'),
         grid_card(area='space2'),
         grid_card(area='space3'),
         grid_card(area='space4'),
         grid_card(area='spacel'),
         grid_card(area='spacer'),
-        
-        grid_card( #x(t) line
-          area='estdt-nat-p',
+        grid_card(
+          area='x-nat-p',
           p("Index"),
           plotOutput('estdt.nat.p')
         )
         ,
-        
-        grid_card( #leaflet
+        grid_card(
           area='geo-nat-l',
           p("Districts"),
           leafletOutput('geo.nat.l')
+        )
+        ,
+        grid_card(
+          area='bin-nat-t',
+          p("Bin/index characteristics"),
+          div(
+            gt_output('bin.nat.t'),
+            style = "font-size:65%")
         ),
-        
-        grid_card( #winding perf table
-          area='estdt-nat-t',
-          p("RSI estimation"),
+        grid_card(
+          area='perf-nat-t',
+          p("Price change"),
           div(
             gt_output('perf.nat.t'),
             style = "font-size:65%")
-        ),
-        grid_card( #charac table
-          area='tab4-nat-t',
-          p("Bin/index characteristics"),
-          div(
-            gt_output('tab4.nat.t'),
-            style = "font-size:65%")
         )
+        
       )
     ),
     nav_panel(
@@ -113,14 +123,16 @@ ui <- page_sidebar(
       title = "Custom",
       sidebarLayout(
         sidebarPanel(
-          actionButton("go.custom.b", "Estimate"), #go
+          downloadButton("downloadData", "Download"),
+          h5(''),
+          actionButton("go.custom.b", "Estimate"), #go 
           h5(''),
           
           treeInput( #districts
-            inputId = "ID1",
+            inputId = "custom.tree",
             label = "Select districts:",
             choices = create_tree(rctree),
-            selected = "London-NW-",
+            #selected = "London-SW-",
             returnValue = "text",
             closeDepth = 0
           )
@@ -140,7 +152,19 @@ ui <- page_sidebar(
 
 #-------------------------------------------------------------------------------server
 server <- function(input, output) {
+  
   load('t4dump.Rdata',envir=globalenv())
+  
+  output$downloadData <- 
+    downloadHandler(
+      filename = function() {
+        paste("data-", Sys.Date(), ".csv", sep="")
+      },
+      content = function(file) {
+        write.csv(rsi.g, file)
+      }
+    )
+  
   x.nat.t4 <- 
     f231204a(2)%>%
     .[,.(
@@ -155,14 +179,9 @@ server <- function(input, output) {
       beta=round(b1/mean(b1),2)
     )]
   
-  output$perf.nat.t <-  #gt estdt
-    render_gt(
-      g240823a(z321)%>%
-        .[]%>%
-        gt(. ,rownames_to_stub = T)
-      
-    )
-  output$tab4.nat.t <-  #gt estdt
+  
+  #national estdt
+  output$bin.nat.t <-  #gt estdt
     render_gt(
       gt(x.nat.t4)%>%
         cols_label(
@@ -174,16 +193,24 @@ server <- function(input, output) {
         tab_spanner(
           label = html("Bin £/m<sup>2</sup>"),
           columns = c(p.bin, p)
-        )    #%>%
+        )   
     )
-  output$estdt.nat.t <-  #gt estdt
+  output$estdt.nat.t <-  #estdt
     render_gt(
-      z321$ses$estdt[nx==z321$geo[rc9==regpcode(input$tgtrc6),nx]]%>%
+      z321$ses$estdt[nx==z321$geo[rc9==regpcode(input$pcd),nx]]%>%
         .[,.(np=nx,date=as.Date(date1),days,xdot=round(xdot,4),xdotse=round(xdotse,4),x=round(x,4),xse=round(xse,4))]#,
     )
+  output$perf.nat.t <-  #gt estdt
+    render_gt(
+      g240823a(z321)%>%
+        .[]%>%
+        gt(. ,rownames_to_stub = T)
+      
+    )
+  
   output$estdt.nat.p <- #ggplot x
     renderPlot(
-      z321$ses$estdt[nx==z321$geo[rc9==regpcode(input$tgtrc6),nx]]%>%
+      z321$ses$estdt[nx==z321$geo[rc9==regpcode(input$pcd),nx]]%>%
         ggplot(.,aes(date1,x))+
         geom_line()+
         xlab('')+
@@ -198,6 +225,7 @@ server <- function(input, output) {
           text=element_text(size=16,face='plain'),
           axis.line.y.left=element_line(size=.1),
           axis.line.x.bottom=element_line(size=.1),
+          #axis.text=element_text(size=6,face = "plain"),
           legend.position='none')+
         scale_x_date(
           breaks = as.Date(c('1995-01-01','2000-01-01','2010-01-01','2020-01-01','2024-01-01')),
@@ -208,18 +236,24 @@ server <- function(input, output) {
   
   output$geo.nat.l <- #leaflet np
     renderLeaflet(
-      z321$geo[nx==z321$geo[rc9==regpcode(input$tgtrc6),nx],rc9]%>%
-        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$tgtrc6),pva=z110,palx=pal,maxzoom=12)
+      z321$geo[nx==z321$geo[rc9==regpcode(input$pcd),nx],rc9]%>%
+        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$pcd),pva=z110,palx=pal,maxzoom=12)
     )
-  #--------------------------------------------------custom
   
+  
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste("data-", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv(rsi.g, file)
+    }
+  )
   
   Rselectedrc <- #rc
     eventReactive(
-      input$go.custom.b, { #ok
-        print('**********************************')
-        print(input$ID1)
-        input$ID1[which(nchar(input$ID1)==6)] 
+      input$go.custom.b, {
+        input$custom.tree[nchar(input$custom.tree)==6,rc6]
       }
     )
   
@@ -229,7 +263,7 @@ server <- function(input, output) {
       coread(Rselectedrc(),'03rip/')[]
     })
   
-  Rgeo <- #geo
+  Rgeo <- #solve rsi
     eventReactive(input$go.custom.b, {
       data.table(
         rc9=Rselectedrc(),
@@ -270,7 +304,6 @@ server <- function(input, output) {
         geom_line()%>%
         print(.)
     })
-  
   
   
 }

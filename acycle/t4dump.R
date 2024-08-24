@@ -1,4 +1,4 @@
-#setwd("C:/Users/Giles/anest.repo/anest.shiny/acycle")
+setwd("C:/Users/Giles/anest.repo/anest.shiny/acycle")
 ipanel <- 2
 rsi=list(z221,z321,z421)[[ipanel]] #---global 
 prj=list(z223,z323,z423)[[ipanel]] #---global
