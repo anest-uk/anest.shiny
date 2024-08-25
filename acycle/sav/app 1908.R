@@ -131,7 +131,7 @@ ui <- page_sidebar(
           treeInput( #districts
             inputId = "custom.tree",
             label = "Select districts:",
-            choices = create_tree(rctree),
+            choices = create_tree(f240824b('SW-')),
             #selected = "London-SW-",
             returnValue = "text",
             closeDepth = 0

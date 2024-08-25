@@ -172,11 +172,11 @@ ui <- grid_page(
           grid_container(
             layout = c(
               "custom_control xchartcus leafletcus",
-              "custom_control perfcust binchacus "
+              ".              permatcus binchacus "
             ),
             row_sizes = c(
-              ".5fr",
-              ".4fr"
+              "1fr",
+              "1fr"
             ),
             col_sizes = c(
               "1fr",#"0.36fr",
@@ -203,42 +203,36 @@ ui <- grid_page(
                   choices = list("annual" = "a", "semi-annual" = "b", "DRC" = "value3"),
                   width = "100%"
                 ),
+                checkboxInput(
+                  inputId = "treeselect",
+                  label = "Postcodes",
+                  value = FALSE
+                ),
                 treeInput( #districts
                   inputId = "customtree",
                   label = "Select districts:",
                   choices = create_tree(f240824b(unique(substr(dir('03rip/'),1,3)))),
-                  selected = "SW-2--",
+                  #selected = "London-SW-",
                   returnValue = "text",
-                  closeDepth = 1
-                ),
-                actionButton(inputId = "go.custom.b", label = "Estimate"),
-                
-                downloadButton("downloadData", "Download")
+                  closeDepth = 0
+                )
                 
               )
             ),
+            grid_card_plot(area = "xchartcus"),
+            grid_card_plot(area = "leafletcus"),
             grid_card(
-              area = "xchartcus",
-              plotOutput("rsi")
-            ),
-            grid_card(
-              area="leafletcus",
-              leafletOutput('geocusl')
-            ),
-            grid_card(
-              area = "perfcust",
-              div(
-                gt_output('perfcust'),
-                style = "font-size:25%"
-              )
+              area = "permatcus",
+              full_screen = TRUE,
+              card_header("Delta log price table")
             ),
             grid_card(
               area = "binchacus",
-              gt_output('binchacus')
-              #full_screen = TRUE,
-              #card_header(
-              #  "P-bins
-              #  "
+              full_screen = TRUE,
+              card_header(
+                "P-bins
+                "
+              )
             )
           )
         )
@@ -341,52 +335,26 @@ server <- function(input, output) {
       z321$geo[nx==z321$geo[rc9==regpcode(input$tgtrc6),nx],rc9]%>%
         f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$tgtrc6),pva=z110,palx=pal,maxzoom=12)
     )
-  
-  output$perfcust <-  #gt winding
-    render_gt(
-      f240823a(x1=Rrsi0())%>%
-        .[]%>%
-        gt(. ,rownames_to_stub = T)
-      
-    )
-  
-  output$binchacus <-  #pva
-    render_gt(
-      z110[rcx%in%input$customtree[which(nchar(input$customtree)==6)],.(rcx,nid,m2bar=round(m2/nid),ppm2=round(ppm2,-1))]%>%
-        gt(.)
-      #.[]%>%
-      #gt(. ,rownames_to_stub = T)
-      
-    )
-  
-  
-  output$geocusl <- #leaflet cust
-    renderLeaflet(
-      input$customtree[which(nchar(input$customtree)==6)]%>%
-        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$tgtrc6),pva=z110,palx=pal,maxzoom=12)
-    )
-  
   #--------------------------------------------------custom
   
   Rselectedrc <- #rc
     eventReactive(
       input$go.custom.b,
       {
-        #print(input$customtree[which(nchar(input$customtree)==6)])
-        input$customtree[which(nchar(input$customtree)==6)]
+        input$ID1[which(nchar(input$ID1)==6)]
       }
     )
   
-  # Rrdt <- #returns
-  #   eventReactive(
-  #     input$go.custom.b,
-  #     {
-  #       Rselectedrow()
-  #       coread(Rselectedrc(),'03rip/')[]
-  #     }
-  #   )
+  Rrdt <- #returns
+    eventReactive(
+      input$go.custom.b,
+      {
+        Rselectedrow()
+        coread(Rselectedrc(),'03rip/')[]
+      }
+    )
   
-  Rgeo <- #Rselectedrc -> geo [->Rrsi]
+  Rgeo <- #geo
     eventReactive(
       input$go.custom.b,
       {
@@ -398,91 +366,25 @@ server <- function(input, output) {
       }
     )
   
-  Rrsi0 <- #Rgeo -> RSI 
+  Rrsi <-
     eventReactive(
       input$go.custom.b,
       {
-        x <- f230312x(  #solve single nx -> estdt with no pra
+        x <- f230312a(  #solve single nx -> estdt with no pra
           nxx=1,
           steprip='03rip/',
           dfn=dfnx,
           geo=Rgeo()
         )
-        print(x)
-        x
-      }
-    )
-  
-  Rrsi <- 
-    eventReactive(
-      input$go.custom.b,
-      {
-        x <- Rrsi0()
+        rsi.g <<- x
         ggplot(
           x,
-          aes(date,x)
+          aes(ii,x)
         )+
-          geom_line()+
-          xlab('')+
-          ylab(bquote(Delta~P~log~price~change))+
-          theme_bw() +
-          theme(
-            axis.line = element_line(colour = "black"),
-            panel.grid.major = element_line(size=pgms,linetype = pgmt,color=pgmc),
-            panel.grid.minor = element_blank(),
-            panel.border = element_blank(),
-            panel.background = element_blank(),
-            text=element_text(size=16,face='plain'),
-            axis.line.y.left=element_line(size=.1),
-            axis.line.x.bottom=element_line(size=.1),
-            legend.position='none')+
-          scale_x_date(
-            breaks = as.Date(c('1995-01-01','2000-01-01','2010-01-01','2020-01-01','2024-01-01')),
-            date_labels = "%Y",
-            limits=c(as.Date(c('1994-12-31','2027-12-31')))
-          )
+          geom_line()
       }
     )
   
-  
-  # Rrsi <- #Rgeo -> RSI -> ggplot
-  #   eventReactive(
-  #     input$go.custom.b,
-  #     {
-  #       x <- f230312a(  #solve single nx -> estdt with no pra
-  #         nxx=1,
-  #         steprip='03rip/',
-  #         dfn=dfnx,
-  #         geo=Rgeo()
-  #       )
-  #       rsi.g <<- x
-  #       print(x)
-  #       ggplot(
-  #         x,
-  #         aes(date,x)
-  #       )+
-  #         geom_line()+
-  #         xlab('')+
-  #         ylab(bquote(Delta~P~log~price~change))+
-  #         theme_bw() +
-  #         theme(
-  #           axis.line = element_line(colour = "black"),
-  #           panel.grid.major = element_line(size=pgms,linetype = pgmt,color=pgmc),
-  #           panel.grid.minor = element_blank(),
-  #           panel.border = element_blank(),
-  #           panel.background = element_blank(),
-  #           text=element_text(size=16,face='plain'),
-  #           axis.line.y.left=element_line(size=.1),
-  #           axis.line.x.bottom=element_line(size=.1),
-  #           legend.position='none')+
-  #         scale_x_date(
-  #           breaks = as.Date(c('1995-01-01','2000-01-01','2010-01-01','2020-01-01','2024-01-01')),
-  #           date_labels = "%Y",
-  #           limits=c(as.Date(c('1994-12-31','2027-12-31')))
-  #         )
-  #     }
-  #   )
-  # 
   output$geo <-
     render_gt(
       Rgeo()[1:3]
@@ -495,9 +397,9 @@ server <- function(input, output) {
   
   output$rsi <- #solve rsi
     renderPlot({
-      Rrsi()#+
-      #geom_line()%>%
-      #print(.)
+      Rrsi()+
+        geom_line()%>%
+        print(.)
     })
 }
 
