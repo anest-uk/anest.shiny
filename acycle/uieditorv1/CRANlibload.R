@@ -1,6 +1,6 @@
 library(magrittr)
 c( 
-#'beepr',
+'beepr',
 'broom',
 'car', #linear hypothesis test
 'colorspace',

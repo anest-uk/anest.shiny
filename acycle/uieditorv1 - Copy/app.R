@@ -1,28 +1,3 @@
-#---------------------CRAN package for gui
-#source('CRANlibload.R') #causes failure once deployed
-library(broom)
-library(bslib)
-library(car) #linear hypothesis test
-library(colorspace)
-library(data.table)
-library(devtools)
-library(ggplot2)    
-library(ggrepel)   
-library(grid)
-library(gridlayout)
-library(gt)
-library(htmltools)
-library(leaflet)
-library(lubridate)
-library(magrittr)   
-library(plotly)
-library(scales)
-library(shiny)
-library(shinyWidgets)
-library(sp)
-library(zoo)
-
-
 #----------------------------------shared across sessions
 pgmt='dotted'
 pgmc='grey50'
@@ -30,16 +5,26 @@ pgms=.2
 
 load('t4dump.Rdata',envir=globalenv())
 
+#---------------------CRAN package for gui
+library(htmltools)
+library(leaflet)
+library(sp)
+library(shinyWidgets)
 
 #---------------------function lib
 source('c-cleanlib.R')
-source('rctree.R') #large table for f240824b() and rctree
-source('headerscript.R') #geo and dfn
+source('rctree.R') #for f240824b()
+source('headerscript.R')
 rcx <<- c('SW-','AL-','M--')
 
 #---------------------function: map colours
-palette=cobalt()[c(2,4)]
 pal <- leaflet::colorNumeric(palette=cobalt()[c(2,4)],domain=0:1)
+
+#from uieditor
+library(shiny)
+library(plotly)
+library(gridlayout)
+library(bslib)
 
 
 ui <- grid_page(
@@ -83,6 +68,8 @@ ui <- grid_page(
           title = "National",
           grid_container(
             layout = c(
+              # "estdtnatp leafletnat",
+              # "permatnat binchanat "
               "estdtnatp leafletnat",
               "perfnatt . ",
               ". . "
@@ -100,7 +87,7 @@ ui <- grid_page(
             grid_card(
               area="leafletnat",
               leafletOutput('geo.nat.l')
-            ),
+            ),#,
             grid_card(
               area = "estdtnatp",
               plotOutput('estdt.nat.p')
@@ -224,7 +211,7 @@ ui <- grid_page(
 
 
 server <- function(input, output) {
-  x.nat.t4 <-
+  x.nat.t4 <- 
     f231204a(2)%>%
     .[,.(
       p.bin=paste0(
@@ -237,13 +224,13 @@ server <- function(input, output) {
       R2rsi=round(r2rsi,3),
       beta=round(b1/mean(b1),2)
     )]
-
+  
   output$perfnatt <-  #gt estdt
     render_gt(
       f240823a(z321)%>%
         .[]%>%
         gt(. ,rownames_to_stub = T)
-
+      
     )
   output$tab4.nat.t <-  #gt estdt
     render_gt(
@@ -289,34 +276,34 @@ server <- function(input, output) {
           limits=c(as.Date(c('1994-12-31','2027-12-31')))
         )
     )
-
+  
   output$geo.nat.l <- #leaflet np
     renderLeaflet(
       z321$geo[nx==z321$geo[rc9==regpcode(input$tgtrc6),nx],rc9]%>%
         f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$tgtrc6),pva=z110,palx=pal,maxzoom=12)
     )
   #--------------------------------------------------custom
-
+  
   Rselectedrc <- #rc
     eventReactive(
-      input$go.custom.b,
+      input$go.custom.b, 
       {
-        input$ID1[which(nchar(input$ID1)==6)]
+        input$ID1[which(nchar(input$ID1)==6)] 
       }
     )
-
+  
   Rrdt <- #returns
     eventReactive(
-      input$go.custom.b,
+      input$go.custom.b, 
       {
         Rselectedrow()
         coread(Rselectedrc(),'03rip/')[]
       }
     )
-
+  
   Rgeo <- #geo
     eventReactive(
-      input$go.custom.b,
+      input$go.custom.b, 
       {
         data.table(
           rc9=Rselectedrc(),
@@ -325,10 +312,10 @@ server <- function(input, output) {
         )
       }
     )
-
-  Rrsi <-
+  
+  Rrsi <- 
     eventReactive(
-      input$go.custom.b,
+      input$go.custom.b, 
       {
         x <- f230312a(  #solve single nx -> estdt with no pra
           nxx=1,
@@ -344,17 +331,17 @@ server <- function(input, output) {
           geom_line()
       }
     )
-
-  output$geo <-
+  
+  output$geo <- 
     render_gt(
       Rgeo()[1:3]
     )
-
+  
   output$selected_var <- #render the string
     renderText({
       Rselectedrc()
     })
-
+  
   output$rsi <- #solve rsi
     renderPlot({
       Rrsi()+
@@ -365,5 +352,3 @@ server <- function(input, output) {
 
 #-------------------------------------------------------------------------------Run
 shinyApp(ui = ui, server = server)
-
-
