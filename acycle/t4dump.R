@@ -6,5 +6,5 @@ bwe=list(z224,z324,z424)[[ipanel]] #---global
 pva=z110 #-----------------------------global
 pxosrdo2dd=getlast('pxosrdo2dd')
 
-nn<-c('z221','z321','z421','z223','z323','z423','z224','z324','z424','z110','pxosrdo2dd')
+nn<-c('z221','z321','z321a','z421','z223','z323','z423','z224','z324','z424','z110','pxosrdo2dd') #z321a is np, annual
 save(list=nn,file='t4dump.Rdata')

@@ -33,7 +33,7 @@ pgms=.2
 
 load('t4dump.Rdata',envir=globalenv())
 
-dfnx <- seq.Date(from=as.Date('1994-12-31'),to=as.Date('2024-12-31'),by='y')
+
 #---------------------function lib
 source('c-cleanlib.R')
 source('rctree.R') #f240824b() : rctree
@@ -51,7 +51,7 @@ ui <- grid_page(
     "sidebar plot "
   ),
   row_sizes = c(
-    "50px",
+    "100px",
     "1fr"
   ),
   col_sizes = c(
@@ -73,7 +73,7 @@ ui <- grid_page(
   ),
   grid_card_text(
     area = "header",
-    content = "Repeat Sales Index",
+    content = "RSI",
     alignment = "start",
     is_title = FALSE
   ),
@@ -87,41 +87,39 @@ ui <- grid_page(
           grid_container(
             layout = c(
               "estdtnatp leafletnat",
-              ". tab4natt "#,
+              "perfnatt tab4natt "#,
               #". . "
             ),
             row_sizes = c(
-              "1fr",
-              "1fr"#,
+              ".5fr",
+              ".4fr"#,
               #"1fr"
             ),
             col_sizes = c(
-              ".37fr",
-              ".37fr"
+              ".5fr",
+              ".5fr"
             ),
             gap_size = "10px",
             grid_card(
               area="leafletnat",
-              leafletOutput('geonatl'),
-              max_height="500px"
+              leafletOutput('geonatl')
             ),
             grid_card(
               area = "estdtnatp",
-              plotOutput('estdtnatp'),
-              max_height="500px"
+              plotOutput('estdtnatp')
             ),
-            # grid_card(
-            #   area = "perfnatt",
-            #   div(
-            #     gt_output('perfnatt')
-            #   ),
-            #   max_height="500px"
-            # ),
+            grid_card(
+              area = "perfnatt",
+              div(
+                gt_output('perfnatt'),
+                style = "font-size:25%"
+              )
+            ),
             grid_card( #charac table
               area='tab4natt',
               div(
                 gt_output('tab4natt'),
-                max_height="500px"
+                style = "font-size:65%"
               )
             )
             # ,
@@ -142,6 +140,36 @@ ui <- grid_page(
           )
         ),
         nav_panel(
+          title = "Local",
+          grid_container(
+            layout = c(
+              "xchartloc leafletloc",
+              "permatloc binchaloc "
+            ),
+            row_sizes = c(
+              "1fr",
+              "1fr"
+            ),
+            col_sizes = c(
+              "1fr",
+              "1fr"
+            ),
+            gap_size = "10px",
+            grid_card_plot(area = "xchartloc"),
+            grid_card_plot(area = "leafletloc"),
+            grid_card(
+              area = "permatloc",
+              full_screen = TRUE,
+              card_header("Delta log price table")
+            ),
+            grid_card(
+              area = "binchaloc",
+              full_screen = TRUE,
+              card_header("P-bins")
+            )
+          )
+        ),
+        nav_panel(
           title = "Custom",
           grid_container(
             layout = c(
@@ -150,28 +178,17 @@ ui <- grid_page(
             ),
             row_sizes = c(
               "1fr",
-              "1fr"
+              ".4fr"
             ),
             col_sizes = c(
-              ".2fr",#"0.36fr",
-              ".37fr",
-              ".37fr"
+              "1fr",#"0.36fr",
+              "1.37fr",
+              "1.27fr"
             ),
-            # row_sizes = c(
-            #   "1fr",
-            #   ".4fr"
-            # ),
-            # col_sizes = c(
-            #   "1fr",#"0.36fr",
-            #   "1.37fr",
-            #   "1.27fr"
-            # ),
             gap_size = "10px",
             grid_card(
               area = "custom_control",
-              
               card_body(
-                'Index estimation',
                 # checkboxGroupInput(
                 #   inputId = "builtform",
                 #   label = "Built form",
@@ -185,7 +202,7 @@ ui <- grid_page(
                 radioButtons(
                   inputId = "Type",
                   label = "Type",
-                  choices = list("House" = "H", "Flat" = "F", "All" = "."),
+                  choices = list("House" = "H", "Flat" = "F", "Both" = "."),
                   width = "100%",
                   inline=T,
                   selected='.'
@@ -193,7 +210,7 @@ ui <- grid_page(
                 radioButtons(
                   inputId = "Used",
                   label = "Used",
-                  choices = list("Used" = "U", "New" = "N", "All" = "."),
+                  choices = list("Used" = "U", "New" = "N", "Both" = "."),
                   width = "100%",
                   inline=T,
                   selected='.'
@@ -226,61 +243,27 @@ ui <- grid_page(
             ),
             grid_card(
               area = "xchartcus",
-              plotOutput("rsi"),
-              max_height="500px"
+              plotOutput("rsi")
             ),
             grid_card(
               area="leafletcus",
-              leafletOutput('geocusl'),
-              max_height="500px"
+              leafletOutput('geocusl')
             ),
             grid_card(
               area = "binchacus",
-              'All properties',
-              gt_output('binchacus'),
-              max_height="500px"
+              gt_output('binchacus')
               #full_screen = TRUE,
               #card_header(
               #  "P-bins
               #  "
             )
           )
-        ),
-        nav_panel(
-          title = "Local",
-          grid_container(
-            layout = c(
-              "xchartloc leafletloc",
-              "permatloc binchaloc "
-            ),
-            row_sizes = c(
-              "1fr",
-              "1fr"
-            ),
-            col_sizes = c(
-              ".37fr",
-              ".37fr"
-            ),
-            gap_size = "10px",
-            grid_card_plot(area = "xchartloc"),
-            grid_card_plot(area = "leafletloc"),
-            grid_card(
-              area = "permatloc",
-              full_screen = TRUE,
-              card_header("Delta log price table")
-            ),
-            grid_card(
-              area = "binchaloc",
-              full_screen = TRUE,
-              card_header("P-bins")
-            )
-          )
         )
-        
       )
     )
   )
 )
+
 
 server <- function(input, output) {
   x.nat.t4 <-
@@ -299,7 +282,7 @@ server <- function(input, output) {
   
   output$perfnatt <-  #gt winding
     render_gt(
-      f240823a(z321a,nx=z321a$geo[rc9==regpcode(input$tgtrc6),nx])%>%
+      f240823a(z321,nx=z321$geo[rc9==regpcode(input$tgtrc6),nx])%>%
         .[]%>%
         gt::gt(. ,rownames_to_stub = T)
       
@@ -320,19 +303,34 @@ server <- function(input, output) {
         gt_highlight_rows(
           .,
           columns = gt::everything(),
-          rows = z321a$geo[rc9==regpcode(input$tgtrc6),11-nx], #reversed order
+          rows = z321$geo[rc9==regpcode(input$tgtrc6),11-nx], #reversed order
           fill = cobalt()['green'], #"#80bcd8"
-          alpha = 0.1, #v pale
-          font_weight = "normal",
-          #font_color = "#000000",
-          #bold_target_only = FALSE,
+          alpha = 0.8,
+          font_weight = "bold",
+          font_color = "#000000",
+          bold_target_only = FALSE,
           target_col = c()
         )
       
     )
+  
+  # Rselectedrc <- #rc
+  # eventReactive(
+  #   input$go.custom.b,
+  #   {
+  #     input$ID1[which(nchar(input$ID1)==6)]
+  #   }
+  # )
+  
+  
+  # output$estdt.nat.t <-  #gt estdt - decided not to show this
+  #   render_gt(
+  #     z321$ses$estdt[nx==z321$geo[rc9==regpcode(input$tgtrc6),nx]]%>%
+  #       .[,.(np=nx,date=as.Date(date1),days,xdot=round(xdot,4),xdotse=round(xdotse,4),x=round(x,4),xse=round(xse,4))]#,
+  #   )
   output$estdtnatp <- #ggplot x
     renderPlot(
-      z321a$ses$estdt[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx]]%>%
+      z321$ses$estdt[nx==z321$geo[rc9==regpcode(input$tgtrc6),nx]]%>%
         ggplot(.,aes(date1,x))+
         geom_line()+
         xlab('')+
@@ -357,29 +355,17 @@ server <- function(input, output) {
   
   output$geonatl <- #leaflet np
     renderLeaflet(
-      z321a$geo[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx],rc9]%>%
+      z321$geo[nx==z321$geo[rc9==regpcode(input$tgtrc6),nx],rc9]%>%
         f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$tgtrc6),pva=z110,palx=pal,maxzoom=12)
     )
   
   output$binchacus <-  #pva
     render_gt(
-      z110[rcx%in%input$customtree[which(nchar(input$customtree)==6)],.(pc=irregpcode(rcx),ppm2=round(ppm2,-1),nid,m2bar=round(m2/nid),pvbar=round(pv/(1000*nid)))]%>%
-        gt::gt(.)%>%
-        fmt_number(columns = 1:4,sep_mark = ",",decimals=0) %>% 
-        cols_label(
-          pc = '',
-          nid = html("Tracked properties"),
-          ppm2 = html("£/m<sup>2</sup>"),
-          m2bar = html("Floor area (m<sup>2</sup>)"),
-          pvbar = html("Present value (£000)"),
-        )%>%
-        tab_spanner(
-          label = html("Average"),
-          columns = c(m2bar, pvbar)
-        )%>%
-        tab_options(
-          table.align = "left"
-        )
+      z110[rcx%in%input$customtree[which(nchar(input$customtree)==6)],.(rcx,nid,m2bar=round(m2/nid),ppm2=round(ppm2,-1))]%>%
+        gt::gt(.)
+      #.[]%>%
+      #gt(. ,rownames_to_stub = T)
+      
     )
   
   
@@ -399,6 +385,15 @@ server <- function(input, output) {
         input$customtree[which(nchar(input$customtree)==6)]
       }
     )
+  
+  # Rrdt <- #returns
+  #   eventReactive(
+  #     input$go.custom.b,
+  #     {
+  #       Rselectedrow()
+  #       coread(Rselectedrc(),'03rip/')[]
+  #     }
+  #   )
   
   Rgeo <- #Rselectedrc -> geo [->Rrsi]
     eventReactive(
@@ -436,7 +431,6 @@ server <- function(input, output) {
           houseflat=input$Type,
           newused=input$Used
         )
-        if(any(x[,is.na(x)])) {xna <<- x; print('na found');x <- x[is.na(xdot),xdot:=0][,x:=cumsum(xdot)][xdot==0,x:=NA];print(x)}
         print(input$customtree)
         x
       }
@@ -483,6 +477,44 @@ server <- function(input, output) {
     )
   
   
+  # Rrsi <- #Rgeo -> RSI -> ggplot
+  #   eventReactive(
+  #     input$go.custom.b,
+  #     {
+  #       x <- f230312a(  #solve single nx -> estdt with no pra
+  #         nxx=1,
+  #         steprip='03rip/',
+  #         dfn=dfnx,
+  #         geo=Rgeo()
+  #       )
+  #       rsi.g <<- x
+  #       print(x)
+  #       ggplot(
+  #         x,
+  #         aes(date,x)
+  #       )+
+  #         geom_line()+
+  #         xlab('')+
+  #         ylab(bquote(Delta~P~log~price~change))+
+  #         theme_bw() +
+  #         theme(
+  #           axis.line = element_line(colour = "black"),
+  #           panel.grid.major = element_line(size=pgms,linetype = pgmt,color=pgmc),
+  #           panel.grid.minor = element_blank(),
+  #           panel.border = element_blank(),
+  #           panel.background = element_blank(),
+  #           text=element_text(size=16,face='plain'),
+  #           axis.line.y.left=element_line(size=.1),
+  #           axis.line.x.bottom=element_line(size=.1),
+  #           legend.position='none')+
+  #         scale_x_date(
+  #           breaks = as.Date(c('1995-01-01','2000-01-01','2010-01-01','2020-01-01','2024-01-01')),
+  #           date_labels = "%Y",
+  #           limits=c(as.Date(c('1994-12-31','2027-12-31')))
+  #         )
+  #     }
+  #   )
+  # 
   output$geo <-
     render_gt(
       Rgeo()[1:3]
