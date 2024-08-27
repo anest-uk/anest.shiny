@@ -1,7 +1,5 @@
 #---------------------CRAN package for gui
 #source('CRANlibload.R') #causes failure once deployed
-library(magic)
-
 library(broom)
 library(bslib)
 library(car) #linear hypothesis test
@@ -189,38 +187,22 @@ ui <- grid_page(
             grid_card(
               area = "custom_control",
               card_body(
-                # checkboxGroupInput(
-                #   inputId = "builtform",
-                #   label = "Built form",
-                #   choices = list("flat" = "a", "house" = "b")
-                # ),
-                # checkboxGroupInput(
-                #   inputId = "Used",
-                #   label = "Used",
-                #   choices = list("Used" = "a", "New" = "b")
-                # ),
-                radioButtons(
-                  inputId = "Type",
-                  label = "Type",
-                  choices = list("House" = "H", "Flat" = "F", "Both" = "."),
-                  width = "100%",
-                  inline=T,
-                  selected='.'
+                checkboxGroupInput(
+                  inputId = "bultform",
+                  label = "Built form",
+                  choices = list("flat" = "a", "house" = "b")
                 ),
-                radioButtons(
+                checkboxGroupInput(
                   inputId = "Used",
                   label = "Used",
-                  choices = list("Used" = "U", "New" = "N", "Both" = "."),
-                  width = "100%",
-                  inline=T,
-                  selected='.'
+                  choices = list("Used" = "a", "New" = "b")
                 ),
-                # radioButtons(
-                #   inputId = "timebinning",
-                #   label = "Time bins",
-                #   choices = list("annual" = "a", "semi-annual" = "b", "DRC" = "value3"),
-                #   width = "100%"
-                # ),
+                radioButtons(
+                  inputId = "timebinning",
+                  label = "Time bins",
+                  choices = list("annual" = "a", "semi-annual" = "b", "DRC" = "value3"),
+                  width = "100%"
+                ),
                 treeInput( #districts
                   inputId = "customtree",
                   label = "Select districts:",
@@ -285,12 +267,12 @@ server <- function(input, output) {
     render_gt(
       f240823a(z321,nx=z321$geo[rc9==regpcode(input$tgtrc6),nx])%>%
         .[]%>%
-        gt::gt(. ,rownames_to_stub = T)
+        gt(. ,rownames_to_stub = T)
       
     )
   output$tab4natt <-  #gt characteristics table 4
     render_gt(
-      gt::gt(x.nat.t4)%>%
+      gt(x.nat.t4)%>%
         cols_label(
           frac = html('Fraction<br>properties'),
           R2rsi = html("RSI R<sup>2</sup>"),
@@ -364,14 +346,14 @@ server <- function(input, output) {
     render_gt(
       f240823a(x1=Rrsi0())%>%
         .[]%>%
-        gt::gt(. ,rownames_to_stub = T)
+        gt(. ,rownames_to_stub = T)
       
     )
   
   output$binchacus <-  #pva
     render_gt(
       z110[rcx%in%input$customtree[which(nchar(input$customtree)==6)],.(rcx,nid,m2bar=round(m2/nid),ppm2=round(ppm2,-1))]%>%
-        gt::gt(.)
+        gt(.)
       #.[]%>%
       #gt(. ,rownames_to_stub = T)
       
@@ -418,47 +400,24 @@ server <- function(input, output) {
   
   Rrsi0 <- #Rgeo -> RSI 
     eventReactive(
-      eventExpr=
-        list(
-        input$go.custom.b,
-        input$Used, #generate reactivity in table
-        input$Type,
-        input$customtree
-      ),
+      input$go.custom.b,
       {
-        x0 <- list(
-        input$go.custom.b,
-        input$Used,
-        input$Type,
-        input$customtree
-      )
         x <- f230312x(  #solve single nx -> estdt with no pra
           nxx=1,
           steprip='03rip/',
           dfn=dfnx,
-          geo=Rgeo(),
-          houseflat=input$Type,
-          newused=input$Used
+          geo=Rgeo()
         )
-        print(input$customtree)
+        print(x)
         x
       }
     )
   
   Rrsi <- 
     eventReactive(
-      eventExpr=
-        list(
-        input$go.custom.b#,
-        # input$Used,    generate no reactivity
-        # input$Type,
-        # input$customtree
-      )
-      ,
+      input$go.custom.b,
       {
         x <- Rrsi0()
-        # x0 <- input$Used
-        # x1 <- input$Type
         ggplot(
           x,
           aes(date,x)

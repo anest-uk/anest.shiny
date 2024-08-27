@@ -51,10 +51,10 @@ c(
 }
 coread <-
 function( #read data from csv in subdir
-    rcx='AL-', #postcodes to read
-    step='nac', #subdir name
-    colClasses=NULL, #e.g. colClasses=c(deed_date='character'),nrow=10
-    nrows=Inf
+  rcx='AL-', #postcodes to read
+  step='nac', #subdir name
+  colClasses=NULL, #e.g. colClasses=c(deed_date='character'),nrow=10
+  nrows=Inf
 ) {
   x1 <- dir(step)
   if(length(x1)==0) {stop(paste0('step: ',step,' no files found'))}
@@ -112,29 +112,33 @@ function(  #solve single nx -> estdt with no pra
     stepdfn='ver001\\06dfn',
     stepgeo='ver001\\04geo',
     steprip='ver001\\03rip', 
-    dfn=coread(rcx='xxx',
-               step=stepdfn,
-               colClasses=c(dfn='Date'),
-               nrows=Inf)%>%
-      .[,dfn],    
-    geo=coread(rcx='xxx',
-               step=stepgeo,
-               colClasses=list(integer='nx'), 
-               nrows=Inf),
-    outthresh=.1
+    dfn=dfnx,
+    geo=geo0,
+    outthresh=.1,
+    newused=c('.','N','U'),
+    houseflat=c('.','H','F'), #typex field added to rip 240826, values UH/NH/UF/NF for new/house
+    ...
   ) {
+    newused=match.arg(newused)
+    houseflat=match.arg(houseflat)
     x1 <- #rip read
       coread(
         rcx=geo[nx==nxx][,rc9],
         step=steprip,
         colClasses=list(numeric=c('retsa'),Date=c('buydate','selldate'))#'retraw',
       )
+    if(
+      'type'%in%names(x1)& #for backward compat.
+      (paste0(newused,houseflat)!='..') #default=no screen
+    ){
+      x1 <- x1[grep(paste0('^',newused,houseflat,'$'),type)] 
+    }
     x2 <- f221209a(
-        geo=geo[nx==nxx], 
-        fur=x1,
-        dfn=dfn,
-        applygeo=F
-      )
+      geo=geo[nx==nxx], 
+      fur=x1,
+      dfn=dfn,
+      applygeo=F
+    )
     x4 <- lm(
       retsa~.-1,
       x2[,!c('idhash.selldate','rc9')] #all
@@ -160,6 +164,19 @@ function(  #solve single nx -> estdt with no pra
       .[,col:=as.factor(lab)]
     x6
   }
+f230312x <-
+function(
+    ...,
+    d0=as.Date('1994-12-31'),
+    newused=c('.','N','U'),
+    houseflat=c('.','H','F') #typex field added to rip 240826, values UH/NH/UF/NF for new/house
+  ) {
+    newused=match.arg(newused)
+    houseflat=match.arg(houseflat)  
+    x1 <- f230312a(...,newused=newused,houseflat=houseflat)
+    x2 <- copy(x1)[,date1:=date][,date0:=c(as.Date(d0),date[-.N])][,xdot.daily:=xdotd]
+    x2
+  }
 f230703c <-
 function(  #NUTS2 names
   ) {
@@ -183,38 +200,38 @@ function(  #NUTS2 names
   }
 f231204a <-
 function(#generate table 4, 'geo comparison' combining P, RSI, LFM, CIRC
-  ipanel=3,  #note this function *breaks* the universal rule: it has global references xnnn which are not passed
-  cardinal=c('TS-','L--','S--','M--','LS-','B--','BS-','AL-','N--','WC-') 
-    ) {
-  rsi=list(z221,z321,z421)[[ipanel]] #---global 
-  prj=list(z223,z323,z423)[[ipanel]] #---global
-  bwe=list(z224,z324,z424)[[ipanel]] #---global
-  pva=z110 #-----------------------------global
-  stat=rsi$ses$stat
-  geo=rsi$geo
-  x0 <- #expand rc3 parts of geo into rc6
-    pva[nchar(rcx)==6]%>%
-    .[,rc3:=substr(rcx,1,3)]%>%
-    .[rc3%in%geo[,rc9],.(rc6=rcx,rc3)]%>%
-    geo[.,on=c(rc9='rc3')]%>%
-    .[,.(rc9=rc6,nx,lab)]%>%
-    rbind(.,geo[nchar(rc9)==6])
-  cname=rbind(
-    data.table(panel=1,nx=1:10,lab=gsub('-','',cardinal)),
-    data.table(panel=2,nx=1:10,lab=paste0('np',1:10)),
-    data.table(panel=3,nx=1:10,lab=f230703c()[order(nx),abbrev])
-  )%>%
-    .[panel==ipanel,.(ipanel,nx,lab)]
-  x1 <- 
-    stat[type=='all',.(nx,rsq)]%>%
-    .[prj[,.(nx,rbarsqprj,aprj,ase=aprj/atprj)],on=c(nx='nx')]%>%
-    .[bwe[,.(nx,b1,tbw=atan2(b3w,b2w),dtbw=c(NA,diff(atan2(b3w,b2w))))],on=c(nx='nx')]%>%
-    .[pva[x0,on=c(rcx='rc9')][,.(nid=sum(nid),ppm2min=min(ppm2),ppm2max=max(ppm2),ppm2=sum(pv)/sum(m2)),nx],on=c(nx='nx')]%>%
-    .[,.(nx,ppm2min,ppm2max,ppm2,fid=nid/sum(nid),r2rsi=rsq,rbar2prj=rbarsqprj,b1,tbw,dtbw,aprj,ase)]%>%
-    cname[.,on=c(nx='nx')]%>%
-    .[order(-nx)]
-  x1
-}
+    ipanel=3,  #note this function *breaks* the universal rule: it has global references xnnn which are not passed
+    cardinal=c('TS-','L--','S--','M--','LS-','B--','BS-','AL-','N--','WC-') 
+  ) {
+    rsi=list(z221,z321,z421)[[ipanel]] #---global 
+    prj=list(z223,z323,z423)[[ipanel]] #---global
+    bwe=list(z224,z324,z424)[[ipanel]] #---global
+    pva=z110 #-----------------------------global
+    stat=rsi$ses$stat
+    geo=rsi$geo
+    x0 <- #expand rc3 parts of geo into rc6
+      pva[nchar(rcx)==6]%>%
+      .[,rc3:=substr(rcx,1,3)]%>%
+      .[rc3%in%geo[,rc9],.(rc6=rcx,rc3)]%>%
+      geo[.,on=c(rc9='rc3')]%>%
+      .[,.(rc9=rc6,nx,lab)]%>%
+      rbind(.,geo[nchar(rc9)==6])
+    cname=rbind(
+      data.table(panel=1,nx=1:10,lab=gsub('-','',cardinal)),
+      data.table(panel=2,nx=1:10,lab=paste0('np',1:10)),
+      data.table(panel=3,nx=1:10,lab=f230703c()[order(nx),abbrev])
+    )%>%
+      .[panel==ipanel,.(ipanel,nx,lab)]
+    x1 <- 
+      stat[type=='all',.(nx,rsq)]%>%
+      .[prj[,.(nx,rbarsqprj,aprj,ase=aprj/atprj)],on=c(nx='nx')]%>%
+      .[bwe[,.(nx,b1,tbw=atan2(b3w,b2w),dtbw=c(NA,diff(atan2(b3w,b2w))))],on=c(nx='nx')]%>%
+      .[pva[x0,on=c(rcx='rc9')][,.(nid=sum(nid),ppm2min=min(ppm2),ppm2max=max(ppm2),ppm2=sum(pv)/sum(m2)),nx],on=c(nx='nx')]%>%
+      .[,.(nx,ppm2min,ppm2max,ppm2,fid=nid/sum(nid),r2rsi=rsq,rbar2prj=rbarsqprj,b1,tbw,dtbw,aprj,ase)]%>%
+      cname[.,on=c(nx='nx')]%>%
+      .[order(-nx)]
+    x1
+  }
 f240810a <-
 function( #leaflet special/custom function for index app, copied from anest.shiny/acycle/applib.R
     zoomx=6.5,

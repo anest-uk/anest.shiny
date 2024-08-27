@@ -1,5 +1,5 @@
 accrue2 <-
-  function(  #for vector of dates, accrue days from buydate to selldate
+function(  #for vector of dates, accrue days from buydate to selldate
     pdate=round(seq(from=fur[,min(buydate)],to=fur[,max(selldate)],length.out=10)),
     fur = f221029bd #has Date fields buydate,selldate
   ) {
@@ -23,67 +23,67 @@ accrue2 <-
     )
   }
 chkpcode <-
-  function(
+function(
     pc='EC2R 8AH'
-  ) {
-    nch <- sapply(pc,nchar)
-    stopifnot(all(nch<=8)) #right length
-    stopifnot(unlist(lapply(gregexpr(patt=' ',pc),length))==1)#max one space
-    x <- strsplit(pc,split=' ')
-    if(length(x[[1]])==1) {
-      stopifnot(all(unlist(gregexpr(pc,patt='^[A-Z,a-z]'))==1))#1-part always starts with alpha cap
-    }
-    if(length(x[[1]])==2) {
-      pcin <- lapply(x,'[[',2)
-      if(!all(unlist(gregexpr(pcin,patt='^[0-9]'))==1)) stop('postcode malformed')#2-part always starts with number [never fails]
-      stopifnot(all(unlist(gregexpr(pcin,patt='^[0-9]'))==1))
-    }
-    TRUE
+    ) {
+  nch <- sapply(pc,nchar)
+  stopifnot(all(nch<=8)) #right length
+  stopifnot(unlist(lapply(gregexpr(patt=' ',pc),length))==1)#max one space
+  x <- strsplit(pc,split=' ')
+  if(length(x[[1]])==1) {
+    stopifnot(all(unlist(gregexpr(pc,patt='^[A-Z,a-z]'))==1))#1-part always starts with alpha cap
   }
+  if(length(x[[1]])==2) {
+    pcin <- lapply(x,'[[',2)
+    if(!all(unlist(gregexpr(pcin,patt='^[0-9]'))==1)) stop('postcode malformed')#2-part always starts with number [never fails]
+    stopifnot(all(unlist(gregexpr(pcin,patt='^[0-9]'))==1))
+  }
+  TRUE
+}
 cobalt <-
-  function(){
-    c(
-      blue='#0082F4',
-      green='#35CA05',
-      onch='#ED9304',
-      punk='#FF628C',
-      midnight='002140')
-  }
+function(){
+c(
+  blue='#0082F4',
+  green='#35CA05',
+  onch='#ED9304',
+  punk='#FF628C',
+  midnight='002140')
+}
 coread <-
-  function( #read data from csv in subdir
-    rcx='AL-', #postcodes to read
-    step='nac', #subdir name
-    colClasses=NULL, #e.g. colClasses=c(deed_date='character'),nrow=10
-    nrows=Inf
-  ) {
-    x1 <- dir(step)
-    if(length(x1)==0) {stop(paste0('step: ',step,' no files found'))}
-    x2 <- grep(grepstring(rcx,caret=T),x1)
-    x3 <- x1[x2]
-    ext <- tolower(unique(unlist(lapply(strsplit(x3,split='\\.'),`[`,i=2))))
-    stopifnot(length(ext)==1) #csv or rdata
-    x4 <- list(NULL)
-    i <- 1
-    for(i in seq_along(x3)) {
-      fp <- paste0(step,'/',x3[i])
-      if(ext=='rdata') {
-        load(file=fp)
-      } else if(ext=='csv') {
-        x <- fread(file=fp,colClasses=colClasses,nrows=nrows)
-        if(is.data.table(x)&is.null(colClasses)) { #undo autorecognition
-          for(i2 in seq_along(x)) {
-            x[[i2]] <- as.character(x[[i2]])
-          }
+function( #read data from csv in subdir
+  rcx='AL-', #postcodes to read
+  step='nac', #subdir name
+  colClasses=NULL, #e.g. colClasses=c(deed_date='character'),nrow=10
+  nrows=Inf
+) {
+  x1 <- dir(step)
+  if(length(x1)==0) {stop(paste0('step: ',step,' no files found'))}
+  x2 <- grep(grepstring(rcx,caret=T),x1)
+  x3 <- x1[x2]
+  ext <- tolower(unique(unlist(lapply(strsplit(x3,split='\\.'),`[`,i=2))))
+  stopifnot(length(ext)==1) #csv or rdata
+  x4 <- list(NULL)
+  i <- 1
+  for(i in seq_along(x3)) {
+    fp <- paste0(step,'/',x3[i])
+    if(ext=='rdata') {
+      load(file=fp)
+    } else if(ext=='csv') {
+      x <- fread(file=fp,colClasses=colClasses,nrows=nrows)
+      if(is.data.table(x)&is.null(colClasses)) { #undo autorecognition
+        for(i2 in seq_along(x)) {
+          x[[i2]] <- as.character(x[[i2]])
         }
-      } else {
-        stop(paste0('file not found step=',step,'rcx=',paste0(rcx,collapse=',')))
       }
-      x4[[i]] <- x
+    } else {
+      stop(paste0('file not found step=',step,'rcx=',paste0(rcx,collapse=',')))
     }
-    rbindlist(x4)
+    x4[[i]] <- x
   }
+  rbindlist(x4)
+}
 f221209a <-
-  function( #wrapper for accrue2
+function( #wrapper for accrue2
     geo=f221230ad$geo,
     dfn=f230215c(), #yearend series
     fur=f221029bd,
@@ -107,28 +107,31 @@ f221209a <-
     x1
   }
 f230312a <-
-  function(  #solve single nx -> estdt with no pra
+function(  #solve single nx -> estdt with no pra
     nxx=geo[,min(nx)],
     stepdfn='ver001\\06dfn',
     stepgeo='ver001\\04geo',
     steprip='ver001\\03rip', 
-    dfn=coread(rcx='xxx',
-               step=stepdfn,
-               colClasses=c(dfn='Date'),
-               nrows=Inf)%>%
-      .[,dfn],    
-    geo=coread(rcx='xxx',
-               step=stepgeo,
-               colClasses=list(integer='nx'), 
-               nrows=Inf),
-    outthresh=.1
+    dfn=dfnx,
+    geo=geo0,
+    outthresh=.1,
+    newused=c('.','N','U'),
+    houseflat=c('.','H','F') #typex field added to rip 240826, values UH/NH/UF/NF for new/house
   ) {
+    newused=match.arg(newused)
+    houseflat=match.arg(houseflat)
     x1 <- #rip read
       coread(
         rcx=geo[nx==nxx][,rc9],
         step=steprip,
         colClasses=list(numeric=c('retsa'),Date=c('buydate','selldate'))#'retraw',
       )
+    if(
+      'type'%in%names(x1)& #for backward compat.
+      (paste0(newused,houseflat)!='..') #default=no screen
+    ){
+      x1 <- x1[grep(paste0('^',newused,houseflat,'$'),type)] 
+    }
     x2 <- f221209a(
       geo=geo[nx==nxx], 
       fur=x1,
@@ -160,8 +163,21 @@ f230312a <-
       .[,col:=as.factor(lab)]
     x6
   }
+f230312x <-
+function(
+    ...,
+    d0=as.Date('1994-12-31'),
+    newused=c('.','N','U'),
+    houseflat=c('.','H','F') #typex field added to rip 240826, values UH/NH/UF/NF for new/house
+  ) {
+    newused=match.arg(newused)
+    houseflat=match.arg(houseflat)  
+    x1 <- f230312a(...,newused=newused,houseflat=houseflat)
+    x2 <- copy(x1)[,date1:=date][,date0:=c(as.Date(d0),date[-.N])][,xdot.daily:=xdotd]
+    x2
+  }
 f230703c <-
-  function(  #NUTS2 names
+function(  #NUTS2 names
   ) {
     nname <-
       structure(list(
@@ -182,7 +198,7 @@ f230703c <-
     nname
   }
 f231204a <-
-  function(#generate table 4, 'geo comparison' combining P, RSI, LFM, CIRC
+function(#generate table 4, 'geo comparison' combining P, RSI, LFM, CIRC
     ipanel=3,  #note this function *breaks* the universal rule: it has global references xnnn which are not passed
     cardinal=c('TS-','L--','S--','M--','LS-','B--','BS-','AL-','N--','WC-') 
   ) {
@@ -215,16 +231,8 @@ f231204a <-
       .[order(-nx)]
     x1
   }
-f230312x <- #wrapper add date1,date0
-  function(...,d0=as.Date('1994-12-31'))
-{
-  x1 <- f230312a(...)
-  x2 <- copy(x1)[,date1:=date][,date0:=c(as.Date(d0),date[-.N])][,xdot.daily:=xdotd]
-  x2
-}
-
 f240810a <-
-  function( #leaflet special/custom function for index app, copied from anest.shiny/acycle/applib.R
+function( #leaflet special/custom function for index app, copied from anest.shiny/acycle/applib.R
     zoomx=6.5,
     x3a=pxosrdo2dd,#rc6 polygons 
     pva=z110,
@@ -287,7 +295,7 @@ f240810a <-
     x8
   }
 f240823a <-
-  function( #winding performance table
+function( #winding performance table
     x0=z321,
     x1= 
       x0$ses$estdt%>%
@@ -318,34 +326,34 @@ f240823a <-
     x7
   }
 grepstring <-
-  function(#grep for any in x 
+function(#grep for any in x 
     x=regpcode(metro()), #character vector
     dollar=F,
     caret=T
-  ) {
-    if(caret) x <- paste0('^',x)
-    if(dollar) x <- paste0(x,'$')
-    paste(x,collapse='|') #OR function does the work
-  }
+    ) {
+  if(caret) x <- paste0('^',x)
+  if(dollar) x <- paste0(x,'$')
+  paste(x,collapse='|') #OR function does the work
+}
 irregpcode <-
-  function( #convert regular (area,district,sector,unit) 12 char to 'normal' postcode
+function( #convert regular (area,district,sector,unit) 12 char to 'normal' postcode
     x
-  ) {
-    x1 <- substr(x,1,pmin(6,nchar(x)))
-    x2 <- substr(x,pmin(7,nchar(x)),nchar(x))
-    gsub(patt=' $',rep='',x=paste(gsub(patt='\\-',rep='',x=x1),gsub(patt='\\-',rep='',x=x2)))
-  }
+    ) {
+  x1 <- substr(x,1,pmin(6,nchar(x)))
+  x2 <- substr(x,pmin(7,nchar(x)),nchar(x))
+  gsub(patt=' $',rep='',x=paste(gsub(patt='\\-',rep='',x=x1),gsub(patt='\\-',rep='',x=x2)))
+}
 pad1 <-
-  function(x) {
-    n1 <- nchar(x)
-    x[n1==1] <- paste0(x[n1==1],paste(collapse ='',rep(rcs(),2)))
-    x[n1==2] <- paste0(x[n1==2],rcs())
-    x
-  }
+function(x) {
+  n1 <- nchar(x)
+  x[n1==1] <- paste0(x[n1==1],paste(collapse ='',rep(rcs(),2)))
+  x[n1==2] <- paste0(x[n1==2],rcs())
+  x
+}
 parsepcode <-
-  function( #parse a vector of 'irregular' (normal) postcode
+function( #parse a vector of 'irregular' (normal) postcode
     pc=c('AL1 1AD','AL1 1BD','AL1 1CD')
-  ) {
+    ) {
     x <- lapply(pc,ppc)%>%
       lapply(.,data.table)%>%
       lapply(.,t)%>%
@@ -358,49 +366,49 @@ parsepcode <-
     x
   }
 ppc <-
-  function(pc='EC2R 8AH') {
-    if(nchar(pc)<2) return(list(area=ifelse(grepl('[A-Z,a-z]',pc),paste0(toupper(pc),'--'),''),district='',sector='',unit=''))
-    chkpcode(pc)
-    pc <- toupper(pc)
-    gg <- gregexpr(patt=' ',pc)
-    x <- strsplit(pc,split=' ')
-    out <- unlist(lapply(x,'[[',1))
-    nout <- nchar(out)
-    inum <- as.numeric(regexpr("[0-9]",out))
-    area <- pc
-    sector <- unit <- district <- rep('',length(pc))
-    area[inum==2] <- substr(out[inum==2],1,1)
-    area[inum==3] <- substr(out[inum==3],1,2)
-    district[inum==2] <- substring(out[inum==2],2)
-    district[inum==3] <- substring(out[inum==3],3)
-    if(any(lapply(x,length)>1)) { #inbound code exists
-      stopifnot(all(lapply(x,length)==2)) #exists for all
-      inb <- unlist(lapply(x,'[[',2))
-      nin <- nchar(inb)
-      sector <- substr(inb,1,1)
-      unit <- substring(inb,2,nin)
-    }
-    list(area=area,district=district,sector=sector,unit=unit)
+function(pc='EC2R 8AH') {
+  if(nchar(pc)<2) return(list(area=ifelse(grepl('[A-Z,a-z]',pc),paste0(toupper(pc),'--'),''),district='',sector='',unit=''))
+  chkpcode(pc)
+  pc <- toupper(pc)
+  gg <- gregexpr(patt=' ',pc)
+  x <- strsplit(pc,split=' ')
+  out <- unlist(lapply(x,'[[',1))
+  nout <- nchar(out)
+  inum <- as.numeric(regexpr("[0-9]",out))
+  area <- pc
+  sector <- unit <- district <- rep('',length(pc))
+  area[inum==2] <- substr(out[inum==2],1,1)
+  area[inum==3] <- substr(out[inum==3],1,2)
+  district[inum==2] <- substring(out[inum==2],2)
+  district[inum==3] <- substring(out[inum==3],3)
+  if(any(lapply(x,length)>1)) { #inbound code exists
+    stopifnot(all(lapply(x,length)==2)) #exists for all
+    inb <- unlist(lapply(x,'[[',2))
+    nin <- nchar(inb)
+    sector <- substr(inb,1,1)
+    unit <- substring(inb,2,nin)
   }
+  list(area=area,district=district,sector=sector,unit=unit)
+}
 rcs <-
-  function(){'-'}
+function(){'-'}
 regpcode <-
-  function(#parse irregular postcode to regular 12-char (area,district,sector,unit)
+function(#parse irregular postcode to regular 12-char (area,district,sector,unit)
     rawcode=c('AL1 1AD','AL1 1BD','AL1 1CD'),x=parsepcode(rawcode)) {
     rawcode <- gsub(patt='  ',rep=' ',rawcode)
     Reduce(paste0,lapply(x,pad1))
   }
 rmifgl <-
-  function( #remove if global
-    x #character=names of non-function objects in .GlobalEnv
+function( #remove if global
+  x #character=names of non-function objects in .GlobalEnv
   ) {
-    for(i in seq_along(x)) {
-      if(
-        exists(x[i],envir=globalenv())
-        &&
-        mode(get(x[i],envir=globalenv()))!='function'
-      ) {
-        rm(list=x[i],envir=globalenv())
+  for(i in seq_along(x)) {
+    if(
+      exists(x[i],envir=globalenv())
+      &&
+      mode(get(x[i],envir=globalenv()))!='function'
+    ) {
+      rm(list=x[i],envir=globalenv())
       }
-    }
   }
+}
