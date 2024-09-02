@@ -18,6 +18,7 @@ library(htmltools)
 library(leaflet)
 library(lubridate)
 library(magrittr)   
+library(PerformanceAnalytics)   
 library(plotly)
 library(scales)
 library(shiny)
@@ -46,6 +47,9 @@ pal <- leaflet::colorNumeric(palette=cobalt()[c(2,4)],domain=0:1)
 
 
 ui <- grid_page(
+      tags$head(tags$link(rel="shortcut icon", href="fav.ico")),
+  
+
   layout = c(
     "header  header  ",
     "sidebar plot "
@@ -87,13 +91,15 @@ ui <- grid_page(
           grid_container(
             layout = c(
               "estdtnatp leafletnat",
-              ". tab4natt "#,
-              #". . "
+              "perfnatt0 tab4natt ",
+              "perfnatt2 perfnatt3 ",
+              "perfnatt1 ."
             ),
             row_sizes = c(
               "1fr",
-              "1fr"#,
-              #"1fr"
+              "1fr",
+              "1fr",
+              "1fr"
             ),
             col_sizes = c(
               ".37fr",
@@ -110,20 +116,49 @@ ui <- grid_page(
               plotOutput('estdtnatp'),
               max_height="500px"
             ),
-            # grid_card(
-            #   area = "perfnatt",
-            #   div(
-            #     gt_output('perfnatt')
-            #   ),
-            #   max_height="500px"
-            # ),
+            grid_card(
+              area = "perfnatt0",
+              'RSI log price change',
+              div(
+                gt_output('perfnatt0')
+              ),
+              max_height="400px"
+            ),
+            grid_card(
+              area = "perfnatt1",
+              'transaction count',
+              div(
+                gt_output('perfnatt1')
+              ),
+              max_height="500px"
+            ),
+            grid_card(
+              area = "perfnatt2",
+              'bought\\sold average log price change',
+              
+              div(
+                gt_output('perfnatt2')
+              ),
+              max_height="500px"
+            ),
             grid_card( #charac table
               area='tab4natt',
+              'price-bin characteristics',
               div(
                 gt_output('tab4natt'),
+                max_height="400px"
+              )
+            ),
+            grid_card( #charac table
+              area='perfnatt3',
+              'time-series summary',
+              div(
+                gt_output('perfnatt3'),
                 max_height="500px"
               )
             )
+            
+            
             # ,
             #     card_header(
             #       "table 4"
@@ -206,6 +241,8 @@ ui <- grid_page(
                 actionButton(inputId = "downloadData", label = "Download index", #,icon("paper-plane"
                              style="color: #222222; background-color: #ffffff; border-color: #2e6da4; padding:4px; font-size:75%; width:50%")
                 ,
+                checkboxInput(inputId = "fixedscale",'fixed y-scale',T)
+                ,
                 #style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
                 # radioButtons(
                 #   inputId = "timebinning",
@@ -238,7 +275,7 @@ ui <- grid_page(
               area = "binchacus",
               'All properties',
               gt_output('binchacus'),
-              max_height="500px"
+              max_height="400px"
               #full_screen = TRUE,
               #card_header(
               #  "P-bins
@@ -283,6 +320,7 @@ ui <- grid_page(
 )
 
 server <- function(input, output) {
+  steprip <- '03rip/'
   x.nat.t4 <-
     f231204a(2)%>%
     .[,.(
@@ -297,13 +335,74 @@ server <- function(input, output) {
       beta=round(b1/mean(b1),2)
     )]
   
-  output$perfnatt <-  #gt winding
+  
+  
+  
+
+    
+  output$perfnatt3 <-  #stats
     render_gt(
-      f240823a(z321a,nx=z321a$geo[rc9==regpcode(input$tgtrc6),nx])%>%
-        .[]%>%
-        gt::gt(. ,rownames_to_stub = T)
+      #nxx <- z321a$geo[rc9==regpcode(input$tgtrc6),nx],
+      #nxx <- 1
+      #x1 <- dcast(coread(geon[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx],rc9],steprip)[,.N,.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='N')
+      #x2 <-  dcast(coread(geon[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx],rc9],steprip)[,.(r=round(mean(as.numeric(retsa)),3)),.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='r')
+      zoo(z321$pan[,-'date'],z321$pan[,date])%>%
+        table.Stats(.,digits=3)%>%
+        data.table(.,keep.rownames = T)%>%
+        `[`(.,i=-c(2,7))%>%
+        setnames(.,c('.',paste0('np=',1:10)))
+      #x3[]
+      # f240823a(z321a,nx=z321a$geo[rc9==regpcode(input$tgtrc6),nx])%>%
+      #   .[]%>%
+      #   gt::gt(. ,rownames_to_stub = T)
+      
+    ) 
+  
+  output$perfnatt0 <-  #gt winding
+    render_gt(
+      #nxx <- z321a$geo[rc9==regpcode(input$tgtrc6),nx],
+      #nxx <- 1
+      #x1 <- dcast(coread(geon[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx],rc9],steprip)[,.N,.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='N')
+      #x2 <-  dcast(coread(geon[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx],rc9],steprip)[,.(r=round(mean(as.numeric(retsa)),3)),.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='r')
+      x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==regpcode(input$tgtrc6),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
+        setnames(.,c('date','xdot'))%>%
+        .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
+        dcast(.,decade~yr,value.var='xdot')%>%
+        .[,decade:=c(1990,2000,2010,2020)]
+      #x3[]
+      # f240823a(z321a,nx=z321a$geo[rc9==regpcode(input$tgtrc6),nx])%>%
+      #   .[]%>%
+      #   gt::gt(. ,rownames_to_stub = T)
+      
+    ) 
+  
+  output$perfnatt1 <-  #gt winding
+    render_gt(
+      #nxx <- z321a$geo[rc9==regpcode(input$tgtrc6),nx],
+      #nxx <- 1
+      x1 <- dcast(coread(geon[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx],rc9],steprip)[,.N,.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='N')
+      #x2 <- dcast(coread(geon[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx],rc9],steprip)[,.(r=mean(as.numeric(retsa))),.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='r')
+      #x3 <- z321a$pan[,date:=as.character(date)][,c(1,nxx+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%setnames(.,c('date','xdot'))%>%.[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot)]%>%dcast(.,decade~yr,value.var='xdot')%>%.[,decade:=c(1990,2000,2010,2020)]
+      #x3[]
+      # f240823a(z321a,nx=z321a$geo[rc9==regpcode(input$tgtrc6),nx])%>%
+      #   .[]%>%
+      #   gt::gt(. ,rownames_to_stub = T)
       
     )
+  output$perfnatt2 <-  #gt winding
+    render_gt(
+      #nxx <- z321a$geo[rc9==regpcode(input$tgtrc6),nx],
+      #nxx <- 1
+      #x1 <- dcast(coread(geon[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx],rc9],steprip)[,.N,.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='N')
+      x2 <-  dcast(coread(geon[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx],rc9],steprip)[,.(r=round(mean(as.numeric(retsa)),3)),.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='r')
+      #x3 <- z321a$pan[,date:=as.character(date)][,c(1,nxx+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%setnames(.,c('date','xdot'))%>%.[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot)]%>%dcast(.,decade~yr,value.var='xdot')%>%.[,decade:=c(1990,2000,2010,2020)]
+      #x3[]
+      # f240823a(z321a,nx=z321a$geo[rc9==regpcode(input$tgtrc6),nx])%>%
+      #   .[]%>%
+      #   gt::gt(. ,rownames_to_stub = T)
+      
+    ) 
+  
   output$tab4natt <-  #gt characteristics table 4
     render_gt(
       gt::gt(x.nat.t4)%>%
@@ -330,9 +429,10 @@ server <- function(input, output) {
         )
       
     )
-  output$estdtnatp <- #ggplot x
-    renderPlot(
-      z321a$ses$estdt[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx]]%>%
+  Restdtnatp <-     eventReactive(
+    input$tgtrc6,
+    {
+      x <- z321a$ses$estdt[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx]]%>%
         ggplot(.,aes(date1,x))+
         geom_line()+
         xlab('')+
@@ -353,6 +453,14 @@ server <- function(input, output) {
           date_labels = "%Y",
           limits=c(as.Date(c('1994-12-31','2027-12-31')))
         )
+      
+      x
+    }
+  )
+  
+  output$estdtnatp <- #ggplot x
+    renderPlot(
+      Restdtnatp()
     )
   
   output$geonatl <- #leaflet np
@@ -361,7 +469,7 @@ server <- function(input, output) {
         f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$tgtrc6),pva=z110,palx=pal,maxzoom=12)
     )
   
-  output$binchacus <-  #pva
+  output$binchacus <-  #pva 
     render_gt(
       z110[rcx%in%input$customtree[which(nchar(input$customtree)==6)],.(pc=irregpcode(rcx),ppm2=round(ppm2,-1),nid,m2bar=round(m2/nid),pvbar=round(pv/(1000*nid)))]%>%
         gt::gt(.)%>%
@@ -371,7 +479,7 @@ server <- function(input, output) {
           nid = html("Tracked properties"),
           ppm2 = html("£/m<sup>2</sup>"),
           m2bar = html("Floor area (m<sup>2</sup>)"),
-          pvbar = html("Present value (£000)"),
+          pvbar = html("Present value (£000)")
         )%>%
         tab_spanner(
           label = html("Average"),
@@ -456,7 +564,8 @@ server <- function(input, output) {
         x <- Rrsi0()
         # x0 <- input$Used
         # x1 <- input$Type
-        ggplot(
+        x1 <- 
+          ggplot(
           x,
           aes(date,x)
         )+
@@ -479,6 +588,10 @@ server <- function(input, output) {
             date_labels = "%Y",
             limits=c(as.Date(c('1994-12-31','2027-12-31')))
           )
+        if(input$fixedscale==T){
+          x1 <- x1+ylim(c(-.1,3))
+        }
+        x1
       }
     )
   
