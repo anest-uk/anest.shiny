@@ -334,7 +334,7 @@ ui <- page_navbar(
             card_body(
               em(""),
               textInput(
-                inputId = "innata",
+                inputId = "tgtrc6",
                 label = "Target district",
                 value = "SW3"
               )
@@ -1423,13 +1423,13 @@ server <- function(input, output) {
   
   output$innama <- #2/5 ------innama map
     renderLeaflet(
-      z321a$geo[nx==z321a$geo[rc9==regpcode(input$innata),nx],rc9]%>%
-        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$innata),pva=z110,palx=pal,maxzoom=12)
+      z321a$geo[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx],rc9]%>%
+        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$tgtrc6),pva=z110,palx=pal,maxzoom=12)
     )
   
   output$innawi <-  #3/5 -----innawi winding
     render_gt(
-      x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==regpcode(input$innata),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
+      x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==regpcode(input$tgtrc6),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
         setnames(.,c('date','xdot'))%>%
         .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
         dcast(.,decade~yr,value.var='xdot')%>%
@@ -1464,7 +1464,7 @@ server <- function(input, output) {
         gt_highlight_rows(
           .,
           columns = gt::everything(),
-          rows = z321a$geo[rc9==regpcode(input$innata),11-nx], #reversed order
+          rows = z321a$geo[rc9==regpcode(input$tgtrc6),11-nx], #reversed order
           fill = cobalt()['green'], #"#80bcd8"
           alpha = 0.1, #v pale
           font_weight = "normal",
@@ -1484,7 +1484,7 @@ server <- function(input, output) {
   #---not used
   output$perfnatt1 <-  #triangular counts
     render_gt(
-      x1 <- dcast(coread(geon[nx==z321a$geo[rc9==regpcode(input$innata),nx],rc9],steprip)[,.N,.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='N') #
+      x1 <- dcast(coread(geon[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx],rc9],steprip)[,.N,.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='N') #
     )
   #---not used
   output$perfnatt2 <-  #triangular mean
@@ -1492,7 +1492,7 @@ server <- function(input, output) {
       x2 <-  
         dcast(
           coread(
-            geon[nx==z321a$geo[rc9==regpcode(input$innata),nx],rc9],
+            geon[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx],rc9],
             steprip
           )[,
             j=.(r=round(mean(as.numeric(retsa)),3)),
@@ -1528,7 +1528,7 @@ server <- function(input, output) {
   output$geocusl <- #leaflet cust
     renderLeaflet(
       input$customtree[which(nchar(input$customtree)==6)]%>%
-        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$innata),pva=z110,palx=pal,maxzoom=12)
+        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$tgtrc6),pva=z110,palx=pal,maxzoom=12)
     )
   #---not used
   output$geo <-
@@ -1552,9 +1552,9 @@ server <- function(input, output) {
   Rinnati <- # innati index national timeseries output$innati
     eventReactive(
       eventExpr=
-        input$innata,
+        input$tgtrc6,
       valueExpr={
-        x <- z321a$ses$estdt[nx==z321a$geo[rc9==regpcode(input$innata),nx]]%>%
+        x <- z321a$ses$estdt[nx==z321a$geo[rc9==regpcode(input$tgtrc6),nx]]%>%
           ggplot(.,aes(date1,x))+
           geom_line()+
           xlab('')+
@@ -1584,18 +1584,18 @@ server <- function(input, output) {
   #---------custom
   Rselectedrc <- #rc
     eventReactive(
-      eventExpr= #-incuseco index custom setting *compute*
+      eventExpr= #-incuseco index custom setting compute*
         input$incuseco,
       valueExpr=
         {
           print('Rselectedrc')
-          input$incusetr[which(nchar(input$incusetr)==6)]
+          input$customtree[which(nchar(input$customtree)==6)]
         }
     )
   
   Rgeo <- 
     eventReactive(
-      eventExpr= #-incuseco index custom setting *compute*
+      eventExpr= #-incuseco index custom setting compute*
         input$incuseco,
       valueExpr=
         {
@@ -1610,22 +1610,21 @@ server <- function(input, output) {
   
   Rrsi0 <- #Rgeo -> RSI 
     eventReactive(
-      eventExpr=#-incuseco index custom setting *compute*
+      eventExpr=#-incuseco index custom setting compute*
         list(
           input$incuseco,
           input$Used, 
           input$Type,
-          input$incusetr
+          input$customtree
         ),
       valueExpr=
       {
         print('Rrsi0')
-        print(Rgeo())
         x0 <- list(
           input$incuseco,
           input$Used,
           input$Type,
-          input$incusetr
+          input$customtree
         )
         x <- f230312x(  #solve single nx -> estdt with no pra
           nxx=1,
@@ -1636,21 +1635,21 @@ server <- function(input, output) {
           newused=input$Used
         )
         if(any(x[,is.na(x)])) {xna <<- x; print('na found');x <- x[is.na(xdot),xdot:=0][,x:=cumsum(xdot)][xdot==0,x:=NA];print(x)}
-        print(input$incusetr)
+        print(input$customtree)
         x
       }
     )
   
   Rincuinti <- 
     eventReactive(
-      eventExpr=#-incuseco index custom setting *compute*
+      eventExpr=#-incuseco index custom setting compute*
         input$incuseco
       ,
        valueExpr=
      {
-        #xx <- Rincusefi()
+        xx <- Rincusefi()
         print('Rincuinti')
-        #print(xx)
+        print(xx)
         x <- Rrsi0()
         x1 <- 
           ggplot(
@@ -1680,7 +1679,7 @@ server <- function(input, output) {
       }
     )
   Rincusefi <- eventReactive(
-    eventExpr=#-incuseco index custom setting *compute*
+    eventExpr=#-incuseco index custom setting compute*
       input$incuseco,
        valueExpr=
    {
