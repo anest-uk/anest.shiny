@@ -1,3 +1,33 @@
+#---libraries from app4
+#---------------------CRAN package for gui
+#source('CRANlibload.R') #causes failure once deployed
+library(magic)
+
+library(broom)
+library(bslib)
+library(car) #linear hypothesis test
+library(colorspace)
+library(data.table)
+library(devtools)
+library(ggplot2)    
+library(ggrepel)   
+library(grid)
+library(gridlayout)
+library(gt)
+library(gtExtras)
+library(htmltools)
+library(leaflet)
+library(lubridate)
+library(magrittr)   
+library(PerformanceAnalytics)   
+library(plotly)
+library(scales)
+library(shiny)
+library(shinyWidgets)
+library(sp)
+library(zoo)
+#---
+
 library(shiny)
 library(ggplot2)
 library(bslib)
