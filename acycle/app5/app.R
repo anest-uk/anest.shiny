@@ -1,5 +1,4 @@
 #---libraries from app4
-#---------------------CRAN package for gui
 #source('CRANlibload.R') #causes failure once deployed
 library(magic) #at start to avoid overload
 
@@ -34,7 +33,6 @@ library(bslib)
 library(gridlayout)
 library(DT)
 
-
 #---------------------------------------from app4
 pgmt='dotted'
 pgmc='grey50'
@@ -67,17 +65,17 @@ ui <- page_navbar(
   selected = "Index",
   collapsible = TRUE,
   theme = bslib::bs_theme(),
-  nav_panel(#--------------------in index
+  nav_panel(#--------------------------------------------------------------index
     title = "Index",
     tabsetPanel(
-      nav_panel(#----------------incu index custom
+      nav_panel(#---------------------------------------------------index custom
         title = "Custom",
         tabsetPanel(
-          nav_panel(#------------incuse index custom settings
+          nav_panel(#--------------------------------------index custom settings
             title = "Settings",
             grid_container(
               layout = c(
-                "incuseti incusege incuseou",
+                "incusetb incusege incuseou",
                 "incusety incusetr incusecr",
                 "incuseag incusefi incuseco"
               ),
@@ -93,35 +91,17 @@ ui <- page_navbar(
               ),
               gap_size = "10px",
               grid_card(
-                area = "incuseti", #time interval 
+                area = "incusetb", #time bin 
                 card_body(
-                  # conditionalPanel(condition = "input.incuseta == 'xxx'" ,
-                  #                  radioButtons(
-                  #                    inputId = "incuseti",
-                  #                    label = "Time interval",
-                  #                    choices = list(
-                  #                      "Annual" = "a",
-                  #                      "Quarterly" = "q",
-                  #                      "Monthly" = "m",
-                  #                      "Custom" = "c"
-                  #                    ),
-                  #                    selected='a',
-                  #                    width = "100%"
-                  #                  )
-                  # ),
-                  #conditionalPanel(condition = "input.incuseta != 'xxx'" , #this special value reveals more options but this condition is just an 'easter egg' (hidden)
                   radioButtons(
-                    inputId = "myRadioButtons",
+                    inputId = "incusetb",
                     label = "Time interval",
                     choices = list(
-                      "Annual" = "a" #this
+                      "Annual" = "a" #only one for now
                     ),
                     selected='a',
                     width = "100%"
                   )
-                  #)
-                  
-                  
                 )
               ),
               grid_card(
@@ -165,12 +145,7 @@ ui <- page_navbar(
                       "Custom file" = "c"
                     ),
                     width = "100%"
-                  )#,
-                  # textInput(
-                  #   inputId = "incuseta",
-                  #   label = "Target district",
-                  #   value = ""
-                  # )
+                  )
                 )
               ),
               grid_card(
@@ -239,8 +214,8 @@ ui <- page_navbar(
                 )
               )
             )
-          ),#\\\\\\\\incuse index custom settings
-          nav_panel(#---incuin index custom index
+          ),
+          nav_panel(#-----------------------------------------index custom index
             title = "Index",
             grid_container(
               layout = c(
@@ -299,7 +274,7 @@ ui <- page_navbar(
                 card_header("Time-series summary"),
                 card_body(
                   gt_output(outputId = "incuinsu")
-                  )
+                )
               ),
               grid_card(
                 area = "incuinbl", #blank-unused
@@ -309,24 +284,19 @@ ui <- page_navbar(
           )
         )
       ),#navpan 
-      nav_panel(
+      nav_panel(#-------------------------------------------------index national
         title = "National",
         grid_container(
           layout = c(
             "innati innama",
             "innawi innach ",
             "innasu innata"
-            # "innati innama", 
-            # "innawi innach",
-            # "innasu .    "
           ),
           # innati -> estdtnatp
           # innama -> leafletnat
           # innawi -> perfnatt0
           # innach -> tab4natt
           # innasu -> perfnatt3
-          
-          
           row_sizes = c(
             "1fr",
             "1fr",
@@ -337,22 +307,6 @@ ui <- page_navbar(
             "1fr"
           ),
           gap_size = "10px",
-          
-          
-          grid_card(
-            area = "innata",
-            card_header("Target"),
-            card_body(
-              em(""),
-              textInput(
-                inputId = "innata",
-                label = "Target district",
-                value = "SW3"
-              )
-            )
-          ),
-          
-          
           grid_card( #1,1
             area = "innati",
             full_screen = TRUE,
@@ -395,16 +349,28 @@ ui <- page_navbar(
             card_body(
               gt_output('innasu')
             )
+          ),
+          grid_card(#3,2 (input)
+            area = "innata",
+            card_header("Target"),
+            card_body(
+              em(""),
+              textInput(
+                inputId = "innata",
+                label = "Target district",
+                value = "SW3"
+              )
+            )
           )
         )
       ),
-      nav_panel(
+      nav_panel(#----------------------------------------------------index local
         title = "Local",
         grid_container(
           layout = c(
             "inloti inloma",
             "inlowi inloch",
-            "inlosu .    "
+            "inlosu inlobl"
           ),
           row_sizes = c(
             "1fr",
@@ -416,43 +382,62 @@ ui <- page_navbar(
             "1fr"
           ),
           gap_size = "10px",
-          grid_card(
+          grid_card(#1,1
             area = "inloti",
             full_screen = TRUE,
             card_header(
-              "Index time-series
-                                                                                                                                                                                                                                                                                                                    "
+              "Index time-series                                                                                                                                                                                                                                                                                                  "
             ),
-            card_body(DTOutput(outputId = "myTable", width = "100%"))
+            card_body(##################################
+                      plotOutput('inloti'),
+                      max_height="500px"
+            )
           ),
-          grid_card(
+          grid_card(#1,2
             area = "inloma",
             full_screen = TRUE,
-            card_header("Map")
+            card_header("Map"),
+            card_body(##################################
+                      leafletOutput('inloma'),
+                      max_height="500px"
+            )
           ),
-          grid_card(
+          grid_card(#2,1
             area = "inlowi",
             full_screen = TRUE,
-            card_header("Winding")
+            card_header("Winding"),
+            card_body(##################################
+                      div(
+                        gt_output('inlowi'),
+                        max_height="400px"
+                      )
+            )
           ),
-          grid_card(
+          grid_card(#2,2
             area = "inloch",
             full_screen = TRUE,
             card_header(
-              "Geo-bin characteristics table
-                                                                                                                                                                                                                                                                                                                    "
+              "Geo-bin characteristics table"
             ),
-            card_body(DTOutput(outputId = "myTable", width = "100%"))
+            card_body(##################################
+                      gt_output('inloch')
+            )
           ),
-          grid_card(
+          grid_card(#3,1
             area = "inlosu",
             full_screen = TRUE,
             card_header("Time-series summary"),
-            card_body(DTOutput(outputId = "myTable", width = "100%"))
+            card_body(##################################
+                      gt_output('inlosu')
+            )
+          ),
+          grid_card(
+            area = "inlobl", #blank-unused
+            full_screen = TRUE
           )
         )
       ),
-      nav_panel(
+      nav_panel(#-------------------------------------------------index accuracy
         title = "Accuracy",
         grid_container(
           layout = c(
@@ -549,7 +534,7 @@ ui <- page_navbar(
           )
         )
       ),
-      nav_panel(
+      nav_panel(#-------------------------------------------------index download
         title = "Download",
         grid_container(
           layout = c(
@@ -698,7 +683,7 @@ ui <- page_navbar(
       )
     )
   ),
-  nav_panel(
+  nav_panel(#--------------------------------------------------------------cycle
     title = "Cycle",
     grid_container(
       layout = c(
@@ -765,7 +750,7 @@ ui <- page_navbar(
         area = "cyta",
         card_body(
           tabsetPanel(
-            nav_panel(
+            nav_panel(#-------------------------------------------------cycle Xx
               title = "Value/Momentum",
               grid_container(
                 layout = c(
@@ -821,7 +806,7 @@ ui <- page_navbar(
                 )
               )
             ),
-            nav_panel(
+            nav_panel(#-------------------------------------------------cycle zb
               title = "Factor/beta",
               grid_container(
                 layout = c(
@@ -873,7 +858,7 @@ ui <- page_navbar(
                 )
               )
             ),
-            nav_panel(
+            nav_panel(#----------------------------------------------cycle xsect
               title = "Cross-section",
               grid_container(
                 layout = c(
@@ -1024,7 +1009,7 @@ ui <- page_navbar(
                 )
               )
             ),
-            nav_panel(
+            nav_panel(#--------------------------------------------cycle tseries
               title = "Time-series",
               grid_container(
                 layout = c(
@@ -1145,7 +1130,7 @@ ui <- page_navbar(
                 )
               )
             ),
-            nav_panel(
+            nav_panel(#-------------------------------------------cycle download
               title = "Download",
               grid_container(
                 layout = c(
@@ -1286,7 +1271,7 @@ ui <- page_navbar(
       )
     )
   ),
-  nav_panel(
+  nav_panel(#---------------------------------------------------------------data
     title = "Data",
     grid_container(
       layout = c(
@@ -1420,43 +1405,54 @@ ui <- page_navbar(
 #========================================================================-server
 server <- function(input, output) {
   steprip <- '03rip/'
-  
-  #-----------------------------------------------------------------------output
-  
-  # 1/5 index   2/5 map
-  # 3/5 winding 4/5 charac
-  # 5/5 timeser
-  Rincuinsu <- # innati index national timeseries output$innati
-    eventReactive(
-      eventExpr=
-        input$innata,
-      valueExpr={
-        x1 <- Rincuin()[,.(date,xdot)]
-        x2 <- zoo(as.matrix(x1[,xdot]),as.matrix(x1[,date]))
-        x3 <- table.Stats(x2,digits=3)
-        x4 <- data.table(x=rownames(x3),stat=x3[[1]])%>%
-          setnames(.,c(' ','  '))%>%
-          .[-c(1,2,7),]
-          
-        x4
-      }
-    )
-
-  output$incuinsu <- 
-    render_gt(
-      Rincuinsu()
-    )
-  
-  #-----------------#
   nfig1 <- 3 #for T2
   nfig2 <- -1 #for ppm2
   nfig3 <- 4 #for frac
-  options(scipen=999)
+  
+  options(scipen=999) #no scientific format
+  
+  #----------------------------------------------------------------render output
+  
+  #-----------------------------------------------------------------index custom
+  # 1/6 index   2/6 map
+  # 3/6 winding 4/6 charac
+  # 5/6 timeser 6/6 blank
+  
+  # 1/6 incuinti 
+  output$incuinti <- #solve rsi
+    renderPlot({
+      Rincuinti()#+
+    })
+  
+  # 2/6 incuinma
+  output$incuinma <- #custom map 
+    renderLeaflet(
+      Rincurc()%>%
+        f240810a(
+          rcx=.,
+          x3a=pxosrdo2dd,
+          target=regpcode(input$innata),
+          pva=z110,
+          palx=pal
+          ,maxzoom=12
+        )
+    )
+  
+  # 3/6 incuinwi 
+  output$incuinwi <- #custom winding
+    render_gt(
+      Rincuin()%>%
+        .[,.(date=as.character(date),xdot)]%>%
+        .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
+        dcast(.,decade~yr,value.var='xdot')%>%
+        .[,decade:=c(1990,2000,2010,2020)]
+    )
+  # 4/6 incuinch
   output$incuinch <-  #charac
     render_gt(
       z110[
-        rcx%in%Rincurc(),#c('SW-2--','SW-4--'),#
-        .(#don't give beta here
+        rcx%in%Rincurc(),
+        .(#no beta1
           frac=round(sum(nid)/z110[nchar(rcx==3),sum(nid)],nfig3),
           ppm2max=round(max(ppm2),nfig2),
           ppm2min=round(min(ppm2),nfig2),
@@ -1464,7 +1460,12 @@ server <- function(input, output) {
           R2rsi=Rincuin()[1,round(rsqraw,nfig1)]
         )
       ]%>%
-        .[,.(frac,R2rsi,p,p.cus=paste0(round(ppm2min,nfig2),'-',round(ppm2max,nfig2)))]%>%
+        .[,.(
+          frac,
+          R2rsi,
+          p,
+          p.cus=paste0(round(ppm2min,nfig2),'-',round(ppm2max,nfig2))
+        )]%>%
         gt::gt(.)%>%
         cols_label(
           frac = html('Fraction<br>properties'),
@@ -1476,59 +1477,93 @@ server <- function(input, output) {
           label = html("Custom £/m<sup>2</sup>"),
           columns = c(p.cus, p)
         )
-      
-      # %>%
-      #   gt_highlight_rows(
-      #     .,
-      #     columns = gt::everything(),
-      #     rows = match(input$innata,), #reversed order
-      #     fill = cobalt()['green'], #"#80bcd8"
-      #     alpha = 0.1, #v pale
-      #     font_weight = "normal",
-      #     #font_color = "#000000",
-      #     #bold_target_only = FALSE,
-      #     target_col = c()
-      #   )
-      
     )
   
-  output$incuinwi <- #custom winding
+  # 5/6 incuinsu 
+  output$incuinsu <- 
     render_gt(
-      Rincuin()%>%
-        .[,.(date=as.character(date),xdot)]%>%
-        .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
-        dcast(.,decade~yr,value.var='xdot')%>%
-        .[,decade:=c(1990,2000,2010,2020)]
+      Rincuinsu()
+    )
+  Rincuinsu <- 
+    eventReactive(
+      eventExpr=
+        list(
+          input$innata,
+          input$incuseco
+        ),
+      valueExpr={
+        x1 <- Rincuin()[,.(date,xdot)]
+        x2 <- zoo(as.matrix(x1[,xdot]),as.matrix(x1[,date]))
+        x3 <- table.Stats(x2,digits=3)
+        x4 <- data.table(x=rownames(x3),stat=x3[[1]])%>%
+          setnames(.,c(' ','  '))%>%
+          .[-c(1,2,7),]
+        
+        x4
+      }
     )
   
+  # 6/6 incuinbl BLANK
   
-  output$incuinma <- #leaflet np
-    renderLeaflet(
-      Rincurc()%>%
-        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$innata),pva=z110,palx=pal,maxzoom=12)
+  #---------------------------------------------------------------index national
+  # 1/6 index   2/6 map
+  # 3/6 winding 4/6 charac
+  # 5/6 summary 6/6 target
+  
+  Rinnati <- #1/6 innati 
+    eventReactive(
+      list(
+          input$innata,
+          input$incuseco
+        )
+      ,
+      valueExpr={
+        x <- z321a$ses$estdt[nx==z321a$geo[rc9==regpcode(input$innata),nx]]%>%
+          ggplot(.,aes(date1,x))+
+          geom_line()+
+          xlab('')+
+          ylab(bquote(Delta~P~log~price~change))+
+          theme_bw() +
+          theme(
+            axis.line = element_line(colour = "black"),
+            panel.grid.major = element_line(size=pgms,linetype = pgmt,color=pgmc),
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            panel.background = element_blank(),
+            text=element_text(size=16,face='plain'),
+            axis.line.y.left=element_line(size=.1),
+            axis.line.x.bottom=element_line(size=.1),
+            legend.position='none')+
+          scale_x_date(
+            breaks = as.Date(c('1995-01-01','2000-01-01','2010-01-01','2020-01-01','2024-01-01')),
+            date_labels = "%Y",
+            limits=c(as.Date(c('1994-12-31','2027-12-31')))
+          )
+        print('Rinnati')
+        x
+      }
     )
-  
-  
-  output$innati <- #1/5 ------innati timeseries
+  output$innati <- 
     renderPlot(
       Rinnati()
     )
   
-  output$innama <- #2/5 ------innama map
+  output$innama <- #2/6 innama
     renderLeaflet(
       z321a$geo[nx==z321a$geo[rc9==regpcode(input$innata),nx],rc9]%>%
         f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$innata),pva=z110,palx=pal,maxzoom=12)
     )
   
-  output$innawi <-  #3/5 -----innawi winding
+  output$innawi <- #3/6 innawi
     render_gt(
       x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==regpcode(input$innata),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
         setnames(.,c('date','xdot'))%>%
         .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
         dcast(.,decade~yr,value.var='xdot')%>%
         .[,decade:=c(1990,2000,2010,2020)]
-    ) 
-  x.nat.t4 <- #4/5-----------innach charac
+    )
+  
+  x.nat.t4 <- #4/6 innach
     f231204a(2)%>%
     .[,.(
       p.bin=paste0(
@@ -1565,7 +1600,8 @@ server <- function(input, output) {
         )
       
     )
-  output$innasu <- #5/5----innasu summary
+  
+  output$innasu <- #5/6 innasu 
     render_gt(
       zoo(z321$pan[,-'date'],z321$pan[,date])%>%
         table.Stats(.,digits=3)%>%
@@ -1574,6 +1610,112 @@ server <- function(input, output) {
         setnames(.,c('.',paste0('np=',1:10)))
     ) 
   
+  # 6/6 innata - target, input
+  
+  #-------------------------------------------------------------------index local
+  #nb this all copy/paste from inna
+    Rinloti <- #1/6 inloti 
+    eventReactive(
+      list(
+          input$innata,
+          input$incuseco
+        )
+      ,
+      valueExpr={
+        x <- z321a$ses$estdt[nx==z321a$geo[rc9==regpcode(input$innata),nx]]%>%
+          ggplot(.,aes(date1,x))+
+          geom_line()+
+          xlab('')+
+          ylab(bquote(Delta~P~log~price~change))+
+          theme_bw() +
+          theme(
+            axis.line = element_line(colour = "black"),
+            panel.grid.major = element_line(size=pgms,linetype = pgmt,color=pgmc),
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            panel.background = element_blank(),
+            text=element_text(size=16,face='plain'),
+            axis.line.y.left=element_line(size=.1),
+            axis.line.x.bottom=element_line(size=.1),
+            legend.position='none')+
+          scale_x_date(
+            breaks = as.Date(c('1995-01-01','2000-01-01','2010-01-01','2020-01-01','2024-01-01')),
+            date_labels = "%Y",
+            limits=c(as.Date(c('1994-12-31','2027-12-31')))
+          )
+        print('Rinloti')
+        x
+      }
+    )
+  output$inloti <- 
+    renderPlot(
+      Rinloti()
+    )
+  
+  output$inloma <- #2/6 inloma
+    renderLeaflet(
+      z321a$geo[nx==z321a$geo[rc9==regpcode(input$innata),nx],rc9]%>%
+        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$innata),pva=z110,palx=pal,maxzoom=12)
+    )
+  
+  output$inlowi <- #3/6 inlowi
+    render_gt(
+      x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==regpcode(input$innata),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
+        setnames(.,c('date','xdot'))%>%
+        .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
+        dcast(.,decade~yr,value.var='xdot')%>%
+        .[,decade:=c(1990,2000,2010,2020)]
+    )
+  
+  x.nat.t4 <- #4/6 inloch
+    f231204a(2)%>%
+    .[,.(
+      p.bin=paste0(
+        formatC(round(ppm2min,-1), format="f", big.mark=",", digits=0),'-',
+        formatC(round(ppm2max,-1), format="f", big.mark=",", digits=0)
+      ),
+      p=formatC(round(ppm2,-1), format="f", big.mark=",", digits=0),
+      np=nx,
+      frac=round(fid,4),
+      R2rsi=round(r2rsi,3),
+      beta=round(b1/mean(b1),2)
+    )]
+  output$inloch <- 
+    render_gt(
+      gt::gt(x.nat.t4)%>%
+        cols_label(
+          frac = html('Fraction<br>properties'),
+          R2rsi = html("RSI R<sup>2</sup>"),
+          p = html("Aggregate"),
+          p.bin=html("Range")
+        )%>%
+        tab_spanner(
+          label = html("Bin £/m<sup>2</sup>"),
+          columns = c(p.bin, p)
+        )%>%
+        gt_highlight_rows(
+          .,
+          columns = gt::everything(),
+          rows = z321a$geo[rc9==regpcode(input$innata),11-nx], #reversed order
+          fill = cobalt()['green'], #"#80bcd8"
+          alpha = 0.1, #v pale
+          font_weight = "normal",
+          target_col = c()
+        )
+      
+    )
+  
+  output$inlosu <- #5/6 inlosu 
+    render_gt(
+      zoo(z321$pan[,-'date'],z321$pan[,date])%>%
+        table.Stats(.,digits=3)%>%
+        data.table(.,keep.rownames = T)%>%
+        `[`(.,i=-c(1,2,7))%>%
+        setnames(.,c('.',paste0('np=',1:10)))
+    ) 
+  
+  
+  #---------------------------------------------------------------------not used
   #---not used
   output$perfnatt1 <-  #triangular counts
     render_gt(
@@ -1623,64 +1765,15 @@ server <- function(input, output) {
       input$customtree[which(nchar(input$customtree)==6)]%>%
         f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$innata),pva=z110,palx=pal,maxzoom=12)
     )
-  #---not used
-  # output$geo <-
-  #   render_gt(
-  #     Rgeo()[1:3]
-  #   )
-  
-  # output$selected_var <- #render the string
-  #   renderText({
-  #     Rincusetr()
-  #   })
-  
-  output$incuinti <- #solve rsi
-    renderPlot({
-      Rincuinti()#+
-    })
   
   
   #======================================================================-reactive
   
-  
-  
-  Rinnati <- # innati index national timeseries output$innati
-    eventReactive(
-      eventExpr=
-        input$innata,
-      valueExpr={
-        x <- z321a$ses$estdt[nx==z321a$geo[rc9==regpcode(input$innata),nx]]%>%
-          ggplot(.,aes(date1,x))+
-          geom_line()+
-          xlab('')+
-          ylab(bquote(Delta~P~log~price~change))+
-          theme_bw() +
-          theme(
-            axis.line = element_line(colour = "black"),
-            panel.grid.major = element_line(size=pgms,linetype = pgmt,color=pgmc),
-            panel.grid.minor = element_blank(),
-            panel.border = element_blank(),
-            panel.background = element_blank(),
-            text=element_text(size=16,face='plain'),
-            axis.line.y.left=element_line(size=.1),
-            axis.line.x.bottom=element_line(size=.1),
-            legend.position='none')+
-          scale_x_date(
-            breaks = as.Date(c('1995-01-01','2000-01-01','2010-01-01','2020-01-01','2024-01-01')),
-            date_labels = "%Y",
-            limits=c(as.Date(c('1994-12-31','2027-12-31')))
-          )
-        
-        x
-      }
-    )
-  
-  
   #---------custom
-  Rincurc <- 
+  Rincurc <- #vector character rc6
     eventReactive(
       eventExpr= 
-        input$incuseco,
+        input$incuseco,#-incuseco *compute*
       valueExpr=
         {
           if(input$incusege=='t') {
@@ -1692,11 +1785,10 @@ server <- function(input, output) {
         }
     )
   
-  
-  Rincusetr <- #incusetr rc6 selected on tree
+  Rincusetr <- #vector character rc6 [treeselect]
     eventReactive(
       eventExpr= 
-        input$incuseco,
+        input$incuseco,#-incuseco *compute*
       valueExpr=
         {
           print('Rincusetr')
@@ -1704,10 +1796,10 @@ server <- function(input, output) {
         }
     )
   
-  Rincusefi <- # incuseco rc6 defined in file
+  Rincusefi <- # vector character rc6 [file]
     eventReactive(
       eventExpr=
-        input$incuseco,
+        input$incuseco,#-incuseco *compute*
       valueExpr=
         {
           req(input$incusefi)
@@ -1717,35 +1809,17 @@ server <- function(input, output) {
         }
     )
   
-  # Rgeo <- 
-  #   eventReactive(
-  #     eventExpr= #-incuseco index custom setting *compute*
-  #       input$incuseco,
-  #     valueExpr=
-  #       {
-  #         print('Rgeo')
-  #         data.table(
-  #           rc9=Rincusetr(),
-  #           nx=1,
-  #           lab='lab001'
-  #         )
-  #       }
-  #   )
-  
-  Rincuin <- #incuin estdt
+  Rincuin <- # RSI solve: dt estdt incuin
     eventReactive(
       eventExpr=#-incuseco index custom setting *compute*
         list(
-          input$incuseco,
+          input$incuseco,#-incuseco *compute*
           input$Used, 
           input$Type,
           input$incusetr
         ),
       valueExpr=
         { 
-          
-          print('Rincuin')
-          #print(Rgeo())
           x0 <- list(
             input$incuseco,
             input$Used,
@@ -1764,13 +1838,14 @@ server <- function(input, output) {
             houseflat=input$Type,
             newused=input$Used
           )
-          if(any(x[,is.na(x)])) {xna <<- x; print('na found');x <- x[is.na(xdot),xdot:=0][,x:=cumsum(xdot)][xdot==0,x:=NA];print(x)}
-          print(x)
+          if(any(x[,is.na(x)])) {
+            xna <<- x; print('na found');x <- x[is.na(xdot),xdot:=0][,x:=cumsum(xdot)][xdot==0,x:=NA];print(x)
+          }
           x
         }
     )
   
-  Rincuinti <- #plot(incuin) 
+  Rincuinti <- # plot(incuin) 
     eventReactive(
       eventExpr=#-incuseco *compute*
         input$incuseco
@@ -1814,5 +1889,3 @@ server <- function(input, output) {
 
 shinyApp(ui, server)
 
-
-#---------------from app4
