@@ -40,8 +40,7 @@ pgmt='dotted'
 pgmc='grey50'
 pgms=.2
 load('t4dump.Rdata',envir=globalenv())
-# dfnx <- seq.Date(from=as.Date('1994-12-31'),to=as.Date('2024-12-31'),by='y')
-# dfnx[length(dfnx)] <- as.Date('2024-07-31')
+dfnx <- seq.Date(from=as.Date('1994-12-31'),to=as.Date('2024-12-31'),by='y')
 #---function lib
 source('c-cleanlib.R')
 source('rctree.R') #f240824b() : rctree
@@ -278,28 +277,22 @@ ui <- page_navbar(
               grid_card(
                 area = "incuinwi", #winding
                 full_screen = TRUE,
-                card_header("Index return"),
-                card_body(
-                  gt_output('incuinwi')
-                )
+                card_header("Index return (winding table)")
               ),
               grid_card(
                 area = "incuinch", #characteristics
                 full_screen = TRUE,
                 card_header(
-                  "Characteristics"
+                  "Geo-bin characteristics table
+                                                                                                                                                                                                                                                                                                                                                                                                            "
                 ),
-                card_body(
-                  gt_output(outputId = "incuinch")
-                )
+                card_body(DTOutput(outputId = "myTable", width = "100%"))
               ),
               grid_card(
                 area = "incuinsu", #summary
                 full_screen = TRUE,
                 card_header("Time-series summary"),
-                card_body(
-                  gt_output(outputId = "incuinsu")
-                  )
+                card_body(DTOutput(outputId = "myTable", width = "100%"))
               ),
               grid_card(
                 area = "incuinbl", #blank-unused
@@ -341,7 +334,7 @@ ui <- page_navbar(
           
           grid_card(
             area = "innata",
-            card_header("Target"),
+            card_header("Settings"),
             card_body(
               em(""),
               textInput(
@@ -433,7 +426,7 @@ ui <- page_navbar(
           grid_card(
             area = "inlowi",
             full_screen = TRUE,
-            card_header("Winding")
+            card_header("Index return (winding table)")
           ),
           grid_card(
             area = "inloch",
@@ -1426,81 +1419,7 @@ server <- function(input, output) {
   # 1/5 index   2/5 map
   # 3/5 winding 4/5 charac
   # 5/5 timeser
-  Rincuinsu <- # innati index national timeseries output$innati
-    eventReactive(
-      eventExpr=
-        input$innata,
-      valueExpr={
-        x1 <- Rincuin()[,.(date,xdot)]
-        x2 <- zoo(as.matrix(x1[,xdot]),as.matrix(x1[,date]))
-        x3 <- table.Stats(x2,digits=3)
-        x4 <- data.table(x=rownames(x3),stat=x3[[1]])%>%
-          setnames(.,c(' ','  '))%>%
-          .[-c(1,2,7),]
-          
-        x4
-      }
-    )
-
-  output$incuinsu <- 
-    render_gt(
-      Rincuinsu()
-    )
-  
   #-----------------#
-  nfig1 <- 3 #for T2
-  nfig2 <- -1 #for ppm2
-  nfig3 <- 4 #for frac
-  options(scipen=999)
-  output$incuinch <-  #charac
-    render_gt(
-      z110[
-        rcx%in%Rincurc(),#c('SW-2--','SW-4--'),#
-        .(#don't give beta here
-          frac=round(sum(nid)/z110[nchar(rcx==3),sum(nid)],nfig3),
-          ppm2max=round(max(ppm2),nfig2),
-          ppm2min=round(min(ppm2),nfig2),
-          p=round(sum(pv)/sum(m2),nfig2),
-          R2rsi=Rincuin()[1,round(rsqraw,nfig1)]
-        )
-      ]%>%
-        .[,.(frac,R2rsi,p,p.cus=paste0(round(ppm2min,nfig2),'-',round(ppm2max,nfig2)))]%>%
-        gt::gt(.)%>%
-        cols_label(
-          frac = html('Fraction<br>properties'),
-          R2rsi = html("RSI R<sup>2</sup>"),
-          p = html("Aggregate"),
-          p.cus=html("Range")
-        )%>%
-        tab_spanner(
-          label = html("Custom £/m<sup>2</sup>"),
-          columns = c(p.cus, p)
-        )
-      
-      # %>%
-      #   gt_highlight_rows(
-      #     .,
-      #     columns = gt::everything(),
-      #     rows = match(input$innata,), #reversed order
-      #     fill = cobalt()['green'], #"#80bcd8"
-      #     alpha = 0.1, #v pale
-      #     font_weight = "normal",
-      #     #font_color = "#000000",
-      #     #bold_target_only = FALSE,
-      #     target_col = c()
-      #   )
-      
-    )
-  
-  output$incuinwi <- #custom winding
-    render_gt(
-      Rincuin()%>%
-        .[,.(date=as.character(date),xdot)]%>%
-        .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
-        dcast(.,decade~yr,value.var='xdot')%>%
-        .[,decade:=c(1990,2000,2010,2020)]
-    )
-  
   
   output$incuinma <- #leaflet np
     renderLeaflet(
@@ -1570,7 +1489,7 @@ server <- function(input, output) {
       zoo(z321$pan[,-'date'],z321$pan[,date])%>%
         table.Stats(.,digits=3)%>%
         data.table(.,keep.rownames = T)%>%
-        `[`(.,i=-c(1,2,7))%>%
+        `[`(.,i=-c(2,7))%>%
         setnames(.,c('.',paste0('np=',1:10)))
     ) 
   
@@ -1641,8 +1560,6 @@ server <- function(input, output) {
   
   
   #======================================================================-reactive
-  
-  
   
   Rinnati <- # innati index national timeseries output$innati
     eventReactive(
@@ -1742,8 +1659,7 @@ server <- function(input, output) {
           input$incusetr
         ),
       valueExpr=
-        { 
-          
+        {
           print('Rincuin')
           #print(Rgeo())
           x0 <- list(
@@ -1779,7 +1695,6 @@ server <- function(input, output) {
         {
           print('Rincuinti')
           x <- Rincuin()
-          foo <<- Rincuin()
           x1 <- 
             ggplot(
               x,
