@@ -1622,17 +1622,8 @@ server <- function(input, output) {
         )
       ,
       valueExpr={
-        x1 <- 
-          regpcode(input$innata)%>%
-          substr(.,1,3)
-        print(x1)
-        x2 <- 
-          z321d$ses$estdt[substr(rc3,1,3)==x1]%>%
-          .[,qq:=as.factor(substr(rc3,4,4))]%>%
-          .[,rc3:=as.factor(substr(rc3,1,3))]
-        print(x2)
-        x <- x2%>%
-          ggplot(.,aes(date1,x,color=qq))+
+        x <- z321a$ses$estdt[nx==z321a$geo[rc9==regpcode(input$innata),nx]]%>%
+          ggplot(.,aes(date1,x))+
           geom_line()+
           xlab('')+
           ylab(bquote(Delta~P~log~price~change))+
@@ -1647,7 +1638,6 @@ server <- function(input, output) {
             axis.line.y.left=element_line(size=.1),
             axis.line.x.bottom=element_line(size=.1),
             legend.position='none')+
-          scale_color_manual(values=as.character(cobalt()))+#cobalt()[2:4]
           scale_x_date(
             breaks = as.Date(c('1995-01-01','2000-01-01','2010-01-01','2020-01-01','2024-01-01')),
             date_labels = "%Y",
