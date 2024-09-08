@@ -47,7 +47,7 @@ c(
   green='#35CA05',
   onch='#ED9304',
   punk='#FF628C',
-  midnight='002140')
+  midnight='#002170')
 }
 coread <-
 function( #read data from csv in subdir
@@ -116,8 +116,7 @@ function(  #solve single nx -> estdt with no pra
     geo=geo0,
     outthresh=.1,
     newused=c('.','N','U'),
-    houseflat=c('.','H','F'), #typex field added to rip 240826, values UH/NH/UF/NF for new/house
-    ...
+    houseflat=c('.','H','F') #typex field added to rip 240826, values UH/NH/UF/NF for new/house
   ) {
     newused=match.arg(newused)
     houseflat=match.arg(houseflat)
@@ -236,12 +235,12 @@ f240810a <-
 function( #leaflet special/custom function for index app, copied from anest.shiny/acycle/applib.R
     zoomx=6.5,
     x3a=pxosrdo2dd,#rc6 polygons 
-    pva=z110,
-    rcx=regpcode(pxosrdo2dd$name[grep('^NG',pxosrdo2dd$name)]),#c('NG-7--','NG-2--')#,
-    targetrcx=rcx[1],
+    pva=z110, #pva: for labelling with £/m2
+    rcx=regpcode(pxosrdo2dd$name[grep('^NG',pxosrdo2dd$name)]),#vector(rc6) - these get shaded
+    targetrcx=rcx[1], #rc6 - gets shaded differently
     minzoom=6,
     maxzoom=11,
-    palx=leaflet::colorNumeric(palette=cobalt()[c(2,4)],domain=0:1)
+    palx=leaflet::colorNumeric(palette=cobalt()[c(2,4)],domain=0:1) #only target gets special shading 4='punk', rest is green
   ){
     gsx <- grepstring(rcx,caret=T,dollar=T)
     width=1000*.7
@@ -294,6 +293,91 @@ function( #leaflet special/custom function for index app, copied from anest.shin
       )%>%
       addProviderTiles(providers$CartoDB.Positron)
     x8
+  }
+f240810b <-
+function( #leaflet special/custom function for index app, copied from anest.shiny/acycle/applib.R
+    x1=
+      data.table(
+        rc6=sort(rc6),
+        col=rep(mycols,length(rc6))[1:length(rc6)] #should be meaningful
+        ),
+    rc6=c('NG-1--','S--10-','SE-25-'),
+    mycols=cobalt(),#only to generate x1
+    x2=pxosrdo2dd,#rc6 SPDF
+    pva=z110, #pva: for labelling with £/m2
+    zoomx=6.5,
+    minzoom=6,
+    maxzoom=11,
+    width=1000*.7,
+    height=1000*.7,
+    w1=1,
+    l1=.08,
+    addlegend=F,
+    uproj3= "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"%>%CRS(.),
+    palx=leaflet::colorFactor(
+      palette=x1[,col],
+      domain=x1[,rc6]
+    ) 
+  ){
+    x1[,stopifnot(all(nchar(rc6)==6))]
+    x1 <- #alpha sort rc
+      x1[order(rc6)] 
+    x2 <- #alpha sort pc
+      x2[order(x2@data$name),] 
+    x3 <- #SPDF subset using [
+      x1[,grepstring(rc6,caret=T,dollar=T)]%>%
+      grep(.,regpcode(x2@data$name))%>%
+      sort(.)%>%#retain alpha sort
+      x2[.,]
+    { #check
+      all.equal(
+        x1[,rc6], #requested
+        regpcode(x3@data$name) #spdf
+      )%>%
+        stopifnot(.) #or fail
+    }
+    x3@data <- #assign cols
+      x1[,.(rc6)]%>%
+      data.frame(.)
+    x4 <- #tooltip labels
+      x1[,
+         sprintf(
+           "<strong>%s</strong><br/>%g",
+           x1[,irregpcode(rc6)],
+           pva[x1,round(ppm2,-1),on=c(rcx='rc6')] 
+         )]%>%
+      lapply(.,htmltools::HTML)
+    x5 <- #leaflet
+      leaflet(
+        x3,
+        width=width,
+        height=height,
+        options=leafletOptions(
+          zoomControl=F,
+          minZoom=minzoom,
+          maxZoom=maxzoom,
+          zoomDelta=2
+        )
+      )
+    x6 <- #colour it
+      x5 %>% 
+      addPolygons(
+        stroke=T,
+        fillColor = ~palx(rc6),#~palx(col),
+        smoothFactor = 0, #remove white slivers
+        weight = 1,
+        opacity = 1,
+        color = "transparent",#"steelblue",
+        dashArray = "2",
+        fillOpacity = .5,
+        label = x4,
+        labelOptions = labelOptions(
+          style = list("font-weight" = "normal", padding = "3px 8px"),
+          textsize = "12px",
+          direction = "auto")
+      )%>%
+      addProviderTiles(providers$CartoDB.Positron)
+    x6
   }
 f240823a <-
 function( #winding performance table
