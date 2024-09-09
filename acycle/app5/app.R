@@ -1452,21 +1452,6 @@ server <- function(input, output) {
       Rincuinti()#+
     })
   
-  # Rcustommap <- 
-  #   eventReactive(
-  #     Rsitr() #map updates with tree
-  #     ,
-  #     valueExpr={
-  #       f240810a(
-  #         rcx=Rsitr(),
-  #         x3a=pxosrdo2dd,
-  #         target=isolate(Rsirc),
-  #         pva=z110,
-  #         palx=palcu,
-  #         maxzoom=12
-  #       )
-  #     }
-  #   )
   
   # 2/6 incuinma
   output$incuinma <- #custom map 
@@ -1481,55 +1466,33 @@ server <- function(input, output) {
         )
     )
   
-  # 3/6 incuinwi 
+  
   output$incuinwi <- #custom winding
     render_gt(
-      Rincuin()%>%
-        .[,.(date=as.character(date),xdot)]%>%
-        .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
-        dcast(.,decade~yr,value.var='xdot')%>%
-        .[,decade:=c(1990,2000,2010,2020)]
+      Rincuinwi() #index custom index summary
+    )
+  Rincuinwi <- 
+    eventReactive(
+      eventExpr=
+        list(
+          Rsita(), #sidepanel target
+          input$sicobu #sidepanel compute button
+        ),
+      valueExpr={
+        isolate(Rincuin())%>%
+          .[,.(date=as.character(date),xdot)]%>%
+          .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
+          dcast(.,decade~yr,value.var='xdot')%>%
+          .[,decade:=c(1990,2000,2010,2020)]
+      }
     )
   
   
   # 4/6 incuinch
-  # output$incuinch <-  #charac
-  #   render_gt(
-  #     z110%>%.[
-  #       rcx%in%Rsitr()#]%>%#.[1:10,]%>%
-  #       ,
-  #       .(#no beta1
-  #         frac=round(sum(nid)/z110[nchar(rcx==3),sum(nid)],nfig3),
-  #         ppm2max=round(max(ppm2),nfig2),
-  #         ppm2min=round(min(ppm2),nfig2),
-  #         p=round(sum(pv)/sum(m2),nfig2),
-  #         R2rsi=Rincuin()[1,round(rsqraw,nfig1)]
-  #       )
-  #     ]%>%
-  #       .[,.(
-  #         frac,
-  #         R2rsi,
-  #         p,
-  #         p.cus=paste0(round(ppm2min,nfig2),'-',round(ppm2max,nfig2))
-  #       )]%>%
-  #       gt::gt(.)%>%
-  #       cols_label(
-  #         frac = gt::html('Fraction<br>properties'),
-  #         R2rsi = gt::html("RSI R<sup>2</sup>"),
-  #         p = gt::html("Aggregate"),
-  #         p.cus=gt::html("Range")
-  #       )%>%
-  #       tab_spanner(
-  #         label = gt::html("Custom £/m<sup>2</sup>"),
-  #         columns = c(p.cus, p)
-  #       )
-  #   )
-  
     output$incuinch <- 
     render_gt(
       Rincuinch() #index custom index summary
     )
-    
     Rincuinch <- 
     eventReactive(
       eventExpr=
