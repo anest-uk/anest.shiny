@@ -22,6 +22,7 @@ library(PerformanceAnalytics)
 library(plotly)
 library(scales)
 library(shiny)
+library(shinyjs)
 library(shinyWidgets)
 library(sp)
 library(zoo)
@@ -1893,7 +1894,11 @@ server <- function(input, output) {
         f240810a(rcx=.,x3a=pxosrdo2dd,target=Rsirc(),pva=z110,palx=pal,maxzoom=12)
     )
   
-  
+  o <- observe({
+    shinyjs::click("sicobu")
+    o$destroy() # destroy observer as it has no use after initial button click
+  })
+
   #======================================================================-reactive   for readability these should list out what they return 
   Rsita <-     
     eventReactive(input$innata,toupper(input$innata))
