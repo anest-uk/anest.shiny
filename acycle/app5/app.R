@@ -1459,7 +1459,7 @@ server <- function(input, output) {
         f240810a(
           rcx=.,
           x3a=pxosrdo2dd,
-          target=regpcode(input$innata),
+          target=regpcode(Rsita()),
           pva=z110,
           palx=palcu,
           maxzoom=12
@@ -1517,7 +1517,7 @@ server <- function(input, output) {
     eventReactive(
       eventExpr=
         list(
-          input$innata,
+          Rsita(),
           input$sicobu
         ),
       valueExpr={
@@ -1542,12 +1542,12 @@ server <- function(input, output) {
   Rinnati <- #1/6 innati 
     eventReactive(
       list(
-        input$innata,
+        Rsita(),
         input$sicobu
       )
       ,
       valueExpr={
-        x <- z321a$ses$estdt[nx==z321a$geo[rc9==regpcode(input$innata),nx]]%>%
+        x <- z321a$ses$estdt[nx==z321a$geo[rc9==regpcode(Rsita()),nx]]%>%
           ggplot(.,aes(date1,x))+
           geom_line()+
           xlab('')+
@@ -1579,13 +1579,13 @@ server <- function(input, output) {
   
   output$innama <- #2/6 innama
     renderLeaflet(
-      z321a$geo[nx==z321a$geo[rc9==regpcode(input$innata),nx],rc9]%>%
-        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$innata),pva=z110,palx=palna,maxzoom=12) 
+      z321a$geo[nx==z321a$geo[rc9==regpcode(Rsita()),nx],rc9]%>%
+        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(Rsita()),pva=z110,palx=palna,maxzoom=12) 
     )
   
   output$innawi <- #3/6 innawi
     render_gt(
-      x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==regpcode(input$innata),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
+      x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==regpcode(Rsita()),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
         setnames(.,c('date','xdot'))%>%
         .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
         dcast(.,decade~yr,value.var='xdot')%>%
@@ -1621,7 +1621,7 @@ server <- function(input, output) {
         gt_highlight_rows(
           .,
           columns = gt::everything(),
-          rows = z321a$geo[rc9==regpcode(input$innata),11-nx], #reversed order
+          rows = z321a$geo[rc9==regpcode(Rsita()),11-nx], #reversed order
           fill = cobalt()['green'], #"#80bcd8"
           alpha = 0.1, #v pale
           font_weight = "normal",
@@ -1646,21 +1646,21 @@ server <- function(input, output) {
   Rinloti <- #1/6 inloti 
     eventReactive(
       list(
-        input$innata,
+        Rsita(),
         input$sicobu
       )
       ,
       valueExpr={
         #x0 <- rep(cobalt()['green'],3)
         x0 <- rep('#00FF00',3)
-        x0[sort(setdiff(1:3,z321d$geo[rc9==regpcode(input$innata),substr(lab,4,4)]))] <- 
+        x0[sort(setdiff(1:3,z321d$geo[rc9==regpcode(Rsita()),substr(lab,4,4)]))] <- 
           cobalt()[c('onch','blue')]
         #as.character(.)%>%
         x0 <- setNames(x0,as.character(1:3))
         #as.factor(.)
         print(x0)
         x1 <- 
-          regpcode(input$innata)%>%
+          regpcode(Rsita())%>%
           substr(.,1,3)
         print(x1)
         x2 <- 
@@ -1705,19 +1705,19 @@ server <- function(input, output) {
     
     renderLeaflet(
       z321d$geo%>%
-        .[substr(rc9,1,3)==substr(regpcode(input$innata),1,3)]%>%
+        .[substr(rc9,1,3)==substr(regpcode(Rsita()),1,3)]%>%
         .[,.(rc6=rc9,col=lighten(cobalt(),lightenx)[as.numeric(substr(lab,4,4))])]%>%
         f240810b(.)
     )
-      # z321d$geo[nx==z321d$geo[rc9==regpcode(input$innata),nx],rc9]%>%
-      #   f240810b(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$innata),pva=z110,palx=palna,maxzoom=12)
-      # z321a$geo[nx==z321a$geo[rc9==regpcode(input$innata),nx],rc9]%>%
-      #   f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$innata),pva=z110,palx=palcu,maxzoom=12)
+      # z321d$geo[nx==z321d$geo[rc9==regpcode(Rsita()),nx],rc9]%>%
+      #   f240810b(rcx=.,x3a=pxosrdo2dd,target=regpcode(Rsita()),pva=z110,palx=palna,maxzoom=12)
+      # z321a$geo[nx==z321a$geo[rc9==regpcode(Rsita()),nx],rc9]%>%
+      #   f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(Rsita()),pva=z110,palx=palcu,maxzoom=12)
     #)
   
   output$inlowi <- #3/6 inlowi
     render_gt(
-      x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==regpcode(input$innata),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
+      x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==regpcode(Rsita()),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
         setnames(.,c('date','xdot'))%>%
         .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
         dcast(.,decade~yr,value.var='xdot')%>%
@@ -1753,7 +1753,7 @@ server <- function(input, output) {
         gt_highlight_rows(
           .,
           columns = gt::everything(),
-          rows = z321a$geo[rc9==regpcode(input$innata),11-nx], #reversed order
+          rows = z321a$geo[rc9==regpcode(Rsita()),11-nx], #reversed order
           fill = cobalt()['green'], #"#80bcd8"
           alpha = 0.1, #v pale
           font_weight = "normal",
@@ -1764,9 +1764,9 @@ server <- function(input, output) {
   
   output$loter <- renderText(
     paste0(
-      toupper(input$innata),
-      ' is in ',irregpcode(substr(regpcode(input$innata),1,3)),' tertile ',
-      z321d$geo[rc9==regpcode(input$innata),substr(lab,4,4)]
+      Rsita(),
+      ' is in ',irregpcode(substr(regpcode(Rsita()),1,3)),' tertile ',
+      z321d$geo[rc9==regpcode(Rsita()),substr(lab,4,4)]
     )
   )
   output$inlosu <- #5/6 inlosu 
@@ -1780,15 +1780,15 @@ server <- function(input, output) {
   
   # output$rc3 <- 
   #   renderText(
-  #     paste0("P-tertiles of ",irregpcode(substr(regpcode(input$innata),1,3)))
+  #     paste0("P-tertiles of ",irregpcode(substr(regpcode(Rsita()),1,3)))
   #   )
   
   output$nationalnp <- 
     renderText(
       paste0(
-        toupper(input$innata),
+        Rsita(),
         " is in national P-band ",
-        z321a$geo[rc9==regpcode(input$innata),nx]
+        z321a$geo[rc9==regpcode(Rsita()),nx]
       )
     )
   
@@ -1797,7 +1797,7 @@ server <- function(input, output) {
   #---not used
   output$perfnatt1 <-  #triangular counts
     render_gt(
-      x1 <- dcast(coread(geon[nx==z321a$geo[rc9==regpcode(input$innata),nx],rc9],steprip)[,.N,.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='N') #
+      x1 <- dcast(coread(geon[nx==z321a$geo[rc9==regpcode(Rsita()),nx],rc9],steprip)[,.N,.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='N') #
     )
   #---not used
   output$perfnatt2 <-  #triangular mean
@@ -1805,7 +1805,7 @@ server <- function(input, output) {
       x2 <-  
         dcast(
           coread(
-            geon[nx==z321a$geo[rc9==regpcode(input$innata),nx],rc9],
+            geon[nx==z321a$geo[rc9==regpcode(Rsita()),nx],rc9],
             steprip
           )[,
             j=.(r=round(mean(as.numeric(retsa)),3)),
@@ -1841,11 +1841,14 @@ server <- function(input, output) {
   output$geocusl <- #leaflet cust
     renderLeaflet(
       input$customtree[which(nchar(input$customtree)==6)]%>%
-        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$innata),pva=z110,palx=pal,maxzoom=12)
+        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(Rsita()),pva=z110,palx=pal,maxzoom=12)
     )
   
   
   #======================================================================-reactive   for readability these should list out what they return 
+  Rsita <-     
+    eventReactive(input$innata,toupper(input$innata))
+  
   
   #---------custom
   Rincurc <- #vector character rc6
