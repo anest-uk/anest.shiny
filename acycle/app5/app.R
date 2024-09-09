@@ -1452,14 +1452,29 @@ server <- function(input, output) {
       Rincuinti()#+
     })
   
+  # Rcustommap <- 
+  #   eventReactive(
+  #     Rsitr() #map updates with tree
+  #     ,
+  #     valueExpr={
+  #       f240810a(
+  #         rcx=Rsitr(),
+  #         x3a=pxosrdo2dd,
+  #         target=isolate(Rsirc),
+  #         pva=z110,
+  #         palx=palcu,
+  #         maxzoom=12
+  #       )
+  #     }
+  #   )
+  
   # 2/6 incuinma
   output$incuinma <- #custom map 
     renderLeaflet(
-      Rincurc()%>%
-        f240810a(
-          rcx=.,
+      f240810a(
+          rcx=Rsitr(),
           x3a=pxosrdo2dd,
-          target=Rsirc(),
+          target=isolate(Rsirc()),
           pva=z110,
           palx=palcu,
           maxzoom=12
@@ -1479,7 +1494,7 @@ server <- function(input, output) {
   output$incuinch <-  #charac
     render_gt(
       z110%>%.[
-        rcx%in%Rincurc()#]%>%#.[1:10,]%>%
+        rcx%in%Rsitr()#]%>%#.[1:10,]%>%
         ,
         .(#no beta1
           frac=round(sum(nid)/z110[nchar(rcx==3),sum(nid)],nfig3),
@@ -1511,17 +1526,17 @@ server <- function(input, output) {
   # 5/6 incuinsu 
   output$incuinsu <- 
     render_gt(
-      Rincuinsu()
+      Rincuinsu() #index custom index summary
     )
   Rincuinsu <- 
     eventReactive(
       eventExpr=
         list(
-          Rsita(),
-          input$sicobu
+          Rsita(), #sidepanel target
+          input$sicobu #sidepanel compute button
         ),
       valueExpr={
-        x1 <- Rincuin()[,.(date,xdot)]
+        x1 <- Rincuin()[,.(date,xdot)] #index custom index (update rsi)
         x2 <- zoo(as.matrix(x1[,xdot]),as.matrix(x1[,date]))
         x3 <- table.Stats(x2,digits=3)
         x4 <- data.table(x=rownames(x3),stat=x3[[1]])%>%
@@ -1877,7 +1892,7 @@ server <- function(input, output) {
       valueExpr=
         {
           if(input$incusege=='t') {
-            x <- Rincusetr()
+            x <- Rsitr()
           } else if(input$incusege=='c') {
             x <- Rincusefi()
           }
@@ -1885,13 +1900,16 @@ server <- function(input, output) {
         }
     )
   
-  Rincusetr <- #vector character rc6 [treeselect]
+  Rsitr <- #vector character rc6 [treeselect]
     eventReactive(
       eventExpr= 
         input$sicobu,#-sicobu *compute*
       valueExpr=
         {
-          print('Rincusetr')
+          print('Rsitr:')
+          print(input$incusetr[which(nchar(input$incusetr)==6)])
+          print('Rsirc:')
+          print(Rsirc())
           input$incusetr[which(nchar(input$incusetr)==6)]
         }
     )
@@ -1931,7 +1949,7 @@ server <- function(input, output) {
             steprip='03rip/',
             dfn=dfnx,
             geo=data.table(
-              rc9=Rincusetr(),
+              rc9=Rsitr(),
               nx=1,
               lab='lab001'
             ),
