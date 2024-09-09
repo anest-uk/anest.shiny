@@ -1490,11 +1490,56 @@ server <- function(input, output) {
         dcast(.,decade~yr,value.var='xdot')%>%
         .[,decade:=c(1990,2000,2010,2020)]
     )
+  
+  
   # 4/6 incuinch
-  output$incuinch <-  #charac
+  # output$incuinch <-  #charac
+  #   render_gt(
+  #     z110%>%.[
+  #       rcx%in%Rsitr()#]%>%#.[1:10,]%>%
+  #       ,
+  #       .(#no beta1
+  #         frac=round(sum(nid)/z110[nchar(rcx==3),sum(nid)],nfig3),
+  #         ppm2max=round(max(ppm2),nfig2),
+  #         ppm2min=round(min(ppm2),nfig2),
+  #         p=round(sum(pv)/sum(m2),nfig2),
+  #         R2rsi=Rincuin()[1,round(rsqraw,nfig1)]
+  #       )
+  #     ]%>%
+  #       .[,.(
+  #         frac,
+  #         R2rsi,
+  #         p,
+  #         p.cus=paste0(round(ppm2min,nfig2),'-',round(ppm2max,nfig2))
+  #       )]%>%
+  #       gt::gt(.)%>%
+  #       cols_label(
+  #         frac = gt::html('Fraction<br>properties'),
+  #         R2rsi = gt::html("RSI R<sup>2</sup>"),
+  #         p = gt::html("Aggregate"),
+  #         p.cus=gt::html("Range")
+  #       )%>%
+  #       tab_spanner(
+  #         label = gt::html("Custom £/m<sup>2</sup>"),
+  #         columns = c(p.cus, p)
+  #       )
+  #   )
+  
+    output$incuinch <- 
     render_gt(
+      Rincuinch() #index custom index summary
+    )
+    
+    Rincuinch <- 
+    eventReactive(
+      eventExpr=
+        list(
+          Rsita(), #sidepanel target
+          input$sicobu #sidepanel compute button
+        ),
+      valueExpr={
       z110%>%.[
-        rcx%in%Rsitr()#]%>%#.[1:10,]%>%
+        rcx%in%isolate(Rsitr())#]%>%#.[1:10,]%>%
         ,
         .(#no beta1
           frac=round(sum(nid)/z110[nchar(rcx==3),sum(nid)],nfig3),
@@ -1521,8 +1566,9 @@ server <- function(input, output) {
           label = gt::html("Custom £/m<sup>2</sup>"),
           columns = c(p.cus, p)
         )
+      }
     )
-  
+
   # 5/6 incuinsu 
   output$incuinsu <- 
     render_gt(
