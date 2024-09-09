@@ -22,6 +22,7 @@ library(PerformanceAnalytics)
 library(plotly)
 library(scales)
 library(shiny)
+library(shinyjs)
 library(shinyWidgets)
 library(sp)
 library(zoo)
@@ -73,7 +74,7 @@ ui <-
                   area="nationalrc6",
                   card_body(
                     textInput(
-                      inputId = "innata",#innata
+                      inputId = "sita",#sita
                       label = "Target district",
                       value = "SW3"
                     )
@@ -84,7 +85,7 @@ ui <-
                                  grid_card(
                                    area="customrc6",
                                    card_body(
-                                     actionButton(inputId = "sicobu", label = "Compute custom")
+                                     actionButton(inputId = "incuseco", label = "Compute custom")
                                      ,
                                      treeInput( #districts
                                        inputId = "incusetr",
@@ -94,7 +95,6 @@ ui <-
                                        returnValue = "text",
                                        closeDepth = 1
                                      )
-                                     
                                    )
                                  )
                 )
@@ -334,7 +334,7 @@ ui <-
                       layout = c(
                         "innati innama",
                         "innawi innach ",
-                        "innasu .      " #innata
+                        "innasu .      " #sita
                       ),
                       row_sizes = c(
                         "1fr",
@@ -1459,7 +1459,7 @@ server <- function(input, output) {
         f240810a(
           rcx=.,
           x3a=pxosrdo2dd,
-          target=regpcode(input$innata),
+          target=Rincuseco(),
           pva=z110,
           palx=palcu,
           maxzoom=12
@@ -1478,9 +1478,8 @@ server <- function(input, output) {
   # 4/6 incuinch
   output$incuinch <-  #charac
     render_gt(
-      z110%>%.[
-         rcx%in%Rincurc()#]%>%#.[1:10,]%>%
-        ,
+      z110[
+        rcx%in%Rincurc(),
         .(#no beta1
           frac=round(sum(nid)/z110[nchar(rcx==3),sum(nid)],nfig3),
           ppm2max=round(max(ppm2),nfig2),
@@ -1497,13 +1496,13 @@ server <- function(input, output) {
         )]%>%
         gt::gt(.)%>%
         cols_label(
-          frac = gt::html('Fraction<br>properties'),
-          R2rsi = gt::html("RSI R<sup>2</sup>"),
-          p = gt::html("Aggregate"),
-          p.cus=gt::html("Range")
+          frac = html('Fraction<br>properties'),
+          R2rsi = html("RSI R<sup>2</sup>"),
+          p = html("Aggregate"),
+          p.cus=html("Range")
         )%>%
         tab_spanner(
-          label = gt::html("Custom £/m<sup>2</sup>"),
+          label = html("Custom £/m<sup>2</sup>"),
           columns = c(p.cus, p)
         )
     )
@@ -1517,8 +1516,8 @@ server <- function(input, output) {
     eventReactive(
       eventExpr=
         list(
-          input$innata,
-          input$sicobu
+          Rsita(),
+          input$incuseco
         ),
       valueExpr={
         x1 <- Rincuin()[,.(date,xdot)]
@@ -1538,16 +1537,45 @@ server <- function(input, output) {
   # 1/6 index   2/6 map
   # 3/6 winding 4/6 charac
   # 5/6 summary 6/6 target
+  Rsita <-     
+    eventReactive(Rsita(),toupper(Rsita))
+
+  
+  Rincuseco <- 
+    eventReactive(
+      list(
+        Rsita()
+      )
+      ,
+      valueExpr={
+        print(regpcode(Rsita()))
+        if(irregpcode(regpcode(Rsita()))==Rsita()) {
+          print(regpcode(Rsita()))
+          updateTreeInput(
+            inputId='incusetr',
+            selected = regpcode(Rsita())
+          )
+        }
+        x <- regpcode(Rsita())
+        x
+      }
+    )
+  
+  # o <- observe({
+  #   shinyjs::click("incuseco")
+  #   o$destroy() # destroy observer as it has no use after initial button click
+  # })
   
   Rinnati <- #1/6 innati 
     eventReactive(
       list(
-        input$innata,
-        input$sicobu
+        Rincuseco(),
+        input$incuseco
       )
       ,
+      
       valueExpr={
-        x <- z321a$ses$estdt[nx==z321a$geo[rc9==regpcode(input$innata),nx]]%>%
+        x <- z321a$ses$estdt[nx==z321a$geo[rc9==Rincuseco(),nx]]%>%
           ggplot(.,aes(date1,x))+
           geom_line()+
           xlab('')+
@@ -1579,13 +1607,13 @@ server <- function(input, output) {
   
   output$innama <- #2/6 innama
     renderLeaflet(
-      z321a$geo[nx==z321a$geo[rc9==regpcode(input$innata),nx],rc9]%>%
-        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$innata),pva=z110,palx=palna,maxzoom=12) 
+      z321a$geo[nx==z321a$geo[rc9==Rincuseco(),nx],rc9]%>%
+        f240810a(rcx=.,x3a=pxosrdo2dd,target=Rincuseco(),pva=z110,palx=palna,maxzoom=12) 
     )
   
   output$innawi <- #3/6 innawi
     render_gt(
-      x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==regpcode(input$innata),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
+      x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==Rincuseco(),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
         setnames(.,c('date','xdot'))%>%
         .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
         dcast(.,decade~yr,value.var='xdot')%>%
@@ -1621,7 +1649,7 @@ server <- function(input, output) {
         gt_highlight_rows(
           .,
           columns = gt::everything(),
-          rows = z321a$geo[rc9==regpcode(input$innata),11-nx], #reversed order
+          rows = z321a$geo[rc9==Rincuseco(),11-nx], #reversed order
           fill = cobalt()['green'], #"#80bcd8"
           alpha = 0.1, #v pale
           font_weight = "normal",
@@ -1639,28 +1667,28 @@ server <- function(input, output) {
         setnames(.,c('.',paste0('np=',1:10)))
     ) 
   
-  # 6/6 innata - target, input
+  # 6/6 sita - target, input
   
   #-------------------------------------------------------------------index local
   #nb this all copy/paste from inna
   Rinloti <- #1/6 inloti 
     eventReactive(
       list(
-        input$innata,
-        input$sicobu
+        Rsita(),
+        input$incuseco
       )
       ,
       valueExpr={
         #x0 <- rep(cobalt()['green'],3)
         x0 <- rep('#00FF00',3)
-        x0[sort(setdiff(1:3,z321d$geo[rc9==regpcode(input$innata),substr(lab,4,4)]))] <- 
+        x0[sort(setdiff(1:3,z321d$geo[rc9==Rincuseco(),substr(lab,4,4)]))] <- 
           cobalt()[c('onch','blue')]
         #as.character(.)%>%
         x0 <- setNames(x0,as.character(1:3))
         #as.factor(.)
         print(x0)
         x1 <- 
-          regpcode(input$innata)%>%
+          Rincuseco()%>%
           substr(.,1,3)
         print(x1)
         x2 <- 
@@ -1705,19 +1733,19 @@ server <- function(input, output) {
     
     renderLeaflet(
       z321d$geo%>%
-        .[substr(rc9,1,3)==substr(regpcode(input$innata),1,3)]%>%
+        .[substr(rc9,1,3)==substr(Rincuseco(),1,3)]%>%
         .[,.(rc6=rc9,col=lighten(cobalt(),lightenx)[as.numeric(substr(lab,4,4))])]%>%
         f240810b(.)
     )
-      # z321d$geo[nx==z321d$geo[rc9==regpcode(input$innata),nx],rc9]%>%
-      #   f240810b(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$innata),pva=z110,palx=palna,maxzoom=12)
-      # z321a$geo[nx==z321a$geo[rc9==regpcode(input$innata),nx],rc9]%>%
-      #   f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$innata),pva=z110,palx=palcu,maxzoom=12)
-    #)
+  # z321d$geo[nx==z321d$geo[rc9==Rincuseco(),nx],rc9]%>%
+  #   f240810b(rcx=.,x3a=pxosrdo2dd,target=Rincuseco(),pva=z110,palx=palna,maxzoom=12)
+  # z321a$geo[nx==z321a$geo[rc9==Rincuseco(),nx],rc9]%>%
+  #   f240810a(rcx=.,x3a=pxosrdo2dd,target=Rincuseco(),pva=z110,palx=palcu,maxzoom=12)
+  #)
   
   output$inlowi <- #3/6 inlowi
     render_gt(
-      x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==regpcode(input$innata),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
+      x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==Rincuseco(),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
         setnames(.,c('date','xdot'))%>%
         .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
         dcast(.,decade~yr,value.var='xdot')%>%
@@ -1753,7 +1781,7 @@ server <- function(input, output) {
         gt_highlight_rows(
           .,
           columns = gt::everything(),
-          rows = z321a$geo[rc9==regpcode(input$innata),11-nx], #reversed order
+          rows = z321a$geo[rc9==Rincuseco(),11-nx], #reversed order
           fill = cobalt()['green'], #"#80bcd8"
           alpha = 0.1, #v pale
           font_weight = "normal",
@@ -1764,9 +1792,9 @@ server <- function(input, output) {
   
   output$loter <- renderText(
     paste0(
-      toupper(input$innata),
-      ' is in ',irregpcode(substr(regpcode(input$innata),1,3)),' tertile ',
-      z321d$geo[rc9==regpcode(input$innata),substr(lab,4,4)]
+      Rsita(),
+      ' is in ',irregpcode(substr(Rincuseco(),1,3)),' tertile ',
+      z321d$geo[rc9==Rincuseco(),substr(lab,4,4)]
     )
   )
   output$inlosu <- #5/6 inlosu 
@@ -1780,15 +1808,15 @@ server <- function(input, output) {
   
   # output$rc3 <- 
   #   renderText(
-  #     paste0("P-tertiles of ",irregpcode(substr(regpcode(input$innata),1,3)))
+  #     paste0("P-tertiles of ",irregpcode(substr(Rincuseco(),1,3)))
   #   )
   
   output$nationalnp <- 
     renderText(
       paste0(
-        toupper(input$innata),
+        Rsita(),
         " is in national P-band ",
-        z321a$geo[rc9==regpcode(input$innata),nx]
+        z321a$geo[rc9==Rincuseco(),nx]
       )
     )
   
@@ -1797,7 +1825,7 @@ server <- function(input, output) {
   #---not used
   output$perfnatt1 <-  #triangular counts
     render_gt(
-      x1 <- dcast(coread(geon[nx==z321a$geo[rc9==regpcode(input$innata),nx],rc9],steprip)[,.N,.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='N') #
+      x1 <- dcast(coread(geon[nx==z321a$geo[rc9==Rincuseco(),nx],rc9],steprip)[,.N,.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='N') #
     )
   #---not used
   output$perfnatt2 <-  #triangular mean
@@ -1805,7 +1833,7 @@ server <- function(input, output) {
       x2 <-  
         dcast(
           coread(
-            geon[nx==z321a$geo[rc9==regpcode(input$innata),nx],rc9],
+            geon[nx==z321a$geo[rc9==Rincuseco(),nx],rc9],
             steprip
           )[,
             j=.(r=round(mean(as.numeric(retsa)),3)),
@@ -1841,7 +1869,7 @@ server <- function(input, output) {
   output$geocusl <- #leaflet cust
     renderLeaflet(
       input$customtree[which(nchar(input$customtree)==6)]%>%
-        f240810a(rcx=.,x3a=pxosrdo2dd,target=regpcode(input$innata),pva=z110,palx=pal,maxzoom=12)
+        f240810a(rcx=.,x3a=pxosrdo2dd,target=Rincuseco(),pva=z110,palx=pal,maxzoom=12)
     )
   
   
@@ -1851,7 +1879,8 @@ server <- function(input, output) {
   Rincurc <- #vector character rc6
     eventReactive(
       eventExpr= 
-        input$sicobu,#-sicobu *compute*
+        Rincuseco()#-incuseco *compute*
+      ,
       valueExpr=
         {
           if(input$incusege=='t') {
@@ -1866,7 +1895,7 @@ server <- function(input, output) {
   Rincusetr <- #vector character rc6 [treeselect]
     eventReactive(
       eventExpr= 
-        input$sicobu,#-sicobu *compute*
+        input$incuseco,#-incuseco *compute*
       valueExpr=
         {
           print('Rincusetr')
@@ -1877,7 +1906,7 @@ server <- function(input, output) {
   Rincusefi <- # vector character rc6 [file]
     eventReactive(
       eventExpr=
-        input$sicobu,#-sicobu *compute*
+        input$incuseco,#-incuseco *compute*
       valueExpr=
         {
           req(input$incusefi)
@@ -1889,9 +1918,9 @@ server <- function(input, output) {
   
   Rincuin <- # RSI solve: dt estdt incuin
     eventReactive(
-      eventExpr=#-sicobu index custom setting *compute*
+      eventExpr=#-incuseco index custom setting *compute*
         list(
-          input$sicobu,#-sicobu *compute*
+          input$incuseco,#-incuseco *compute*
           input$Used, 
           input$Type,
           input$incusetr
@@ -1899,7 +1928,7 @@ server <- function(input, output) {
       valueExpr=
         { 
           x0 <- list(
-            input$sicobu,
+            input$incuseco,
             input$Used,
             input$Type,
             input$incusetr
@@ -1925,8 +1954,8 @@ server <- function(input, output) {
   
   Rincuinti <- # plot(incuin) 
     eventReactive(
-      eventExpr=#-sicobu *compute*
-        input$sicobu
+      eventExpr=#-incuseco *compute*
+        input$incuseco
       ,
       valueExpr=
         {
