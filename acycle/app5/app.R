@@ -92,7 +92,7 @@ ui <-
                                        inputId = "incusetr",
                                        label = "Select peers:",
                                        choices = create_tree(f240824b(unique(substr(dir('03rip/'),1,3)))),
-                                       selected = "rc6x", #this
+                                       selected = rc6x, #this
                                        returnValue = "text",
                                        closeDepth = 1
                                      )
@@ -101,7 +101,6 @@ ui <-
                                  )
                 )
                 ,
-                #conditionalPanel(condition="input.tabs == 'National' || input.tabs == 'Local'",
                 conditionalPanel(condition="input.tabs == 'Local'",
                                  grid_card(
                                    area="localrc3",
@@ -248,9 +247,9 @@ ui <-
                                 inputId = "incusety",
                                 label = "Type",
                                 choices = list(
-                                  "All" = "a", #this
-                                  "House" = "h", 
-                                  "Flat" = "f"
+                                  "All" = ".", #this
+                                  "House" = "H", 
+                                  "Flat" = "F"
                                 ),
                                 width = "100%"
                               )
@@ -261,11 +260,11 @@ ui <-
                             card_body(
                               radioButtons(
                                 inputId = "incuseag",
-                                label = "Age",
+                                label = "Used",
                                 choices = list(
-                                  "All"="a", #age
-                                  "New" = "n", 
-                                  "Used" = ""
+                                  "All"=".", #used
+                                  "New" = "N", 
+                                  "Used" = "U"
                                 ),
                                 width = "100%"
                               )
@@ -418,7 +417,7 @@ ui <-
                         card_header(
                           "Index time-series                                                                                                                                                                                                                                                                                                  "
                         ),
-                        card_body(##################################
+                        card_body(
                                   plotOutput('inloti'),
                                   max_height="500px"
                         )
@@ -427,7 +426,7 @@ ui <-
                         area = "inloma",
                         full_screen = TRUE,
                         card_header("Map"),
-                        card_body(##################################
+                        card_body(
                                   leafletOutput('inloma'),
                                   max_height="500px"
                         )
@@ -436,7 +435,7 @@ ui <-
                         area = "inlowi",
                         full_screen = TRUE,
                         card_header("Winding"),
-                        card_body(##################################
+                        card_body(
                                   div(
                                     gt_output('inlowi'),
                                     max_height="400px"
@@ -449,7 +448,7 @@ ui <-
                         card_header(
                           "Geo-bin characteristics table"
                         ),
-                        card_body(##################################
+                        card_body(
                                   gt_output('inloch')
                         )
                       ),
@@ -457,7 +456,7 @@ ui <-
                         area = "inlosu",
                         full_screen = TRUE,
                         card_header("Time-series summary"),
-                        card_body(##################################
+                        card_body(
                                   gt_output('inlosu')
                         )
                       ),
@@ -1453,22 +1452,6 @@ server <- function(input, output) {
     renderPlot({
       Rincuinti()#+
     })
-  
-  
-  # 2/6 incuinma
-  # output$incuinma <- #custom map 
-  #   renderLeaflet(
-  #     f240810a(
-  #         rcx=Rsitr(),
-  #         x3a=pxosrdo2dd,
-  #         target=isolate(Rsirc()),
-  #         pva=z110,
-  #         palx=palcu,
-  #         maxzoom=12
-  #       )
-  #   )
-  
-  
   output$incuinma <- #custom map 
     renderLeaflet(
       Rincuinma()
@@ -1618,7 +1601,6 @@ server <- function(input, output) {
             date_labels = "%Y",
             limits=c(as.Date(c('1994-12-31','2027-12-31')))
           )
-        print('Rinnati')
         x
       }
     )
@@ -1641,7 +1623,6 @@ server <- function(input, output) {
         dcast(.,decade~yr,value.var='xdot')%>%
         .[,decade:=c(1990,2000,2010,2020)]
     )
-  
   x.nat.t4 <- #4/6 innach
     f231204a(2)%>%
     .[,.(
@@ -1659,13 +1640,13 @@ server <- function(input, output) {
     render_gt(
       gt::gt(x.nat.t4)%>%
         cols_label(
-          frac = html('Fraction<br>properties'),
-          R2rsi = html("RSI R<sup>2</sup>"),
-          p = html("Aggregate"),
-          p.bin=html("Range")
+          frac = gt::html('Fraction<br>properties'),
+          R2rsi = gt::html("RSI R<sup>2</sup>"),
+          p = gt::html("Aggregate"),
+          p.bin=gt::html("Range")
         )%>%
         tab_spanner(
-          label = html("Band £/m<sup>2</sup>"),
+          label = gt::html("Band £/m<sup>2</sup>"),
           columns = c(p.bin, p)
         )%>%
         gt_highlight_rows(
@@ -1701,23 +1682,17 @@ server <- function(input, output) {
       )
       ,
       valueExpr={
-        #x0 <- rep(cobalt()['green'],3)
         x0 <- rep('#00FF00',3)
         x0[sort(setdiff(1:3,z321d$geo[rc9==Rsirc(),substr(lab,4,4)]))] <- 
           cobalt()[c('onch','blue')]
-        #as.character(.)%>%
         x0 <- setNames(x0,as.character(1:3))
-        #as.factor(.)
-        print(x0)
         x1 <- 
           Rsirc()%>%
           substr(.,1,3)
-        print(x1)
         x2 <- 
           z321d$ses$estdt[substr(rc3,1,3)==x1]%>%
           .[,qq:=as.factor(substr(rc3,4,4))]%>%
           .[,rc3:=as.factor(substr(rc3,1,3))]
-        print(x2)
         x <- x2%>%
           ggplot(.,aes(date1,x,color=qq))+
           geom_line()+
@@ -1741,7 +1716,6 @@ server <- function(input, output) {
             date_labels = "%Y",
             limits=c(as.Date(c('1994-12-31','2027-12-31')))
           )
-        #print('Rinloti')
         x
       }
     )
@@ -1759,12 +1733,6 @@ server <- function(input, output) {
         .[,.(rc6=rc9,col=lighten(cobalt(),lightenx)[as.numeric(substr(lab,4,4))])]%>%
         f240810b(.)
     )
-  # z321d$geo[nx==z321d$geo[rc9==Rsirc(),nx],rc9]%>%
-  #   f240810b(rcx=.,x3a=pxosrdo2dd,target=Rsirc(),pva=z110,palx=palna,maxzoom=12)
-  # z321a$geo[nx==z321a$geo[rc9==Rsirc(),nx],rc9]%>%
-  #   f240810a(rcx=.,x3a=pxosrdo2dd,target=Rsirc(),pva=z110,palx=palcu,maxzoom=12)
-  #)
-  
   output$inlowi <- #3/6 inlowi
     render_gt(
       x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==Rsirc(),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
@@ -1791,13 +1759,13 @@ server <- function(input, output) {
     render_gt(
       gt::gt(x.nat.t4)%>%
         cols_label(
-          frac = html('Fraction<br>properties'),
-          R2rsi = html("RSI R<sup>2</sup>"),
-          p = html("Aggregate"),
-          p.bin=html("Range")
+          frac = gt::html('Fraction<br>properties'),
+          R2rsi = gt::html("RSI R<sup>2</sup>"),
+          p = gt::html("Aggregate"),
+          p.bin=gt::html("Range")
         )%>%
         tab_spanner(
-          label = html("Band £/m<sup>2</sup>"),
+          label = gt::html("Band £/m<sup>2</sup>"),
           columns = c(p.bin, p)
         )%>%
         gt_highlight_rows(
@@ -1827,11 +1795,6 @@ server <- function(input, output) {
         `[`(.,i=-c(1,2,7))%>%
         setnames(.,c('.',paste0('np=',1:10)))
     ) 
-  
-  # output$rc3 <- 
-  #   renderText(
-  #     paste0("P-tertiles of ",irregpcode(substr(regpcode(Rsita()),1,3)))
-  #   )
   
   output$nationalnp <- 
     renderText(
@@ -1874,13 +1837,13 @@ server <- function(input, output) {
         fmt_number(columns = 1:4,sep_mark = ",",decimals=0) %>% 
         cols_label(
           pc = '',
-          nid = html("Tracked properties"),
-          ppm2 = html("£/m<sup>2</sup>"),
-          m2bar = html("Floor area (m<sup>2</sup>)"),
-          pvbar = html("Present value (£000)")
+          nid = gt::html("Tracked properties"),
+          ppm2 = gt::html("£/m<sup>2</sup>"),
+          m2bar = gt::html("Floor area (m<sup>2</sup>)"),
+          pvbar = gt::html("Present value (£000)")
         )%>%
         tab_spanner(
-          label = html("Average"),
+          label = gt::html("Average"),
           columns = c(m2bar, pvbar)
         )%>%
         tab_options(
@@ -1910,7 +1873,6 @@ server <- function(input, output) {
       )
       ,
       valueExpr={
-        print(regpcode(Rsita()))
         if(irregpcode(regpcode(Rsita()))==Rsita()) {
           print(regpcode(Rsita()))
           updateTreeInput(
@@ -1945,10 +1907,7 @@ server <- function(input, output) {
         input$sicobu,#-sicobu *compute*
       valueExpr=
         {
-          print('Rsitr:')
           print(input$incusetr[which(nchar(input$incusetr)==6)])
-          print('Rsirc:')
-          print(Rsirc())
           input$incusetr[which(nchar(input$incusetr)==6)]
         }
     )
@@ -1983,6 +1942,7 @@ server <- function(input, output) {
             input$Type,
             input$incusetr
           )
+          print(paste0('type:', input$Type,'; used:', input$Used))
           x <- f230312x(  #solve single nx -> estdt with no pra
             nxx=1,
             steprip='03rip/',
@@ -2009,9 +1969,7 @@ server <- function(input, output) {
       ,
       valueExpr=
         {
-          print('Rincuinti')
           x <- Rincuin()
-          foo <<- Rincuin()
           x1 <- 
             ggplot(
               x,
