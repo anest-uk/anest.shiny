@@ -46,6 +46,7 @@ source('c-cleanlib.R')
 source('rctree.R') #f240824b() : rctree
 source('headerscript.R') #geo and dfn
 rcx <<- c('SW-','AL-','M--')
+rc6x <- "SW-3--"
 #---function: map colours
 palna <- 
   c('red','magenta')%>%
@@ -84,13 +85,13 @@ ui <-
                                  grid_card(
                                    area="customrc6",
                                    card_body(
-                                     actionButton(inputId = "sicobu", label = "Compute custom")
+                                     actionButton(inputId = "sicobu", label = "Compute")
                                      ,
                                      treeInput( #districts
                                        inputId = "incusetr",
                                        label = "Select peers:",
                                        choices = create_tree(f240824b(unique(substr(dir('03rip/'),1,3)))),
-                                       selected = "SW-2--", #this
+                                       selected = "rc6x", #this
                                        returnValue = "text",
                                        closeDepth = 1
                                      )
@@ -206,9 +207,9 @@ ui <-
                           layout = c(
                             "incusetb", 
                             "incusege", 
+                            "incusefi", 
                             "incuseou",
                             "incusety", 
-                            "incusefi", 
                             "incusecr",
                             "incuseag"
                           ),
@@ -1454,18 +1455,41 @@ server <- function(input, output) {
   
   
   # 2/6 incuinma
+  # output$incuinma <- #custom map 
+  #   renderLeaflet(
+  #     f240810a(
+  #         rcx=Rsitr(),
+  #         x3a=pxosrdo2dd,
+  #         target=isolate(Rsirc()),
+  #         pva=z110,
+  #         palx=palcu,
+  #         maxzoom=12
+  #       )
+  #   )
+  
+  
   output$incuinma <- #custom map 
     renderLeaflet(
-      f240810a(
-          rcx=Rsitr(),
+      Rincuinma()
+    )
+  Rincuinma <- 
+    eventReactive(
+      eventExpr=
+        list(
+          input$innata, #sidepanel target
+          input$incusetr #sidepanel tree
+        ),
+      valueExpr={
+        f240810a(
+          rcx=input$incusetr[which(nchar(input$incusetr)==6)],
           x3a=pxosrdo2dd,
-          target=isolate(Rsirc()),
+          target=input$innata,
           pva=z110,
           palx=palcu,
           maxzoom=12
         )
-    )
-  
+      }
+    )  
   
   output$incuinwi <- #custom winding
     render_gt(
@@ -1475,7 +1499,7 @@ server <- function(input, output) {
     eventReactive(
       eventExpr=
         list(
-          Rsita(), #sidepanel target
+          Rsirc(), #sidepanel target
           input$sicobu #sidepanel compute button
         ),
       valueExpr={
@@ -1489,49 +1513,49 @@ server <- function(input, output) {
   
   
   # 4/6 incuinch
-    output$incuinch <- 
+  output$incuinch <- 
     render_gt(
       Rincuinch() #index custom index summary
     )
-    Rincuinch <- 
+  Rincuinch <- 
     eventReactive(
       eventExpr=
         list(
-          Rsita(), #sidepanel target
+          Rsirc(), #sidepanel target
           input$sicobu #sidepanel compute button
         ),
       valueExpr={
-      z110%>%.[
-        rcx%in%isolate(Rsitr())#]%>%#.[1:10,]%>%
-        ,
-        .(#no beta1
-          frac=round(sum(nid)/z110[nchar(rcx==3),sum(nid)],nfig3),
-          ppm2max=round(max(ppm2),nfig2),
-          ppm2min=round(min(ppm2),nfig2),
-          p=round(sum(pv)/sum(m2),nfig2),
-          R2rsi=Rincuin()[1,round(rsqraw,nfig1)]
-        )
-      ]%>%
-        .[,.(
-          frac,
-          R2rsi,
-          p,
-          p.cus=paste0(round(ppm2min,nfig2),'-',round(ppm2max,nfig2))
-        )]%>%
-        gt::gt(.)%>%
-        cols_label(
-          frac = gt::html('Fraction<br>properties'),
-          R2rsi = gt::html("RSI R<sup>2</sup>"),
-          p = gt::html("Aggregate"),
-          p.cus=gt::html("Range")
-        )%>%
-        tab_spanner(
-          label = gt::html("Custom £/m<sup>2</sup>"),
-          columns = c(p.cus, p)
-        )
+        z110%>%.[
+          rcx%in%isolate(Rsitr())#]%>%#.[1:10,]%>%
+          ,
+          .(#no beta1
+            frac=round(sum(nid)/z110[nchar(rcx==3),sum(nid)],nfig3),
+            ppm2max=round(max(ppm2),nfig2),
+            ppm2min=round(min(ppm2),nfig2),
+            p=round(sum(pv)/sum(m2),nfig2),
+            R2rsi=Rincuin()[1,round(rsqraw,nfig1)]
+          )
+        ]%>%
+          .[,.(
+            frac,
+            R2rsi,
+            p,
+            p.cus=paste0(round(ppm2min,nfig2),'-',round(ppm2max,nfig2))
+          )]%>%
+          gt::gt(.)%>%
+          cols_label(
+            frac = gt::html('Fraction<br>properties'),
+            R2rsi = gt::html("RSI R<sup>2</sup>"),
+            p = gt::html("Aggregate"),
+            p.cus=gt::html("Range")
+          )%>%
+          tab_spanner(
+            label = gt::html("Custom £/m<sup>2</sup>"),
+            columns = c(p.cus, p)
+          )
       }
     )
-
+  
   # 5/6 incuinsu 
   output$incuinsu <- 
     render_gt(
@@ -1541,7 +1565,7 @@ server <- function(input, output) {
     eventReactive(
       eventExpr=
         list(
-          Rsita(), #sidepanel target
+          Rsirc(), #sidepanel target
           input$sicobu #sidepanel compute button
         ),
       valueExpr={
@@ -1566,7 +1590,7 @@ server <- function(input, output) {
   Rinnati <- #1/6 innati 
     eventReactive(
       list(
-        Rsita(),
+        Rsirc(),
         input$sicobu
       )
       ,
@@ -1574,6 +1598,7 @@ server <- function(input, output) {
         x <- z321a$ses$estdt[nx==z321a$geo[rc9==Rsirc(),nx]]%>%
           ggplot(.,aes(date1,x))+
           geom_line()+
+          geom_point(size=.3)+
           xlab('')+
           ylab(bquote(Delta~P~log~price~change))+
           theme_bw() +
@@ -1670,7 +1695,7 @@ server <- function(input, output) {
   Rinloti <- #1/6 inloti 
     eventReactive(
       list(
-        Rsita(),
+        Rsirc(),
         input$sicobu
       )
       ,
@@ -1788,7 +1813,7 @@ server <- function(input, output) {
   
   output$loter <- renderText(
     paste0(
-      Rsita(),
+      Rsirc(),
       ' is in ',irregpcode(substr(Rsirc(),1,3)),' tertile ',
       z321d$geo[rc9==Rsirc(),substr(lab,4,4)]
     )
@@ -1810,7 +1835,7 @@ server <- function(input, output) {
   output$nationalnp <- 
     renderText(
       paste0(
-        Rsita(),
+        Rsirc(),
         " is in national P-band ",
         z321a$geo[rc9==Rsirc(),nx]
       )
@@ -1988,6 +2013,7 @@ server <- function(input, output) {
               aes(date,x)
             )+
             geom_line()+
+            geom_point(size=.3)+
             xlab('')+
             ylab(bquote(Delta~P~log~price~change))+
             theme_bw() +
