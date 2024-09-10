@@ -259,10 +259,12 @@ function( #leaflet special/custom function for index app, copied from anest.shin
       .[,.(name,rc6,col=as.numeric(rc6==targetrcx))]
     x3@data <- data.frame(x4)
     x5 <- pva[grep(gsx,rcx),.(rcx=sort(rcx))]
-    labels <- sprintf(
-      paste0("<strong>%s</strong><br/>%g"),
-      x5[,irregpcode(rcx)],pva[x5,round(ppm2,-1),on=c(rcx='rcx')]
-    ) %>%
+    labels <-     
+      paste0(
+        x5[,irregpcode(rcx)],
+        ' ',
+        prettyNum(as.integer(pva[x5,round(ppm2,-1),on=c(rcx='rcx')]), big.mark=",", scientific=FALSE)
+      )%>%
       lapply(htmltools::HTML)
     x7 <- leaflet(
       x3,
@@ -300,7 +302,7 @@ function( #leaflet special/custom function for index app, copied from anest.shin
       data.table(
         rc6=sort(rc6),
         col=rep(mycols,length(rc6))[1:length(rc6)] #should be meaningful
-        ),
+      ),
     rc6=c('NG-1--','S--10-','SE-25-'),
     mycols=cobalt(),#only to generate x1
     x2=pxosrdo2dd,#rc6 SPDF
@@ -339,13 +341,15 @@ function( #leaflet special/custom function for index app, copied from anest.shin
     x3@data <- #assign cols
       x1[,.(rc6)]%>%
       data.frame(.)
+    print('*****************************************')
     x4 <- #tooltip labels
       x1[,
-         sprintf(
-           "<strong>%s</strong><br/>%g",
+         paste0(
            x1[,irregpcode(rc6)],
-           pva[x1,round(ppm2,-1),on=c(rcx='rc6')] 
-         )]%>%
+           ' ',
+           prettyNum(as.integer(pva[x1,round(ppm2,-1),on=c(rcx='rc6')]), big.mark=",", scientific=FALSE)
+         )
+      ]%>%
       lapply(.,htmltools::HTML)
     x5 <- #leaflet
       leaflet(

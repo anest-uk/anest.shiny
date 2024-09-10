@@ -45,12 +45,15 @@ load('t4dump.Rdata',envir=globalenv())
 # dfnx[length(dfnx)] <- as.Date('2024-07-31')
 #---function lib
 source('c-cleanlib.R')
-print(getwd())
 source('rctree.R') #f240824b() : rctree
 source('headerscript.R') #geo and dfn
 rcx <<- c('SW-','AL-','M--')
 rc6x <- "SW-3--"
 #---function: map colours
+palna <- 
+  c('red','magenta')%>%
+  lighten(.,lightenx)%>%
+  leaflet::colorNumeric(palette=.,domain=0:1)
 palna <- 
   c(.3,0)%>%
   lighten('green',.)%>%
@@ -231,7 +234,87 @@ ui <-
                   id="tabs",
                   
                   
-                  
+                  nav_panel(#---------------------------------------------------index custom
+                    title = "Custom",
+                    
+                    
+                    # tabsetPanel(
+                    #   nav_panel(#-----------------------------------------index custom index
+                    #                        title = "Index",
+                    
+                    grid_container(
+                      layout = c(
+                        "incuti incuma",
+                        "incuwi incuch",
+                        "incusu incubl"
+                      ),
+                      row_sizes = c(
+                        "1fr",
+                        "1fr",
+                        "1fr"
+                      ),
+                      col_sizes = c(
+                        "1fr",
+                        "1fr"
+                      ),
+                      #gap_size = "10px",
+                      grid_card(
+                        area = "incuti", #time-series
+                        full_screen = TRUE,
+                        card_header("Index time-series"),
+                        card_body(
+                          plotOutput("incuti"),
+                          height=gridheight
+                        )
+                      ),
+                      grid_card(
+                        area = "incuma", #map 
+                        full_screen = TRUE,
+                        card_header("Map"),
+                        card_body(
+                          leafletOutput('incuma'),
+                          height=gridheight
+                        )
+                      ),
+                      grid_card(
+                        area = "incuwi", #winding
+                        full_screen = TRUE,
+                        card_header("Index return"),
+                        card_body(
+                          gt_output('incuwi'),
+                          height=gridheight
+                        )
+                      ),
+                      grid_card(
+                        area = "incuch", #characteristics
+                        full_screen = TRUE,
+                        card_header(
+                          "Characteristics"
+                        ),
+                        card_body(
+                          gt_output(outputId = "incuch"),
+                          height=gridheight
+                        )
+                      ),
+                      grid_card(
+                        area = "incusu", #summary
+                        full_screen = TRUE,
+                        card_header("Time-series summary"),
+                        card_body(
+                          gt_output(outputId = "incusu"),
+                          height=gridheight
+                        )
+                      ),
+                      grid_card(
+                        area = "incubl", #blank-unused
+                        full_screen = TRUE
+                      )
+                      
+                      #   )
+                      # )
+                      
+                    )
+                  ),#navpan 
                   nav_panel(#-------------------------------------------------index national
                     title = "National",
                     grid_container(
@@ -372,79 +455,6 @@ ui <-
                       )
                     )
                   ),
-                  nav_panel(#---------------------------------------------------index custom
-                    title = "Custom",
-                    
-                    grid_container(
-                      layout = c(
-                        "incuti incuma",
-                        "incuwi incuch",
-                        "incusu incubl"
-                      ),
-                      row_sizes = c(
-                        "1fr",
-                        "1fr",
-                        "1fr"
-                      ),
-                      col_sizes = c(
-                        "1fr",
-                        "1fr"
-                      ),
-                      #gap_size = "10px",
-                      grid_card(
-                        area = "incuti", #time-series
-                        full_screen = TRUE,
-                        card_header("Index time-series"),
-                        card_body(
-                          plotOutput("incuti"),
-                          height=gridheight
-                        )
-                      ),
-                      grid_card(
-                        area = "incuma", #map 
-                        full_screen = TRUE,
-                        card_header("Map"),
-                        card_body(
-                          leafletOutput('incuma'),
-                          height=gridheight
-                        )
-                      ),
-                      grid_card(
-                        area = "incuwi", #winding
-                        full_screen = TRUE,
-                        card_header("Index return"),
-                        card_body(
-                          gt_output('incuwi'),
-                          height=gridheight
-                        )
-                      ),
-                      grid_card(
-                        area = "incuch", #characteristics
-                        full_screen = TRUE,
-                        card_header(
-                          "Characteristics"
-                        ),
-                        card_body(
-                          gt_output(outputId = "incuch"),
-                          height=gridheight
-                        )
-                      ),
-                      grid_card(
-                        area = "incusu", #summary
-                        full_screen = TRUE,
-                        card_header("Time-series summary"),
-                        card_body(
-                          gt_output(outputId = "incusu"),
-                          height=gridheight
-                        )
-                      ),
-                      grid_card(
-                        area = "incubl", #blank-unused
-                        full_screen = TRUE
-                      )
-                      
-                    )
-                  ),#navpan 
                   nav_panel(#-------------------------------------------------index accuracy
                     title = "Accuracy",
                     grid_container(
@@ -1435,7 +1445,7 @@ server <- function(input, output) {
     renderLeaflet(
       Rincuma()
     )
-  Rincuma <-  
+  Rincuma <- 
     eventReactive(
       eventExpr=
         list(
@@ -1446,9 +1456,9 @@ server <- function(input, output) {
         f240810a(
           rcx=input$incusetr[which(nchar(input$incusetr)==6)],
           x3a=pxosrdo2dd,
-          target=Rsirc(),#input$innata,
+          target=input$innata,
           pva=z110,
-          palx=palna,
+          palx=palcu,
           maxzoom=12
         )
       }
@@ -1661,24 +1671,21 @@ server <- function(input, output) {
       )
       ,
       valueExpr={
-        # x0 <- rep(cobalt()['green'],3)#rep('#00FF00',3)
-        # x0[sort(setdiff(1:3,z321d$geo[rc9==Rsirc(),substr(lab,4,4)]))] <- 
-        #   cobalt()[c('punk','blue')]
-        # x0 <- setNames(x0,as.character(1:3))
-        x0 <- setNames(cobalt()[c('punk','green','blue')],as.character(1:3))
+        x0 <- rep('#00FF00',3)
+        x0[sort(setdiff(1:3,z321d$geo[rc9==Rsirc(),substr(lab,4,4)]))] <- 
+          cobalt()[c('onch','blue')]
+        x0 <- setNames(x0,as.character(1:3))
         x1 <- 
           Rsirc()%>%
           substr(.,1,3)
         x2 <- 
           z321d$ses$estdt[substr(rc3,1,3)==x1]%>%
           .[,qq:=as.factor(substr(rc3,4,4))]%>%
-          .[,rc3:=as.factor(substr(rc3,1,3))]%>%
-          .[,lab:=ifelse(date1==max(date1),qq,NA)]
+          .[,rc3:=as.factor(substr(rc3,1,3))]
         x <- x2%>%
-          ggplot(.,aes(date1,x,color=qq,label=lab))+
+          ggplot(.,aes(date1,x,color=qq))+
           geom_line()+
           geom_point(size=.3)+
-          geom_text_repel()+
           xlab('')+
           ylab(bquote(Delta~P~log~price~change))+
           theme_bw() +
@@ -1705,17 +1712,14 @@ server <- function(input, output) {
     renderPlot(
       Rinloti()
     )
-  # z321d$geo
+  z321d$geo
   output$inloma <- #2/6 inloma
+    
+    
     renderLeaflet(
-      # z321d$geo%>%
-      #   .[substr(rc9,1,3)==substr(Rsirc(),1,3)]%>%
-      #   .[,.(rc6=rc9,col=lighten(cobalt(),lightenx)[4-as.numeric(substr(lab,4,4))])]%>%
-      #f240810b(.)
       z321d$geo%>%
         .[substr(rc9,1,3)==substr(Rsirc(),1,3)]%>%
-        .[,.(rc6=rc9,col=lighten(cobalt(),0.3)[4-as.numeric(substr(lab,4,4))],lab)]%>%
-        .[rc6==Rsirc(),col:=cobalt()[4-as.numeric(substr(lab,4,4))]]%>%
+        .[,.(rc6=rc9,col=lighten(cobalt(),lightenx)[as.numeric(substr(lab,4,4))])]%>%
         f240810b(.)
     )
   output$inlowi <- #3/6 inlowi
@@ -1767,12 +1771,9 @@ server <- function(input, output) {
   
   output$loter <- renderText(
     paste0(
-      irregpcode(Rsirc()),
+      Rsirc(),
       ' is in ',irregpcode(substr(Rsirc(),1,3)),' tertile ',
-      z321d$geo[rc9==Rsirc(),substr(lab,4,4)],
-      ' (',
-      c('low','mid','high')[z321d$geo[rc9==Rsirc(),as.numeric(substr(lab,4,4))]],
-      ')'
+      z321d$geo[rc9==Rsirc(),substr(lab,4,4)]
     )
   )
   output$inlosu <- #5/6 inlosu 
