@@ -1466,16 +1466,14 @@ server <- function(input, output) {
           input$sicobu #sidepanel compute button
         ),
       valueExpr={
-        x <- 
-          isolate(Rincu())%>%
+        isolate(Rincu())%>%
           .[,.(date=as.character(date),xdot)]%>%
           .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
           dcast(.,decade~yr,value.var='xdot')%>%
           .[,decade:=c(1990,2000,2010,2020)]
-        for(i in 2:length(x)) x[[i]] <- ifelse(is.na(x[[i]]),'',as.character(round(x[[i]],3))) #only way to suppress NA??? see SO
-        x
       }
     )
+  
   
   # 4/6 incuch
   output$incuch <- 
@@ -1596,27 +1594,14 @@ server <- function(input, output) {
         f240810a(rcx=.,x3a=pxosrdo2dd,target=Rsirc(),pva=z110,palx=palna,maxzoom=12) 
     )
   
-  
-  
-  Rinnawi <- #3/6 inlowi
-    eventReactive(
-      Rsirc()
-      ,
-      valueExpr={
-        x <- 
-          z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==Rsirc(),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
-          setnames(.,c('date','xdot'))%>%
-          .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
-          dcast(.,decade~yr,value.var='xdot')%>%
-          .[,decade:=c(1990,2000,2010,2020)]
-        for(i in 2:length(x)) x[[i]] <- ifelse(is.na(x[[i]]),'',as.character(round(x[[i]],3))) #only way to suppress NA??? see SO
-        x
-      }
+  output$innawi <- #3/6 innawi
+    render_gt(
+      x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==Rsirc(),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
+        setnames(.,c('date','xdot'))%>%
+        .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
+        dcast(.,decade~yr,value.var='xdot')%>%
+        .[,decade:=c(1990,2000,2010,2020)]
     )
-  
-  output$innawi <-
-    render_gt(Rinnawi())
-  
   x.nat.t4 <- #4/6 innach
     f231204a(2)%>%
     .[,.(
@@ -1640,7 +1625,7 @@ server <- function(input, output) {
           p.bin=gt::html("Range")
         )%>%
         tab_spanner(
-          label = gt::html("£/m<sup>2</sup>"),
+          label = gt::html("Band £/m<sup>2</sup>"),
           columns = c(p.bin, p)
         )%>%
         gt_highlight_rows(
@@ -1676,6 +1661,10 @@ server <- function(input, output) {
       )
       ,
       valueExpr={
+        # x0 <- rep(cobalt()['green'],3)#rep('#00FF00',3)
+        # x0[sort(setdiff(1:3,z321d$geo[rc9==Rsirc(),substr(lab,4,4)]))] <- 
+        #   cobalt()[c('punk','blue')]
+        # x0 <- setNames(x0,as.character(1:3))
         x0 <- setNames(cobalt()[c('punk','green','blue')],as.character(1:3))
         x1 <- 
           Rsirc()%>%
@@ -1716,229 +1705,65 @@ server <- function(input, output) {
     renderPlot(
       Rinloti()
     )
+  # z321d$geo
   output$inloma <- #2/6 inloma
     renderLeaflet(
-      z321d$geo%>% #lab=rc3-q and both parts are used here
-        .[substr(rc9,1,3)==substr(Rsirc(),1,3)]%>% #rc3 match
-        .[,.(
-          rc6=rc9, #name it correctly
-          col=lighten(cobalt()[c(1,2,4)],0.3)[4-as.numeric(substr(lab,4,4))], #lightened colour by tertile q
-          lab #include label 
-        )]%>% 
-        .[
-          rc6==Rsirc(), #target district
-          col:=cobalt()[c(1,2,4)][4-as.numeric(substr(lab,4,4))]  #overwrite target: colour without lightening
-        ]%>% 
-        f240810b(.) #leaflet uses this arg for shading 
+      # z321d$geo%>%
+      #   .[substr(rc9,1,3)==substr(Rsirc(),1,3)]%>%
+      #   .[,.(rc6=rc9,col=lighten(cobalt(),lightenx)[4-as.numeric(substr(lab,4,4))])]%>%
+      #f240810b(.)
+      z321d$geo%>%
+        .[substr(rc9,1,3)==substr(Rsirc(),1,3)]%>%
+        .[,.(rc6=rc9,col=lighten(cobalt(),0.3)[4-as.numeric(substr(lab,4,4))],lab)]%>%
+        .[rc6==Rsirc(),col:=cobalt()[4-as.numeric(substr(lab,4,4))]]%>%
+        f240810b(.)
+    )
+  output$inlowi <- #3/6 inlowi
+    render_gt(
+      x3 <- z321a$pan[,date:=as.character(date)][,c(1,z321a$geo[rc9==Rsirc(),nx]+1),with=F][date=='2009-02-28',date:='2008-12-31']%>%
+        setnames(.,c('date','xdot'))%>%
+        .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
+        dcast(.,decade~yr,value.var='xdot')%>%
+        .[,decade:=c(1990,2000,2010,2020)]
     )
   
-  Rinlowi <- #3/6 inlowi
-    eventReactive(
-      Rsirc()
-      ,
-      valueExpr={
-        x <- copy(z321d$ses$estdt)[nx==copy(z321d$geo)[rc9==Rsirc(),nx][1],.(rc3,date1=as.character(date1),xdot)]%>%
-          .[,.(rc3,date=ifelse(date1=='2009-02-28','2008-12-31',date1),xdot)]%>%
-          .[,.(rc3,date,year=substr(date,1,4),decade=paste0(substr(date,1,3),'0'),yr=substr(date,4,4),xdot)]%>%
-          dcast(.,decade~yr,value.var='xdot')
-        for(i in 2:length(x)) x[[i]] <- ifelse(is.na(x[[i]]),'',as.character(round(x[[i]],3))) #only way to suppress NA??? see SO
-        x
-      }
-    )
-  
-  output$inlowi <-
-    render_gt(Rinlowi())
-  
-  
-  # 4/6 inloch
-  Rinloch <- 
-    eventReactive(
-      eventExpr=Rsirc()
-      ,
-      valueExpr={
-        rsirc <- Rsirc()
-        nfig2=-1
-        x1 <- z321d$geo
-        x2 <- z110[nchar(rcx)==3]
-        x6 <- 
-          z321d$tss[rc3%in%paste0(substr(rsirc,1,3),1:3)]%>%
-          .[,.(nx,rc3q=rc3,rsq=rsqrsitot)]%>%
-          .[]
-        nfig2 <- -1
-        x7 <-
-          z110[x1[lab%in%x6[,rc3q]],on=c(rcx='rc9')]%>%
-          x6[.,on=c(rc3q='lab')]
-        x7%>%
-          .[,
-            .(
-              lab=rc3q[1],
-              frac=sum(nid)/x7[,sum(nid)],
-              nid=round(sum(nid)/1000,1),
-              R2rsi=round(mean(rsq),3),
-              ppm2max=round(max(ppm2),nfig2),
-              ppm2min=round(min(ppm2),nfig2),
-              ppm2=round(sum(pv)/sum(m2),nfig2)
-            ),
-            rc3q
-          ]%>%
-          .[order(-ppm2)]%>%
-          .[,
-            .(
-              lab,
-              frac,
-              nid,
-              R2rsi,
-              p.cus=paste0(
-                formatC(round(ppm2min,-1), format="f", big.mark=",", digits=0),'-',
-                formatC(round(ppm2max,-1), format="f", big.mark=",", digits=0)
-              ),
-              p=formatC(round(ppm2,-1), format="f", big.mark=",", digits=0)              
-            )
-          ]
-        
-      }
-    )
+  x.nat.t4 <- #4/6 inloch
+    f231204a(2)%>%
+    .[,.(
+      p.bin=paste0(
+        formatC(round(ppm2min,-1), format="f", big.mark=",", digits=0),'-',
+        formatC(round(ppm2max,-1), format="f", big.mark=",", digits=0)
+      ),
+      p=formatC(round(ppm2,-1), format="f", big.mark=",", digits=0),
+      np=nx,
+      frac=round(fid,4),
+      R2rsi=round(r2rsi,3),
+      beta=round(b1/mean(b1),2)
+    )]
   output$inloch <- 
     render_gt(
-      Rinloch()%>%
-        gt(.)%>%
+      gt::gt(x.nat.t4)%>%
         cols_label(
-          lab = gt::html('Area<br> tertile'),
-          frac = gt::html('Fraction<br> properties'),
-          nid = gt::html('000s<br>properties'),
+          frac = gt::html('Fraction<br>properties'),
           R2rsi = gt::html("RSI R<sup>2</sup>"),
-          p = gt::html("aggregate"),
-          p.cus=gt::html("range")
+          p = gt::html("Aggregate"),
+          p.bin=gt::html("Range")
         )%>%
-        fmt_percent(
-          columns = c(frac), 
-          decimals = 0
-          )%>%
-        cols_align(
-          align = c("center"),
-          columns = c(p.cus)
-          )%>%
         tab_spanner(
-          label = gt::html("£/m<sup>2</sup>"),
-          columns = c(p.cus, p)
-        )%>%        
+          label = gt::html("Band £/m<sup>2</sup>"),
+          columns = c(p.bin, p)
+        )%>%
         gt_highlight_rows(
           .,
-          rows = 1,
-          fill = lighten(cobalt()[1],.3),
+          columns = gt::everything(),
+          rows = z321a$geo[rc9==Rsirc(),11-nx], #reversed order
+          fill = cobalt()['green'], #"#80bcd8"
+          alpha = 0.1, #v pale
           font_weight = "normal",
-          alpha = 0.2 #v pale
-        )%>%        
-        gt_highlight_rows(
-          .,
-          rows = 2,
-          fill = lighten(cobalt()[2],.3),
-          font_weight = "normal",
-          alpha = 0.2 #v pale
-        )%>%  
-        gt_highlight_rows(
-          .,
-          rows = 3,
-          fill = lighten(cobalt()[4],.3),
-          font_weight = "normal",
-          alpha = 0.2 #v pale
+          target_col = c()
         )
-
-        # gt_highlight_rows(
-        #   .,
-        #   columns = gt::everything(),
-        #   rows = 1:3, #reversed order
-        #   fill = lighten(cobalt()[c(1,2,4)],.7), #"#80bcd8"
-        #   alpha = 0.1, #v pale
-        #   font_weight = "normal",
-        #   target_col = c()
-        # )
-
+      
     )
-  
-  
-  output$incuch <- 
-    render_gt(
-      Rincuch() #index custom index summary
-    )
-  Rincuch <- 
-    eventReactive(
-      eventExpr=
-        list(
-          Rsirc(), #sidepanel target
-          input$sicobu #sidepanel compute button
-        ),
-      valueExpr={
-        z110%>%.[
-          rcx%in%isolate(Rsitr())#]%>%#.[1:10,]%>%
-          ,
-          .(#no beta1
-            frac=round(sum(nid)/z110[nchar(rcx==3),sum(nid)],4),
-            ppm2max=round(max(ppm2),nfig2),
-            ppm2min=round(min(ppm2),nfig2),
-            p=round(sum(pv)/sum(m2),nfig2),
-            R2rsi=Rincu()[1,round(rsqraw,3)]
-          )
-        ]%>%
-          .[,.(
-            frac,
-            R2rsi,
-            p,
-            p.cus=paste0(round(ppm2min,nfig2),'-',round(ppm2max,nfig2))
-          )]%>%
-          gt::gt(.)%>%
-          cols_label(
-            frac = gt::html('Fraction<br>properties'),
-            R2rsi = gt::html("RSI R<sup>2</sup>"),
-            p = gt::html("Aggregate"),
-            p.cus=gt::html("Range")
-          )%>%
-          tab_spanner(
-            label = gt::html("Custom £/m<sup>2</sup>"),
-            columns = c(p.cus, p)
-          )
-      }
-    )
-  
-  
-  
-  # x.nat.t4 <- #4/6 inloch
-  #   f231204a(2)%>%
-  #   .[,.(
-  #     p.bin=paste0(
-  #       formatC(round(ppm2min,-1), format="f", big.mark=",", digits=0),'-',
-  #       formatC(round(ppm2max,-1), format="f", big.mark=",", digits=0)
-  #     ),
-  #     p=formatC(round(ppm2,-1), format="f", big.mark=",", digits=0),
-  #     np=nx,
-  #     frac=round(fid,4),
-  #     R2rsi=round(r2rsi,3),
-  #     beta=round(b1/mean(b1),2)
-  #   )]
-  # output$inloch <- 
-  #   render_gt(
-  #     gt::gt(x.nat.t4)%>%
-  #       cols_label(
-  #         frac = gt::html('Fraction<br>properties'),
-  #         R2rsi = gt::html("RSI R<sup>2</sup>"),
-  #         p = gt::html("Aggregate"),
-  #         p.bin=gt::html("Range")
-  #       )%>%
-  #       tab_spanner(
-  #         label = gt::html("Band £/m<sup>2</sup>"),
-  #         columns = c(p.bin, p)
-  #       )%>%
-  #       gt_highlight_rows(
-  #         .,
-  #         columns = gt::everything(),
-  #         rows = z321a$geo[rc9==Rsirc(),11-nx], #reversed order
-  #         fill = cobalt()['green'], #"#80bcd8"
-  #         alpha = 0.1, #v pale
-  #         font_weight = "normal",
-  #         target_col = c()
-  #       )
-  #     
-  #   )
   
   output$loter <- renderText(
     paste0(
@@ -1967,6 +1792,7 @@ server <- function(input, output) {
         z321a$geo[rc9==Rsirc(),nx]
       )
     )
+  
   
   #---------------------------------------------------------------------not used
   #---not used
@@ -2021,7 +1847,6 @@ server <- function(input, output) {
   
   o <- observe({
     shinyjs::click("sicobu")
-    Sys.sleep(1)
     o$destroy() # destroy observer as it has no use after initial button click
   })
   
