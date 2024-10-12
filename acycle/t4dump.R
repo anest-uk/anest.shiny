@@ -10,6 +10,7 @@ nn<-c('geon','z221','z321','z321a','z321b','z421','z223','z323','z423','z224','z
 nn <- c(nn,c(
   'z321c',
   'z321d', #local tertile ann RSI
-  'z323c'  #local tertile drc PRJ
+  'z323c',  #local tertile drc PRJ
+  'f240915ad'
   ))
 save(list=nn,file='t4dump.Rdata')

@@ -414,6 +414,53 @@ function( #winding performance table
       PerformanceAnalytics::table.CalendarReturns(x6,digits=2)
     x7
   }
+f240915b <-
+function(
+    rc6x='W--2--',
+    outthreshx=c('0.0','0.1','0.5'), #outthreshx='zero'
+    rtk=c('raw','trim','kfx'), #rtk='raw'
+    stat=c('r2','rmse')#, #stat='r2'
+    #nn='f240915ad'
+  ) {
+    print(outthreshx)
+    #getgd(nn)
+    outthreshx <- match.arg(outthreshx)
+    rtk <- match.arg(rtk)
+    stat <- match.arg(stat)
+    x1 <- c(0,.1,.5)[match(outthreshx,c('0.0','0.1','0.5'))]
+    x2 <- c('sser','ssei','ssek')[match(rtk,c('raw','trim','kfx'))]
+    x3 <- c('lab',x2)
+    x4 <- f240915ad
+    x5 <- 
+      x4[rc6==rc6x][outthresh==x1][,x3,with=F]%>%
+      setnames(.,c('lab',rtk))%>%.[]%>%
+      .[,lab:=substr(lab,1,1)]%>%
+      .[,lab:=ifelse(lab=='C','L',lab)]
+    if(stat=='r2') {
+      x5[[2]]<-1-x5[[2]]/x4[rc6==rc6x][outthresh==x1][,sstr]
+    }
+    x5
+  }
+f240915c <-
+function(
+    rc6x='W--2--',
+    outthreshx=c('0.0','0.1','0.5'), 
+    stat=c('r2','rmse'), #stat='r2'
+   # nn='f240915ad',
+    digit=4
+  ){
+    if(!exists('f240915ad')) {print('data.table f240915ad needs to be loaded')}
+    x6 <- 
+      f240915b(rtk='k',rc6x=rc6x,out=outthreshx,stat=stat)%>%
+      .[f240915b(rtk='t',rc6x=rc6x,out=outthreshx,stat=stat),on=c(lab='lab')]%>%
+      .[f240915b(rtk='r',rc6x=rc6x,out=outthreshx,stat=stat),on=c(lab='lab')]
+    labs <- data.table(lab=c('L','N','X','R','A'),relab=c('London','National','Local','Region','Area'))
+    x7 <- labs[x6,on=c(lab='lab')]
+    x8 <- 
+      x7[order(-kfx)]%>%
+      .[,.(relab,kfx=round(kfx,digit),trim=round(trim,digit),raw=round(raw,digit))]
+    x8
+  }
 grepstring <-
 function(#grep for any in x 
     x=regpcode(metro()), #character vector

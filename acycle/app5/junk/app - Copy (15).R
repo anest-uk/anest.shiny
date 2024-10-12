@@ -34,52 +34,31 @@ library(bslib)
 library(gridlayout)
 library(DT)
 
-
-#---------------------------------------local files
-#rdata
-load('t4dump.Rdata',envir=globalenv())
-#r data
-source('f240915ad.R') #manually generated and data.table(.) added
-source('rctree.R') #f240824b() : rctree
-source('headerscript.R') #geo and dfn
-#r code
-source('../c-cleanlib.R')
-print(getwd())
-
 #---------------------------------------from app4
-print(getwd())
 pgmt='dotted'
 pgmc='grey50'
 pgms=.2
 lightenx <- .7
 gridheight="630px"
-
-dfnx <- seq.Date( #same as t4dump but define in code
-  from=as.Date('1994-12-31'),
-  to=as.Date('2024-12-31'),
-  by='y')
-dfnx[length(dfnx)] <- 
-  as.Date('2024-07-31')
+load('t4dump.Rdata',envir=globalenv())
+# dfnx <- seq.Date(from=as.Date('1994-12-31'),to=as.Date('2024-12-31'),by='y')
+# dfnx[length(dfnx)] <- as.Date('2024-07-31')
 #---function lib
+source('c-cleanlib.R')
+print(getwd())
+source('rctree.R') #f240824b() : rctree
+source('headerscript.R') #geo and dfn
 rcx <<- c('SW-','AL-','M--')
-#rc6x <- "SW-3--"
-treex <- ''
-
-tabwihead <- "Index return"
-tabchhead <- "Characteristics"
-tabsuhead <- "Returns summary"
-tabachead <- "Accuracy"
-
+rc6x <- "SW-3--"
 #---function: map colours
-lightenx=.4
-palna <- #national
-  c(lightenx,0)%>% #for non-target, lighten
+palna <- 
+  c(.3,0)%>%
   lighten('green',.)%>%
   leaflet::colorNumeric(palette=.,domain=0:1)
-# palcu <- #custom
-#   lightenx%>% #lighten
-#   lighten('green',.)%>%
-#   leaflet::colorNumeric(palette=.,domain=0:1)
+palcu <- 
+  c('green')%>%
+  lighten(.,.4)%>%
+  leaflet::colorNumeric(palette=.,domain=0:1)
 #---------------------------------------
 ui <- 
   page_navbar(##################################################################
@@ -111,9 +90,9 @@ ui <-
                                        inputId = "incusetr",
                                        label = "Select peers:",
                                        choices = create_tree(f240824b(unique(substr(dir('03rip/'),1,3)))),
-                                       selected = treex, #this
+                                       selected = rc6x, #this
                                        returnValue = "text",
-                                       closeDepth = 0
+                                       closeDepth = 1
                                      )
                                      
                                    )
@@ -191,6 +170,21 @@ ui <-
                                    )
                                  ),
                                  grid_card(
+                                   area = "incuseou", #outlier
+                                   card_body(
+                                     radioButtons(
+                                       inputId = "incuseou",
+                                       label = "Outlier reject %",
+                                       choices = list(
+                                         "0" = "b", #this
+                                         "10" = "a",
+                                         "30" = "value3"
+                                       ),
+                                       width = "100%"
+                                     )
+                                   )
+                                 ),
+                                 grid_card(
                                    area = "incusecr",
                                    card_body(
                                      radioButtons(
@@ -207,23 +201,6 @@ ui <-
                                  
                 )
                 ,
-                conditionalPanel(condition="input.tabs == 'Custom' || input.tabs == 'Accuracy'",
-                                 grid_card(
-                                   area = "incuseou", #outlier
-                                   card_body(
-                                     radioButtons(
-                                       inputId = "incuseou",
-                                       label = "Outlier reject fraction",
-                                       choices = list(
-                                         "0.0" = "0.0",
-                                         "0.1" = "0.1",
-                                         "0.5" = "0.5"
-                                       ),
-                                       width = "100%"
-                                     )
-                                   )
-                                 ),
-                ),
                 conditionalPanel(condition="input.tabs == 'Local'",
                                  grid_card(
                                    area="localrc3",
@@ -259,7 +236,7 @@ ui <-
                     title = "National",
                     grid_container(
                       layout = c(
-                        "innama innati",
+                        "innati innama",
                         "innawi innach ",
                         "innasu .      " #innata
                       ),
@@ -276,7 +253,7 @@ ui <-
                       grid_card( #1,1
                         area = "innati",
                         full_screen = TRUE,
-                        #card_header("Index time-series"),
+                        card_header("Index time-series"),
                         card_body(
                           plotOutput('innati'),
                           height=gridheight
@@ -286,7 +263,7 @@ ui <-
                       grid_card(#1,2
                         area = "innama",
                         full_screen = TRUE,
-                        #card_header("Map"),
+                        card_header("Map"),
                         card_body(
                           leafletOutput('innama'),
                           height=gridheight
@@ -295,7 +272,7 @@ ui <-
                       grid_card(#2,1
                         area = "innawi",
                         full_screen = TRUE,
-                        card_header(tabwihead),
+                        card_header("Winding"),
                         card_body(
                           gt_output('innawi'),
                           height=gridheight
@@ -304,7 +281,7 @@ ui <-
                       grid_card(#2,2
                         area='innach',
                         full_screen = TRUE,
-                        card_header(tabchhead),
+                        card_header("Price band characteristics"),
                         card_body(
                           gt_output('innach'),
                           height=gridheight
@@ -313,7 +290,7 @@ ui <-
                       grid_card(#3,1
                         area = "innasu",
                         full_screen = TRUE,
-                        card_header(tabsuhead),
+                        card_header("Time-series summary"),
                         card_body(
                           gt_output('innasu'),
                           height=gridheight
@@ -326,7 +303,7 @@ ui <-
                     title = "Local",
                     grid_container(
                       layout = c(
-                        "inloma inloti",
+                        "inloti inloma",
                         "inlowi inloch",
                         "inlosu inlobl"
                       ),
@@ -343,7 +320,9 @@ ui <-
                       grid_card(#1,1
                         area = "inloti",
                         full_screen = TRUE,
-                        #card_header("Index time-series"),
+                        card_header(
+                          "Index time-series                                                                                                                                                                                                                                                                                                  "
+                        ),
                         card_body(
                           plotOutput('inloti'),
                           height=gridheight
@@ -352,7 +331,7 @@ ui <-
                       grid_card(#1,2
                         area = "inloma",
                         full_screen = TRUE,
-                        #card_header("Map"),
+                        card_header("Map"),
                         card_body(
                           leafletOutput('inloma'),
                           height=gridheight
@@ -361,7 +340,7 @@ ui <-
                       grid_card(#2,1
                         area = "inlowi",
                         full_screen = TRUE,
-                        card_header(tabwihead),
+                        card_header("Winding"),
                         card_body(
                           gt_output('inlowi'),
                           height=gridheight
@@ -370,7 +349,9 @@ ui <-
                       grid_card(#2,2
                         area = "inloch",
                         full_screen = TRUE,
-                        card_header(tabchhead),
+                        card_header(
+                          "Geo-bin characteristics table"
+                        ),
                         card_body(
                           gt_output('inloch'),
                           height=gridheight
@@ -379,7 +360,7 @@ ui <-
                       grid_card(#3,1
                         area = "inlosu",
                         full_screen = TRUE,
-                        card_header(tabsuhead),
+                        card_header("Time-series summary"),
                         card_body(
                           gt_output('inlosu'),
                           height=gridheight
@@ -396,7 +377,7 @@ ui <-
                     
                     grid_container(
                       layout = c(
-                        "incuma incuti",
+                        "incuti incuma",
                         "incuwi incuch",
                         "incusu incubl"
                       ),
@@ -413,7 +394,7 @@ ui <-
                       grid_card(
                         area = "incuti", #time-series
                         full_screen = TRUE,
-                        #card_header("Index time-series"),
+                        card_header("Index time-series"),
                         card_body(
                           plotOutput("incuti"),
                           height=gridheight
@@ -422,7 +403,7 @@ ui <-
                       grid_card(
                         area = "incuma", #map 
                         full_screen = TRUE,
-                        #card_header("Map"),
+                        card_header("Map"),
                         card_body(
                           leafletOutput('incuma'),
                           height=gridheight
@@ -431,7 +412,7 @@ ui <-
                       grid_card(
                         area = "incuwi", #winding
                         full_screen = TRUE,
-                        card_header(tabwihead),
+                        card_header("Index return"),
                         card_body(
                           gt_output('incuwi'),
                           height=gridheight
@@ -440,7 +421,9 @@ ui <-
                       grid_card(
                         area = "incuch", #characteristics
                         full_screen = TRUE,
-                        card_header(tabchhead),
+                        card_header(
+                          "Characteristics"
+                        ),
                         card_body(
                           gt_output(outputId = "incuch"),
                           height=gridheight
@@ -449,7 +432,7 @@ ui <-
                       grid_card(
                         area = "incusu", #summary
                         full_screen = TRUE,
-                        card_header(tabsuhead),
+                        card_header("Time-series summary"),
                         card_body(
                           gt_output(outputId = "incusu"),
                           height=gridheight
@@ -466,113 +449,99 @@ ui <-
                     title = "Accuracy",
                     grid_container(
                       layout = c(
-                        "inacta" #accuracy
-                        # "inacth area1 area2",
-                        # "area4 .     .    ",
-                        # "area5 .     .    ",
-                        # "area6 .     .    ",
-                        # ".     .     .    "
+                        "inacth area1 area2",
+                        "area4 .     .    ",
+                        "area5 .     .    ",
+                        "area6 .     .    ",
+                        ".     .     .    "
                       ),
                       row_sizes = c(
-                        "1fr"#,
-                        # "0.49fr",
-                        # "0.45fr",
-                        # "0.46fr",
-                        # "2.67fr"
+                        "0.93fr",
+                        "0.49fr",
+                        "0.45fr",
+                        "0.46fr",
+                        "2.67fr"
                       ),
                       col_sizes = c(
-                        #"0.9fr",
-                        #"1.1fr",
+                        "0.9fr",
+                        "1.1fr",
                         "1fr"
                       ),
                       gap_size = "10px",
-                      
-                      
                       grid_card(
-                        area = "inacta",
-                         full_screen = TRUE,
-                        card_header(tabachead),
-                       card_body(
-                          gt_output(
-                            outputId = "inacta"
-                          ) #index accuracy table
+                        area = "area1",
+                        card_body(
+                          "R2",
+                          grid_container(
+                            layout = c(
+                              "area0 area1 area2"
+                            ),
+                            gap_size = "10px",
+                            col_sizes = c(
+                              "1fr",
+                              "1fr",
+                              "1fr"
+                            ),
+                            row_sizes = c(
+                              "0.7000000000000001fr"
+                            ),
+                            grid_card(area = "area0", card_body("All")),
+                            grid_card(
+                              area = "area1",
+                              card_body(
+                                "Outlier trim
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        "
+                              )
+                            ),
+                            grid_card(area = "area2", card_body("k-fold"))
+                          )
                         )
+                      ),
+                      grid_card(
+                        area = "area2",
+                        card_body(
+                          "MSE
+                                                                                                                                                                                                                                                                                                                    ",
+                          grid_container(
+                            layout = c(
+                              "area0 area1 area2"
+                            ),
+                            gap_size = "10px",
+                            col_sizes = c(
+                              "1fr",
+                              "1fr",
+                              "1fr"
+                            ),
+                            row_sizes = c(
+                              "0.8fr"
+                            ),
+                            grid_card(area = "area0", card_body("All")),
+                            grid_card(area = "area1", card_body("Outlier trim")),
+                            grid_card(
+                              area = "area2",
+                              card_body(
+                                "k-fold
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        "
+                              )
+                            )
+                          )
+                        )
+                      ),
+                      grid_card(
+                        area = "area4",
+                        card_body(
+                          "Custom
+                                                                                                                                                                                                                                                                                                                    "
+                        )
+                      ),
+                      grid_card(area = "area5", card_body("National")),
+                      grid_card(area = "area6", card_body("Local")),
+                      grid_card(
+                        area = "inacth",
+                        card_body("this is just a table!")
                       )
-                      
-                      # grid_card(
-                      #   area = "area1",
-                      #   card_body(
-                      #     "R2",
-                      #     grid_container(
-                      #       layout = c(
-                      #         "area0 area1 area2"
-                      #       ),
-                      #       gap_size = "10px",
-                      #       col_sizes = c(
-                      #         "1fr",
-                      #         "1fr",
-                      #         "1fr"
-                      #       ),
-                      #       row_sizes = c(
-                      #         "0.7000000000000001fr"
-                      #       ),
-                      #       grid_card(area = "area0", card_body("All")),
-                      #       grid_card(
-                      #         area = "area1",
-                      #         card_body(
-                      #           "Outlier trim
-                      #                                                                                                                                                                                                                                                                                                                                                                                                                                   "
-                      #         )
-                      #       ),
-                      #       grid_card(area = "area2", card_body("k-fold"))
-                      #     )
-                      #   )
-                      # ),
-                      # grid_card(
-                      #   area = "area2",
-                      #   card_body(
-                      #     "MSE
-                      #                                                                                                                                                                                                                                                                                               ",
-                      #     grid_container(
-                      #       layout = c(
-                      #         "area0 area1 area2"
-                      #       ),
-                      #       gap_size = "10px",
-                      #       col_sizes = c(
-                      #         "1fr",
-                      #         "1fr",
-                      #         "1fr"
-                      #       ),
-                      #       row_sizes = c(
-                      #         "0.8fr"
-                      #       ),
-                      #       grid_card(area = "area0", card_body("All")),
-                      #       grid_card(area = "area1", card_body("Outlier trim")),
-                      #       grid_card(
-                      #         area = "area2",
-                      #         card_body(
-                      #           "k-fold
-                      #                                                                                                                                                                                                                                                                                                                                                                                                                                   "
-                      #         )
-                      #       )
-                      #     )
-                      #   )
-                      # ),
-                      # grid_card(
-                      #   area = "area4",
-                      #   card_body(
-                      #     "Custom
-                      #                                                                                                                                                                                                                                                                                               "
-                      #   )
-                      # ),
-                      # grid_card(area = "area5", card_body("National")),
-                      # grid_card(area = "area6", card_body("Local")),
-                      # grid_card(
-                      #   area = "inacth",
-                      #   card_body("this is just a table!")
-                      # )#final card
-                    )#grid container
-                  ),#nav panel
+                    )
+                  ),
                   nav_panel(#-------------------------------------------------index download
                     title = "Download",
                     grid_container(
@@ -1462,45 +1431,6 @@ server <- function(input, output) {
     renderPlot({
       Rincuti()#+
     })
-  Rincuti <- # plot(incu) 
-    eventReactive(
-      eventExpr=#-sicobu *compute*
-        input$sicobu
-      ,
-      valueExpr=
-        {
-          x <- Rincu()
-          x1 <- 
-            ggplot(
-              x,
-              aes(date,x)
-            )+
-            geom_line()+
-            geom_point(size=.3)+
-            ylim(Rinlorange())+
-            xlab('')+
-            ylab(bquote(Delta~P~log~price~change))+
-            theme_bw() +
-            theme(
-              axis.line = element_line(colour = "black"),
-              panel.grid.major = element_line(size=pgms,linetype = pgmt,color=pgmc),
-              panel.grid.minor = element_blank(),
-              panel.border = element_blank(),
-              panel.background = element_blank(),
-              text=element_text(size=16,face='plain'),
-              axis.line.y.left=element_line(size=.1),
-              axis.line.x.bottom=element_line(size=.1),
-              legend.position='none')+
-            scale_x_date(
-              breaks = as.Date(c('1995-01-01','2000-01-01','2010-01-01','2020-01-01','2024-01-01')),
-              date_labels = "%Y",
-              limits=c(as.Date(c('1994-12-31','2027-12-31')))
-            )
-          x1
-        }
-    )
-  
-  
   output$incuma <- #custom map 
     renderLeaflet(
       Rincuma()
@@ -1634,7 +1564,6 @@ server <- function(input, output) {
           ggplot(.,aes(date1,x))+
           geom_line()+
           geom_point(size=.3)+
-          ylim(Rinlorange())+
           xlab('')+
           ylab(bquote(Delta~P~log~price~change))+
           theme_bw() +
@@ -1666,6 +1595,8 @@ server <- function(input, output) {
       z321a$geo[nx==z321a$geo[rc9==Rsirc(),nx],rc9]%>%
         f240810a(rcx=.,x3a=pxosrdo2dd,target=Rsirc(),pva=z110,palx=palna,maxzoom=12) 
     )
+  
+  
   
   Rinnawi <- #3/6 inlowi
     eventReactive(
@@ -1726,7 +1657,7 @@ server <- function(input, output) {
   
   output$innasu <- #5/6 innasu 
     render_gt(
-      zoo(z321a$pan[,-'date'],z321$pan[,date])%>%
+      zoo(z321$pan[,-'date'],z321$pan[,date])%>%
         table.Stats(.,digits=3)%>%
         data.table(.,keep.rownames = T)%>%
         `[`(.,i=-c(1,2,7))%>%
@@ -1737,26 +1668,6 @@ server <- function(input, output) {
   
   #-------------------------------------------------------------------index local
   #nb this all copy/paste from inna
-  
-  Rinlorange <- 
-    eventReactive(
-      list(
-        Rsirc(),
-        input$sicobu
-      )
-      ,
-      valueExpr={
-        x1 <- 
-          Rsirc()%>%
-          substr(.,1,3)
-        x2 <- 
-          z321d$ses$estdt[substr(rc3,1,3)==x1]%>%
-          .[,range(c(0,x))*1.1]
-        print(x2)
-        x2
-      }
-    )
-  
   Rinloti <- #1/6 inloti 
     eventReactive(
       list(
@@ -1779,7 +1690,6 @@ server <- function(input, output) {
           geom_line()+
           geom_point(size=.3)+
           geom_text_repel()+
-          ylim(Rinlorange())+
           xlab('')+
           ylab(bquote(Delta~P~log~price~change))+
           theme_bw() +
@@ -1812,15 +1722,12 @@ server <- function(input, output) {
         .[substr(rc9,1,3)==substr(Rsirc(),1,3)]%>% #rc3 match
         .[,.(
           rc6=rc9, #name it correctly
-          col=
-            cobalt()[c(1,2,4)]%>% #tertile colours ascending freq
-            lighten(.,lightenx*1.5)%>% #lighten all
-            .[4-as.numeric(substr(lab,4,4))], #high
+          col=lighten(cobalt()[c(1,2,4)],0.3)[4-as.numeric(substr(lab,4,4))], #lightened colour by tertile q
           lab #include label 
         )]%>% 
         .[
           rc6==Rsirc(), #target district
-          col:=cobalt()[c(4,2,1)][as.numeric(substr(lab,4,4))]  #overwrite target: colour without lightening
+          col:=cobalt()[c(1,2,4)][4-as.numeric(substr(lab,4,4))]  #overwrite target: colour without lightening
         ]%>% 
         f240810b(.) #leaflet uses this arg for shading 
     )
@@ -1841,6 +1748,7 @@ server <- function(input, output) {
   
   output$inlowi <-
     render_gt(Rinlowi())
+  
   
   # 4/6 inloch
   Rinloch <- 
@@ -1863,7 +1771,7 @@ server <- function(input, output) {
         x7%>%
           .[,
             .(
-              lab=paste0(substr(rc3q[1],1,3),'T',substr(rc3q[1],4,4)), #insert 'T' ('Tertile') for legibility
+              lab=rc3q[1],
               frac=sum(nid)/x7[,sum(nid)],
               nid=round(sum(nid)/1000,1),
               R2rsi=round(mean(rsq),3),
@@ -1893,7 +1801,7 @@ server <- function(input, output) {
   output$inloch <- 
     render_gt(
       Rinloch()%>%
-        gt::gt(.)%>%
+        gt(.)%>%
         cols_label(
           lab = gt::html('Area<br> tertile'),
           frac = gt::html('Fraction<br> properties'),
@@ -1903,31 +1811,31 @@ server <- function(input, output) {
           p.cus=gt::html("range")
         )%>%
         fmt_percent(
-          columns = c(frac),
+          columns = c(frac), 
           decimals = 0
-        )%>%
+          )%>%
         cols_align(
           align = c("center"),
           columns = c(p.cus)
-        )%>%
+          )%>%
         tab_spanner(
           label = gt::html("£/m<sup>2</sup>"),
           columns = c(p.cus, p)
-        )%>%
+        )%>%        
         gt_highlight_rows(
           .,
           rows = 1,
           fill = lighten(cobalt()[1],.3),
           font_weight = "normal",
           alpha = 0.2 #v pale
-        )%>%
+        )%>%        
         gt_highlight_rows(
           .,
           rows = 2,
           fill = lighten(cobalt()[2],.3),
           font_weight = "normal",
           alpha = 0.2 #v pale
-        )%>%
+        )%>%  
         gt_highlight_rows(
           .,
           rows = 3,
@@ -1935,31 +1843,19 @@ server <- function(input, output) {
           font_weight = "normal",
           alpha = 0.2 #v pale
         )
-      
+
+        # gt_highlight_rows(
+        #   .,
+        #   columns = gt::everything(),
+        #   rows = 1:3, #reversed order
+        #   fill = lighten(cobalt()[c(1,2,4)],.7), #"#80bcd8"
+        #   alpha = 0.1, #v pale
+        #   font_weight = "normal",
+        #   target_col = c()
+        # )
+
     )
   
-  output$inlosu <- #5/6 inlosu 
-    render_gt(
-      zoo(
-        as.matrix(
-          z321d$pan[,-1] #annual local
-        )%>%
-          .[,paste0(substr(Rsirc(),1,3),1:3)],
-        z321d$pan[,date]
-      )%>%
-        table.Stats(.,digits=3)%>%
-        data.table(
-          .,
-          keep.rownames = T
-        )%>%
-        `[`(.,i=-c(1,2,7))%>%
-        setnames(
-          .,
-          c('.',paste0(substr(Rsirc(),1,3),1:3))
-        )
-    ) 
-  
-  #6/6 blank
   
   output$incuch <- 
     render_gt(
@@ -2004,6 +1900,46 @@ server <- function(input, output) {
       }
     )
   
+  
+  
+  # x.nat.t4 <- #4/6 inloch
+  #   f231204a(2)%>%
+  #   .[,.(
+  #     p.bin=paste0(
+  #       formatC(round(ppm2min,-1), format="f", big.mark=",", digits=0),'-',
+  #       formatC(round(ppm2max,-1), format="f", big.mark=",", digits=0)
+  #     ),
+  #     p=formatC(round(ppm2,-1), format="f", big.mark=",", digits=0),
+  #     np=nx,
+  #     frac=round(fid,4),
+  #     R2rsi=round(r2rsi,3),
+  #     beta=round(b1/mean(b1),2)
+  #   )]
+  # output$inloch <- 
+  #   render_gt(
+  #     gt::gt(x.nat.t4)%>%
+  #       cols_label(
+  #         frac = gt::html('Fraction<br>properties'),
+  #         R2rsi = gt::html("RSI R<sup>2</sup>"),
+  #         p = gt::html("Aggregate"),
+  #         p.bin=gt::html("Range")
+  #       )%>%
+  #       tab_spanner(
+  #         label = gt::html("Band £/m<sup>2</sup>"),
+  #         columns = c(p.bin, p)
+  #       )%>%
+  #       gt_highlight_rows(
+  #         .,
+  #         columns = gt::everything(),
+  #         rows = z321a$geo[rc9==Rsirc(),11-nx], #reversed order
+  #         fill = cobalt()['green'], #"#80bcd8"
+  #         alpha = 0.1, #v pale
+  #         font_weight = "normal",
+  #         target_col = c()
+  #       )
+  #     
+  #   )
+  
   output$loter <- renderText(
     paste0(
       irregpcode(Rsirc()),
@@ -2014,6 +1950,14 @@ server <- function(input, output) {
       ')'
     )
   )
+  output$inlosu <- #5/6 inlosu 
+    render_gt(
+      zoo(z321$pan[,-'date'],z321$pan[,date])%>%
+        table.Stats(.,digits=3)%>%
+        data.table(.,keep.rownames = T)%>%
+        `[`(.,i=-c(1,2,7))%>%
+        setnames(.,c('.',paste0('np=',1:10)))
+    ) 
   
   output$nationalnp <- 
     renderText(
@@ -2023,20 +1967,6 @@ server <- function(input, output) {
         z321a$geo[rc9==Rsirc(),nx]
       )
     )
-  
-  
-  output$inacta <- 
-    render_gt( #index accuracy table
-      f240915c(Rsirc(),ou=input$incuseou)%>%
-          gt::gt(.)%>%
-          cols_label(
-            relab = gt::html("RSI R<sup>2</sup>"),
-            kfx = gt::html("Cross-validated"),
-            trim = gt::html("Outlier trim"),
-            raw=gt::html("All observations")
-          )
-    )
-  
   
   #---------------------------------------------------------------------not used
   #---not used
@@ -2195,9 +2125,42 @@ server <- function(input, output) {
         }
     )
   
-  
-  
-  
+  Rincuti <- # plot(incu) 
+    eventReactive(
+      eventExpr=#-sicobu *compute*
+        input$sicobu
+      ,
+      valueExpr=
+        {
+          x <- Rincu()
+          x1 <- 
+            ggplot(
+              x,
+              aes(date,x)
+            )+
+            geom_line()+
+            geom_point(size=.3)+
+            xlab('')+
+            ylab(bquote(Delta~P~log~price~change))+
+            theme_bw() +
+            theme(
+              axis.line = element_line(colour = "black"),
+              panel.grid.major = element_line(size=pgms,linetype = pgmt,color=pgmc),
+              panel.grid.minor = element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank(),
+              text=element_text(size=16,face='plain'),
+              axis.line.y.left=element_line(size=.1),
+              axis.line.x.bottom=element_line(size=.1),
+              legend.position='none')+
+            scale_x_date(
+              breaks = as.Date(c('1995-01-01','2000-01-01','2010-01-01','2020-01-01','2024-01-01')),
+              date_labels = "%Y",
+              limits=c(as.Date(c('1994-12-31','2027-12-31')))
+            )
+          x1
+        }
+    )
   
   
 }
