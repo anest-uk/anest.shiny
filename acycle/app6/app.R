@@ -82,8 +82,8 @@ palna <- #national
 #   leaflet::colorNumeric(palette=.,domain=0:1)
 #---------------------------------------
 ui <- 
-  page_navbar(##################################################################
-              sidebar = sidebar(
+  page_navbar(
+              sidebar = sidebar(#----------------------------------index-sidebar
                 Title="Sidebar",
                 layout = c("customrc6",
                            "nationalrc6",
@@ -258,19 +258,16 @@ ui <-
                                  )
                 )
                 
-              ),
+              ),#---------------------------------------------=end-index-sidebar
               #footer = tags$div("powered by Acycle"),
               title = "Acycle",
               selected = "Index",
               collapsible = TRUE,
               theme = bslib::bs_theme(),
-              nav_panel(#--------------------------------------------------------------index
+              nav_panel(#------------------------------------------toolbar-index
                 title = "Index",
                 tabsetPanel(
                   id="tabs",
-                  
-                  
-                  
                   nav_panel(#-------------------------------------------------index national
                     title = "Index",
                     conditionalPanel(#start conditional
