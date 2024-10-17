@@ -2,6 +2,8 @@
 .Rproj.user
 #not exists:
 .Ruserdata
+#can get large
+*\.Rkeep
 #unwanted extensions
 *\.csv
 *\.dcf
