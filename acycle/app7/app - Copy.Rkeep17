@@ -263,12 +263,14 @@ ui <- page_navbar( #UI ---------------------------------------------------------
                                      )
                                      
                    ),
-                   nav_panel(title = "Index",#toolbar 1/3: index ----
+                   nav_panel(title = "Index",#toolbar-1/3 ----
                              tabsetPanel(id="tabs",# ----
-                                         nav_panel(title = "Index",#tab: index ----
+                                         nav_panel(title = "Index",# ----
                                                    conditionalPanel(condition = "input.intybu == 'n'", # ---- 
+                                                                    
+                                                                    
                                                                     grid_container(
-                                                                      layout = c( #inna: innama1.1 innati1.2 innawi2.1 innach2.2 innasu3.1----
+                                                                      layout = c(
                                                                         "innama innati",
                                                                         "innawi innach ",
                                                                         "innasu .      " #innata
@@ -335,7 +337,7 @@ ui <- page_navbar( #UI ---------------------------------------------------------
                                                    ,
                                                    conditionalPanel(condition = "input.intybu == 'l'",# ----
                                                                     grid_container(
-                                                                      layout = c( #inlo: inloma1.1 inloti1.2 inlowi2.1 inloch2.2 inlosu3.1 inlobl3.2----
+                                                                      layout = c(
                                                                         "inloma inloti",
                                                                         "inlowi inloch",
                                                                         "inlosu inlobl"
@@ -406,7 +408,7 @@ ui <- page_navbar( #UI ---------------------------------------------------------
                                                    ,
                                                    conditionalPanel(condition = "input.intybu == 'c'", #----
                                                                     grid_container(
-                                                                      layout = c( #incu: incuma1.1 incuti1.2 incuwi2.1 incuch2.2 incusu3.1 incubl3.2----
+                                                                      layout = c(
                                                                         "incuma incuti",
                                                                         "incuwi incuch",
                                                                         "incusu incubl"
@@ -474,7 +476,7 @@ ui <- page_navbar( #UI ---------------------------------------------------------
                                                                     )
                                                    )
                                          ),
-                                         nav_panel(title = "Accuracy",#tab: accuracy-----------------------------------------
+                                         nav_panel(title = "Accuracy",#index-accuracy-start -----------------------------------------
                                                    grid_container(
                                                      layout = c(
                                                        "inacta" #accuracy
@@ -584,7 +586,7 @@ ui <- page_navbar( #UI ---------------------------------------------------------
                                                      # )#final card
                                                    )#grid container
                                          ),#nav panel
-                                         nav_panel(title = "Download",#tab: download -----------------------------------------------
+                                         nav_panel(title = "Download",#index download -----------------------------------------------
                                                    grid_container(
                                                      layout = c(
                                                        "indocu",
@@ -732,7 +734,7 @@ ui <- page_navbar( #UI ---------------------------------------------------------
                                          )
                              )
                    ),
-                   nav_panel(title = "Cycle",#toolbar 2/3: cycle ------------------------------------
+                   nav_panel(title = "Cycle",#toolbar-2/3 ------------------------------------
                              grid_container(
                                layout = c(
                                  "cyse cyta"
@@ -798,7 +800,7 @@ ui <- page_navbar( #UI ---------------------------------------------------------
                                  area = "cyta",
                                  card_body(
                                    tabsetPanel(
-                                     nav_panel(title = "Value/Momentum",#tab: cycle ----------------------------------------
+                                     nav_panel(title = "Value/Momentum",#nav_panel cycle ----------------------------------------
                                                grid_container(
                                                  layout = c(
                                                    "cyvmcc cyvmcr",
@@ -853,7 +855,7 @@ ui <- page_navbar( #UI ---------------------------------------------------------
                                                  )
                                                )
                                      ),
-                                     nav_panel( title = "Factor/Beta",#tab: factor/beta --------------------------------------------
+                                     nav_panel( title = "Factor/beta",# nav_panel Factor/beta --------------------------------------------
                                                 
                                                 grid_container(
                                                   layout = c(
@@ -905,7 +907,7 @@ ui <- page_navbar( #UI ---------------------------------------------------------
                                                   )
                                                 )
                                      ),
-                                     nav_panel(title = "Cross-section",#tab: cycle xsect ----------------------------------------------
+                                     nav_panel(title = "Cross-section",# nav_panel cycle xsect ----------------------------------------------
                                                grid_container(
                                                  layout = c(
                                                    "area0",
@@ -1055,7 +1057,7 @@ ui <- page_navbar( #UI ---------------------------------------------------------
                                                  )
                                                )
                                      ),
-                                     nav_panel(title = "Time-series",#tab: time-series --------------------------------
+                                     nav_panel(title = "Time-series",#nav-panel-Time-series-v --------------------------------
                                                grid_container(
                                                  layout = c(
                                                    "area0",
@@ -1176,7 +1178,7 @@ ui <- page_navbar( #UI ---------------------------------------------------------
                                                )
                                      )
                                      ,
-                                     nav_panel(title = "Download",#tab: download -----------------------------------
+                                     nav_panel(title = "Download",#nav-panel-Download-v -----------------------------------
                                                grid_container(
                                                  layout = c(
                                                    "cydofa",
@@ -1317,7 +1319,7 @@ ui <- page_navbar( #UI ---------------------------------------------------------
                              )
                    )
                    ,
-                   nav_panel(title = "Data", #toolbar 3/3: data -------
+                   nav_panel(title = "Data", #toolbar-3/3 -------
                              grid_container(
                                layout = c(
                                  "daipbu daipsu  daipfi",
@@ -1454,16 +1456,16 @@ ui <- page_navbar( #UI ---------------------------------------------------------
 #next: try an example of extracting to a script the input-read, generating output
 #then replace with equivalent using f14a
 #server ------------------------------------------------------------------------
-server <- function(input, output) {#server                                   -------------------------------------
+server <- function(input, output) {#server -------------------------------------
   #Index
   #Reactive
   #--Reactive
   #input-read
-  Rsita   <- eventReactive(#I target rc6 uppercase                           ----
+  Rsita   <- eventReactive(#I target rc6 uppercase ----
                            input$innata,
                            toupper(input$innata)
   )
-  Rsirc   <- eventReactive(#I update incusetr tree with Rsita()              ----
+  Rsirc   <- eventReactive(#I update incusetr tree with Rsita()----
                            list(
                              Rsita()
                            )
@@ -1481,7 +1483,7 @@ server <- function(input, output) {#server                                   ---
                            }
   )
   #---------custom
-  Rincurc <- eventReactive(#I vector character rc6 from Rsitr or Rincusefi   ----
+  Rincurc <- eventReactive(#I vector character rc6 from Rsitr or Rincusefi ----
                            eventExpr= 
                              input$sicobu,#-sicobu *compute*
                            valueExpr=
@@ -1494,7 +1496,7 @@ server <- function(input, output) {#server                                   ---
                                x
                              }
   )
-  Rsitr   <- eventReactive(#I incusetr custom tree rc6                       ----
+  Rsitr   <- eventReactive(#I incusetr custom tree rc6 ----
                            eventExpr= 
                              input$sicobu,#-sicobu *compute*
                            valueExpr=
@@ -1504,7 +1506,7 @@ server <- function(input, output) {#server                                   ---
                              }
   )
   
-  Rincusefi <- eventReactive(#I read incusefi$datatpath file                 ----
+  Rincusefi <- eventReactive(#I read incusefi$datatpath file----
                              eventExpr=
                                input$sicobu,#-sicobu *compute*
                              valueExpr=
@@ -1516,7 +1518,7 @@ server <- function(input, output) {#server                                   ---
                                }
   )
   
-  Rinlorange <- eventReactive(#I local x-range                               ----
+  Rinlorange <- eventReactive(#I local x-range ----
                               list(
                                 Rsirc(),
                                 input$sicobu
@@ -1536,7 +1538,7 @@ server <- function(input, output) {#server                                   ---
   
   #compute
   #compute
-  Rincu   <- eventReactive(#C custom rsi solve                               ----
+  Rincu   <- eventReactive(#C custom rsi solve----
                            eventExpr=#rsi solve
                              list(
                                input$sicobu,#-sicobu *compute*
@@ -1581,7 +1583,7 @@ server <- function(input, output) {#server                                   ---
   
   
   #output
-  Rincuti <- eventReactive(#O custom tseries plot                            ----
+  Rincuti <- eventReactive(#O custom tseries plot ----
                            eventExpr=input$sicobu
                            ,
                            valueExpr=
@@ -1618,7 +1620,7 @@ server <- function(input, output) {#server                                   ---
   )
   
   
-  Rincuma <- eventReactive(#O custom leaflet map                             ----
+  Rincuma <- eventReactive(#O custom leaflet map ----
                            eventExpr=
                              list(
                                input$innata, #sidepanel target
@@ -1635,7 +1637,7 @@ server <- function(input, output) {#server                                   ---
                              )
                            }
   )  
-  Rincuwi <- eventReactive(#O custom winding table                           ----
+  Rincuwi <- eventReactive(#O custom winding table----
                            eventExpr=
                              list(
                                Rsirc(), #sidepanel target
@@ -1652,7 +1654,7 @@ server <- function(input, output) {#server                                   ---
                              x
                            }
   )
-  Rincuch <- eventReactive(#O custom characteristics table                   ----
+  Rincuch <- eventReactive(#O custom characteristics table ----
                            eventExpr=
                              list(
                                Rsirc(), #sidepanel target
@@ -1689,7 +1691,7 @@ server <- function(input, output) {#server                                   ---
                                )
                            }
   )
-  Rincusu <- eventReactive(#O custom tseries summary                         ----
+  Rincusu <- eventReactive(#O custom tseries summary ----
                            eventExpr=
                              list(
                                Rsirc(), #sidepanel target
@@ -1714,7 +1716,7 @@ server <- function(input, output) {#server                                   ---
   
   # 4/6 incuch
   
-  Rinnati <- eventReactive(#O national tseries plot                          ----
+  Rinnati <- eventReactive(#O national tseries plot ----
                            list(
                              Rsirc(),
                              input$sicobu
@@ -1747,7 +1749,7 @@ server <- function(input, output) {#server                                   ---
                              x
                            }
   )
-  Rinnawi <- eventReactive(#O national winding table                         ----
+  Rinnawi <- eventReactive(#O national winding table ----
                            Rsirc()
                            ,
                            valueExpr={
@@ -1761,7 +1763,7 @@ server <- function(input, output) {#server                                   ---
                              x
                            }
   )
-  Rinloti <- eventReactive(#O local tseries plot                             ----
+  Rinloti <- eventReactive(#O local tseries plot ----
                            list(
                              Rsirc(),
                              input$sicobu
@@ -1805,7 +1807,7 @@ server <- function(input, output) {#server                                   ---
                              x
                            }
   )
-  Rinlowi <- eventReactive(#O local winding table                            ----
+  Rinlowi <- eventReactive(#O local winding table----
                            Rsirc()
                            ,
                            valueExpr={
@@ -1817,7 +1819,7 @@ server <- function(input, output) {#server                                   ---
                              x
                            }
   )
-  Rinloch <- eventReactive(#O local characteristics table                    ----
+  Rinloch <- eventReactive(#O local characteristics table ----
                            eventExpr=Rsirc()
                            ,
                            valueExpr={
@@ -1863,7 +1865,7 @@ server <- function(input, output) {#server                                   ---
                              
                            }
   )
-  Rincuch <- eventReactive(#O custom characteristics                         ----
+  Rincuch <- eventReactive(#O custom characteristics ----
                            eventExpr=
                              list(
                                Rsirc(), #sidepanel target
@@ -1901,7 +1903,7 @@ server <- function(input, output) {#server                                   ---
                            }
   )
   #observe
-  o <- observe(#observer clicks sicobu sidebar 'compute' button once         ----
+  o <- observe(#observer clicks sicobu sidebar 'compute' button once ----
                {
                  shinyjs::click("sicobu")
                  Sys.sleep(1)
@@ -1911,70 +1913,10 @@ server <- function(input, output) {#server                                   ---
   
   #--Render
   #local
-  # national---------------------------------------------------------------  ----
-  output$innama <-renderLeaflet(#national map                         1.1    ----
-                                z321a$geo[nx==z321a$geo[rc9==Rsirc(),nx],rc9]%>%
-                                  f240810a(rcx=.,x3a=pxosrdo2dd,target=Rsirc(),pva=z110,palx=palna,maxzoom=12) 
-  )
-  output$innati <- renderPlot(#national tseries plot                  1.2    ----
-                              Rinnati()
-  )
-  output$innawi <-  render_gt(Rinnawi())#national winding table       2.1    ----
-  x.nat.t4 <- #4/6 innach
-    f231204a(2)%>%
-    .[,.(
-      p.bin=paste0(
-        formatC(round(ppm2min,-1), format="f", big.mark=",", digits=0),'-',
-        formatC(round(ppm2max,-1), format="f", big.mark=",", digits=0)
-      ),
-      p=formatC(round(ppm2,-1), format="f", big.mark=",", digits=0),
-      np=nx,
-      frac=round(fid,4),
-      R2rsi=round(r2rsi,3),
-      beta=round(b1/mean(b1),2)
-    )]
-  output$innach <- render_gt( #national characteristics table         2.2    ----
-                              gt::gt(x.nat.t4)%>%
-                                cols_label(
-                                  frac = gt::html('Fraction<br>properties'),
-                                  R2rsi = gt::html("RSI R<sup>2</sup>"),
-                                  p = gt::html("Aggregate"),
-                                  p.bin=gt::html("Range")
-                                )%>%
-                                tab_spanner(
-                                  label = gt::html("£/m<sup>2</sup>"),
-                                  columns = c(p.bin, p)
-                                )%>%
-                                gt_highlight_rows(
-                                  .,
-                                  columns = gt::everything(),
-                                  rows = z321a$geo[rc9==Rsirc(),11-nx], #reversed order
-                                  fill = cobalt()['green'], #"#80bcd8"
-                                  alpha = 0.1, #v pale
-                                  font_weight = "normal",
-                                  target_col = c()
-                                )
-                              
-  )
-  
-  output$innasu <-render_gt(#national summary table                   3.1    ----
-                            zoo(z321a$pan[,-'date'],z321$pan[,date])%>%
-                              table.Stats(.,digits=3)%>%
-                              data.table(.,keep.rownames = T)%>%
-                              `[`(.,i=-c(1,2,7))%>%
-                              setnames(.,c('.',paste0('np=',1:10)))
-  ) 
-  
-  # 6/6 innata - target, input
-  
-  
-  
-  # local----
-  # custom----
-  output$inloti <- renderPlot(#local Rinloti() timeseries plot               ----
+  output$inloti <- renderPlot(#local Rinloti() timeseries plot ----
                               Rinloti()
   )
-  output$inloma <- renderLeaflet(#local map                                  ----
+  output$inloma <- renderLeaflet(#local map ----
                                  z321d$geo%>% #lab=rc3-q and both parts are used here
                                    .[substr(rc9,1,3)==substr(Rsirc(),1,3)]%>% #rc3 match
                                    .[,.(
@@ -1992,9 +1934,9 @@ server <- function(input, output) {#server                                   ---
                                    f240810b(.) #fields rc6,col
   )
   
-  output$inlowi <- render_gt(#local winding table Rinlowi()                  ----
+  output$inlowi <- render_gt(#local winding table Rinlowi() ----
                              Rinlowi())
-  output$inloch <-  render_gt(#local characteristics table Rinloch()         ----
+  output$inloch <-  render_gt(#local characteristics table Rinloch() ----
                               Rinloch()%>%
                                 gt::gt(.)%>%
                                 cols_label(
@@ -2040,7 +1982,7 @@ server <- function(input, output) {#server                                   ---
                                 )
                               
   )
-  output$inlosu <- render_gt(#local su                                       ----
+  output$inlosu <- render_gt(#local su ----
                              zoo(
                                as.matrix(
                                  z321d$pan[,-1] #annual local
@@ -2059,7 +2001,7 @@ server <- function(input, output) {#server                                   ---
                                  c('.',paste0(substr(Rsirc(),1,3),1:3))
                                )
   ) 
-  output$loter  <- renderText(#local tertile                                 ----
+  output$loter  <- renderText(#local tertile ----
                               paste0(
                                 irregpcode(Rsirc()),
                                 ' is in ',irregpcode(substr(Rsirc(),1,3)),' tertile ',
@@ -2074,30 +2016,90 @@ server <- function(input, output) {#server                                   ---
   #6/6 blank
   
   #custom
-  output$incuma <- renderLeaflet(Rincuma())#custom map                       ----
+  output$incuma <- renderLeaflet(Rincuma())#custom map ----
   
-  output$incuwi <- render_gt(Rincuwi())#custom winding table                 ----
+  output$incuwi <- render_gt(Rincuwi())#custom winding table ----
   
-  output$incuch <- render_gt(#custom characteristics table                   ----
+  output$incuch <- render_gt(#custom characteristics table ----
                              Rincuch() 
   )
-  output$incusu <- render_gt(#custom summary table                           ----
+  output$incusu <- render_gt(#custom summary table----
                              Rincusu() #custom summary table
   )
   output$incuti <-   renderPlot({#custom tseries plot -----
     Rincuti()  })
   #national
-  output$incuch <- render_gt(#custom characteristics table                   ----
+  output$innati <- renderPlot(#national tseries plot----
+                              Rinnati()
+  )
+  
+  output$innama <-renderLeaflet(#national map ----
+                                z321a$geo[nx==z321a$geo[rc9==Rsirc(),nx],rc9]%>%
+                                  f240810a(rcx=.,x3a=pxosrdo2dd,target=Rsirc(),pva=z110,palx=palna,maxzoom=12) 
+  )
+  
+  output$innawi <-  render_gt(Rinnawi())#national winding table ----
+  x.nat.t4 <- #4/6 innach
+    f231204a(2)%>%
+    .[,.(
+      p.bin=paste0(
+        formatC(round(ppm2min,-1), format="f", big.mark=",", digits=0),'-',
+        formatC(round(ppm2max,-1), format="f", big.mark=",", digits=0)
+      ),
+      p=formatC(round(ppm2,-1), format="f", big.mark=",", digits=0),
+      np=nx,
+      frac=round(fid,4),
+      R2rsi=round(r2rsi,3),
+      beta=round(b1/mean(b1),2)
+    )]
+  
+  output$innach <- render_gt( #national characteristics table ----
+                              gt::gt(x.nat.t4)%>%
+                                cols_label(
+                                  frac = gt::html('Fraction<br>properties'),
+                                  R2rsi = gt::html("RSI R<sup>2</sup>"),
+                                  p = gt::html("Aggregate"),
+                                  p.bin=gt::html("Range")
+                                )%>%
+                                tab_spanner(
+                                  label = gt::html("£/m<sup>2</sup>"),
+                                  columns = c(p.bin, p)
+                                )%>%
+                                gt_highlight_rows(
+                                  .,
+                                  columns = gt::everything(),
+                                  rows = z321a$geo[rc9==Rsirc(),11-nx], #reversed order
+                                  fill = cobalt()['green'], #"#80bcd8"
+                                  alpha = 0.1, #v pale
+                                  font_weight = "normal",
+                                  target_col = c()
+                                )
+                              
+  )
+  
+  output$innasu <-render_gt(#national summary table ----
+                            zoo(z321a$pan[,-'date'],z321$pan[,date])%>%
+                              table.Stats(.,digits=3)%>%
+                              data.table(.,keep.rownames = T)%>%
+                              `[`(.,i=-c(1,2,7))%>%
+                              setnames(.,c('.',paste0('np=',1:10)))
+  ) 
+  
+  # 6/6 innata - target, input
+  
+  
+  
+  output$incuch <- render_gt(#custom characteristics table ----
                              Rincuch() #custom index summary
   )
-  output$nationalnp <- renderText(#national P-band for fixed graphics scale  ---- 
+  output$nationalnp <- renderText(#national P-band for fixed graphics scale ---- 
                                   paste0(
                                     Rsirc(),
                                     " is in national P-band ",
                                     z321a$geo[rc9==Rsirc(),nx]
                                   )
   )
-  output$inacta <- render_gt( #accuracy table                                ----
+  output$inacta <- render_gt( #accuracy table ----
                               f240915c(Rsirc(),ou=input$incuseou)%>%
                                 gt::gt(.)%>%
                                 cols_label(
@@ -2110,11 +2112,11 @@ server <- function(input, output) {#server                                   ---
   
   
   #not used
-  output$perfnatt1 <- render_gt(#national triangular counts table            ----
+  output$perfnatt1 <- render_gt(#national triangular counts table ----
                                 x1 <- dcast(coread(geon[nx==z321a$geo[rc9==Rsirc(),nx],rc9],steprip)[,.N,.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))],buy~sell,value.var='N') #
   )
   #not used
-  output$perfnatt2 <-  render_gt(#national triangular mean table             ----
+  output$perfnatt2 <-  render_gt(#national triangular mean table ----
                                  x2 <-  
                                    dcast(
                                      coread(
@@ -2130,7 +2132,7 @@ server <- function(input, output) {#server                                   ---
                                      buy~sell,value.var='r')
   )
   #not used
-  output$binchacus <-  render_gt(#custom characteristics table               ----
+  output$binchacus <-  render_gt(#custom characteristics table----
                                  z110[rcx%in%input$customtree[which(nchar(input$customtree)==6)],.(pc=irregpcode(rcx),ppm2=round(ppm2,-1),nid,m2bar=round(m2/nid),pvbar=round(pv/(1000*nid)))]%>%
                                    gt::gt(.)%>%
                                    fmt_number(columns = 1:4,sep_mark = ",",decimals=0) %>% 
@@ -2149,7 +2151,7 @@ server <- function(input, output) {#server                                   ---
                                      table.align = "left"
                                    )
   )
-  output$geocusl <- renderLeaflet(#custom map                                ----
+  output$geocusl <- renderLeaflet(#custom map ----
                                   input$customtree[which(nchar(input$customtree)==6)]%>%
                                     f240810a(rcx=.,x3a=pxosrdo2dd,target=Rsirc(),pva=z110,palx=pal,maxzoom=12)
   )
