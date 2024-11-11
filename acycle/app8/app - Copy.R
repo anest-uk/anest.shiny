@@ -1,9 +1,8 @@
 
 #---------------------------------Header-----------------------------------1----
+{
   library(gt)
   library(leaflet)
-load('app8 working script/.Rdata')
-if(T) {
   #dependencies
   if(F) {
     f241020aFun()
