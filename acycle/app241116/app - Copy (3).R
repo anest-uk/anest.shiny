@@ -41,8 +41,11 @@ zerorefC =F#, #set reference asset NULL
 showtradetriangle=F
 nfig2 <- -1 #for ppm2
 nfig3 <- 4 #for frac
+verbose <- T
+if(verbose) print('enter ')
 
-ui <- grid_page(#----
+ui <-      #ui----
+  grid_page(
                 layout = c(
                   "header  header",
                   "sidebar area2 "
@@ -272,11 +275,10 @@ ui <- grid_page(#----
                     )
                   )
                 )
-)#ui grid_page ----
-
-server <- function(input, output) {
-  aaa <- 0
-  #------------------------global
+)#ui grid_page ends
+server <-  #server----
+  function(input, output) {
+  #---global   section----
   x00G <<- copy(f241021ad)
   geoplusG <<- copy(x00G$geoplus)[,let(lab,des)]
   estdtG <<- copy(x00G$estdt)[,.(nx,ii,date,xdotd,days,xdot,x)]
@@ -299,52 +301,58 @@ server <- function(input, output) {
     ]%>%
     z110G[.,on=c(rcx='rc6')]%>%
     .[,.(nx,gx,lab,rc3,rc6=rcx,qtile)]
-  
   #------------------------reactive + global
-  #---target
-  geotR <- #geo
-    eventReactive( 
-      rc6tR(),
-      {
-        x <- 
-          geoaR()%>%
-          .[rc6==rc6tR()]
-        geotG <<- copy(x)
-        x
-      }
-    )
-  
-  
-  #----------------------------custom section
-  
-  #-rc6
-  rc6cuR <- 
-    eventReactive( 
-      rc6tR(), #+control
-      {
-        x <- rc6tR()
-        rc6cuG <<- copy(x)
-        x
-      }
-    )
-  
-  #-geo
-  geocuR <- 
-    eventReactive( 
-      rc6cuR(),
-      {
-        x <- 
-          data.table(rc9=rc6cuG,nx=0,lab='CU00') #rc6cuG -> rc6cuR()
-        geocuG <<- copy(x)
-        x
-      }
-    )
-  
- 
-nxcuR <- 
+  #---target   section----
+  geotR <-     #---target geo compute   ----
+  eventReactive( 
+    rc6tR(),
+    {
+if(verbose) print('enter geotR')
+      x <- 
+        geoaR()%>%
+        .[rc6==rc6tR()]
+      geotG <<- copy(x)
+      x
+    }
+  )
+  rc6tR <-     #---target rc6 reformat  ----
+  eventReactive( 
+    input$rc6tC,
+    {
+if(verbose) print('enter rc6tR')
+      x <- 
+        regpcode(input$rc6tC)
+      rc6tG <<- copy(x)
+      x
+    }
+  )
+  #---custom   section----
+  rc6cuR <-    #---custom rc6 control   ----
+  eventReactive( 
+    rc6tR(), #+control
+    {
+if(verbose) print('enter rc6cuR')
+      x <- rc6tR()
+      rc6cuG <<- copy(x)
+      x
+    }
+  )
+  geocuR <-    #---custom geo compute   -----
+  eventReactive( 
+    rc6cuR(),
+    {
+if(verbose) print('enter geocuR')
+      x <- 
+        data.table(rc9=rc6cuG,nx=0,lab='CU00') #rc6cuG -> rc6cuR()
+      geocuG <<- copy(x)
+      x
+    }
+  )
+  nxcuR <-     #---custom nx compute    ----
   eventReactive( 
     geocuR(),
     {
+if(verbose) print('enter nxcuR')
       x <- 
         geocuR()[,.(nx,rc3,qtile,lab)]%>%
         unique(.)
@@ -352,144 +360,160 @@ nxcuR <-
       x
     }
   )
-
-rsicuR <- #custom rsi
+  rsicuR <-    #---custom rsi compute   ----
   eventReactive( 
     list(
       geocuR(),
       estdtaR() #for dates
     ),
     {
+if(verbose) print('enter rsicuR')
       geox <- geocuR()
       dfnx <- estdtaG[,sort(unique(date))]
+      #geox <- rbind(geox,geox[,rc9:='E--1--'])
+      #geox[,nx:=1]
+      #browser()
       x <- 
         f240710a(  #returns estdt, kfoldsse, all
           nxx=0,
           stepripx='03rip/', 
-          dfn=sort(unique(c(min(x101G,dfnx)))),    #R
+          dfn=sort(unique(c(min(x101G),dfnx))),    #R
           geo=geox, #R
           outthresh=.1,
           kfold=5,
           sectorwise=T, 
           usepra=F, 
-          newused=c('.','N','U'),
-          houseflat=c('.','H','F') 
+          newused=c('.'),
+          houseflat=c('.') 
         )
       rsicuG <<- copy(x)
       x
     }
   )
-estdtcuR <- 
+  estdtcuR <-  #---custom estdt select  ----
   eventReactive( 
     list(
       rsicuR(),
       rc6tR() #added.... debugging...
     ),
     {
+if(verbose) print('enter estdtcuR')
       x <- rsicuR()$estdt
       estdtcuG <<- copy(x)
       x
     }
   )
-
-rsscuR <- 
+  rsscuR <-    #---custom rss select    ----
   eventReactive( 
     list(
       rsicuR()
     ),
     {
+if(verbose) print('enter rsscuR')
       x <- cbind(rsicuR()$kfoldsse,rsicuR()$all)
       rsscuG <<- copy(x)
       x
     }
   )
-  
-  
-  
-  #----------------------------end custom section
-  
-  
-  #---qtile
-  geoqR <- #geo
-    eventReactive( 
-      list(geoaR(),geotR()#,
-           #rsscuR(),estdtcuR() #these added here just to provide dependency and hence drive global assignment of custom
-           ),
-      {
-        x <- geoaR()%>% 
-          .[geotR()[,.(qtile)],
-            on=c(qtile='qtile')]
-        geoaG <<- copy(x)
-        x
-      }
+  #---qtile    section----
+  geoqR <-     #---qtile geo select     ----
+  eventReactive( 
+    list(geoaR(),geotR()#,
+         #rsscuR(),estdtcuR() #these added here just to provide dependency and hence drive global assignment of custom
+    ),
+    {
+if(verbose) print('enter geoqR')
+      x <- geoaR()%>% 
+        .[geotR()[,.(qtile)],
+          on=c(qtile='qtile')]
+      geoqG <<- copy(x)
+      x
+    }
+  )
+  nxqR <-      #---qtile nx compute     ----
+  eventReactive( 
+    geoqR(),
+    {
+if(verbose) print('enter nxqR')
+      x<- 
+        geoqR()[,.(nx,rc3,qtile,lab)]%>%
+        unique(.)
+      nxqG <<- copy(x)
+      x
+    }
+  )
+  estdttR <-   #---target estdt compute ----
+  eventReactive( 
+    nxqR(),
+    {
+if(verbose) print('enter estdttR')
+      x <- 
+        estdtG[nxqR(),on=c(nx='nx')]%>%
+        .[,.(nx,date,ii,lab,rc3,qtile,xdotd,days,xdot,x)]
+      estdttG <<- copy(x)
+      x
+    }
+  )
+  #---area     section----
+  geoaR <-     #---area geo compute     ----
+  eventReactive( 
+    rc6tR(),
+    {
+if(verbose) print('enter geoaR')
+      x <- geo0G%>%
+        .[rc3==substr(rc6tR(),1,3)] 
+      geoaG <<- copy(x)
+      x
+    }
+  )
+  nxaR <-      #---area nx select       ----
+  eventReactive( 
+    geoaR(),
+    {
+if(verbose) print('enter nxaR')
+      x <- 
+        geoaR()[,.(nx,rc3,qtile,lab)]%>%
+        unique(.)
+      nxaG <<- copy(x)
+      x
+    }
+  )
+  estdtaR <-   #---area estdt compute   ----
+  eventReactive( 
+    nxaR(),
+    {
+if(verbose) print('enter estdtaR')
+      x <- 
+        estdtG[nxaR(),on=c(nx='nx')]%>%
+        .[,.(nx,date,ii,lab,rc3,qtile,xdotd,days,xdot,x)]
+      estdtaG <<- copy(x)
+      x
+    }
+  )
+  rssaR <-     #---area rss compute     ----
+  eventReactive( 
+    nxaR(),
+    {
+if(verbose) print('enter rssaR')
+      x <- 
+        rssG[nxaR(),on=c(nx='nx')]
+      rssaG <<- copy(x)
+      x
+    }
+  )
+  #---combo    section                  ----
+  estdtxR <- #----112 x(t)              ----
+    eventReactive(
+      list(estdtcuR(),estdtaR())
+      ,
+      rbind(
+        estdtcuR()[,.(nx,date,xdotd,days,xdot,x,lab,ii,qtile=0,rc3=geocuR()[,substr(rc9,1,3)])],
+        estdtaR() [,.(nx,date,xdotd,days,xdot,x,lab,ii,qtile,rc3)]
+      )[,qq:=as.factor(qtile)]
     )
-  nxqR <- #nx
-    eventReactive( 
-      geoqR(),
-      {
-        x<- 
-          geoqR()[,.(nx,rc3,qtile,lab)]%>%
-          unique(.)
-        nxqG <<- copy(x)
-        x
-      }
-    )
-  estdttR <- #estdt
-    eventReactive( 
-      nxqR(),
-      {
-        x <- 
-          estdtG[nxqR(),on=c(nx='nx')]%>%
-          .[,.(nx,date,ii,lab,rc3,qtile,xdotd,days,xdot,x)]
-        estdttG <<- copy(x)
-        x
-      }
-    )
-  #---area
-  geoaR <- #geo
-    eventReactive( 
-      rc6tR(),
-      {
-        x <- geo0G%>%
-          .[rc3==substr(rc6tR(),1,3)] 
-        geoaG <<- copy(x)
-        x
-      }
-    )
-  nxaR <- #nx
-    eventReactive( 
-      geoaR(),
-      {
-        x <- 
-          geoaR()[,.(nx,rc3,qtile,lab)]%>%
-          unique(.)
-        nxaG <<- copy(x)
-        x
-      }
-    )
-  estdtaR <- #estdt
-    eventReactive( 
-      nxaR(),
-      {
-        x <- 
-          estdtG[nxaR(),on=c(nx='nx')]%>%
-          .[,.(nx,date,ii,lab,rc3,qtile,xdotd,days,xdot,x)]
-        estdtaG <<- copy(x)
-        x
-      }
-    )
-  rssaR <- #rss
-    eventReactive( 
-      nxaR(),
-      {
-        x <- 
-          rssG[nxaR(),on=c(nx='nx')]
-        rssaG <<- copy(x)
-        x
-      }
-    )
-  #-----utility
-  ylimR <-
+
+  #---utility  section----
+  ylimR <-     #ylim                    ----
     eventReactive( 
       estdtaR(),
       {
@@ -499,22 +523,10 @@ rsscuR <-
         x
       }
     )
-  rc6tR <-
-    eventReactive( 
-      input$rc6tC,
+  #---display  section----
+  x111D <- eventReactive(list(rc6tR(),rc6cuR()),#map ----
       {
-        x <- 
-          regpcode(input$rc6tC)
-        rc6tG <<- copy(x)
-        x
-      }
-    )
-  #----------------------display
-  #---1.1.1 map-----------------------------------------------------------------
-  x111D <-          
-    eventReactive( 
-      list(rc6tR(),rc6cuR()),
-      {
+if(verbose) print('enter x111D')
         x <- 
           geoaR()%>% 
           .[,.(
@@ -549,47 +561,33 @@ rsscuR <-
     renderLeaflet(
       x111D()
     )
-  #----1.1.2 x(t)---------------------------------------------------------------
-#some crap from before  
-      pgmt='dotted'
-    pgmc='grey50'
-    pgms=.2
-    lightenx <- .7
-    gridheight="630px"
-    colx <- cobalt()[c(4,2,1)]
-
   
   
-  x112D <- 
-    eventReactive(
-      input$tslider,
-      #list(input$tslider,rc6tR(),estdtaR(),estdtcuR()),
-      {
-        x <- plot(1:10)
-        if(F){
+  x112D <- eventReactive(list(input$tslider,rc6tR(),estdtxR()),#----112 x(t)                ----
+    {
+if(verbose) print('enter x112D')
+      x <- plot(1:10)
+      print(estdtcuR()[1,])
         print(estdtcuR()[1,])#<<<<<<<<<<<<<<<<dev here
         print(estdtaR()[1,])
-        # x2a <- estdtcuG[,.(nx,date,xdotd,days,xdot,x,lab,ii,qtile=0,rc3='E--')] #rethink the last two<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<problem in this routing
-        # x2b <- estdtaG[,.(nx,date,xdotd,days,xdot,x,lab,ii,qtile,rc3)] #rethink the last two
-        # x2c <- rbind(x2a,x2b)%>%
-          #.[,.SD[,.(ii,date,lab,x=x-ifelse(input$tslider==0,0,x[input$tslider]))],.(qtile)]%>%
-          # .[,.SD[,.(ii,date,lab,x)],.(qtile)]%>%
-          # .[,qq:=as.factor(qtile)]%>%
-          # .[,labx:=ifelse(date==max(date),lab,NA)]
+        x2c <- estdtxR()%>%
+        .[,.SD[,.(ii,date,lab,x=x-ifelse(input$tslider==0,0,x[input$tslider]))],.(qtile)]%>%
+        .[,.SD[,.(ii,date,lab,x)],.(qtile)]%>%
+        .[,qq:=as.factor(qtile)]%>%
+        .[,labx:=ifelse(date==max(date),lab,NA)]
         x0 <- setNames(cobalt()[c('punk','green','blue')],as.character(1:3))
-        x3 <- estdtaR()[,.SD[,.(ifelse(input$tslider==0,0,x[input$tslider]))],.(qtile)][,mean(V1)]#base value for rebase level
+        x3 <- estdtxR()[,.SD[,.(ifelse(input$tslider==0,0,x[input$tslider]))],.(qtile)][,mean(V1)]#base value for rebase level
         x2 <-
-          estdtaR()[,.SD[,.(ii,date,lab,x=x-ifelse(input$tslider==0,0,x[input$tslider]))],.(qtile)]%>%
+          estdtxR()[,.SD[,.(ii,date,lab,x=x-ifelse(input$tslider==0,0,x[input$tslider]))],.(qtile)]%>%
           .[,qq:=as.factor(qtile)]%>%
           .[,labx:=ifelse(date==max(date),lab,NA)]
-        #x2 <- x2c #<<<<<<<<<<<<<hacks end here   
         x <- x2%>%
           ggplot(.,aes(date,x,color=qq,label=labx))+
           geom_hline(yintercept=0,linewidth=.4,linetype = "dotted",color='grey40')+
           geom_line()+
           geom_point(size=.3)+
           geom_text_repel()+
-          #ylim(ylimR()-x3)+
+          ylim(ylimR()-x3)+
           xlab('')+
           ylab(bquote(Delta~P~log~price~change))+
           theme_bw() +
@@ -610,21 +608,20 @@ rsscuR <-
             limits=c(as.Date(c('1994-12-31','2027-12-31')))
           )
         x112G <<- copy(x)
-        }
-        x
-      }
-    )
+      #}
+      x
+    }
+  )
   output$x112 <- 
     renderPlot(
       x112D()
     )
   
-  #----1.2.1 winding
-  x121D <- 
+  x121D <- #----121 winding             ----
     eventReactive(
       list(input$tslider,rc6tR(),x101G),
       {
-        #browser()
+if(verbose) print('enter x121D')
         tslidex <- input$tslider
         d1 <- #daily
           seq.Date(from=min(x101G),to=max(x101G),by='d')
@@ -660,11 +657,12 @@ rsscuR <-
       x121D()
     )
   
-  #----1.2.2 characteristics
-  x122D <- 
+  
+  x122D <- #----122 characteristics     ----
     eventReactive(
       list(rc6tR(),rssaR()),
       {
+if(verbose) print('enter x122D')
         x <- 
           z110G[rssaR(),on=c(rcx='rc6')]%>%
           .[,.(
@@ -710,10 +708,12 @@ rsscuR <-
       x122D()
     )
   
-  #----1.3.1 summary
-  x131D <- eventReactive(
+  
+  x131D <- #----131 summary             ----
+    eventReactive(
     list(input$tslider,estdtaR()),
     {
+if(verbose) print('enter x131D')
       x <- 
         estdtaR()%>%
         .[ii>=input$tslider]%>%
@@ -741,10 +741,12 @@ rsscuR <-
       x131D()
     )
   
-  #----1.3.2 trade summary (2 tables)
-  x132D <- eventReactive(
+  
+  x132D <- #----132 trade summary (2)   ----
+    eventReactive(
     list(input$tslider,geoqR(),estdttR()),
     {
+if(verbose) print('enter x132D')
       steprip <- '03rip/'
       x0 <-
         geoqR()[,rc6]%>%
@@ -788,10 +790,12 @@ rsscuR <-
   output$x132b <- 
     render_gt(x132D()[[2]])
   
-  #----2.1.1  accuracy  tbin
-  x211D <- eventReactive(
+  
+  x211D <- #----211  accuracy  tbin     ----
+    eventReactive(
     list(rc6tR(),geoaR()),
     {
+if(verbose) print('enter x211G')
       pc6tx <- rc6tR()
       x1 <-
         data.table(tbin=1:3,freq=c('lo','hi','an'))
@@ -820,11 +824,13 @@ rsscuR <-
   output$x211 <- 
     render_gt(x211D())
   
-  #----2.2.1  accuracy  trim
-  x221D <- eventReactive(
+  
+  x221D <- #----221  accuracy  trim     ----
+    eventReactive(
     list(rc6tR(),geoaR()),
     {
-      pc6tx <- rc6tR()
+ if(verbose) print('enter x221D')
+     pc6tx <- rc6tR()
       x1 <-
         data.table(itrim=1:3,threshold=c('0.0','0.1','0.5'))
       x2 <-
@@ -853,10 +859,12 @@ rsscuR <-
   output$x221 <- 
     render_gt(x221D())
   
-  #----2.3.1  accuracy  in/out
-  x231D <- eventReactive(
+  
+  x231D <- #----231  accuracy  in/out   ----
+    eventReactive(
     list(rc6tR(),geoaR()),
     {
+if(verbose) print('enter x231D')
       pc6tx <- rc6tR()
       x1 <-
         rssG%>%
@@ -886,10 +894,12 @@ rsscuR <-
   output$x231 <- 
     render_gt(x231D())
   
-  #----3.1.1 listing
-  x311D <- eventReactive(
+  
+  x311D <- #----311 listing             ----
+    eventReactive(
     list(estdttR(),geoqR()), #geo0G is not reactive
     {
+if(verbose) print('enter x311D')
       x0 <-
         geo0G[z110G,on=c(rc6='rcx'),nomatch=NULL]%>%
         .[,.(ppm2=sum(pv)/sum(m2)),.(gx,nx)]%>%
@@ -944,10 +954,12 @@ rsscuR <-
       x311D()
     )
   
-  #----4.1.1 constituents
-  x411D <- eventReactive(
+  
+  x411D <- #----411 constituents        ----
+    eventReactive(
     list(geo0G), #geo0G is not reactive
     {
+if(verbose) print('enter 411')
       x1 <- 
         geo0G[,.(rc3,rc6,qtile)]%>%
         z110G[.,on=c(rcx='rc6')]%>%
