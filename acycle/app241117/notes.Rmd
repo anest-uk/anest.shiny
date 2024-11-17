@@ -1,0 +1,26 @@
+
+This is an internal development version  
+These informal notes will be updated as development proceeds  
+The app is not self-explanatory at present and needs proper introduction  
+
+Geographic scope:  
+  -  These are the 'local indices'  
+  -  The current scope includes the local model, pre-calculated, on 104 postcode areas  
+  -  Most areas have been optimally split into 3 price-bands, smaller ones into 2 or just 1, depending on datapoints available  
+  -  The indices total 286 and span the country exactly: every property belongs to exactly 1 index  
+  -  The controls are (1) select district, AKA 'outward postcode', or 'outcode' (2) a 'base date' which is used to on the first page, displays 'indices' 'summary' and 'trade recap'  
+  
+ Limitations:  
+  -  Trade recap is available for area examples (BA, B, E, AL) only at present  
+  -  The time-binning is as before dynamic bins currently 46 in total  
+  -  Accuracy is reported as 'mean square error' i.e. the error in the repeat sales regression  
+ -  labelling is abbreviated and needs explanation  
+  -  units are delta log price and are decimal  
+  -  only one time-binning of 3 is displayed   
+  -  only local geo-bins are displayed  
+  -  sensitivity to outlier removal is reported but the resulting indices not shown  
+  -  custom index is not implemented / not shown  
+  -  upload and measure acccuracy of 3rd party index is not available  
+  -  download index is not available  
+  -  numerical results are not checked in detail  
+  -  The cycle model is not shown  
