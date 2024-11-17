@@ -135,9 +135,8 @@ grid_page(
                 "Price return summary"
               ),
               card_body(#--------------x121
-                gt::gt_output('x121a'),
-                gt::gt_output('x121b'),
-                height=gridheight
+                gt::gt_output('x121')#,
+                #height=gridheight
               )
               
             ),
@@ -443,15 +442,15 @@ function(input, output) {
       x
     }
   )
-  estdtlR <-   #---local estdt compute ----
+  estdttR <-   #---target estdt compute ----
   eventReactive( 
     nxqR(),
     {
-      if(verbose) print('enter estdtlR')
+      if(verbose) print('enter estdttR')
       x <- 
         estdtG[nxqR(),on=c(nx='nx')]%>%
         .[,.(nx,date,ii,lab,rc3,qtile,xdotd,days,xdot,x)]
-      estdtlG <<- copy(x)
+      estdttG <<- copy(x)
       x
     }
   )
@@ -507,15 +506,10 @@ function(input, output) {
   eventReactive(
     list(estdtcuR(),estdtaR())
     ,
-    {
-      x <- 
-        rbind(
-          estdtcuR()[,.(nx,date,xdotd,days,xdot,x,lab,ii,qtile=0,rc3=geocuR()[,substr(rc9,1,3)])],
-          estdtaR() [,.(nx,date,xdotd,days,xdot,x,lab,ii,qtile,rc3)]
-        )[,qq:=as.factor(qtile)]
-      estdtxG <<- copy(x)
-      x
-    }
+    rbind(
+      estdtcuR()[,.(nx,date,xdotd,days,xdot,x,lab,ii,qtile=0,rc3=geocuR()[,substr(rc9,1,3)])],
+      estdtaR() [,.(nx,date,xdotd,days,xdot,x,lab,ii,qtile,rc3)]
+    )[,qq:=as.factor(qtile)]
   )
   
   #---utility  section----
@@ -619,67 +613,50 @@ function(input, output) {
       x112D()
     )
   
-  f121 <- function(
-    estdt=estdtlR(),
-    tslidex=input$tslider,
-    drange=range(x101G)
-  ) {
-    d1 <- #daily
-      seq.Date(from=drange[1],to=drange[2],by='d')
-    d2 <- #resample: yearend + final date
-      x101G%>%
-      ifelse(.==as.Date('2009-02-28'),as.Date('2008-12-31'),.)%>%
-      as.Date(.)%>%
-      .[-1]
-    x1 <-
-      estdt%>% #local
-      .[.(date=d1),on=c(date='date'),roll=-Inf,j=.(date,xdotd)]%>%
-      .[,.(ii=1:.N,date,x=cumsum(xdotd))]%>%
-      .[.(date2=d2),on=c(date='date2')]%>%
-      .[,.(date,x,xdot=c(x[1],diff(x)),ii=1:.N)]%>%
-      .[,.(ii,date,xdot,x)]%>%
-      .[,.(date,xdot)]%>%
-      .[date==as.Date('2009-02-28'),let(date,as.Date('2008-12-31'))]%>%
-      .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
-      dcast(.,decade~yr,value.var='xdot')%>%
-      .[,decade:=c(1990,2000,2010,2020)]
-    for(i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]),'',as.character(round(x1[[i]],3)))
-    x1
-  }
-  
-  x121D <- eventReactive(list(input$tslider,estdtlR()),#winding----
-                  {
-                    if(verbose) print('enter x121D')
-                    x1 <- f121()
-                    x2 <- gt::gt(x1)%>%gt::tab_footnote(
-                      footnote=f241108a(typeC,tbinC)[[1]]
-                    )%>%gt::tab_footnote(
-                      footnote=f241108a(typeC,tbinC)[[2]]
-                    )
-                    x3 <- f121(estdt=estdtcuR())
-                    x4 <- gt::gt(x3)%>%gt::tab_footnote(
-                      footnote=f241108a('Custom',tbinC)[[1]]
-                    )%>%gt::tab_footnote(
-                      footnote=f241108a('Custom',tbinC)[[2]]
-                    )
-                    x <- list(x2,x4)
-                    x121G <<- copy(x)
-                    x
-                  }
+  x121D <- eventReactive(list(input$tslider,estdttR()),#winding----
+                         {
+                           if(verbose) print('enter x121D')
+                           tslidex <- input$tslider
+                           d1 <- #daily
+                             seq.Date(from=min(x101G),to=max(x101G),by='d')
+                           d2 <- #yearend + final date
+                             x101G%>%
+                             ifelse(.==as.Date('2009-02-28'),as.Date('2008-12-31'),.)%>%
+                             as.Date(.)%>%
+                             .[-1]
+                           x1 <-
+                             estdttR()%>%
+                             .[.(date=d1),on=c(date='date'),roll=-Inf,j=.(date,xdotd)]%>%
+                             .[,.(ii=1:.N,date,x=cumsum(xdotd))]%>%
+                             .[.(date2=d2),on=c(date='date2')]%>%
+                             .[,.(date,x,xdot=c(x[1],diff(x)),ii=1:.N)]%>%
+                             .[,.(ii,date,xdot,x)]%>%
+                             .[,.(date,xdot)]%>%
+                             .[date==as.Date('2009-02-28'),let(date,as.Date('2008-12-31'))]%>%
+                             .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
+                             dcast(.,decade~yr,value.var='xdot')%>%
+                             .[,decade:=c(1990,2000,2010,2020)]
+                           for(i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]),'',as.character(round(x1[[i]],3)))
+                           x <- gt::gt(x1)%>%gt::tab_footnote(
+                             footnote=f241108a(typeC,tbinC)[[1]]
+                           )%>%gt::tab_footnote(
+                             footnote=f241108a(typeC,tbinC)[[2]]
+                           )
+                           x121G <<- copy(x)
+                           x
+                         }
+  )
+  output$x121 <- 
+    render_gt(
+      x121D()
     )
-  output$x121a <- 
-    render_gt(x121D()[[1]])
-  output$x121b <- 
-    render_gt(x121D()[[2]])
   
-  x122D <- eventReactive(list(rc6tR(),rssaR(),rsscuR),#characteristics----
+  
+  x122D <- eventReactive(list(rc6tR(),rssaR()),#characteristics----
                          {
                            if(verbose) print('enter x122D')
-                           rssax <- rssaR()
-                           #rc6tx <- rc6tG#R()
-                           rsscux <- copy(rsscuR())[,lab:='CU000']#R()
-                           x0 <- #custom
-                             z110G[rsscux,on=c(rcx='rc6')]%>%
+                           x <- 
+                             z110G[rssaR(),on=c(rcx='rc6')]%>%
                              .[,.(
                                frac=round(sum(nid)/z110G[nchar(rcx)==6,sum(nid)],nfig3),
                                nid=sum(nid),
@@ -689,27 +666,7 @@ function(input, output) {
                              ),
                              lab
                              ]%>%
-                             .[rsscux[,.(R2rsi=1-sum(ssek)/sum(sstr)),lab],on=c(lab='lab')]%>%
-                             .[,.(
-                               lab=substr(lab,1,4),#='Custom',
-                               frac,
-                               R2rsi=round(R2rsi,3),
-                               p=prettyNum(round(p,nfig3), big.mark=","),
-                               p.cus=paste0(prettyNum(round(ppm2min,nfig2), big.mark=","),'-',prettyNum(round(ppm2max,nfig2), big.mark=","))
-                             )]
-                           
-                           x1 <- #local
-                             z110G[rssax,on=c(rcx='rc6')]%>%
-                             .[,.(
-                               frac=round(sum(nid)/z110G[nchar(rcx)==6,sum(nid)],nfig3),
-                               nid=sum(nid),
-                               ppm2max=round(max(ppm2),nfig2),
-                               ppm2min=round(min(ppm2),nfig2),
-                               p=round(sum(pv)/sum(m2),nfig2)
-                             ),
-                             lab
-                             ]%>%
-                             .[rssax[,.(R2rsi=1-sum(ssek)/sum(sstr)),lab],on=c(lab='lab')]%>%
+                             .[rssaR()[,.(R2rsi=1-sum(ssek)/sum(sstr)),lab],on=c(lab='lab')]%>%
                              .[order(-p)]%>%
                              .[,.(
                                lab,
@@ -717,11 +674,7 @@ function(input, output) {
                                R2rsi=round(R2rsi,3),
                                p=prettyNum(round(p,nfig3), big.mark=","),
                                p.cus=paste0(prettyNum(round(ppm2min,nfig2), big.mark=","),'-',prettyNum(round(ppm2max,nfig2), big.mark=","))
-                             )]
-                           x2 <- 
-                             rbind(x1,x0)[order(-p)][]
-                           x <- 
-                             x2%>%
+                             )]%>%
                              gt::gt(.)%>%
                              cols_label(
                                lab = gt::html('Area-band'),
@@ -748,16 +701,16 @@ function(input, output) {
     )
   
   
-  x131D <- eventReactive(list(input$tslider,estdtxR()),#summary----
+  x131D <- eventReactive(list(input$tslider,estdtaR()),#summary----
                          {
                            if(verbose) print('enter x131D')
                            x <- 
-                             estdtxR()%>%
+                             estdtaR()%>%
                              .[ii>=input$tslider]%>%
                              dcast(.,ii~lab,value.var='xdot')%>%
                              .[,-'ii']%>%
                              as.matrix(.)%>%
-                             zoo(.,estdtxR()[,sort(unique(date))])%>%
+                             zoo(.,estdtaR()[,sort(unique(date))])%>%
                              table.Stats(.,digits=3)%>%
                              data.table(.,keep.rownames = T)%>%
                              `[`(.,i=-c(1,2,7,11,12,13))%>%
@@ -779,7 +732,7 @@ function(input, output) {
     )
   
   
-  x132D <- eventReactive(list(input$tslider,geoqR(),estdtlR()),#trade summary(2)----
+  x132D <- eventReactive(list(input$tslider,geoqR(),estdttR()),#trade summary(2)----
                          {
                            if(verbose) print('enter x132D')
                            steprip <- '03rip/'
@@ -787,7 +740,7 @@ function(input, output) {
                              geoqR()[,rc6]%>%
                              coread(.,steprip)%>% #or rc6tC
                              .[,.(N=.N,mean=round(mean(as.numeric(retsa)),4)),.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))]%>%
-                             .[(buy>=estdtlR()[ii>=input$tslider,substr(min(as.character(date)),1,4)])]
+                             .[(buy>=estdttR()[ii>=input$tslider,substr(min(as.character(date)),1,4)])]
                            x1 <- 
                              x0%>%
                              dcast(.,
@@ -925,7 +878,7 @@ function(input, output) {
     render_gt(x231D())
   
   
-  x311D <- eventReactive(list(estdtlR(),geoqR()), #listing----
+  x311D <- eventReactive(list(estdttR(),geoqR()), #listing----
                          {
                            if(verbose) print('enter x311D')
                            x0 <-
@@ -939,7 +892,7 @@ function(input, output) {
                              .[geotR(),on=c(gx='gx')]%>%
                              .[order(date),.(date,t,lab,NF,NH,UF,UH)]
                            x2 <-
-                             estdtlR()%>%
+                             estdttR()%>%
                              .[,.(t=c(0,ii),days=c(NA,days),date=c(date[1]-days[1],date),xdot=c(NA,xdot),x=c(0,x))]%>%
                              x1[.,on=c(t='t')]%>%
                              .[,.(t,date=i.date,days,xdot,x,NF,NH,UF,UH,tot=NF+NH+UF+UH)]%>%

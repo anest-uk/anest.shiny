@@ -680,3 +680,12 @@ function( #remove if global
       }
   }
 }
+    f241108a <- 
+      function(tc=typeC,tb=tbinC) {
+        x1 <- 
+          list(
+            paste0('Geographic bins: ',c(A='All',L='Local',N='National',C='Custom')[tc]),
+            paste0('Time sampling: ',c('Low Frequency','High Frequency','Annual')[tb])
+          )
+        x1    
+      }
