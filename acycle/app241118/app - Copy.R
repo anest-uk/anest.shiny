@@ -184,13 +184,36 @@ grid_page(
         ),
         nav_panel(
           title = "Listing",
-          card(
-            full_screen = TRUE,
-            card_header(
-              "Index time series"
+          grid_container(
+            layout = c(
+              "locallist  customlist"
             ),
-            card_body(#--------------x311
-              gt::gt_output('x311')
+            row_sizes = c(
+              "1fr"
+            ),
+            col_sizes = c(
+              "1fr",
+              "1fr"
+            ),
+            grid_card(
+              area='locallist',
+              full_screen = TRUE,
+              card_header(
+                "Local"
+              ),
+              card_body(#--------------x311
+                gt::gt_output('x311')
+              )
+            ),
+            grid_card(
+              area='customlist',
+              full_screen = TRUE,
+              card_header(
+                "Custom"
+              ),
+              card_body(#--------------x311cu
+                gt::gt_output('x311cu')
+              )
             )
           )
         ),
@@ -304,6 +327,9 @@ function(input, output) {
     ]%>%
     z110G[.,on=c(rcx='rc6')]%>%
     .[,.(nx,gx,lab,rc3,rc6=rcx,qtile)]
+  dfnG <<- #assume constant
+    data.table(date=c(as.Date('1994-12-31'),estdtG[,sort(unique(date))]))[,let(i,(0:(.N-1)))]
+
   #------------------------reactive + global
   #---target   section----
   geotR <-     #---target geo compute   ----
@@ -346,7 +372,7 @@ function(input, output) {
     {
       if(verbose) print('enter geocuR')
       x <- 
-        data.table(rc9=rc6cuG,nx=0,lab='CU00') #rc6cuG -> rc6cuR()
+        data.table(rc9=rc6cuR(),nx=0,lab='CU00') #rc6cuG -> rc6cuR()
       geocuG <<- copy(x)
       x
     }
@@ -372,7 +398,7 @@ function(input, output) {
     {
       if(verbose) print('enter rsicuR')
       geox <- geocuR()
-      dfnx <- estdtaG[,sort(unique(date))]
+      dfnx <- estdtaR()[,sort(unique(date))]
       #geox <- rbind(geox,geox[,rc9:='E--1--'])
       #geox[,nx:=1]
       #browser()
@@ -670,9 +696,9 @@ function(input, output) {
                          }
   )
   output$x121a <- 
-    render_gt(x121D()[[1]])
+    gt::render_gt(x121D()[[1]])
   output$x121b <- 
-    render_gt(x121D()[[2]])
+    gt::render_gt(x121D()[[2]])
   
   x122D <- eventReactive(list(rc6tR(),rssaR(),rsscuR),#characteristics----
                          {
@@ -745,7 +771,7 @@ function(input, output) {
                          }
   )
   output$x122 <- 
-    render_gt(
+    gt::render_gt(
       x122D()
     )
   
@@ -776,7 +802,7 @@ function(input, output) {
                          }
   )
   output$x131 <- 
-    render_gt(
+    gt::render_gt(
       x131D()
     )
   
@@ -809,6 +835,7 @@ function(input, output) {
       )
     for(i in 2:length(x2)) x2[[i]] <- ifelse(is.na(x2[[i]]),'',x2[[i]])
     x3 <- list(x1,x2)
+    print(x3)
     x3
   }
   x132D <- eventReactive(list(input$tslider,geoqR(),estdtlR()),#trade summary(2)----
@@ -831,11 +858,10 @@ function(input, output) {
                              local=x1,
                              custom=x2
                            )
-                           #browser()
-                           #setnames(x[['local']][[1]],old='buy',new='buy\\sell')
+                            #setnames(x[['local']][[1]],old='buy',new='buy\\sell')
                            x[['local']][[1]] <- 
                              x[['local']][[1]]%>%
-                             gt(.)%>%
+                             gt::gt(.)%>%
                              tab_header(.,title = 'Local - Return', subtitle=NULL, preheader = NULL)%>%
                              opt_align_table_header(., align = "left")%>%
                              tab_options(heading.title.font.size =14)%>%
@@ -845,7 +871,7 @@ function(input, output) {
                              )
                            x[['local']][[2]] <- 
                              x[['local']][[2]]%>%
-                             gt(.)%>%
+                             gt::gt(.)%>%
                              tab_header(., title='Local - Number', subtitle = NULL, preheader = NULL)%>%
                             opt_align_table_header(., align = "left")%>%
                              tab_options(heading.title.font.size =14)%>%
@@ -855,7 +881,7 @@ function(input, output) {
                              )
                            x[['custom']][[1]] <- 
                              x[['custom']][[1]]%>%
-                             gt(.)%>%
+                             gt::gt(.)%>%
                              tab_header(., title='Custom - Return', subtitle = NULL, preheader = NULL)%>%
                             opt_align_table_header(., align = "left")%>%
                              tab_options(heading.title.font.size =14)%>%
@@ -865,7 +891,7 @@ function(input, output) {
                              )
                            x[['custom']][[2]] <- 
                              x[['custom']][[2]]%>%
-                             gt(.)%>%
+                             gt::gt(.)%>%
                              tab_header(., title='Custom - Number', subtitle = NULL, preheader = NULL)%>%
                             opt_align_table_header(., align = "left")%>%
                              tab_options(heading.title.font.size =14)%>%
@@ -879,23 +905,23 @@ function(input, output) {
   )
   
   output$x132a <- 
-    render_gt(x132D()[['local']][[1]])
+    gt::render_gt(x132D()[['local']][[1]])
   output$x132b <- 
-    render_gt(x132D()[['local']][[2]])
+    gt::render_gt(x132D()[['local']][[2]])
   output$x132c <- 
-    render_gt(x132D()[['custom']][[1]])
+    gt::render_gt(x132D()[['custom']][[1]])
   output$x132d <- 
-    render_gt(x132D()[['custom']][[2]])
+    gt::render_gt(x132D()[['custom']][[2]])
   
   
-  x211D <- eventReactive(list(rc6tR(),rssaR()),#accuracy-tbin----
+  x211D <- eventReactive(list(rc6tR(),rssaR()),#accuracy----tbin----
                          {
                            if(verbose) print('enter x211G')
                            pc6tx <- rc6tR()
                            x1 <-
                              data.table(tbin=1:3,freq=c('lo','hi','an'))
                            x2 <- 
-                             rssaR()%>%
+                             rssG%>% #use global no filters
                              .[geoqR(),on=c(rc6='rc6')]%>%
                              .[type=='L']%>%
                              .[itrim==itriC]%>%
@@ -918,17 +944,17 @@ function(input, output) {
                          }
   )
   output$x211 <- 
-    render_gt(x211D())
+    gt::render_gt(x211D())
   
   
-  x221D <- eventReactive(list(rc6tR(),rssaR()),#accuracy-trim----
+  x221D <- eventReactive(list(rc6tR(),rssaR()),#accuracy----trim----
                          {
                            if(verbose) print('enter x221D')
                            pc6tx <- rc6tR()
                            x1 <-
                              data.table(itrim=1:3,threshold=c('0.0','0.1','0.5'))
                            x2 <-
-                             rssaR()%>%
+                             rssG%>%
                              .[geoqR(),on=c(rc6='rc6')]%>%
                              .[type=='L']%>%
                              .[tbin==tbinC]%>%
@@ -951,15 +977,15 @@ function(input, output) {
                          }
   )
   output$x221 <- 
-    render_gt(x221D())
+    gt::render_gt(x221D())
   
   
-  x231D <- eventReactive(list(rc6tR(),rssaR()),#accuracyin/out----
+  x231D <- eventReactive(list(rc6tR(),rssaR()),#accuracy----in/out----
                          {
                            if(verbose) print('enter x231D')
                            pc6tx <- rc6tR()
                            x1 <-
-                             rssaR()%>%
+                             rssG%>%
                              .[geoqR(),on=c(rc6='rc6')]%>%
                              .[type=='L']%>%
                              .[tbin==tbinC]%>%
@@ -983,24 +1009,24 @@ function(input, output) {
                            x
                          }
   )
-  output$x231 <- 
-    render_gt(x231D())
+  output$x231 <-
+    gt::render_gt(x231D())
+
   
-  
-  x311D <- eventReactive(list(estdtlR(),geoqR()), #listing----
+   x311D <- eventReactive(list(estdtlR(),geoqR()), #listing----
                          {
                            if(verbose) print('enter x311D')
                            x0 <-
                              geo0G[z110G,on=c(rc6='rcx'),nomatch=NULL]%>%
                              .[,.(ppm2=sum(pv)/sum(m2)),.(gx,nx)]%>%
                              .[1,-c('ppm2')]
-                           browser()
                            x1 <-
-                             fread('f241024ad.csv')%>%
-                             .[order(tbin,gx,date)]%>%.[,let(t,1:.N),.(tbin,gx)]%>%
-                             .[tbin==tbinC]%>%
-                             .[geotR(),on=c(gx='gx')]%>%
-                             .[order(date),.(date,t,lab,NF,NH,UF,UH)]
+                             fread('f241117ad.csv')%>%
+                             .[geoqG[,.(rc6,lab)],on=c(rc6='rc6')]%>%
+                             .[,.(cum=sum(cum)),.(nh,date,lab)]%>%
+                             .[dfnG[i>0],on=c(date='date')]%>%
+                             dcast(.,date+i+lab~nh,value.var='cum')%>%
+                             .[order(date),.(date,t=i,lab,NF,NH,UF,UH)]
                            x2 <-
                              estdtlR()%>%
                              .[,.(t=c(0,ii),days=c(NA,days),date=c(date[1]-days[1],date),xdot=c(NA,xdot),x=c(0,x))]%>%
@@ -1022,7 +1048,7 @@ function(input, output) {
                            x3 <- #districts footnote
                              geoqR()[
                                ,paste0('Districts: ',paste0(sort(irregpcode(rc6)),collapse=', '))]
-                           x <- 
+                           x <-
                              gt::gt(x2)%>%gt::tab_footnote(
                                footnote=f241108a(typeC,tbinC)[[1]]
                              )%>%gt::tab_footnote(
@@ -1035,16 +1061,82 @@ function(input, output) {
                              tab_spanner(
                                label = gt::html("Sales Breakdown"),
                                columns = c(newhouse, usedhouse,newflat,usedflat,total,perday)
+                             )%>%
+                             cols_label(
+                               total = gt::html('total(000)')
                              )
+
                            x311G <<- copy(x)
                            x
                          }
   )
-  output$x311 <- 
-    render_gt(
+  output$x311 <-
+    gt::render_gt(
       x311D()
     )
-  
+  x311cuD <- eventReactive(list(estdtlR(),geoqR()), #listing----
+                         {
+                           if(verbose) print('enter x311D')
+                           geox <- copy(geocuR())[,let(rc6,rc9)] #used for aggregation and label
+                           #browser()
+                           x0 <-
+                             geo0G[z110G,on=c(rc6='rcx'),nomatch=NULL]%>%
+                             .[,.(ppm2=sum(pv)/sum(m2)),.(gx,nx)]%>%
+                             .[1,-c('ppm2')]
+                           x1 <-
+                             fread('f241117ad.csv')%>%
+                             .[geox[,.(rc6,lab)],on=c(rc6='rc6')]%>% #cu here
+                             .[,.(cum=sum(cum)),.(nh,date,lab)]%>%
+                             .[dfnG[i>0],on=c(date='date')]%>%
+                             dcast(.,date+i+lab~nh,value.var='cum')%>%
+                             .[order(date),.(date,t=i,lab,NF,NH,UF,UH)]
+                           x2 <-
+                             estdtcuR()%>%
+                             .[,.(t=c(0,ii),days=c(NA,days),date=c(date[1]-days[1],date),xdot=c(NA,xdot),x=c(0,x))]%>%
+                             x1[.,on=c(t='t')]%>%
+                             .[,.(t,date=i.date,days,xdot,x,NF,NH,UF,UH,tot=NF+NH+UF+UH)]%>%
+                             .[-1,.(
+                               t,
+                               date,
+                               days,
+                               return=round(xdot,sf),
+                               cumreturn=round(x,sf),
+                               newhouse=round(NH/tot,sf),
+                               usedhouse=round(UH/tot,sf),
+                               newflat=round(NF/tot,sf),
+                               usedflat=round(UF/tot,sf),
+                               total=round(tot/1000,1),
+                               perday=round(tot/days)
+                             )]
+                           x3 <- #districts footnote
+                             geox[
+                               ,paste0('Districts: ',paste0(sort(irregpcode(rc6)),collapse=', '))]
+                           x <- 
+                             gt::gt(x2)%>%gt::tab_footnote(
+                               footnote=f241108a('C',tbinC)[[1]]
+                             )%>%gt::tab_footnote(
+                               footnote=f241108a('C',tbinC)[[2]]
+                             )%>%gt::tab_footnote(
+                               footnote=x3,
+                               locations = NULL,
+                               placement = c("auto", "right", "left")
+                             )%>%
+                             tab_spanner(
+                               label = gt::html("Sales Breakdown"),
+                               columns = c(newhouse, usedhouse,newflat,usedflat,total,perday)
+                             )%>%
+                             cols_label(
+                               total = gt::html('total(000)')
+                             )
+                           
+                           x311cuG <<- copy(x)
+                           x
+                         }
+  )
+  output$x311cu <- 
+    gt::render_gt(
+      x311cuD()
+    )
   
   x411D <- eventReactive(list(geo0G),  #constituents----
                          {
