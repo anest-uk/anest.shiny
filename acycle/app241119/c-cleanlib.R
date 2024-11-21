@@ -3055,6 +3055,7 @@ function( #leaflet special/custom function for index app, copied from anest.shin
     x3@data <- #assign cols
       x1[,.(rc6)]%>%
       data.frame(.)
+    print('*****************************************')
     x4 <- #tooltip labels
       x1[,
          paste0(

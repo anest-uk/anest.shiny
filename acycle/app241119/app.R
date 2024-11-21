@@ -45,7 +45,8 @@ nfig3 <- 4 #for frac
 verbose <- T
 if(verbose) print('enter ')
 
-ui <-      #ui----
+  #---ui   section
+  ui <-      #ui----
 grid_page(
   layout = c(
     "header  header",
@@ -346,8 +347,9 @@ grid_page(
     )
   )
 )#ui grid_page ends
-server <-  #server----
-function(input, output) {
+  #---server   section
+  server <-  #server----
+  function(input, output) {
   #---global   section----
   x00G <<- copy(f241021ad)
   geoplusG <<- copy(x00G$geoplus)[,let(lab,des)]
@@ -447,9 +449,9 @@ function(input, output) {
       #geox[,nx:=1]
       #browser()
       x <- 
-        f240710a(  #returns estdt, kfoldsse, all
+        f241119a(  #returns estdt, kfoldsse, all
           nxx=0,
-          stepripx='03rip/', 
+          steprip2='smallrip/',  #smaller format
           dfn=sort(unique(c(min(x101G),dfnx))),    #R
           geo=geox, #R
           outthresh=.1,
@@ -492,7 +494,6 @@ function(input, output) {
   geoqR <-     #---qtile geo select     ----
   eventReactive( 
     list(geoaR(),geotR()#,
-         #rsscuR(),estdtcuR() #these added here just to provide dependency and hence drive global assignment of custom
     ),
     {
       if(verbose) print('enter geoqR')
@@ -515,7 +516,7 @@ function(input, output) {
       x
     }
   )
-  estdtlR <-   #---local estdt compute ----
+  estdtlR <-   #---local estdt compute  ----
   eventReactive( 
     nxqR(),
     {
@@ -602,7 +603,7 @@ function(input, output) {
     }
   )
   #---display  section----
-  x111D <- eventReactive(list(rc6tR(),rc6cuR()),#map ----
+  x111D <- eventReactive(list(rc6tR(),rc6cuR()),       #111 map ----
                          {
                            if(verbose) print('enter x111D')
                            x <- 
@@ -641,7 +642,7 @@ function(input, output) {
     )
   
   
-  x112D <- eventReactive(list(input$tslider,estdtxR()),#x(t)----
+  x112D <- eventReactive(list(input$tslider,estdtxR()),#112 x(t)----
                          {
                            if(verbose) print('enter x112D')
                            x2c <- estdtxR()%>%
@@ -719,7 +720,7 @@ function(input, output) {
     x1
   }
   
-  x121D <- eventReactive(list(input$tslider,estdtlR()),#winding----
+  x121D <- eventReactive(estdtlR(),#121 winding----
                          {
                            if(verbose) print('enter x121D')
                            x1 <- f121()
@@ -730,9 +731,9 @@ function(input, output) {
                            )
                            x3 <- f121(estdt=estdtcuR())
                            x4 <- gt::gt(x3)%>%gt::tab_footnote(
-                             footnote=f241108a('Custom',tbinC)[[1]]
+                             footnote=f241108a('C',tbinC)[[1]]
                            )%>%gt::tab_footnote(
-                             footnote=f241108a('Custom',tbinC)[[2]]
+                             footnote=f241108a('C',tbinC)[[2]]
                            )
                            x <- list(x2,x4)
                            x121G <<- copy(x)
@@ -744,14 +745,16 @@ function(input, output) {
   output$x121b <- 
     gt::render_gt(x121D()[[2]])
   
-  x122D <- eventReactive(list(rc6tR(),rssaR(),rsscuR),#characteristics----
+  x122D <- eventReactive(list(rc6tR(),rssaR(),rsscuR), #122 characteristics----
                          {
                            if(verbose) print('enter x122D')
                            rssax <- rssaR()
                            #rc6tx <- rc6tG#R()
                            rsscux <- copy(rsscuR())[,lab:='CU000']#R()
-                           x0 <- #custom
-                             z110G[rsscux,on=c(rcx='rc6')]%>%
+                           f122 <- #combine rss and P characteristics
+                             function(rssx) {
+                              x0 <- 
+                             z110G[rssx,on=c(rcx='rc6')]%>%
                              .[,.(
                                frac=round(sum(nid)/z110G[nchar(rcx)==6,sum(nid)],nfig3),
                                nid=sum(nid),
@@ -761,35 +764,17 @@ function(input, output) {
                              ),
                              lab
                              ]%>%
-                             .[rsscux[,.(R2rsi=1-sum(ssek)/sum(sstr)),lab],on=c(lab='lab')]%>%
+                             .[rssx[,.(R2rsi=1-sum(ssek)/sum(sstr)),lab],on=c(lab='lab')]%>%
                              .[,.(
-                               lab=substr(lab,1,4),#='Custom',
+                               lab=substr(lab,1,4),
                                frac,
                                R2rsi=round(R2rsi,3),
                                p=prettyNum(round(p,nfig3), big.mark=","),
                                p.cus=paste0(prettyNum(round(ppm2min,nfig2), big.mark=","),'-',prettyNum(round(ppm2max,nfig2), big.mark=","))
                              )]
-                           
-                           x1 <- #local
-                             z110G[rssax,on=c(rcx='rc6')]%>%
-                             .[,.(
-                               frac=round(sum(nid)/z110G[nchar(rcx)==6,sum(nid)],nfig3),
-                               nid=sum(nid),
-                               ppm2max=round(max(ppm2),nfig2),
-                               ppm2min=round(min(ppm2),nfig2),
-                               p=round(sum(pv)/sum(m2),nfig2)
-                             ),
-                             lab
-                             ]%>%
-                             .[rssax[,.(R2rsi=1-sum(ssek)/sum(sstr)),lab],on=c(lab='lab')]%>%
-                             .[order(-p)]%>%
-                             .[,.(
-                               lab,
-                               frac,
-                               R2rsi=round(R2rsi,3),
-                               p=prettyNum(round(p,nfig3), big.mark=","),
-                               p.cus=paste0(prettyNum(round(ppm2min,nfig2), big.mark=","),'-',prettyNum(round(ppm2max,nfig2), big.mark=","))
-                             )]
+                           }
+                           x0 <- f122(rsscux)
+                           x1 <- f122(rssax)
                            x2 <- 
                              rbind(x1,x0)[order(-p)][]
                            x <- 
@@ -820,7 +805,7 @@ function(input, output) {
     )
   
   
-  x131D <- eventReactive(list(input$tslider,estdtxR()),#summary----
+  x131D <- eventReactive(list(input$tslider,estdtxR()),#131 summary----
                          {
                            if(verbose) print('enter x131D')
                            x <- 
@@ -852,16 +837,15 @@ function(input, output) {
   
   
   
-  
   f132 <- function(
     geox=geoqG,
-    steprip='03rip/',
-    estdtlx=estdtlG, #only used for its date(ii) relation
+    steprip='smallrip/',
+    estdtlx=estdtlG, #oE14nly used for its date(ii) relation
     tmin=20
   ) {#tmin=input$tslider
     x0 <-
       geox[,rc6]%>%
-      coread(.,steprip)%>% #or rc6tC
+      coread2(.,steprip)%>% #or rc6tC
       .[,.(N=.N,mean=round(mean(as.numeric(retsa)),4)),.(buy=substr(buydate,1,4),sell=substr(selldate,1,4))]%>%
       .[(buy>=estdtlx[ii>=tmin,substr(min(as.character(date)),1,4)])]
     x1 <- 
@@ -882,19 +866,22 @@ function(input, output) {
     print(x3)
     x3
   }
-  x132D <- eventReactive(list(input$tslider,geoqR(),estdtlR()),#trade summary(2)----
+  
+  
+  x132D <- eventReactive(list(input$tslider,geoqR(),estdtlR()),#132 trade summary(2)----
                          {
+                           steprip='smallrip/'
                            tminx <- input$tslider
                            if(verbose) print('enter x132D')
                            x1 <- f132(
                              geox=geoqR(),#geoqR()
-                             steprip='03rip/',
+                             steprip=steprip,
                              estdtlx=estdtlR(),#estdtlR()
                              tmin=tminx#tmin=input$tslider
                            )
                            x2 <- f132(
                              geox=geocuR()[,.(rc6=rc9)],#geoqR()
-                             steprip='03rip/',
+                             steprip=steprip,
                              estdtlx=estdtlR(),#estdtlR()
                              tmin=tminx#tmin=input$tslider
                            )
@@ -944,6 +931,7 @@ function(input, output) {
                                columns = 2:ncol(x[['custom']][[2]])
                              )
                            x132G <<- copy(x)
+                           if(verbose) print('exit x132D')
                            x
                          }
   )
@@ -959,7 +947,7 @@ function(input, output) {
   
   
   #------------------custom accuracy
-  x211cuD <- eventReactive(list(rc6tR(),rssaR()),#accuracy--custom--tbin----
+  x211cuD <- eventReactive(list(rc6tR(),rssaR()),      #211 accuracy--custom--tbin----
                            {
                              if(verbose) print('enter x211Gcu')
                              pc6tx <- rc6tR()
@@ -978,7 +966,7 @@ function(input, output) {
                                dcast(.,tbin~span,value.var='mse')%>%
                                x1[.,on=c(tbin='tbin')]%>%
                                .[,-'tbin']
-                                                          x <- 
+                             x <- 
                                gt::gt(x3)%>%
                                gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])%>%
                                gt::tab_footnote(footnote=paste0('only freq=hi is computed for custom'))
@@ -997,7 +985,7 @@ function(input, output) {
   output$x211cu <- 
     gt::render_gt(x211cuD())
   
-  x221cuD <- eventReactive(list(rc6tR(),rssaR()),#accuracy----trim----
+  x221cuD <- eventReactive(list(rc6tR(),rssaR()),      #221 accuracy----trim----
                            {
                              if(verbose) print('enter x221D')
                              pc6tx <- rc6tR()
@@ -1016,24 +1004,24 @@ function(input, output) {
                                dcast(.,itrim~span,value.var='mse')%>%
                                x1[.,on=c(itrim='itrim')]%>%
                                .[,-'itrim']
-                                                          x <- 
+                             x <- 
                                gt::gt(x3)%>%
                                gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])%>%
                                gt::tab_footnote(footnote=paste0('only threshold=0.1 is computed for custom'))
                              x231cuG <<- copy(x)
-# 
-#                              x <- 
-#                                gt::gt(x3)%>%
-#                                gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])%>%
-#                                gt::tab_footnote(footnote=paste0('only threshold=0.1 is computed for custom'))
-#                              x221cuG <<- copy(x)
+                             # 
+                             #                              x <- 
+                             #                                gt::gt(x3)%>%
+                             #                                gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])%>%
+                             #                                gt::tab_footnote(footnote=paste0('only threshold=0.1 is computed for custom'))
+                             #                              x221cuG <<- copy(x)
                              x
                            }
   )
   output$x221cu <- 
     gt::render_gt(x221cuD())
   
-  x231cuD <- eventReactive(list(rc6tR(),rssaR()),#accuracy----in/out----
+  x231cuD <- eventReactive(list(rc6tR(),rssaR()),      #231 accuracy----in/out----
                            {
                              if(verbose) print('enter x231cuD')
                              pc6tx <- rc6tR()
@@ -1062,10 +1050,9 @@ function(input, output) {
     gt::render_gt(x231cuD())
   
   
-  #----------------------------------
-  
-  
-  x211D <- eventReactive(list(rc6tR(),rssaR()),#accuracy----tbin----
+  #---render section------------
+
+  x211D <- eventReactive(list(rc6tR(),geoqR()),        #211 accuracy----tbin----
                          {
                            if(verbose) print('enter x211G')
                            pc6tx <- rc6tR()
@@ -1098,7 +1085,7 @@ function(input, output) {
     gt::render_gt(x211D())
   
   
-  x221D <- eventReactive(list(rc6tR(),rssaR()),#accuracy----trim----
+  x221D <- eventReactive(list(rc6tR(),geoqR()),        #221 accuracy----trim----
                          {
                            if(verbose) print('enter x221D')
                            pc6tx <- rc6tR()
@@ -1131,7 +1118,7 @@ function(input, output) {
     gt::render_gt(x221D())
   
   
-  x231D <- eventReactive(list(rc6tR(),rssaR()),#accuracy----in/out----
+  x231D <- eventReactive(list(rc6tR(),geoqR()),        #231 accuracy----in/out----
                          {
                            if(verbose) print('enter x231D')
                            pc6tx <- rc6tR()
@@ -1164,7 +1151,7 @@ function(input, output) {
     gt::render_gt(x231D())
   
   
-  x311D <- eventReactive(list(estdtlR(),geoqR()), #listing----
+  x311D <- eventReactive(list(estdtlR(),geoqR()),      #311 listing----
                          {
                            if(verbose) print('enter x311D')
                            x0 <-
@@ -1175,14 +1162,24 @@ function(input, output) {
                              fread('f241117ad.csv')%>%
                              .[geoqG[,.(rc6,lab)],on=c(rc6='rc6')]%>%
                              .[,.(cum=sum(cum)),.(nh,date,lab)]%>%
-                             .[dfnG[i>0],on=c(date='date')]%>%
-                             dcast(.,date+i+lab~nh,value.var='cum')%>%
+                             .[dfnG[i>0],on=c(date='date')]%>% #dfnG is all dates, all frequencies
+                             dcast(.,date+i+lab~nh,value.var='cum')%>%#
                              .[order(date),.(date,t=i,lab,NF,NH,UF,UH)]
                            x2 <-
                              estdtlR()%>%
                              .[,.(t=c(0,ii),days=c(NA,days),date=c(date[1]-days[1],date),xdot=c(NA,xdot),x=c(0,x))]%>%
                              x1[.,on=c(t='t')]%>%
-                             .[,.(t,date=i.date,days,xdot,x,NF,NH,UF,UH,tot=NF+NH+UF+UH)]%>%
+                             .[1,let(NF,0)]%>%
+                             .[1,let(NH,0)]%>%
+                             .[1,let(UF,0)]%>%
+                             .[1,let(UH,0)]%>%
+                             .[,.(t,date=i.date,days,xdot,x,
+                                  NF=c(0,diff(NF)),
+                                  NH=c(0,diff(NH)),
+                                  UF=c(0,diff(UF)),
+                                  UH=c(0,diff(UH)),
+                                  tot=c(0,diff(NF+NH+UF+UH))
+                             )]%>%
                              .[-1,.(
                                t,
                                date,
@@ -1193,8 +1190,8 @@ function(input, output) {
                                usedhouse=round(UH/tot,sf),
                                newflat=round(NF/tot,sf),
                                usedflat=round(UF/tot,sf),
-                               total=round(tot/1000,1),
-                               perday=round(tot/days)
+                               total=round(tot),
+                               perday=round(tot/days,1)
                              )]
                            x3 <- #districts footnote
                              geoqR()[
@@ -1217,7 +1214,7 @@ function(input, output) {
                                newflat = gt::html('new flat'),
                                usedflat = gt::html('used flat'),
                                perday = gt::html('per day'),
-                               total = gt::html('total(000)')
+                               total = gt::html('total')
                              )%>%
                              tab_spanner(
                                label = gt::html("Period"),
@@ -1257,7 +1254,7 @@ function(input, output) {
                            # )%>%
                            # 
                            # cols_label(
-                           #   total = gt::html('total(000)')
+                           #   total = gt::html('total')
                            # )
                            
                            x311G <<- copy(x)
@@ -1268,11 +1265,10 @@ function(input, output) {
     gt::render_gt(
       x311D()
     )
-  x311cuD <- eventReactive(list(estdtlR(),geoqR()), #listing----
+  x311cuD <- eventReactive(list(estdtlR(),geoqR()),    #311cu listing----
                            {
                              if(verbose) print('enter x311D')
                              geox <- copy(geocuR())[,let(rc6,rc9)] #used for aggregation and label
-                             #browser()
                              x0 <-
                                geo0G[z110G,on=c(rc6='rcx'),nomatch=NULL]%>%
                                .[,.(ppm2=sum(pv)/sum(m2)),.(gx,nx)]%>%
@@ -1288,7 +1284,17 @@ function(input, output) {
                                estdtcuR()%>%
                                .[,.(t=c(0,ii),days=c(NA,days),date=c(date[1]-days[1],date),xdot=c(NA,xdot),x=c(0,x))]%>%
                                x1[.,on=c(t='t')]%>%
-                               .[,.(t,date=i.date,days,xdot,x,NF,NH,UF,UH,tot=NF+NH+UF+UH)]%>%
+                               .[1,let(NF,0)]%>%
+                               .[1,let(NH,0)]%>%
+                               .[1,let(UF,0)]%>%
+                               .[1,let(UH,0)]%>%
+                               .[,.(t,date=i.date,days,xdot,x,
+                                    NF=c(0,diff(NF)),
+                                    NH=c(0,diff(NH)),
+                                    UF=c(0,diff(UF)),
+                                    UH=c(0,diff(UH)),
+                                    tot=c(0,diff(NF+NH+UF+UH))
+                               )]%>%
                                .[-1,.(
                                  t,
                                  date,
@@ -1299,12 +1305,13 @@ function(input, output) {
                                  usedhouse=round(UH/tot,sf),
                                  newflat=round(NF/tot,sf),
                                  usedflat=round(UF/tot,sf),
-                                 total=round(tot/1000,1),
-                                 perday=round(tot/days)
+                                 total=round(tot),
+                                 perday=round(tot/days,1)
                                )]
                              x3 <- #districts footnote
                                geox[
                                  ,paste0('Districts: ',paste0(sort(irregpcode(rc6)),collapse=', '))]
+                             #browser()
                              x <- 
                                gt::gt(x2)%>%gt::tab_footnote(
                                  footnote=f241108a('C',tbinC)[[1]]
@@ -1323,7 +1330,7 @@ function(input, output) {
                                  newflat = gt::html('new flat'),
                                  usedflat = gt::html('used flat'),
                                  perday = gt::html('per day'),
-                                 total = gt::html('total(000)')
+                                 total = gt::html('total')
                                )%>%
                                tab_spanner(
                                  label = gt::html("Period"),
@@ -1346,7 +1353,7 @@ function(input, output) {
                                  columns = c(newhouse, usedhouse,newflat,usedflat,total,perday)
                                )
                              # cols_label(
-                             #   total = gt::html('total(000)')
+                             #   total = gt::html('total')
                              # )
                              x311cuG <<- copy(x)
                              x
@@ -1357,7 +1364,7 @@ function(input, output) {
       x311cuD()
     )
   
-  x411D <- eventReactive(list(geo0G),  #constituents----
+  x411D <- eventReactive(list(geo0G),                  #411 constituents----
                          {
                            if(verbose) print('enter 411')
                            x1 <- 

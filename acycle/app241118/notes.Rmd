@@ -3,6 +3,19 @@ This is an internal development version
 These informal notes will be updated as development proceeds  
 The app is not self-explanatory at present and needs proper introduction  
 
+**2024-11-20 Update**
+  - time-series summary page
+    - add Custom index on all 6 displays
+    - outline target district orange on map
+  - listing page
+    - add Custom index 
+    - improve labelling
+  - accuracy page
+    - add Custom index 
+  - notes: revised format 
+
+**2024-11-13 Initial**
+
 Geographic scope:  
   -  These are the 'local indices'  
   -  The current scope includes the local model, pre-calculated, on 104 postcode areas  
