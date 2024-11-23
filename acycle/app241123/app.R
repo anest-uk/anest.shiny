@@ -1216,17 +1216,15 @@ function(input, output) {
                              x
                            }
   )
-  #311 listing----
+  #211 listing----
   f211D <- function(
     estdtlX=estdtlG, #single
     geoqX=geoqG, #footnote only 'this qtile'
-    #geo0X=geo0G, #all rc6
-    #z110X=z110G, #all
     dfnxxX=dfnxxG #single
   ) {
     if(verbose) print('enter x211D')
     x1 <-
-      fread('f241117ad.csv')%>%
+      fread('f241122ad.csv')%>%
       .[geoqX[,.(rc6,lab)],on=c(rc6='rc6')]%>%
       .[,.(cum=sum(cum)),.(lab,nh,date)]%>%
       .[data.table(date=dfnxxX[-1],i=1:(length(dfnxxX)-1)),on=c(date='date')]%>% #dfnG is all dates, all frequencies
@@ -1312,101 +1310,15 @@ function(input, output) {
   x211D <- eventReactive(list(
     estdtlR(),
     geoqR(),
-    #geo0R(),
-    #z110R(),
     dfnxxR()
-  ),       #311 listing----
+  ),       #211 listing----
   {
     if(verbose) print('enter x211D')
-    #browser()
     x <- f211D(
       estdtlX=estdtlR(),
       geoqX=geoqR(), 
       dfnxxX=dfnxxR()
     )
-    # x0 <-
-    #   geo0R()[z110R(),on=c(rc6='rcx'),nomatch=NULL]%>%
-    #   .[,.(ppm2=sum(pv)/sum(m2)),.(gx,nx)]%>%
-    #   .[1,-c('ppm2')]
-    # x1 <-
-    #   fread('f241117ad.csv')%>%
-    #   .[geoqG[,.(rc6,lab)],on=c(rc6='rc6')]%>%
-    #   .[,.(cum=sum(cum)),.(nh,date,lab)]%>%
-    #   .[data.table(date=dfnxxR()[-1],i=(1:length(dfnxxR())-1)),on=c(date='date')]%>% #dfnG is all dates, all frequencies
-    #   dcast(.,date+i+lab~nh,value.var='cum')%>%#
-    #   .[order(date),.(date,t=i,lab,NF,NH,UF,UH)]
-    # x2 <-
-    #   estdtlR()%>%
-    #   .[,.(t=c(0,ii),days=c(NA,days),date=c(date[1]-days[1],date),xdot=c(NA,xdot),x=c(0,x))]%>%
-    #   x1[.,on=c(t='t')]%>%
-    #   .[1,let(NF,0)]%>%
-    #   .[1,let(NH,0)]%>%
-    #   .[1,let(UF,0)]%>%
-    #   .[1,let(UH,0)]%>%
-    #   .[,.(t,date=i.date,days,xdot,x,
-    #        NF=c(0,diff(NF)),
-    #        NH=c(0,diff(NH)),
-    #        UF=c(0,diff(UF)),
-    #        UH=c(0,diff(UH)),
-    #        tot=c(0,diff(NF+NH+UF+UH))
-    #   )]%>%
-    #   .[-1,.(
-    #     t,
-    #     date,
-    #     days,
-    #     return=round(xdot,sf),
-    #     cumreturn=round(x,sf),
-    #     newhouse=round(NH/tot,sf),
-    #     usedhouse=round(UH/tot,sf),
-    #     newflat=round(NF/tot,sf),
-    #     usedflat=round(UF/tot,sf),
-    #     total=round(tot),
-    #     perday=round(tot/days,1)
-    #   )]
-    # x3 <- #districts footnote
-    #   geoqR()[
-    #     ,paste0('Districts: ',paste0(sort(irregpcode(rc6)),collapse=', '))]
-    # x <-
-    #   gt::gt(x2)%>%gt::tab_footnote(
-    #     footnote=f241108a(typeC,tbinC)[[1]]
-    #   )%>%gt::tab_footnote(
-    #     footnote=f241108a(typeC,tbinC)[[2]]
-    #   )%>%gt::tab_footnote(
-    #     footnote=x3,
-    #     locations = NULL,
-    #     placement = c("auto", "right", "left")
-    #   )%>%
-    #   cols_label(
-    #     date = gt::html('end date'),
-    #     cumreturn = gt::html('cumulative'),
-    #     newhouse = gt::html('new house'),
-    #     usedhouse = gt::html('used house'),
-    #     newflat = gt::html('new flat'),
-    #     usedflat = gt::html('used flat'),
-    #     perday = gt::html('per day'),
-    #     total = gt::html('total')
-    #   )%>%
-    #   tab_spanner(
-    #     label = gt::html("Period"),
-    #     columns = c(date,days)
-    #   )%>%
-    #   tab_spanner(
-    #     label = gt::html("Log price"),
-    #     columns = c(return,cumreturn)
-    #   )%>%
-    #   tab_spanner(
-    #     label = gt::html("Fraction"),
-    #     columns = c(newhouse, usedhouse,newflat,usedflat)
-    #   )%>%
-    #   tab_spanner(
-    #     label = gt::html("Count"),
-    #     columns = c(total,perday)
-    #   )%>%
-    #   tab_spanner(
-    #     label = gt::html("Sales Breakdown"),
-    #     columns = c(newhouse, usedhouse,newflat,usedflat,total,perday)
-    #   )
-    
     x211G <<- copy(x)
     x
   }

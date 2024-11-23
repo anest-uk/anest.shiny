@@ -1189,24 +1189,27 @@ function(input, output) {
                              .[,.(ppm2=sum(pv)/sum(m2)),.(gx,nx)]%>%
                              .[1,-c('ppm2')]
                            x1 <-
-                             fread('f241122ad.csv')%>%
+                             fread('f241117ad.csv')%>%
                              .[geoqG[,.(rc6,lab)],on=c(rc6='rc6')]%>%
-                             .[,.(cum=sum(cum)),.(nh,date,lab)]%>% #cross-sectional sum
-                             .[data.table(date=dfnxxR()[-1]),on=c(date='date')]%>% #dfnG is all dates, all frequencies
-                             dcast(.,date+lab~nh,value.var='cum')%>%#
-                             .[order(date),.(date,t=1:.N,lab,NF,NH,UF,UH)]
-                           #browser()
+                             .[,.(cum=sum(cum)),.(nh,date,lab)]%>%
+                             .[data.table(date=dfnxxR()[-1],i=(1:length(dfnxxR())-1)),on=c(date='date')]%>% #dfnG is all dates, all frequencies
+                             dcast(.,date+i+lab~nh,value.var='cum')%>%#
+                             .[order(date),.(date,t=i,lab,NF,NH,UF,UH)]
                            x2 <-
                              estdtlR()%>%
-                             .[,.(t=ii,days,date,xdot,x)]%>%
+                             .[,.(t=c(0,ii),days=c(NA,days),date=c(date[1]-days[1],date),xdot=c(NA,xdot),x=c(0,x))]%>%
                              x1[.,on=c(t='t')]%>%
-                             .[,.(t,date,days,xdot,x,
-                                  NF=c(NF[1],diff(NF)),#timeseries difference on cumulative
-                                  NH=c(NH[1],diff(NH)),
-                                  UF=c(UF[1],diff(UF)),
-                                  UH=c(UH[1],diff(UH))
+                             .[1,let(NF,0)]%>%
+                             .[1,let(NH,0)]%>%
+                             .[1,let(UF,0)]%>%
+                             .[1,let(UH,0)]%>%
+                             .[,.(t,date=i.date,days,xdot,x,
+                                  NF=c(0,diff(NF)),
+                                  NH=c(0,diff(NH)),
+                                  UF=c(0,diff(UF)),
+                                  UH=c(0,diff(UH)),
+                                  tot=c(0,diff(NF+NH+UF+UH))
                              )]%>%
-                             .[,tot:=NF+NH+UF+UH]%>%
                              .[-1,.(
                                t,
                                date,
@@ -1268,7 +1271,7 @@ function(input, output) {
                            x
                          }
   )
-  x311cuD <- eventReactive(list(estdtlR(),geoqR()),     #311cu listing---- <<<<<<<<<<<<<<<<<<<<<got to here needs work  see above
+  x311cuD <- eventReactive(list(estdtlR(),geoqR()),     #311cu listing----
                            {
                              if(verbose) print('enter x311D')
                              geox <- copy(geocuR())[,let(rc6,rc9)] #used for aggregation and label
