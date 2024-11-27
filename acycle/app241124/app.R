@@ -31,7 +31,7 @@ load('pxosrdo2dd.RData')   #4
 gridheight="630px"
 gridheight2="830px"
 gridheight3="1020px"
-colx <<- cobalt()[c(4,2,1)]
+collG <- colx <<- cobalt()[c(4,2,1)]
 sf <<- 3
 pgmc <<- 'grey50'
 
@@ -47,6 +47,17 @@ typerC  <<- typeC
 nfig2   <<- -1 #for ppm2
 nfig3   <<- 4 #for frac
 verbose <<- T
+minzoomnG <<- 7
+colnG <<- 
+  leaflet::colorFactor(
+    palette=scales::hue_pal(
+      direction=-1,
+      l=70 #lightness
+    )(10),
+    domain=1:10#x0[,bins]
+  )(1:10)%>%
+  rev(.)
+
 
 zerorefC =F#, #set reference asset NULL
 showtradetriangle=F
@@ -90,7 +101,8 @@ grid_page( ###grid page ----
                  selected = rc6cuC, 
                  returnValue = "text",
                  closeDepth = 0
-               )
+               )#,
+               #checkboxInput('localcbC,'Local',T)
                
              )
            ),#grid card end
@@ -110,11 +122,13 @@ grid_page( ###grid page ----
                                        layout = c(
                                          "x111     xtimeseries    ",
                                          "Winding characteristics",
-                                         "summary tradesummary   "
+                                         "summary tradesummary   ",
+                                         "x141   ."
                                        ),
                                        row_sizes = c(
                                          "1fr",
                                          ".7fr",
+                                         "1fr",
                                          "1fr"
                                        ),
                                        col_sizes = c(
@@ -126,10 +140,21 @@ grid_page( ###grid page ----
                                          area = "x111", 
                                          full_screen = TRUE,
                                          card_header(
-                                           "Postcode area map"
+                                           "Area P-tertile map"
                                          ),
                                          card_body(#
                                            leaflet::leafletOutput('x111'),
+                                           height=gridheight
+                                         )
+                                       ),
+                                       grid_card( #1,1-------------card
+                                         area = "x141", 
+                                         full_screen = TRUE,
+                                         card_header(
+                                           "National P-decile map"
+                                         ),
+                                         card_body(#
+                                           leaflet::leafletOutput('x141'),
                                            height=gridheight
                                          )
                                        ),
@@ -193,6 +218,17 @@ grid_page( ###grid page ----
                                            gt::gt_output('x132c'),
                                            gt::gt_output('x132d'),
                                            height=gridheight2
+                                         )
+                                       ),
+                                       grid_card( #1,1-------------card
+                                         area = "x141", 
+                                         full_screen = TRUE,
+                                         card_header(
+                                           "National P-decile map"
+                                         ),
+                                         card_body(#
+                                           leaflet::leafletOutput('x141'),
+                                           height=gridheight
                                          )
                                        )
                                        #   )
@@ -360,6 +396,14 @@ function(input, output) {
     geoplusG <<- copy(x)
     x
   })
+  
+  geonR <- reactive({
+    x <- 
+      geoplusR()[type=='N'][,.(rc9,nx=as.integer(substr(lab,3,4)),lab)]%>%unique(.)%>%.[,.(rc6=rc9,qtile=nx,lab)]
+    geonG <<- copy(x)
+    x
+  })
+  
   estdtR <- reactive({
     x <- copy(x00R()$estdt)[,.(nx,ii,date,xdotd,days,xdot,x)]
     estdtG <<- copy(x)
@@ -437,7 +481,6 @@ function(input, output) {
       x #vector of Date 0:tbar
     }
   
-  #------------------------reactive + global
   #---target   section----
   geotR <-     #---target geo compute   ----
   eventReactive( 
@@ -673,13 +716,15 @@ function(input, output) {
     geoaX=geoaG,
     pxosrdo2ddX=pxosrdo2ddG,
     z110X=z110G,
-    colX=colx #punk green blue
+    colX=colx, #punk green blue
+    minzoom=9,#7 for national
+    lightx=.7#higher is lighter
   ) {
     x <-
       geoaX%>%
       .[,.(
         rc6,
-        col=lighten(colx,.7)[.BY[[1]]],
+        col=lighten(colX,lightx)[.BY[[1]]],   ### capital in colX <<<<<<<<<<<<<<<<<<<<
         qtile, #shade tiles light
         lab
       ),by=.(qtile)]%>%
@@ -692,7 +737,7 @@ function(input, output) {
         .,
         x2=pxosrdo2ddX,
         pva=z110X,
-        minzoom=9,
+        minzoom=minzoom,
         maxzoom=12
       )%>%
       addPolygons( #outline custom districts
@@ -704,8 +749,10 @@ function(input, output) {
       )
     x
   }
-  #f111D()
-  x111D <- eventReactive(list(rc6tR(),rc6cuR(),geoaR(),pxosrdo2ddR(),z110R()),       #111 map ----
+  
+  #local
+  minzoomlG <- 9  
+  x111D <- eventReactive(list(rc6tR(),rc6cuR(),geoaR(),pxosrdo2ddR(),z110R()),       #111 map 
                          {
                            if(verbose) print('enter x111D')
                            x <-   f111D(
@@ -714,12 +761,33 @@ function(input, output) {
                              geoaX=geoaR(),
                              pxosrdo2ddX=pxosrdo2ddR(),
                              z110X=z110R(),
-                             colX=colx #punk green blue
+                             colX=collG, #punk green blue 
+                             minzoom=minzoomlG
                            )
                            x111G <<- copy(x)
                            x
                          }
   )
+  
+  #national
+  x141D <- eventReactive(list(rc6tR(),rc6cuR(),geoaR(),pxosrdo2ddR(),z110R()),       #141 map
+                         {
+                           if(verbose) print('enter x111D')
+                           x <-   f111D(
+                             rc6tX=rc6tR(),
+                             rc6cuX=rc6cuR(),
+                             geoaX=geonR(),
+                             pxosrdo2ddX=pxosrdo2ddR(),
+                             z110X=z110R(),
+                             colX=colnG, 
+                             minzoom=minzoomnG 
+                           )
+                           x141G <<- copy(x)
+                           x
+                         }
+  )
+  # }
+  
   
   f112D <- function(
     tslideX=tslideG,
@@ -1366,28 +1434,6 @@ function(input, output) {
                          {
                            if(verbose) print('enter x411G')
                            x <- f411D(geoqX=geoqR(),rc6tX=rc6tR(),rssX=rssR())
-                           # pc6tx <- rc6tR()
-                           # x1 <-
-                           #   data.table(tbin=1:3,freq=c('lo','hi','an'))
-                           # x2 <- 
-                           #   rssG%>% #use global no filters
-                           #   .[geoqR(),on=c(rc6='rc6')]%>%
-                           #   .[type=='L']%>%
-                           #   .[itrim==itriC]%>%
-                           #   .[,.(n=sum(n),ssek=sum(ssek)),.(tbin,rc6)]
-                           # x3 <-
-                           #   rbind(
-                           #     x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin],
-                           #     x2[rc6==pc6tx,.(span=pc6tx,mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin]
-                           #   )%>%
-                           #   dcast(.,tbin~span,value.var='mse')%>%
-                           #   x1[.,on=c(tbin='tbin')]%>%
-                           #   .[,-'tbin']
-                           # x <- 
-                           #   gt::gt(x3)%>%
-                           #   gt::tab_footnote(
-                           #     footnote=f241108a(typeC,tbinC)[[1]]
-                           #   )
                            x411G <<- copy(x)
                            x
                          }
@@ -1397,25 +1443,6 @@ function(input, output) {
                          {
                            if(verbose) print('enter x411Gcu')
                            x <-  f412D(geocuX=geocuR(),rc6tX=rc6tR(),rsscuX=rsscuR())
-                           # pc6tx <- rc6tR()
-                           # x1 <-
-                           #   data.table(tbin=1:3,freq=c('lo','hi','an'))
-                           # x2 <- 
-                           #   rsscuR()%>% #use global no filters
-                           #   .[geocuR(),on=c(rc6='rc9')]%>%
-                           #   .[,.(n,ssek,tbin=tbinC,rc6)]
-                           # x3 <-
-                           #   rbind(
-                           #     x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin],
-                           #     x2[rc6==pc6tx,.(span=pc6tx,mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin]
-                           #   )%>%
-                           #   dcast(.,tbin~span,value.var='mse')%>%
-                           #   x1[.,on=c(tbin='tbin')]%>%
-                           #   .[,-'tbin']
-                           # x <- 
-                           #   gt::gt(x3)%>%
-                           #   gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])%>%
-                           #   gt::tab_footnote(footnote=paste0('only freq=hi is computed for custom'))
                            x412G <<- copy(x)
                            x
                          }
@@ -1425,29 +1452,6 @@ function(input, output) {
                          {
                            if(verbose) print('enter x421D')
                            x <-  f421D(geoqX=geoqR(),rc6tX=rc6tR(),rssX=rssR())
-                           # pc6tx <- rc6tR()
-                           # x1 <-
-                           #   data.table(itrim=1:3,threshold=c('0.0','0.1','0.5'))
-                           # x2 <-
-                           #   rssG%>%
-                           #   .[geoqR(),on=c(rc6='rc6')]%>%
-                           #   .[type=='L']%>%
-                           #   .[tbin==tbinC]%>%
-                           #   .[,.(n=sum(n),ssek=sum(ssek)),.(itrim,rc6)]
-                           # x3 <- rbind(
-                           #   x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim],
-                           #   x2[rc6==pc6tx,.(span=pc6tx,mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim]
-                           # )%>%
-                           #   dcast(.,itrim~span,value.var='mse')%>%
-                           #   x1[.,on=c(itrim='itrim')]%>%
-                           #   .[,-'itrim']
-                           # x <- 
-                           #   gt::gt(x3)%>%
-                           #   gt::tab_footnote(
-                           #     footnote=f241108a(typeC,tbinC)[[1]]
-                           #   )%>%gt::tab_footnote(
-                           #     footnote=f241108a(typeC,tbinC)[[2]]
-                           #   )
                            x421G <<- copy(x)
                            x
                          }
@@ -1457,24 +1461,6 @@ function(input, output) {
                          {
                            if(verbose) print('enter x422D')
                            x <- f422D(geocuX=geocuR(),rc6tX=rc6tR(),rsscuX=rsscuR())
-                           # pc6tx <- rc6tR()
-                           # x1 <-
-                           #   data.table(itrim=1:3,threshold=c('0.0','0.1','0.5'))
-                           # x2 <-
-                           #   rsscuR()%>%
-                           #   .[geocuR(),on=c(rc6='rc9')]%>%
-                           #   .[,.(n,ssek,itrim=itriC,rc6)]
-                           # x3 <- rbind(
-                           #   x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim],
-                           #   x2[rc6==pc6tx,.(span=pc6tx,mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim]
-                           # )%>%
-                           #   dcast(.,itrim~span,value.var='mse')%>%
-                           #   x1[.,on=c(itrim='itrim')]%>%
-                           #   .[,-'itrim']
-                           # x <- 
-                           #   gt::gt(x3)%>%
-                           #   gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])%>%
-                           #   gt::tab_footnote(footnote=paste0('only threshold=0.1 is computed for custom'))
                            x422G <<- copy(x)
                            x
                          }
@@ -1484,28 +1470,6 @@ function(input, output) {
                          {
                            if(verbose) print('enter x431D')
                            x <- f431D(geoqX=geoqR(),rc6tX=rc6tR(),rssX=rssR())
-                           # pc6tx <- rc6tR()
-                           # x1 <-
-                           #   rssG%>%
-                           #   .[geoqR(),on=c(rc6='rc6')]%>%
-                           #   .[type=='L']%>%
-                           #   .[tbin==tbinC]%>%
-                           #   .[itrim==itriC]%>%
-                           #   .[,.(n=sum(n),ssek=sum(ssek),ssei=sum(ssei)),.(itrim,rc6)]
-                           # x2 <-
-                           #   rbind(
-                           #     x1[,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))],
-                           #     x1[rc6==pc6tx,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))]
-                           #   )%>%
-                           #   as.matrix(.)%>%t(.)%>%as.data.table(.,keep.rownames=T)
-                           # setnames(x2,c('domain','index.average',rc6tR())[1:ncol(x2)])
-                           # if(ncol(x2)==3) x2 <- x2[,c(1,3,2)]
-                           # x <- 
-                           #   gt::gt(x2)%>%gt::tab_footnote(
-                           #     footnote=f241108a(typeC,tbinC)[[1]]
-                           #   )%>%gt::tab_footnote(
-                           #     footnote=f241108a(typeC,tbinC)[[2]]
-                           #   )
                            x431G <<- copy(x)
                            x
                          }
@@ -1515,28 +1479,14 @@ function(input, output) {
                          {
                            if(verbose) print('enter x432D')
                            x <- f432D(geocuX=geocuR(),rc6tX=rc6tR(),rsscuX=rsscuR())
-                           # pc6tx <- rc6tR()
-                           # x1 <-
-                           #   rsscuR()%>%
-                           #   .[geocuR(),on=c(rc6='rc9')]%>%
-                           #   .[,.(n,ssek,ssei,itrim=itriC,rc6)]
-                           # x2 <-
-                           #   rbind(
-                           #     x1[,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))],
-                           #     x1[rc6==pc6tx,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))]
-                           #   )%>%
-                           #   as.matrix(.)%>%t(.)%>%as.data.table(.,keep.rownames=T)
-                           # setnames(x2,c('domain','index.average',rc6tR())[1:ncol(x2)])
-                           # if(ncol(x2)==3) x2 <- x2[,c(1,3,2)]
-                           # x <- 
-                           #   gt::gt(x2)%>%
-                           #   gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])
                            x432G <<- copy(x)
                            x
                          }
   )
   
   #---render section------------
+  output$x141 <- renderLeaflet(x141D())
+  
   output$x111 <- renderLeaflet(x111D())
   output$x112 <- renderPlot(x112D())
   output$x121a <- gt::render_gt(x121D()[[1]])

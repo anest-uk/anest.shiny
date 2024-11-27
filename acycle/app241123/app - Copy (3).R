@@ -242,7 +242,7 @@ grid_page( ###grid page ----
                                        ),
                                        card_body(#--------------x311
                                          DT::DTOutput('x311'),
-                                         height=gridheight3
+                                       height=gridheight3
                                        ),
                                        height=gridheight3
                                      )
@@ -692,8 +692,7 @@ function(input, output) {
         .,
         x2=pxosrdo2ddX,
         pva=z110X,
-        minzoom=9,
-        maxzoom=12
+        minzoom=9
       )%>%
       addPolygons( #outline custom districts
         data=pxosrdo2ddX[which(pxosrdo2ddX@data$name%in%irregpcode(rc6cuX)),],
@@ -816,8 +815,7 @@ function(input, output) {
                            x2 <- f121D(estdt=estdtlR(),
                                        dfnxX=dfnxR())
                            x4 <- f121D(estdt=estdtcuR(),
-                                       dfnxX=dfnxR(),
-                                       typeX='C')
+                                       dfnxX=dfnxR())
                            x <- list(x2,x4)
                            x121G <<- copy(x)
                            x
@@ -1047,7 +1045,7 @@ function(input, output) {
                          }
   )
   
-  
+
   #211 listing----
   f211D <- function(
     estdtlX=estdtlG, #single
@@ -1150,7 +1148,7 @@ function(input, output) {
                            x
                          }
   )
-  x211cuD <- eventReactive(list(estdtcuR(),geocuR(),dfnxxR()),           #211cu listing----
+  x211cuD <- eventReactive(list(estdtcuR(),geocuR(),dfnxxR()),           #111cu listing----
                            {
                              if(verbose) print('enter x211D')
                              geox <- copy(geocuR())[,let(rc6,rc9)] #used for aggregation and label
@@ -1164,35 +1162,35 @@ function(input, output) {
                            }
   )
   
-  f311D <- function(geo0X=geo0G,z110X=z110G,rc6tX=rc6tG)                   #311 constituents----
-  {
-    if(verbose) print('enter 311')
-    x1 <- 
-      geo0X[,.(rc3,rc6,qtile)]%>%
-      z110X[.,on=c(rcx='rc6')]%>%
-      .[,.(rc3,rc6=rcx,nid,ppm2=round(ppm2),quantile=paste0('local-',qtile))]
-    x <- 
-      DT::datatable(
-        x1,
-        options = list(
-          search = list(search = rc6tX), 
-          columnDefs = list(list(className = 'dt-center', targets = 1:4,searchable = F, targets = 3:5)),
-          paging=T,
-          pageLength=100,
-          initComplete = JS(
-            "function(settings, json) {",
-            "$('body').css({'font-family': 'Calibri'});",
-            "}"
-          )
-        ),
-        rownames=F
-      )%>%
-      DT::formatStyle( 0, target= 'row', lineHeight='70%')
-    x311G <<- copy(x)
-    x
-  }
-  
-  x311D <- eventReactive(list(geo0R(),z110R(),rc6tX=rc6tR()),     #311 custom constituents----
+ f311D <- function(geo0X=geo0G,z110X=z110G,rc6tX=rc6tG)                   #311 constituents----
+                         {
+                           if(verbose) print('enter 311')
+                           x1 <- 
+                             geo0X[,.(rc3,rc6,qtile)]%>%
+                             z110X[.,on=c(rcx='rc6')]%>%
+                             .[,.(rc3,rc6=rcx,nid,ppm2=round(ppm2),quantile=paste0('local-',qtile))]
+                           x <- 
+                             DT::datatable(
+                               x1,
+                               options = list(
+                                 search = list(search = rc6tX), 
+                                 columnDefs = list(list(className = 'dt-center', targets = 1:4,searchable = F, targets = 3:5)),
+                                 paging=T,
+                                 pageLength=100,
+                                 initComplete = JS(
+                                   "function(settings, json) {",
+                                   "$('body').css({'font-family': 'Calibri'});",
+                                   "}"
+                                 )
+                               ),
+                               rownames=F
+                             )%>%
+                             DT::formatStyle( 0, target= 'row', lineHeight='70%')
+                           x311G <<- copy(x)
+                           x
+                         }
+   
+x311D <- eventReactive(list(geo0R(),z110R(),rc6tX=rc6tR()),     #311 custom constituents----
                          {
                            if(verbose) print('enter 311')
                            x <- f311D(
@@ -1204,338 +1202,176 @@ function(input, output) {
                            x
                          }
   )
-  
+
   #------------------ accuracy
-  
-  f411D <- function(geoqX=geoqG,rc6tX=rc6tG,rssX=rssG) {        #2x11 accuracy----tbin----
-    if(verbose) print('enter f411G')
-    x1 <-
-      data.table(tbin=1:3,freq=c('lo','hi','an'))
-    x2 <- 
-      rssX%>% #use global no filters
-      .[geoqX,on=c(rc6='rc6')]%>%
-      .[type=='L']%>%
-      .[itrim==itriC]%>%
-      .[,.(n=sum(n),ssek=sum(ssek)),.(tbin,rc6)]
-    x3 <-
-      rbind(
-        x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin],
-        x2[rc6==rc6tX,.(span=rc6tX,mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin]
-      )%>%
-      dcast(.,tbin~span,value.var='mse')%>%
-      x1[.,on=c(tbin='tbin')]%>%
-      .[,-'tbin']
-    x <- 
-      gt::gt(x3)%>%
-      gt::tab_footnote(
-        footnote=f241108a(typeC,tbinC)[[1]]
-      )
-    x411G <<- copy(x)
-    x
-  }
-  
-  
-  f412D <- function(geocuX=geocuG,rc6tX=rc6tG,rsscuX=rsscuG)  {     #2x11cu accuracy--custom--tbin----
-    x1 <-
-      data.table(tbin=1:3,freq=c('lo','hi','an'))
-    x2 <- 
-      rsscuX%>% #use global no filters
-      .[geocuX,on=c(rc6='rc9')]%>%
-      .[,.(n,ssek,tbin=tbinC,rc6)]
-    x3 <-
-      rbind(
-        x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin],
-        x2[rc6==rc6tX,.(span=rc6tX,mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin]
-      )%>%
-      dcast(.,tbin~span,value.var='mse')%>%
-      x1[.,on=c(tbin='tbin')]%>%
-      .[,-'tbin']
-    x <- 
-      gt::gt(x3)%>%
-      gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])%>%
-      gt::tab_footnote(footnote=paste0('only freq=hi is computed for custom'))
-    x412G <<- copy(x)
-    x
-  }
-  
-  
-  f421D <- function(geoqX=geoqG,rc6tX=rc6tG,rssX=rssG)   {      #221 accuracy----trim----
-    x1 <-
-      data.table(itrim=1:3,threshold=c('0.0','0.1','0.5'))
-    x2 <-
-      rssX%>%
-      .[geoqX,on=c(rc6='rc6')]%>%
-      .[type=='L']%>%
-      .[tbin==tbinC]%>%
-      .[,.(n=sum(n),ssek=sum(ssek)),.(itrim,rc6)]
-    x3 <- rbind(
-      x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim],
-      x2[rc6==rc6tX,.(span=rc6tX,mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim]
-    )%>%
-      dcast(.,itrim~span,value.var='mse')%>%
-      x1[.,on=c(itrim='itrim')]%>%
-      .[,-'itrim']
-    x <- 
-      gt::gt(x3)%>%
-      gt::tab_footnote(
-        footnote=f241108a(typeC,tbinC)[[1]]
-      )%>%gt::tab_footnote(
-        footnote=f241108a(typeC,tbinC)[[2]]
-      )
-    x421G <<- copy(x)
-    x
-  }
-  
-  
-  f422D <- function(geocuX=geocuG,rc6tX=rc6tG,rsscuX=rsscuG)  {     #221cu accuracy----trim----
-    x1 <-
-      data.table(itrim=1:3,threshold=c('0.0','0.1','0.5'))
-    x2 <-
-      rsscuX%>%
-      .[geocuX,on=c(rc6='rc9')]%>%
-      .[,.(n,ssek,itrim=itriC,rc6)]
-    x3 <- rbind(
-      x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim],
-      x2[rc6==rc6tX,.(span=rc6tX,mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim]
-    )%>%
-      dcast(.,itrim~span,value.var='mse')%>%
-      x1[.,on=c(itrim='itrim')]%>%
-      .[,-'itrim']
-    x <- 
-      gt::gt(x3)%>%
-      gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])%>%
-      gt::tab_footnote(footnote=paste0('only threshold=0.1 is computed for custom'))
-    x432G <<- copy(x)
-    x
-  }
-  
-  
-  f431D <- function(geoqX=geoqG,rc6tX=rc6tG,rssX=rssG)   {      #231 accuracy----in/out----
-    x1 <-
-      rssX%>%
-      .[geoqX,on=c(rc6='rc6')]%>%
-      .[type=='L']%>%
-      .[tbin==tbinC]%>%
-      .[itrim==itriC]%>%
-      .[,.(n=sum(n),ssek=sum(ssek),ssei=sum(ssei)),.(itrim,rc6)]
-    x2 <-
-      rbind(
-        x1[,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))],
-        x1[rc6==rc6tX,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))]
-      )%>%
-      as.matrix(.)%>%t(.)%>%as.data.table(.,keep.rownames=T)
-    setnames(x2,c('domain','index.average',rc6tX)[1:ncol(x2)])
-    if(ncol(x2)==3) x2 <- x2[,c(1,3,2)]
-    x <- 
-      gt::gt(x2)%>%gt::tab_footnote(
-        footnote=f241108a(typeC,tbinC)[[1]]
-      )%>%gt::tab_footnote(
-        footnote=f241108a(typeC,tbinC)[[2]]
-      )
-    x431G <<- copy(x)
-    x
-  }
-  
-  
-  f432D <- function(geocuX=geocuG,rc6tX=rc6tG,rsscuX=rsscuG)  {     #231cu accuracy----in/out----
-    x1 <-
-      rsscuX%>%
-      .[geocuX,on=c(rc6='rc9')]%>%
-      .[,.(n,ssek,ssei,itrim=itriC,rc6)]
-    x2 <-
-      rbind(
-        x1[,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))],
-        x1[rc6==rc6tX,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))]
-      )%>%
-      as.matrix(.)%>%t(.)%>%as.data.table(.,keep.rownames=T)
-    setnames(x2,c('domain','index.average',rc6tX)[1:ncol(x2)])
-    if(ncol(x2)==3) x2 <- x2[,c(1,3,2)]
-    x <- 
-      gt::gt(x2)%>%
-      gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])
-    x432G <<- copy(x)
-    x
-  }
-  
-  
-  
-  
-  
-  #-----------------------------reactive
-  x411D <- eventReactive(list(geoqR(),rc6tR(),rssR()),        #2x11 accuracy----tbin----
+  x411D <- eventReactive(list(rc6cuR(),geoqR()),        #2x11 accuracy----tbin----
                          {
                            if(verbose) print('enter x411G')
-                           x <- f411D(geoqX=geoqR(),rc6tX=rc6tR(),rssX=rssR())
-                           # pc6tx <- rc6tR()
-                           # x1 <-
-                           #   data.table(tbin=1:3,freq=c('lo','hi','an'))
-                           # x2 <- 
-                           #   rssG%>% #use global no filters
-                           #   .[geoqR(),on=c(rc6='rc6')]%>%
-                           #   .[type=='L']%>%
-                           #   .[itrim==itriC]%>%
-                           #   .[,.(n=sum(n),ssek=sum(ssek)),.(tbin,rc6)]
-                           # x3 <-
-                           #   rbind(
-                           #     x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin],
-                           #     x2[rc6==pc6tx,.(span=pc6tx,mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin]
-                           #   )%>%
-                           #   dcast(.,tbin~span,value.var='mse')%>%
-                           #   x1[.,on=c(tbin='tbin')]%>%
-                           #   .[,-'tbin']
-                           # x <- 
-                           #   gt::gt(x3)%>%
-                           #   gt::tab_footnote(
-                           #     footnote=f241108a(typeC,tbinC)[[1]]
-                           #   )
+                           pc6tx <- rc6tR()
+                           x1 <-
+                             data.table(tbin=1:3,freq=c('lo','hi','an'))
+                           x2 <- 
+                             rssG%>% #use global no filters
+                             .[geoqR(),on=c(rc6='rc6')]%>%
+                             .[type=='L']%>%
+                             .[itrim==itriC]%>%
+                             .[,.(n=sum(n),ssek=sum(ssek)),.(tbin,rc6)]
+                           x3 <-
+                             rbind(
+                               x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin],
+                               x2[rc6==pc6tx,.(span=pc6tx,mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin]
+                             )%>%
+                             dcast(.,tbin~span,value.var='mse')%>%
+                             x1[.,on=c(tbin='tbin')]%>%
+                             .[,-'tbin']
+                           x <- 
+                             gt::gt(x3)%>%
+                             gt::tab_footnote(
+                               footnote=f241108a(typeC,tbinC)[[1]]
+                             )
                            x411G <<- copy(x)
                            x
                          }
   )
-  
-  x412D <- eventReactive(list(geocuR(),rc6tR(),rsscuR()),      #2x11cu accuracy--custom--tbin----
-                         {
-                           if(verbose) print('enter x411Gcu')
-                           x <-  f412D(geocuX=geocuR(),rc6tX=rc6tR(),rsscuX=rsscuR())
-                           # pc6tx <- rc6tR()
-                           # x1 <-
-                           #   data.table(tbin=1:3,freq=c('lo','hi','an'))
-                           # x2 <- 
-                           #   rsscuR()%>% #use global no filters
-                           #   .[geocuR(),on=c(rc6='rc9')]%>%
-                           #   .[,.(n,ssek,tbin=tbinC,rc6)]
-                           # x3 <-
-                           #   rbind(
-                           #     x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin],
-                           #     x2[rc6==pc6tx,.(span=pc6tx,mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin]
-                           #   )%>%
-                           #   dcast(.,tbin~span,value.var='mse')%>%
-                           #   x1[.,on=c(tbin='tbin')]%>%
-                           #   .[,-'tbin']
-                           # x <- 
-                           #   gt::gt(x3)%>%
-                           #   gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])%>%
-                           #   gt::tab_footnote(footnote=paste0('only freq=hi is computed for custom'))
-                           x412G <<- copy(x)
-                           x
-                         }
+
+  x412D <- eventReactive(list(rc6cuR(),rssaR()),      #2x11cu accuracy--custom--tbin----
+                           {
+                             if(verbose) print('enter x411Gcu')
+                             pc6tx <- rc6tR()
+                             x1 <-
+                               data.table(tbin=1:3,freq=c('lo','hi','an'))
+                             x2 <- 
+                               rsscuR()%>% #use global no filters
+                               .[geocuR(),on=c(rc6='rc9')]%>%
+                               .[,.(n,ssek,tbin=tbinC,rc6)]
+                             x3 <-
+                               rbind(
+                                 x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin],
+                                 x2[rc6==pc6tx,.(span=pc6tx,mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin]
+                               )%>%
+                               dcast(.,tbin~span,value.var='mse')%>%
+                               x1[.,on=c(tbin='tbin')]%>%
+                               .[,-'tbin']
+                             x <- 
+                               gt::gt(x3)%>%
+                               gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])%>%
+                               gt::tab_footnote(footnote=paste0('only freq=hi is computed for custom'))
+                             x412G <<- copy(x)
+                             x
+                           }
   )
-  
-  x421D <- eventReactive(list(geoqR(),rc6tR(),rssR()),        #221 accuracy----trim----
+
+  x421D <- eventReactive(list(rc6cuR(),geoqR()),        #221 accuracy----trim----
                          {
                            if(verbose) print('enter x421D')
-                           x <-  f421D(geoqX=geoqR(),rc6tX=rc6tR(),rssX=rssR())
-                           # pc6tx <- rc6tR()
-                           # x1 <-
-                           #   data.table(itrim=1:3,threshold=c('0.0','0.1','0.5'))
-                           # x2 <-
-                           #   rssG%>%
-                           #   .[geoqR(),on=c(rc6='rc6')]%>%
-                           #   .[type=='L']%>%
-                           #   .[tbin==tbinC]%>%
-                           #   .[,.(n=sum(n),ssek=sum(ssek)),.(itrim,rc6)]
-                           # x3 <- rbind(
-                           #   x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim],
-                           #   x2[rc6==pc6tx,.(span=pc6tx,mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim]
-                           # )%>%
-                           #   dcast(.,itrim~span,value.var='mse')%>%
-                           #   x1[.,on=c(itrim='itrim')]%>%
-                           #   .[,-'itrim']
-                           # x <- 
-                           #   gt::gt(x3)%>%
-                           #   gt::tab_footnote(
-                           #     footnote=f241108a(typeC,tbinC)[[1]]
-                           #   )%>%gt::tab_footnote(
-                           #     footnote=f241108a(typeC,tbinC)[[2]]
-                           #   )
+                           pc6tx <- rc6tR()
+                           x1 <-
+                             data.table(itrim=1:3,threshold=c('0.0','0.1','0.5'))
+                           x2 <-
+                             rssG%>%
+                             .[geoqR(),on=c(rc6='rc6')]%>%
+                             .[type=='L']%>%
+                             .[tbin==tbinC]%>%
+                             .[,.(n=sum(n),ssek=sum(ssek)),.(itrim,rc6)]
+                           x3 <- rbind(
+                             x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim],
+                             x2[rc6==pc6tx,.(span=pc6tx,mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim]
+                           )%>%
+                             dcast(.,itrim~span,value.var='mse')%>%
+                             x1[.,on=c(itrim='itrim')]%>%
+                             .[,-'itrim']
+                           x <- 
+                             gt::gt(x3)%>%
+                             gt::tab_footnote(
+                               footnote=f241108a(typeC,tbinC)[[1]]
+                             )%>%gt::tab_footnote(
+                               footnote=f241108a(typeC,tbinC)[[2]]
+                             )
                            x421G <<- copy(x)
                            x
                          }
   )
-  
-  x422D <- eventReactive(list(geocuR(),rc6tR(),rsscuR()),      #221cu accuracy----trim----
-                         {
-                           if(verbose) print('enter x422D')
-                           x <- f422D(geocuX=geocuR(),rc6tX=rc6tR(),rsscuX=rsscuR())
-                           # pc6tx <- rc6tR()
-                           # x1 <-
-                           #   data.table(itrim=1:3,threshold=c('0.0','0.1','0.5'))
-                           # x2 <-
-                           #   rsscuR()%>%
-                           #   .[geocuR(),on=c(rc6='rc9')]%>%
-                           #   .[,.(n,ssek,itrim=itriC,rc6)]
-                           # x3 <- rbind(
-                           #   x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim],
-                           #   x2[rc6==pc6tx,.(span=pc6tx,mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim]
-                           # )%>%
-                           #   dcast(.,itrim~span,value.var='mse')%>%
-                           #   x1[.,on=c(itrim='itrim')]%>%
-                           #   .[,-'itrim']
-                           # x <- 
-                           #   gt::gt(x3)%>%
-                           #   gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])%>%
-                           #   gt::tab_footnote(footnote=paste0('only threshold=0.1 is computed for custom'))
-                           x422G <<- copy(x)
-                           x
-                         }
+
+  x422D <- eventReactive(list(rc6cuR(),rssaR()),      #221cu accuracy----trim----
+                           {
+                             if(verbose) print('enter x421D')
+                             pc6tx <- rc6tR()
+                             x1 <-
+                               data.table(itrim=1:3,threshold=c('0.0','0.1','0.5'))
+                             x2 <-
+                               rsscuR()%>%
+                               .[geocuR(),on=c(rc6='rc9')]%>%
+                               .[,.(n,ssek,itrim=itriC,rc6)]
+                             x3 <- rbind(
+                               x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim],
+                               x2[rc6==pc6tx,.(span=pc6tx,mse=round(sqrt(sum(ssek)/sum(n)),4)),itrim]
+                             )%>%
+                               dcast(.,itrim~span,value.var='mse')%>%
+                               x1[.,on=c(itrim='itrim')]%>%
+                               .[,-'itrim']
+                             x <- 
+                               gt::gt(x3)%>%
+                               gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])%>%
+                               gt::tab_footnote(footnote=paste0('only threshold=0.1 is computed for custom'))
+                             x432G <<- copy(x)
+                             x
+                           }
   )
-  
-  x431D <- eventReactive(list(geoqR(),rc6tR(),rssR()),        #231 accuracy----in/out----
+
+  x431D <- eventReactive(list(rc6cuR(),geoqR()),        #231 accuracy----in/out----
                          {
                            if(verbose) print('enter x431D')
-                           x <- f431D(geoqX=geoqR(),rc6tX=rc6tR(),rssX=rssR())
-                           # pc6tx <- rc6tR()
-                           # x1 <-
-                           #   rssG%>%
-                           #   .[geoqR(),on=c(rc6='rc6')]%>%
-                           #   .[type=='L']%>%
-                           #   .[tbin==tbinC]%>%
-                           #   .[itrim==itriC]%>%
-                           #   .[,.(n=sum(n),ssek=sum(ssek),ssei=sum(ssei)),.(itrim,rc6)]
-                           # x2 <-
-                           #   rbind(
-                           #     x1[,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))],
-                           #     x1[rc6==pc6tx,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))]
-                           #   )%>%
-                           #   as.matrix(.)%>%t(.)%>%as.data.table(.,keep.rownames=T)
-                           # setnames(x2,c('domain','index.average',rc6tR())[1:ncol(x2)])
-                           # if(ncol(x2)==3) x2 <- x2[,c(1,3,2)]
-                           # x <- 
-                           #   gt::gt(x2)%>%gt::tab_footnote(
-                           #     footnote=f241108a(typeC,tbinC)[[1]]
-                           #   )%>%gt::tab_footnote(
-                           #     footnote=f241108a(typeC,tbinC)[[2]]
-                           #   )
+                           pc6tx <- rc6tR()
+                           x1 <-
+                             rssG%>%
+                             .[geoqR(),on=c(rc6='rc6')]%>%
+                             .[type=='L']%>%
+                             .[tbin==tbinC]%>%
+                             .[itrim==itriC]%>%
+                             .[,.(n=sum(n),ssek=sum(ssek),ssei=sum(ssei)),.(itrim,rc6)]
+                           x2 <-
+                             rbind(
+                               x1[,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))],
+                               x1[rc6==pc6tx,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))]
+                             )%>%
+                             as.matrix(.)%>%t(.)%>%as.data.table(.,keep.rownames=T)
+                           setnames(x2,c('domain','index.average',rc6tR())[1:ncol(x2)])
+                           if(ncol(x2)==3) x2 <- x2[,c(1,3,2)]
+                           x <- 
+                             gt::gt(x2)%>%gt::tab_footnote(
+                               footnote=f241108a(typeC,tbinC)[[1]]
+                             )%>%gt::tab_footnote(
+                               footnote=f241108a(typeC,tbinC)[[2]]
+                             )
                            x431G <<- copy(x)
                            x
                          }
   )
-  
-  x432D <- eventReactive(list(geocuR(),rc6tR(),rsscuR()),      #231cu accuracy----in/out----
-                         {
-                           if(verbose) print('enter x432D')
-                           x <- f432D(geocuX=geocuR(),rc6tX=rc6tR(),rsscuX=rsscuR())
-                           # pc6tx <- rc6tR()
-                           # x1 <-
-                           #   rsscuR()%>%
-                           #   .[geocuR(),on=c(rc6='rc9')]%>%
-                           #   .[,.(n,ssek,ssei,itrim=itriC,rc6)]
-                           # x2 <-
-                           #   rbind(
-                           #     x1[,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))],
-                           #     x1[rc6==pc6tx,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))]
-                           #   )%>%
-                           #   as.matrix(.)%>%t(.)%>%as.data.table(.,keep.rownames=T)
-                           # setnames(x2,c('domain','index.average',rc6tR())[1:ncol(x2)])
-                           # if(ncol(x2)==3) x2 <- x2[,c(1,3,2)]
-                           # x <- 
-                           #   gt::gt(x2)%>%
-                           #   gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])
-                           x432G <<- copy(x)
-                           x
-                         }
+
+  x432D <- eventReactive(list(rc6cuR(),rssaR()),      #231cu accuracy----in/out----
+                           {
+                             if(verbose) print('enter x432D')
+                             pc6tx <- rc6tR()
+                             x1 <-
+                               rsscuR()%>%
+                               .[geocuR(),on=c(rc6='rc9')]%>%
+                               .[,.(n,ssek,ssei,itrim=itriC,rc6)]
+                             x2 <-
+                               rbind(
+                                 x1[,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))],
+                                 x1[rc6==pc6tx,.(outsamp=round(sqrt(sum(ssek)/sum(n)),4),insamp=round(sqrt(sum(ssei)/sum(n)),4))]
+                               )%>%
+                               as.matrix(.)%>%t(.)%>%as.data.table(.,keep.rownames=T)
+                             setnames(x2,c('domain','index.average',rc6tR())[1:ncol(x2)])
+                             if(ncol(x2)==3) x2 <- x2[,c(1,3,2)]
+                             x <- 
+                               gt::gt(x2)%>%
+                               gt::tab_footnote(footnote=f241108a(tc='C',tbinC)[[1]])
+                             x432G <<- copy(x)
+                             x
+                           }
   )
-  
+
   #---render section------------
   output$x111 <- renderLeaflet(x111D())
   output$x112 <- renderPlot(x112D())

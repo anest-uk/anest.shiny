@@ -3,15 +3,27 @@
 - This is an internal development version  
 - These informal notes will be updated as development proceeds  
 - The app is not self-explanatory at present and needs proper introduction  
-  
+
+**2024-11-25 Update**  
+- promote from shinyapps.io free tier to 'basic' paid tier, enable 4GB memory for app
+- add 'estimate custom' to avoid over-eager recalculation and hide it when selection=estimate
+- add message 'custom index matches selection' when no re-estimation is needed
+- listing: move districts from footnote to small header
+- reorder custom selection alphabetically
+- select target district using tree-picker widget
+
+Limitations:
+- target district treepicker should allow only one input - instead uses the first alphabetically
+- target index treepicker causes error if area or region selected
+
 **2024-11-20 Update**  
+- add custom index district picker, always combined with target
 - time-series summary: add custom index on all 6 displays
-- time-series summary: outline target district orange on map
+- time-series summary: outline custom districts orange on map
 - listing: add custom index 
 - accuracy: add custom index 
 - custom index: compacted data, extend scope to all districts England & Wales
 - formatting improvements
-- minor UI limitation: custom index 'district picker' not implemented, hardcoded custom=target district  
 - performance issue: premature recalculation while typing in target district  
   
 **2024-11-13 Initial**  
