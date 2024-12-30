@@ -1,0 +1,57 @@
+
+**Acycle index**   
+- This is an internal development version  
+- These informal notes will be updated as development proceeds  
+- The app is not self-explanatory at present and needs proper introduction  
+
+**2024-12-10 Update**  
+- scan for peers based on £/m2 and radial distance and use best as defaults/peers in custom 
+- report members of: suggested-peers-custom, selected-custom, computed-custom
+- show custom-status: red message if selection not equal to computed, else black
+- place actionbutton, member-report, custom-status above/outside scrolling area
+
+**2024-11-25 Update**  
+- promote from shinyapps.io free tier to 'basic' paid tier, enable 4GB memory for app
+- add 'estimate custom' to avoid over-eager recalculation and hide it when selection=estimate
+- add message 'custom index matches selection' when no re-estimation is needed
+- listing: move districts from footnote to small header
+- reorder custom selection alphabetically
+- select target district using tree-picker widget
+
+Limitations:
+- target district treepicker should allow only one input - instead uses the first alphabetically
+- target index treepicker causes error if area or region selected
+
+**2024-11-20 Update**  
+- add custom index district picker, always combined with target
+- time-series summary: add custom index on all 6 displays
+- time-series summary: outline custom districts orange on map
+- listing: add custom index 
+- accuracy: add custom index 
+- custom index: compacted data, extend scope to all districts England & Wales
+- formatting improvements
+- performance issue: premature recalculation while typing in target district  
+  
+**2024-11-13 Initial**  
+  
+Geographic scope:  
+  -  local indices
+  -  current scope includes the local model, pre-calculated, on 104 postcode areas  
+  -  most areas have been optimally split into 3 price-bands, smaller ones into 2 or just 1, depending on datapoints available  
+  -  indices total 286 and span the country exactly: every property belongs to exactly 1 index  
+  -  controls are (1) select district, AKA 'outward postcode', or 'outcode' (2) a 'base date' which is used to on the first page, displays 'indices' 'summary' and 'trade recap'  
+
+ Limitations:  
+  -  trade recap is available for area examples (BA, B, E, AL) only at present  
+  -  the time-binning is as before dynamic bins currently 46 in total  
+  -  accuracy is reported as 'mean square error' i.e. the error in the repeat sales regression  
+  -  labelling is abbreviated and needs explanation  
+  -  units are delta log price and are decimal  
+  -  only one time-binning of 3 is displayed   
+  -  only local geo-bins are displayed  
+  -  sensitivity to outlier removal is reported but the resulting indices not shown  
+  -  custom index is not implemented / not shown  
+  -  upload and measure acccuracy of 3rd party index is not available  
+  -  download index is not available  
+  -  numerical results are not checked in detail  
+  -  cycle model is not shown  
