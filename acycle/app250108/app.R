@@ -86,21 +86,24 @@ grid_page( ###grid page ----
                #   ),
                #   card_body(
                div(style = "padding:4px",
-                   span(textOutput('defrc6'), style="padding:0px;color:black;font-size:12px"),
-                   span(textOutput('selrc6'), style="padding:0px;color:black;font-size:12px"),
-                   span(textOutput('comrc6'), style="padding:0px;color:black;font-size:12px"),
-                   conditionalPanel(
-                     condition="output.comrc6forjstest==output.selrc6forjstest",#"all.equal('A','B')",
-                     span(textOutput('cuseqcom'), style="color:black;font-size:12px"),
-                   ),
-                   conditionalPanel(#not equal
-                     condition="output.comrc6forjstest!=output.selrc6forjstest",#"all.equal('A','B')",
-                     span(textOutput('cusnecom'), style="color:red;font-size:12px"),
-                   ),
+                   # span(textOutput('defrc6'), style="padding:0px;color:black;font-size:12px"),
+                   # span(textOutput('selrc6'), style="padding:0px;color:black;font-size:12px"),
+                   # span(textOutput('comrc6'), style="padding:0px;color:black;font-size:12px"),
                    actionButton("docusabC", "Recompute custom"),
+                   conditionalPanel( #custom == computed
+                     condition="output.comrc6forjstest==output.selrc6forjstest",#"all.equal('A','B')",
+                     span(textOutput('cuseqcom'), style="color:black;font-size:12px")
+                   ),
+                   conditionalPanel(#custom != computed
+                     condition="output.comrc6forjstest!=output.selrc6forjstest",#"all.equal('A','B')",
+                     span(textOutput('cusnecom'), style="color:red;font-size:12px")
+                   ),
+                   textOutput('comrc6'),
+                   textOutput('selrc6'),
+                   textOutput('defrc6')
                ),#div
-             )
-           ),
+             )#card_body
+           ),#grid_card
            grid_card(
              area = "sidebar",
              card_header("Selection"),
@@ -154,7 +157,7 @@ grid_page( ###grid page ----
                #)
                #   )
                # ),
-               span(textOutput('selrc6forjstest'), style="color:white"), #white
+               span(textOutput('selrc6forjstest'), style="color:white"), #white - these must exist for conditionalpanel logic
                span(textOutput('comrc6forjstest'), style="color:white") #white
              )
            ),#grid card end
@@ -325,85 +328,30 @@ grid_page( ###grid page ----
                            nav_panel(title = "Accuracy", #----
                                      card(
                                        full_screen = TRUE,
-                                       card_header("RMS error sensitivity to key parameters"),
+                                       card_header("Accuracy metrics"),
                                        card_body(
                                          grid_container(
                                            layout = c(
-                                             "timesamplinglocal      timesamplingcustom",
-                                             "outlierrejectionlocal  outlierrejectioncustom",
-                                             "crossvalidationlocal   crossvalidationcustom"#,
+                                             "trial"
                                            ),
                                            row_sizes = c(
-                                             "1fr",
-                                             "1fr",
-                                             "1fr"#,
+                                             "1fr"
                                            ),
                                            col_sizes = c(
-                                             "1fr",
                                              "1fr"
                                            ),
                                            gap_size = "10px",
                                            grid_card(
-                                             area = "timesamplinglocal",
+                                             area = "trial",
                                              full_screen = TRUE,
-                                             card_header(
-                                               "Time Sampling"
-                                             ),
+                                             # card_header(
+                                             #   "Parameter sets" #does not need header until have more cards e.g. correlation
+                                             # ),
                                              card_body(#--------------x411
                                                gt::gt_output('x411')
                                              )
-                                           ),
-                                           grid_card(
-                                             area = "timesamplingcustom",
-                                             full_screen = TRUE,
-                                             card_header(
-                                               "."
-                                             ),
-                                             card_body(#--------------x412
-                                               gt::gt_output('x412')
-                                             )
-                                           ),
-                                           grid_card(
-                                             area = "outlierrejectionlocal",
-                                             full_screen = TRUE,
-                                             card_header(
-                                               "Outlier Rejection"
-                                             ),
-                                             card_body(#--------------x421
-                                               gt::gt_output('x421')
-                                             )
-                                           ),
-                                           
-                                           grid_card(
-                                             area = "outlierrejectioncustom",
-                                             full_screen = TRUE,
-                                             card_header(
-                                               "."
-                                             ),
-                                             card_body(#--------------x412
-                                               gt::gt_output('x422')
-                                             )
-                                           ),
-                                           grid_card(
-                                             area = "crossvalidationlocal",
-                                             full_screen = TRUE,
-                                             card_header(
-                                               "Cross Validation"
-                                             ),
-                                             card_body(#--------------x431
-                                               gt::gt_output('x431')
-                                             )
-                                           ),
-                                           grid_card(
-                                             area = "crossvalidationcustom",
-                                             full_screen = TRUE,
-                                             card_header(
-                                               "Cross Validation"
-                                             ),
-                                             card_body(#--------------x432
-                                               gt::gt_output('x432')
-                                             )
                                            )
+                                           
                                          )
                                        )
                                      )
@@ -434,8 +382,12 @@ function(input, output) {
   # })
   # iv$enable()
   selectedrc6R <- reactive({
-    #browser()
-    x0 <- sort(unique(input$rctreeC))
+    x0 <- union(
+      input$rctreeC, #custom
+      input$rc6tC     #target (always must be included)
+    )%>%
+      unique(.)%>%
+      sort(.)
     x1 <- #exclude non-rc6 higher tree nodes
       x0[
         which(
@@ -443,9 +395,31 @@ function(input, output) {
             (substr(x0,3,3)=='-')
         )
       ]
-    x <- paste0(paste0(x1,collapse=','))
-    print(paste0('selectedrc6R: ',x))
-    selectedrc6G <<- copy(x)
+    # x <- paste0(paste0(x1,collapse=','))
+    print(x0)
+    print(paste0('selectedrc6R: ',paste0(x1,collapse=',')))
+    selectedrc6G <<- copy(x1)
+    x1 #return vector of union(tree1,tree2)
+  })
+  
+    selectedrc6stringR <- reactive({
+    # x0 <- union(
+    #   input$rctreeC, #custom
+    #   input$rctC     #target (always must be included)
+    # )%>%
+    #   unique(.)%>%
+    #   sort(.)
+    # x1 <- #exclude non-rc6 higher tree nodes
+    #   x0[
+    #     which(
+    #       (nchar(x0)==6) &
+    #         (substr(x0,3,3)=='-')
+    #     )
+    #   ]
+    x1 <- selectedrc6R()
+    x <- paste0(paste0(x1,collapse=',')) #for messages
+    print(paste0('selectedrc6stringR: ',x))
+    selectedrc6stringG <<- copy(x)
     x
   })
   computedrc6R<- reactive({
@@ -456,10 +430,10 @@ function(input, output) {
     computedrc6G <<- copy(x)
     x
   })
-  output$selrc6 <- renderText({ paste0('selected:   ',selectedrc6R()) })
+  output$selrc6 <- renderText({ paste0('selected:   ',selectedrc6stringR()) })
   output$comrc6 <- renderText({ paste0('computed: ',computedrc6R()) })
   output$defrc6 <- renderText({ paste0(c('suggested: ',rc6deR()),collapse='') })
-  output$selrc6forjstest <- renderText({ selectedrc6R() })
+  output$selrc6forjstest <- renderText({ selectedrc6stringR() })
   output$comrc6forjstest <- renderText({ computedrc6R() })
   
   output$cuseqcom <- renderText({'Custom index matches selection'})#span(, style="size:8")
@@ -1490,29 +1464,72 @@ function(input, output) {
   
   f411D <- function(geoqX=geoqG,rc6tX=rc6tG,rssX=rssG) {        #2x11 accuracy----tbin----
     if(verbose) print('enter f411G')
-    x1 <-
-      data.table(tbin=1:3,freq=c('lo','hi','an'))
-    x2 <- 
-      rssX%>% #use global no filters
-      .[geoqX,on=c(rc6='rc6')]%>%
-      .[type=='L']%>%
-      .[itrim==itriC]%>%
-      .[,.(n=sum(n),ssek=sum(ssek)),.(tbin,rc6)]
-    x3 <-
-      rbind(
-        x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin],
-        x2[rc6==rc6tX,.(span=rc6tX,mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin]
+    # x1 <-
+    #   data.table(tbin=1:3,freq=c('lo','hi','an'))
+    # x2 <- 
+    #   rssX%>% #use global no filters
+    #   .[geoqX,on=c(rc6='rc6')]%>%
+    #   .[type=='L']%>%
+    #   .[itrim==itriC]%>%
+    #   .[,.(n=sum(n),ssek=sum(ssek)),.(tbin,rc6)]
+    # x3 <-
+    #   rbind(
+    #     x2[,.(span='index.average',mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin],
+    #     x2[rc6==rc6tX,.(span=rc6tX,mse=round(sqrt(sum(ssek)/sum(n)),4)),tbin]
+    #   )%>%
+    #   dcast(.,tbin~span,value.var='mse')%>%
+    #   x1[.,on=c(tbin='tbin')]%>%
+    #   .[,-'tbin']
+    #browser()
+    x1 <- 
+      copy(f250107bd)%>%
+      .[rc6==rc6tX]%>%
+      .[order(V1)]%>%
+      .[,target:=irregpcode(rc6)]%>%
+      .[,-c('V1','rc6')]%>%
+      .[,version:=c('Market','Region','Area','Area-tertile','Custom default','Custom annual','Custom all outliers','Custom 50% outliers')]%>%
+      .[,c(14,15,1:13)]
+    
+    x2 <-   
+      gt::gt(x1)%>%
+      cols_label(
+        n='datapoints',
+        version='index span',
+        
+        rmsei='training',
+        rmseo='testing',
+        delta='delta',
+        
+        rsqi='training',
+        rsqo='testing',
+        deltarsq='delta',
+        
+        rmsei.avg='training',
+        rmseo.avg='testing',
+        delta.avg='delta',
+        
+        rsqi.avg='training',
+        rsqo.avg='testing',
+        deltarsq.avg='delta'
       )%>%
-      dcast(.,tbin~span,value.var='mse')%>%
-      x1[.,on=c(tbin='tbin')]%>%
-      .[,-'tbin']
-    x <- 
-      gt::gt(x3)%>%
-      gt::tab_footnote(
-        footnote=f241108a(typeC,tbinC)[[1]]
-      )
-    x411G <<- copy(x)
-    x
+        tab_spanner(label='RMS error',columns=c('rmsei','rmseo','delta','rmsei.avg','rmseo.avg','delta.avg'),level=1)%>%
+        tab_spanner(label='R-squared',columns=c('rsqi','rsqo','deltarsq','rsqi.avg','rsqo.avg','deltarsq.avg'),level=1)%>%
+      tab_spanner(label='Target',columns=c('rmsei','rmseo','delta','rsqi','rsqo','deltarsq'),level=2,gather=F)%>%
+      tab_spanner(label='Index average',columns=c('rmsei.avg','rmseo.avg','delta.avg','rsqi.avg','rsqo.avg','deltarsq.avg'),level=2,gather=F)%>%
+      fmt_number(columns=c('rmsei','rmseo','delta','rmsei.avg','rmseo.avg','delta.avg','rsqi','rsqo','deltarsq','rsqi.avg','rsqo.avg','deltarsq.avg'),
+                   use_seps = TRUE,
+                   decimals = 4
+        )%>%
+      fmt_number(columns=c('n'),
+                 use_seps = TRUE,
+                 decimals = 0
+      )%>%
+      gtExtras::gt_highlight_rows(rows = 5,
+                        fill = "#EEFFEE")%>%
+      tab_options(table.font.size = 13,column_labels.font.size = 13,#row.padding=1.1,
+                  row.striping.include_table_body = F,table.align='center')#%>%
+    x411G <<- copy(x2)
+    x2
   }
   
   
