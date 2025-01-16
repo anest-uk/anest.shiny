@@ -74,55 +74,50 @@ function(input, output) {
     x
   })
   
-  
-  #---global   section----
-  
-  #reactive - no event, just copy, assign, ...
-  x00R <-   #r----
+  #---global   section---- UNCH
+  x00R     <-    #r----
     reactive({ 
     x <- copy(f241021ad)
     x00G <<- copy(x)
     x
   })
-  
-  #eventReactive - has eventExpr list
-  geoplusR <-   #r----
+  geoplusR <-    #r----
     reactive({
     x <- copy(x00R()$geoplus)[,let(lab,des)]
     geoplusG <<- copy(x)
     x
   })
-  estdtR <-    #r----
+  estdtR   <-    #r----
     reactive({ 
     x <- copy(x00R()$estdt)[,.(nx,ii,date,xdotd,days,xdot,x)]
     estdtG <<- copy(x)
     x
   })
-  rssR  <-    #r----
+  rssR     <-    #r----
     reactive({ 
     x <- copy(x00R()$rss)
     rssG <<- copy(x)
     x
   })
-  pxosrdo2ddR <-    #r----
+  pxosrdo2ddR <- #r----
     reactive({ 
     x <- copy(pxosrdo2dd)
     pxosrdo2ddG <<- copy(x)
     x
   })
-  z110R <-    #r----
+  z110R    <-    #r----
     reactive({ 
     x <- copy(z110)
     z110G <<- copy(x)
     x
   })
-  x101R <-    #r----
+  x101R    <-    #r----
     reactive({ 
     x <- copy(x101) #initial dates
     x101G <<- copy(x)
     x
   })
-  geo0R <-    #r----
+  geo0R    <-    #r----
     reactive({ 
     x <- 
       geoplusR()%>%
@@ -142,13 +137,12 @@ function(input, output) {
     geo0G <<- copy(x)
     x
   })
-  #--------------------------------------------------end work
   # dfnR <- reactive({ #not used?
   #   x <- data.table(date=c(as.Date('1994-12-31'),estdtR()[,sort(unique(date))]))[,let(i,(0:(.N-1)))]
   #   dfnG <<- copy(x)
   #   x
   # })
-  dfnxR <-    #r----
+  dfnxR    <-    #r----
     reactive({     
       x <-   #4-col table with NA
       dcast(x00R()$estdt[,.(tbin,date)]%>%unique(.)%>%.[order(tbin,date)],date~tbin,value.var='date')%>% #lo, hi, an
@@ -157,7 +151,7 @@ function(input, output) {
     dfnxG <<- copy(x)
     x
   })
-  dfnxxR <-    #r----
+  dfnxxR   <-    #r----
     reactive({ 
     x <- #vector of current date
       dfnxR()[,paste0('tbin',tbinC),with=F]%>%setnames(.,'x')%>%.[,sort(unique(x))]
@@ -165,7 +159,7 @@ function(input, output) {
     x
   })
   
-  tslideR <-    #r----
+  tslideR  <-    #r----
     reactive({ 
     x <- input$tslider
     tslideG <<- copy(x)
@@ -181,8 +175,8 @@ function(input, output) {
   
   #------------------------reactive + global
   
-  #---target   section----
-  geotR <-  eventReactive(rc6tR(),         #---target geo compute   ----
+  #---target section----
+  geotR <-  eventReactive(rc6tR(),         #-target geo compute   ----
     {
       if(verbose) print('enter geotR')
       x <- 
@@ -193,51 +187,45 @@ function(input, output) {
     }
   )
   
-  rc6tR <-  eventReactive(input$rc6tC,     #---target rc6 reformat  ----
+  rc6tR <-  eventReactive(input$rc6tC,     #-target rc6 reformat  ----
     {
       if(verbose) print('enter rc6tR')
       x <- 
         regpcode(input$rc6tC)[1]
       rc6tG <<- copy(x)
       x
-    }
-  )
+    })
   
   
   #---custom   section----
-  observe(  #----
-    
-    { if(verbose) {
-        print('enter updateTreeInput')
-      }
-      if(#guard against invalid selection
-        (!is.null(input$rc6tC))&#empty tree
-        (all(nchar(input$rc6tC)==6))#non-leaf selection
-      ) {
-        rc6c <- 
-          rc6deR()
-        if(verbose) {
-          print('treeInput update with custom peers:')
-          print(rc6c)
-        }
-        shinyWidgets::updateTreeInput(
-          inputId='rctreeC',
-          label = NULL,
-          selected = rc6c,
-          session = shiny::getDefaultReactiveDomain()
-        )
-        if(verbose) {
-          print('updateTreeInput complete')
-        }
-      } else {
-        print('no updateTreeInput')
-      } #length(rc6c)>0 end
+  observe(     #o-update tree with custom peers----
+    {
+    if(verbose) {
+      print('enter updateTreeInput')
     }
-  )
-  
-  
-  
-  rc6deR <-    #---default custom rc6 ----
+    if(#guard against invalid selection
+      (!is.null(input$rc6tC))&#empty tree
+      (all(nchar(input$rc6tC)==6))#non-leaf selection
+    ) {
+      rc6c <- 
+        rc6deR()
+      if(verbose) {
+        print('treeInput update with custom peers:')
+        print(rc6c)
+      }
+      shinyWidgets::updateTreeInput(
+        inputId='rctreeC',
+        label = NULL,
+        selected = rc6c,
+        session = shiny::getDefaultReactiveDomain()
+      )
+      if(verbose) {
+        print('updateTreeInput complete')
+      }
+    } else {
+      print('no updateTreeInput')
+    }  } )
+  rc6deR <-    #eR-default custom rc6 <<<<<<   ----
   eventReactive( 
     input$rc6tC, #target 
     {
