@@ -5,10 +5,38 @@
 #---server   section
 server <- 
 function(input, output) {
-  selectedrc6R <-  eventReactive(list(input$rctreeC,input$rc6tC), #-----UNCH
+  
+  #behaviour of JS testing depends on location of these lines so do not move without testing
+  output$selrc6 <- renderText({ paste0('selected:   ',selectedrc6stringR()) })
+  output$comrc6 <- renderText({ paste0('computed: ',computedrc6R()) })
+  output$defrc6 <- renderText({ paste0(c('suggested: ',rc6deR()),collapse='') })
+  output$selrc6forjstest <- renderText({ selectedrc6stringR() })
+  output$comrc6forjstest <- renderText({ computedrc6R() })
+  output$cuseqcom <- renderText({'Custom index matches selection'})
+  output$cusnecom <- renderText({'Recalc for selected districts'})
+  output$x111 <- renderLeaflet(x111D())
+  output$x112 <- renderPlot(x112D())
+  output$x121a <- gt::render_gt(x121D()[[1]])
+  output$x121b <- gt::render_gt(x121D()[[2]])
+  output$x122 <- gt::render_gt(x122D())
+  output$x131 <- gt::render_gt(x131D())
+  output$x132a <- gt::render_gt(x132D()[['local']][[1]])
+  output$x132b <- gt::render_gt(x132D()[['local']][[2]])
+  output$x132c <- gt::render_gt(x132D()[['custom']][[1]])
+  output$x132d <- gt::render_gt(x132D()[['custom']][[2]])
+  output$x411 <- gt::render_gt(x411D())
+  output$x421 <- gt::render_gt(x421D())
+  output$x431 <- gt::render_gt(x431D())
+  output$x412 <- gt::render_gt(x412D())
+  output$x422 <- gt::render_gt(x422D())
+  output$x432 <- gt::render_gt(x432D())
+  output$x211 <- gt::render_gt(x211D())
+  output$x211cu <- gt::render_gt(x211cuD())
+  output$x311 <- DT::renderDT(x311D())
+  
+  selectedrc6R <-  eventReactive(list(input$rctreeC,input$rc6tC),
   {
-    print('-----------------*******************______________________***********************')
-    x0 <- union(
+  x0 <- union(
       input$rctreeC, #custom
       input$rc6tC     #target (always must be included)
     )%>%
@@ -45,6 +73,7 @@ function(input, output) {
     computedrc6G <<- copy(x)
     x
   })
+  
   
   #---global   section----
   
@@ -176,7 +205,7 @@ function(input, output) {
   
   
   #---custom   section----
-  observeEvent( eventExpr=input$rc6tC, #----
+  observe(  #----
     
     { if(verbose) {
         print('enter updateTreeInput')
@@ -1259,33 +1288,7 @@ function(input, output) {
   
   #---render section------------
   
-  output$selrc6 <- renderText({ paste0('selected:   ',selectedrc6stringR()) })
-  output$comrc6 <- renderText({ paste0('computed: ',computedrc6R()) })
-  output$defrc6 <- renderText({ paste0(c('suggested: ',rc6deR()),collapse='') })
-  output$selrc6forjstest <- renderText({ selectedrc6stringR() })
-  output$comrc6forjstest <- renderText({ computedrc6R() })
-  output$cuseqcom <- renderText({'Custom index matches selection'})#span(, style="size:8")
-  output$cusnecom <- renderText({'Recalc for selected districts'})#span(, style="size:8")
-  output$x111 <- renderLeaflet(x111D())
-  output$x112 <- renderPlot(x112D())
-  output$x121a <- gt::render_gt(x121D()[[1]])
-  output$x121b <- gt::render_gt(x121D()[[2]])
-  output$x122 <- gt::render_gt(x122D())
-  output$x131 <- gt::render_gt(x131D())
-  output$x132a <- gt::render_gt(x132D()[['local']][[1]])
-  output$x132b <- gt::render_gt(x132D()[['local']][[2]])
-  output$x132c <- gt::render_gt(x132D()[['custom']][[1]])
-  output$x132d <- gt::render_gt(x132D()[['custom']][[2]])
-  output$x411 <- gt::render_gt(x411D())
-  output$x421 <- gt::render_gt(x421D())
-  output$x431 <- gt::render_gt(x431D())
-  output$x412 <- gt::render_gt(x412D())
-  output$x422 <- gt::render_gt(x422D())
-  output$x432 <- gt::render_gt(x432D())
-  output$x211 <- gt::render_gt(x211D())
-  output$x211cu <- gt::render_gt(x211cuD())
-  output$x311 <- DT::renderDT(x311D())
-  
+
 }
 
 #shinyApp(ui, server)
