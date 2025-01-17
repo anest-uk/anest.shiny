@@ -41,7 +41,7 @@ grid_page( ###grid page ----
              card_header("Selection"),
              card_body(
                shinyWidgets::treeInput( #districts
-                 inputId = "rc6tC",
+                 inputId = "rctaC",
                  label = "Target district",
                  choices = create_tree(f240824b(rev(sort(unique(substr(dir('smallrip/'),1,3)))))[(order(regionx,lab))]),
                  selected = (rc6cuC[1]), 
@@ -57,7 +57,7 @@ grid_page( ###grid page ----
                  value=34
                ),
                shinyWidgets::treeInput( #districts
-                 inputId = "rctreeC",
+                 inputId = "rccuC",
                  label = "Custom selection",
                  choices = create_tree(f240824b(rev(sort(unique(substr(dir('smallrip/'),1,3)))))[(order(regionx,lab))]),
                  selected = rc6cuC, 

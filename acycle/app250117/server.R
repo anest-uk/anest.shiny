@@ -34,11 +34,12 @@ function(input, output) {
   output$x211cu <- gt::render_gt(x211cuD())
   output$x311 <- DT::renderDT(x311D())
   
-  selectedrc6R <-  eventReactive(list(input$rctreeC,input$rc6tC),
+  selectedrc6R <-  eventReactive(list(rccuR(),rctaR()),
   {
-  x0 <- union(
-      input$rctreeC, #custom
-      input$rc6tC     #target (always must be included)
+    if(verbose) print('X - enter selectedrc6R')
+    x0 <- union(
+      rccuR(), #custom
+      rctaR()     #target (always must be included)
     )%>%
       unique(.)%>%
       sort(.)
@@ -49,27 +50,27 @@ function(input, output) {
             (substr(x0,3,3)=='-')
         )
       ]
-    print(x0)
-    print(paste0('selectedrc6R: ',paste0(x1,collapse=',')))
+    #print(x0)
+    #print(paste0('selectedrc6R: ',paste0(x1,collapse=',')))
     selectedrc6G <<- copy(x1)
     x1 #return vector of union(tree1,tree2)
   })
   selectedrc6stringR <- eventReactive(list(selectedrc6R()), #r----
   {
-    print('-----------------*******************______________________***********************')
+    if(verbose) print('X - enter selectedrc6stringR')
     x1 <- selectedrc6R()
     x <- paste0(paste0(x1,collapse=',')) #for messages
-    print(paste0('selectedrc6stringR: ',x))
+    #print(paste0('selectedrc6stringR: ',x))
     selectedrc6stringG <<- copy(x)
     x
   })
   computedrc6R<-   #r----
   eventReactive(list(rsicuR()),
   { 
+    if(verbose) print('X - enter computedrc6R')
     rsicuX <- rsicuR()
     x1 <- rsicuX$kfoldsse[,rc6]%>%.[nchar(.)==6]
     x <- paste0(paste0(sort(unique(x1)),collapse=','))
-    print(paste0('computedrc6R: ',x))
     computedrc6G <<- copy(x)
     x
   })
@@ -87,47 +88,43 @@ function(input, output) {
     pxosrdo2ddG <<- copy(x)
     x
   })
-  x101R    <-    #r----
-    reactive({ 
-      print('enter x101R')
-      x <- copy(x101) #initial dates
-    x101G <<- copy(x)
-    x
-  })
-  dfnF <- #date extractor using globals----
-    function(nn=c('tbinC','dfnxG')) {
-      x <- dfnxR()[,paste0('tbin',tbinC),with=F]%>%setnames(.,'x')%>%.[,sort(unique(x))]
-      x #vector of Date 0:tbar
-    }
+  # x101R    <-    #r----
+  #   reactive({ 
+  #     print('enter x101R')
+  #     x <- copy(x101) #annual dates
+  #   x101G <<- copy(x)
+  #   x
+  # })
+  # dfnF <- #date extractor using globals----
+  #   function(nn=c('tbinC','dfnxG')) {
+  #     x <- dfnxR()[,.(x=date)]
+  #     x #vector of Date 0:tbar
+  #   }
   
   #------------------------reactive + global
   
-  #---target section----
-  #---custom   section----
-  
-  
-  
-  fgeocuX <-    #---custom geo compute   -----
+  fgeocuX <-    #---custom geo compute dk   -----
   function( 
-    rc6cuX=rc6cuG
+    rccuX=rccuG
   ){
+    if(verbose) print('enter fgeocuX')
     x <- 
-      data.table(rc9=rc6cuX,nx=0,lab='CU00') 
+      data.table(rc9=rccuX,nx=0,lab='CU00') 
     x
   }
   
-  nxcuR <-     #---custom nx compute    ----
-  eventReactive( 
-    geocuR(),
-    {
-      if(verbose) print('enter nxcuR')
-      x <- 
-        geocuR()[,.(nx,rc3,qtile,lab)]%>%
-        unique(.)
-      nxcuG <<- copy(x)
-      x
-    }
-  )
+  # nxcuR <-     #---custom nx compute    ----
+  # eventReactive( 
+  #   geocuR(),
+  #   {
+  #     if(verbose) print('enter nxcuR')
+  #     x <- 
+  #       geocuR()[,.(nx,rc3,qtile,lab)]%>%
+  #       unique(.)
+  #     nxcuG <<- copy(x)
+  #     x
+  #   }
+  # )
 
   #---qtile    section----
   nxqR <-      #---qtile nx compute     ----
@@ -142,30 +139,30 @@ function(input, output) {
       x
     }
   )
-  estdtlR <-   #---local estdt compute  ----
-  eventReactive( 
-    nxqR(),
-    {
-      if(verbose) print('enter estdtlR')
-      x <- 
-        estdtR()[nxqR(),on=c(nx='nx')]%>%
-        .[,.(nx,date,ii,lab,rc3,qtile,xdotd,days,xdot,x)]
-      estdtlG <<- copy(x)
-      x
-    }
-  )
+  # estdtlR <-   #---local estdt compute  ----
+  # eventReactive( 
+  #   nxqR(),
+  #   {
+  #     if(verbose) print('enter estdtlR')
+  #     x <- 
+  #       estdtsR()[nxqR(),on=c(nx='nx')]%>%
+  #       .[,.(nx,date,ii,lab,rc3,qtile,xdotd,days,xdot,x)]
+  #     estdtlG <<- copy(x)
+  #     x
+  #   }
+  # )
   #---area     section----
-  rssaR <-     #---area rss compute     ----
-  eventReactive( 
-    nxaR(),
-    {
-      if(verbose) print('enter rssaR')
-      x <- 
-        rssR()[nxaR(),on=c(nx='nx')]
-      rssaG <<- copy(x)
-      x
-    }
-  )
+  # rssaR <-     #---area rss compute     ----
+  # eventReactive( 
+  #   nxaR(),
+  #   {
+  #     if(verbose) print('enter rssaR')
+  #     x <- 
+  #       rssR()[nxaR(),on=c(nx='nx')]
+  #     rssaG <<- copy(x)
+  #     x
+  #   }
+  # )
   #---combo    section                  ----
   festdtxX <- #----112 x(t)              ----
   function(
@@ -182,8 +179,8 @@ function(input, output) {
   
   #revised---------------------
   f111D <- function( #-leaflet----
-    rc6tX=rc6tG,
-    rc6cuX=rc6cuG,
+    rctaX=rctaG,
+    rccuX=rccuG,
     geoaX=geoaG,
     pxosrdo2ddX=pxosrdo2ddG,
     z110X=z110G,
@@ -200,10 +197,10 @@ function(input, output) {
         lab
       ),by=.(qtile)]%>%
       .[
-        rc6==rc6tX, #with target district darker
+        rc6==rctaX, #with target district darker
         col:=colX[.BY[[1]]],
         by=.(qtile)
-      ]%>%
+      ]%>%.[]%>%
       f240810b( #->leaflet, colours for areas-to-shade in column 'col'
         .,
         x2=pxosrdo2ddX,
@@ -212,7 +209,7 @@ function(input, output) {
         maxzoom=12
       )%>%
       addPolygons( #outline custom districts
-        data=pxosrdo2ddX[which(pxosrdo2ddX@data$name%in%irregpcode(rc6cuX)),],
+        data=pxosrdo2ddX[which(pxosrdo2ddX@data$name%in%irregpcode(rccuX)),],
         fill=F,
         color="orange",
         weight=1,
@@ -227,7 +224,6 @@ function(input, output) {
     geocuX=geocuxxG
   )
   {
-    #browser()
     print('X - enter f112D')
     x2c <- estdtxX%>%
       .[,.SD[,.(ii,date,lab,x=x-ifelse(tslideX==0,0,x[tslideX]))],.(qtile)]%>%
@@ -235,11 +231,12 @@ function(input, output) {
       .[,qq:=as.factor(qtile)]%>%
       .[,labx:=ifelse(date==max(date),lab,NA)]
     x0 <- setNames(cobalt()[c('punk','green','blue')],as.character(1:3))
-    x3 <- estdtxX[,.SD[,.(ifelse(tslideX==0,0,x[tslideX]))],.(qtile)][,mean(V1)]#base value for rebase level
+    x3 <- estdtxX[,.SD[,.(ifelse(tslideX==0,0,x[tslideX]))],.(qtile)][,mean(V1,na.rm=T)]#base value for rebase level
     x2 <-
       estdtxX[,.SD[,.(ii,date,lab,x=x-ifelse(tslideX==0,0,x[tslideX]))],.(qtile)]%>%
       .[,qq:=as.factor(qtile)]%>%
-      .[,labx:=ifelse(date==max(date),lab,NA)]
+      .[,labx:=ifelse(date==max(date),lab,NA)]%>%
+      .[!is.na(x)]
     x <- x2%>%
       ggplot(.,aes(date,x,color=qq,label=labx))+
       geom_hline(yintercept=0,linewidth=.4,linetype = "dotted",color='grey40')+
@@ -271,10 +268,10 @@ function(input, output) {
   }
   #f112D()
   
-  f411D <- function(geoqX=geoqG,rc6tX=rc6tG,rssX=rssG) {        #2x11 accuracy----tbin----
+  f411D <- function(geoqX=geoqG,rctaX=rctaG,rssX=rssG) {        #2x11 accuracy----tbin----
     x1 <- 
       copy(f250107bd)%>%
-      .[rc6==rc6tX]%>%
+      .[rc6==rctaX]%>%
       .[order(V1)]%>%
       .[,target:=irregpcode(rc6)]%>%
       .[,-c('V1','rc6')]%>%
@@ -325,24 +322,26 @@ function(input, output) {
   
   #################################################################################
   dfnxR    <-    #r----
-  reactive({     
-    print('X - enter dfnxR')
-    x <-   #4-col table with NA
-      dcast(x00R()$estdt[,.(tbin,date)]%>%unique(.)%>%.[order(tbin,date)],date~tbin,value.var='date')%>% #lo, hi, an
-      rbind(as.data.table(as.list(rep(as.Date('1994-12-31'),4))),.,use.names=F)%>%
-      setnames(.,c('date','tbin1','tbin2','tbin3'))
-    dfnxG <<- copy(x)
-    x
-  })
+    reactive({     
+      print('X - enter dfnxR')
+      x <- #define now as single col dt
+        data.table(date=c(as.Date('1994-12-31'),x00R()$estdt[grep('^MKT',col),date]))
+      # x <-   #4-col table with NA
+      #   dcast(x00R()$estdt[,.(tbin,date)]%>%unique(.)%>%.[order(tbin,date)],date~tbin,value.var='date')%>% #lo, hi, an
+      #   rbind(as.data.table(as.list(rep(as.Date('1994-12-31'),4))),.,use.names=F)%>%
+      #   setnames(.,c('date','tbin1','tbin2','tbin3'))
+      dfnxG <<- copy(x)
+      x
+    })
   
   dfnxxR   <-    #r----
-  reactive({ 
-    print('X - enter dfnxxR')
-    x <- #vector of current date
-      dfnxR()[,paste0('tbin',tbinC),with=F]%>%setnames(.,'x')%>%.[,sort(unique(x))]
-    dfnxxG <<- copy(x)
-    x
-  })
+    reactive({ 
+      print('X - enter dfnxxR')
+      x <- dfnxR()[,date] #vector of current date, now always drc
+        #dfnxR()[,paste0('tbin',tbinC),with=F]%>%setnames(.,'x')%>%.[,sort(unique(x))]
+      dfnxxG <<- copy(x)
+      x
+    })
   
   estdtaR <-   #---area estdt compute   ----
   eventReactive( 
@@ -350,9 +349,22 @@ function(input, output) {
     {
       if(verbose) print('X - enter estdtaR')
       x <- 
-        estdtR()[nxaR(),on=c(nx='nx')]%>%
+        estdtsR()[nxaR(),on=c(nx='nx')]%>%
         .[,.(nx,date,ii,lab,rc3,qtile,xdotd,days,xdot,x)]
       estdtaG <<- copy(x)
+      x
+    }
+  )
+  
+  estdtxR <- #----112 x(t)              ----
+  eventReactive(
+    list(estdtcuR(),estdtaR(),geocuX=geocuR())
+    ,
+    {
+      print('X - enter estdtxR')
+      x <- 
+        festdtxX(estdtcuX=estdtcuR(),estdtaX=estdtaR(),geocuX=geocuR())
+      estdtxG <<- copy(x)
       x
     }
   )
@@ -370,69 +382,56 @@ function(input, output) {
     }
   )
   
-  estdtR   <-    #r----
+  estdtsR   <-    #r----
   reactive({ 
-    print('X - enter estdtR')
+    print('X - enter estdtsR')
     x <- copy(x00R()$estdt)[,.(nx,ii,date,xdotd,days,xdot,x)]
     estdtG <<- copy(x)
     x
   })
   
-  estdtxR <- #----112 x(t)              ----
-  eventReactive(
-    list(estdtcuR(),estdtaR(),geocuX=geocuR())
-    ,
-    {
-      print('X - enter estdtxR')
-      x <- 
-        festdtxX(estdtcuX=estdtcuR(),estdtaX=estdtaR(),geocuX=geocuR())
-      estdtxG <<- copy(x)
-      x
-    }
-  )
-  
   geo0R    <-    #r----
   reactive({ 
     print('X - enter geo0R')
     x <- 
-      geoplusR()%>%
-      .[type=='L']%>%
-      .[itrim==itriC]%>%
-      .[tbin==tbinC]%>%
+      x00R()$geo%>%
+      #.[type=='L']%>%
+      #.[itrim==itriC]%>%
+      #.[tbin==tbinC]%>%
+      .[(nx%/%100000)==4]%>%
       .[,.(
         nx,
-        gx,
-        lab=des,
+        #gx,
+        lab,#=des,
         rc6=rc9,
         rc3=substr(rc9,1,3),
-        qtile=as.numeric(substr(des,4,4)))
+        qtile=as.numeric(substr(lab,4,4)))
       ]%>%
       z110R()[.,on=c(rcx='rc6')]%>%
-      .[,.(nx,gx,lab,rc3,rc6=rcx,qtile)]
+      .[,.(nx,lab,rc3,rc6=rcx,qtile)]
     geo0G <<- copy(x)
     x
   })
   # dfnR <- reactive({ #not used?
-  #   x <- data.table(date=c(as.Date('1994-12-31'),estdtR()[,sort(unique(date))]))[,let(i,(0:(.N-1)))]
+  #   x <- data.table(date=c(as.Date('1994-12-31'),estdtsR()[,sort(unique(date))]))[,let(i,(0:(.N-1)))]
   #   dfnG <<- copy(x)
   #   x
   # })
   
   geoaR <-     #---area tertile geo  ----
   eventReactive( 
-    rc6tR(),
+    rctaR(),
     {
       if(verbose) print('X - enter geoaR')
-      # x <- geo0R()[rc3==substr(rc6tR(),1,3)] 
-      #browser()
+      # x <- geo0R()[rc3==substr(rctaR(),1,3)] 
       x <- 
         f250111bd$geo[(nx%/%100000)==4]%>%
-        .[grep(substr(rc6tR(),1,3),rc9)]%>%
+        .[grep(substr(rctaR(),1,3),rc9)]%>%
         .[,.(
         nx,
         rc6=rc9,
         rc3=substr(rc9,1,3),
-        qtile=as.numeric(substr(lab,4,4)),
+        qtile=as.numeric(substr(lab,4,4)), #
         lab
       )]
       geoaG <<- copy(x)
@@ -440,75 +439,74 @@ function(input, output) {
     }
   )
   
-  geocuxxR <-    #---custom geo compute   -----
-  eventReactive( 
-    rc6cuR(), #from control
-    {
-      if(verbose) print('X - enter geocuxxR')
-      #browser()
-      x <- data.table(rc9=rc6cuR(),nx=0,lab='CU00') 
-      geocuxxG <<- copy(x)
-      x
-    }
-  )
+  # geocuxxR <-    #---custom geo compute   -----
+  # eventReactive( 
+  #   rccuR(), #from control
+  #   {
+  #     if(verbose) print('X - enter geocuxxR')
+  #     x <- data.table(rc9=rccuR(),nx=0,lab='CU00') 
+  #     geocuxxG <<- copy(x)
+  #     x
+  #   }
+  # )
   
   geocuR <-    #---custom geo compute   -----
   eventReactive( 
-    rc6cuR(),
+    rccuR(),
     {
       if(verbose) print('X - enter geocuR')
       x <- 
-        fgeocuX(rc6cuX=rc6cuR())
+        fgeocuX(rccuX=rccuR())
       geocuG <<- copy(x)
       x
     }
   )
   
-  rsscuR <-    #---custom rss select    ----
-  eventReactive( 
-    list(
-      rsicuR()
-    ),
-    {
-      if(verbose) print('X - enter rsscuR')
-      x <- cbind(rsicuR()$kfoldsse,rsicuR()$all)
-      rsscuG <<- copy(x)
-      x
-    }
-  )
+  # rsscuR <-    #---custom rss select    ----
+  # eventReactive( 
+  #   list(
+  #     rsicuR()
+  #   ),
+  #   {
+  #     if(verbose) print('X - enter rsscuR')
+  #     x <- cbind(rsicuR()$kfoldsse,rsicuR()$all)
+  #     rsscuG <<- copy(x)
+  #     x
+  #   }
+  # )
   
-  geoplusR <-    #r----
-  reactive({
-    print('X - enter geoplusR')
-    x <- copy(x00R()$geoplus)[,let(lab,des)]
-    geoplusG <<- copy(x)
-    x
-  })
+  # geoplusR <-    #r----
+  # reactive({
+  #   print('X - enter geoplusR')
+  #   x <- copy(x00R()$geo)#[,let(lab,des)]
+  #   geoplusG <<- copy(x)
+  #   x
+  # })
   
   geoqR <-     #---qtile geo select     ----
   eventReactive( 
-    list(geoaR(),geotR()#,
+    list(geoaR()#,
     ),
     {
       if(verbose) print('X - enter geoqR')
       x <- geoaR()%>% 
-        .[geotR()[,.(qtile)],
+        .[geoaR()[rc6==rctaR()][,.(qtile)],
           on=c(qtile='qtile')]
       geoqG <<- copy(x)
       x
     }
   )
   
-  geotR <-  eventReactive(rc6tR(),         #-target geo compute   ----
-                          {
-                            if(verbose) print('X - enter geotR')
-                            x <- 
-                              geoaR()%>%
-                              .[rc6==rc6tR()]
-                            geotG <<- copy(x)
-                            x
-                          }
-  )
+  # geotR <-  eventReactive(rctaR(),         #-target geo compute   ----
+  #                         {
+  #                           if(verbose) print('X - enter geotR')
+  #                           x <- 
+  #                             geoaR()%>%
+  #                             .[rc6==rctaR()]
+  #                           geotG <<- copy(x)
+  #                           x
+  #                         }
+  # )
   
   nxaR <-      #---area nx select       ----
   eventReactive( 
@@ -522,44 +520,45 @@ function(input, output) {
       x
     }
   )
-  
-  rc6cuR <-    #---custom rc6 control   ----
-  eventReactive( 
-    list(rc6tR(),input$rctreeC), #+control
+  fcheckrc6 <- function(x){x[(nchar(x)==6)&(substr(x,3,3)=='-')]}
+  rccuR <-  eventReactive(list(rctaR(),input$rccuC), #-custom rc6 ----
     {
-      if(verbose) print('X - enter rc6cuR')
-      x <- sort(unique(c(rc6tR(),input$rctreeC)))%>%.[nchar(.)==6]
-      rc6cuG <<- copy(x)
+      if(verbose) print('X - enter rccuR')
+      x <- sort(unique(c(rctaR(),input$rccuC)))%>%
+        fcheckrc6(.) #valid
+      rccuG <<- copy(x)
       x
     }
   )
   
-  rc6tR <-  eventReactive(input$rc6tC,     #-target rc6 reformat  ----
-                          {
-                            if(verbose) print('X - enter rc6tR')
-                            x <- 
-                              regpcode(input$rc6tC)[1]
-                            rc6tG <<- copy(x)
-                            x
-                          })
+  rctaR <-  eventReactive(input$rctaC,               #-target rc6----
+    {
+      if(verbose) print('X - enter rctaR')
+      x <- input$rctaC[(nchar(input$rctaC)==6)]%>%
+        fcheckrc6(.)%>% #valid
+        `[`(.,y=1) #first only
+      shinyWidgets::updateTreeInput('rctaC',selected=x)  #update: first only
+      rctaG <<- copy(x)
+      x
+    })
   
   rc6deR <-    #eR-default custom rc6 <<<<<<   ----
   eventReactive( 
-    input$rc6tC, #target 
+    rctaR(), #target 
     {
       if(verbose) {
         print('X - enter updateTreeInput')
       }
       if(#guard against invalid selection
-        (!is.null(input$rc6tC))&#empty tree
-        (all(nchar(input$rc6tC)==6))#non-leaf selection
+        (!is.null(rctaR()))&#empty tree
+        (all(nchar(rctaR())==6))#null selection
       ) {
         x <- 
-          f241229bd[rc6tR()==target,sort(f240920b(id))]
-        if(verbose) {
-          print('custom peers:')
-          print(x)
-        }
+          f241229bd[rctaR()==target,sort(f240920b(id))]
+        # if(verbose) {
+        #   print('custom peers:')
+        #   print(x)
+        # }
         rc6deG <<- copy(x)
         x
       }
@@ -575,16 +574,16 @@ function(input, output) {
       if(verbose) print('X - enter rsicuR')
       geox <- isolate(geocuR())
       dfnx <- isolate(dfnxxR()) #source of truth
-      if(verbose) isolate(print(paste0('set/reset custom ',paste0(input$rctreeC,collapse=','),' to include target ',input$rc6tC[1])))
-      shinyWidgets::updateTreeInput('rctreeC',selected=unique(union(input$rc6tC[1],input$rctreeC)))
-      rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
+      #if(verbose) isolate(print(paste0('set/reset custom ',paste0(rccuR(),collapse=','),' to include target ',rctaR()[1])))
+      shinyWidgets::updateTreeInput('rccuC',selected=unique(union(rctaR()[1],rccuR())))
+      rctax <- toupper(isolate(irregpcode(rctaR()[1])))
       rc6valid <- isolate(geo0R()[,rc6])
       if(
-        (irregpcode(regpcode(rc6tx))==rc6tx)
+        (irregpcode(regpcode(rctax))==rctax)
         &
-        (nchar(regpcode(rc6tx))==6)
+        (nchar(regpcode(rctax))==6)
         &
-        (regpcode(rc6tx)%in%rc6valid)
+        (regpcode(rctax)%in%rc6valid)
       )  {
         print('recalc accepted in rsicuR')
         x <-
@@ -620,17 +619,18 @@ function(input, output) {
   x00R     <-    #r----
   reactive({ 
     print('X - enter x00R')
-    x <- copy(f241021ad)
+    #x <- copy(f241021ad)
+    x <- copy(f250111bd)
     x00G <<- copy(x)
     x
   })
   
-  x111D <- eventReactive(list(rc6tR(),rc6cuR(),geoaR(),pxosrdo2ddR(),z110R()),       #111 map ----
+  x111D <- eventReactive(list(rctaR(),rccuR(),geoaR(),pxosrdo2ddR(),z110R()),       #111 map ----
                          {
                            if(verbose) print('X - enter x111D')
                            x <-   f111D(
-                             rc6tX=rc6tR(),
-                             rc6cuX=rc6cuR(),
+                             rctaX=rctaR(),
+                             rccuX=rccuR(),
                              geoaX=geoaR(),
                              pxosrdo2ddX=pxosrdo2ddR(),
                              z110X=z110R(),
@@ -655,10 +655,10 @@ function(input, output) {
                          }
   )
   
-  x411D <- eventReactive(list(geoqR(),rc6tR(),rssR()),        #2x11 accuracy----tbin----
+  x411D <- eventReactive(list(geoqR(),rctaR(),rssR()),        #2x11 accuracy----tbin----
                          {
                            if(verbose) print('X - enter x411D')
-                           x <- f411D(geoqX=geoqR(),rc6tX=rc6tR(),rssX=rssR())
+                           x <- f411D(geoqX=geoqR(),rctaX=rctaR(),rssX=rssR())
                            x411G <<- copy(x)
                            x
                          }
@@ -670,7 +670,8 @@ function(input, output) {
     {
       print('X - enter ylimR')
       x <- 
-        estdtxR()[,range(x)]*1.1
+        estdtxR()[,range(x,na.rm=T)+diff(range(x,na.rm=T))*c(-.1,.1)]#*1.1
+      print(x)
       ylimG <<- copy(x)
       x
     }
@@ -689,24 +690,24 @@ function(input, output) {
       print('X - enter observe updateTreeInput')
     }
     if(#guard against invalid selection
-      (!is.null(input$rc6tC))&#empty tree
-      (all(nchar(input$rc6tC)==6))#non-leaf selection
+      (!is.null(rctaR()))&#empty tree
+      (all(nchar(rctaR())==6))#non-leaf selection
     ) {
       rc6c <- 
         rc6deR()
-      if(verbose) {
-        print('treeInput update with custom peers:')
-        print(rc6c)
-      }
+      # if(verbose) {
+      #   print('treeInput update with custom peers:')
+      #   print(rc6c)
+      # }
       shinyWidgets::updateTreeInput(
-        inputId='rctreeC',
+        inputId='rccuC',
         label = NULL,
         selected = rc6c,
         session = shiny::getDefaultReactiveDomain()
       )
-      if(verbose) {
-        print('updateTreeInput complete')
-      }
+      # if(verbose) {
+      #   print('updateTreeInput complete')
+      # }
     } else {
       print('no updateTreeInput')
     }  
