@@ -69,7 +69,6 @@ f240810a #
 f240810b #
 f240816a #
 f240823a #
-#f240824b #this in rctree.R due to size
 f240915b #
 f240915c #
 f240920a #

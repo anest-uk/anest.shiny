@@ -1,13 +1,6 @@
-
-#---server   section
-server <- 
+server <-  #server----
 function(input, output) {
-  selectedrc6R <-  #r----
-    # reactive(
-  eventReactive(
-    list(input$rctreeC,input$rc6tC),
-    {
-    print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<test here')
+  selectedrc6R <- reactive({
     x0 <- union(
       input$rctreeC, #custom
       input$rc6tC     #target (always must be included)
@@ -27,16 +20,14 @@ function(input, output) {
     x1 #return vector of union(tree1,tree2)
   })
   
-  selectedrc6stringR <-   #r----
-    reactive({
+  selectedrc6stringR <- reactive({
     x1 <- selectedrc6R()
     x <- paste0(paste0(x1,collapse=',')) #for messages
     print(paste0('selectedrc6stringR: ',x))
     selectedrc6stringG <<- copy(x)
     x
   })
-  computedrc6R<-   #r----
-    reactive({ 
+  computedrc6R<- reactive({
     rsicuX <- rsicuR()
     x1 <- rsicuX$kfoldsse[,rc6]%>%.[nchar(.)==6]
     x <- paste0(paste0(sort(unique(x1)),collapse=','))
@@ -54,52 +45,42 @@ function(input, output) {
   output$cusnecom <- renderText({'Recalc for selected districts'})#span(, style="size:8")
   
   #---global   section----
-  
-  #reactive - change to eventReact()
-  x00R <-   #r----
-    reactive({ 
+  x00R <- reactive({
     x <- copy(f241021ad)
     x00G <<- copy(x)
     x
   })
-  geoplusR <-   #r----
-    reactive({
+  geoplusR <- reactive({
     x <- copy(x00R()$geoplus)[,let(lab,des)]
     geoplusG <<- copy(x)
     x
   })
-  estdtR <-    #r----
-    reactive({ 
+  estdtR <- reactive({
     x <- copy(x00R()$estdt)[,.(nx,ii,date,xdotd,days,xdot,x)]
     estdtG <<- copy(x)
     x
   })
-  rssR  <-    #r----
-    reactive({ 
+  rssR  <- reactive({
     x <- copy(x00R()$rss)
     rssG <<- copy(x)
     x
   })
-  pxosrdo2ddR <-    #r----
-    reactive({ 
+  pxosrdo2ddR <- reactive({
     x <- copy(pxosrdo2dd)
     pxosrdo2ddG <<- copy(x)
     x
   })
-  z110R <-    #r----
-    reactive({ 
+  z110R <- reactive({
     x <- copy(z110)
     z110G <<- copy(x)
     x
   })
-  x101R <-    #r----
-    reactive({ 
+  x101R <- reactive({
     x <- copy(x101) #initial dates
     x101G <<- copy(x)
     x
   })
-  geo0R <-    #r----
-    reactive({ 
+  geo0R <- reactive({
     x <- 
       geoplusR()%>%
       .[type=='L']%>%
@@ -118,30 +99,27 @@ function(input, output) {
     geo0G <<- copy(x)
     x
   })
-  # dfnR <- reactive({ #not used?
-  #   x <- data.table(date=c(as.Date('1994-12-31'),estdtR()[,sort(unique(date))]))[,let(i,(0:(.N-1)))]
-  #   dfnG <<- copy(x)
-  #   x
-  # })
-  dfnxR <-    #r----
-    reactive({     
-      x <-   #4-col table with NA
+  dfnR <- reactive({ #not used?
+    x <- data.table(date=c(as.Date('1994-12-31'),estdtR()[,sort(unique(date))]))[,let(i,(0:(.N-1)))]
+    dfnG <<- copy(x)
+    x
+  })
+  dfnxR <- reactive({ #4-col table with NA
+    x <- 
       dcast(x00R()$estdt[,.(tbin,date)]%>%unique(.)%>%.[order(tbin,date)],date~tbin,value.var='date')%>% #lo, hi, an
       rbind(as.data.table(as.list(rep(as.Date('1994-12-31'),4))),.,use.names=F)%>%
       setnames(.,c('date','tbin1','tbin2','tbin3'))
     dfnxG <<- copy(x)
     x
   })
-  dfnxxR <-    #r----
-    reactive({ 
-    x <- #vector of current date
+  dfnxxR <- reactive({ #vector of current date
+    x <-
       dfnxR()[,paste0('tbin',tbinC),with=F]%>%setnames(.,'x')%>%.[,sort(unique(x))]
     dfnxxG <<- copy(x)
     x
   })
   
-  tslideR <-    #r----
-    reactive({ 
+  tslideR <- reactive({
     x <- input$tslider
     tslideG <<- copy(x)
     x
@@ -155,9 +133,10 @@ function(input, output) {
     }
   
   #------------------------reactive + global
-  
   #---target   section----
-  geotR <-  eventReactive(rc6tR(),         #---target geo compute   ----
+  geotR <-     #---target geo compute   ----
+  bindEvent( 
+    rc6tR(),
     {
       if(verbose) print('enter geotR')
       x <- 
@@ -168,7 +147,9 @@ function(input, output) {
     }
   )
   
-  rc6tR <-  eventReactive(input$rc6tC,     #---target rc6 reformat  ----
+  rc6tR <-     #---target rc6 reformat  ----
+  bindEvent( 
+    input$rc6tC,
     {
       if(verbose) print('enter rc6tR')
       x <- 
@@ -180,10 +161,10 @@ function(input, output) {
   
   
   #---custom   section----
-  observeEvent( eventExpr=input$rc6tC, #----
-    
-    { if(verbose) {
-        print('enter updateTreeInput')
+  observe(
+    x={
+      if(verbose) {
+        print('enter updateTreeInput ob')
       }
       if(#guard against invalid selection
         (!is.null(input$rc6tC))&#empty tree
@@ -192,10 +173,10 @@ function(input, output) {
         rc6c <- 
           rc6deR()
         if(verbose) {
-          print('treeInput update with custom peers:')
+          print('treeinput update with custom peers:')
           print(rc6c)
         }
-        shinyWidgets::updateTreeInput(
+        updateTreeInput(
           inputId='rctreeC',
           label = NULL,
           selected = rc6c,
@@ -213,7 +194,7 @@ function(input, output) {
   
   
   rc6deR <-    #---default custom rc6 ----
-  eventReactive( 
+  bindEvent( 
     input$rc6tC, #target 
     {
       if(verbose) {
@@ -236,7 +217,7 @@ function(input, output) {
   )
   
   rc6cuR <-    #---custom rc6 control   ----
-  eventReactive( 
+  bindEvent( 
     list(rc6tR(),input$rctreeC), #+control
     {
       if(verbose) print('enter rc6cuR')
@@ -255,7 +236,7 @@ function(input, output) {
   }
   
   geocuR <-    #---custom geo compute   -----
-  eventReactive( 
+  bindEvent( 
     rc6cuR(),
     {
       if(verbose) print('enter geocuR')
@@ -266,7 +247,7 @@ function(input, output) {
     }
   )
   nxcuR <-     #---custom nx compute    ----
-  eventReactive( 
+  bindEvent( 
     geocuR(),
     {
       if(verbose) print('enter nxcuR')
@@ -277,9 +258,8 @@ function(input, output) {
       x
     }
   )
-
   rsicuR <-    #---custom rsi compute   ----
-  eventReactive(
+  bindEvent( 
     list(
       input$docusabC
     ),
@@ -288,7 +268,7 @@ function(input, output) {
       geox <- isolate(geocuR())
       dfnx <- isolate(dfnxxR()) #source of truth
       if(verbose) isolate(print(paste0('set/reset custom ',paste0(input$rctreeC,collapse=','),' to include target ',input$rc6tC[1])))
-      shinyWidgets::updateTreeInput('rctreeC',selected=unique(union(input$rc6tC[1],input$rctreeC)))
+      updateTreeInput('rctreeC',selected=unique(union(input$rc6tC[1],input$rctreeC)))
       rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
       rc6valid <- isolate(geo0R()[,rc6])
       if(
@@ -299,7 +279,7 @@ function(input, output) {
         (regpcode(rc6tx)%in%rc6valid)
       )  {
         print('recalc accepted in rsicuR')
-        x <-
+        x <- 
           f241119a(  #returns estdt, kfoldsse, all
             nxx=0,
             steprip2='smallrip/',  #smaller format
@@ -307,10 +287,10 @@ function(input, output) {
             geo=geox, #R
             outthresh=.1,
             kfold=5,
-            sectorwise=T,
-            usepra=F,
+            sectorwise=T, 
+            usepra=F, 
             newused=c('.'),
-            houseflat=c('.')
+            houseflat=c('.') 
           )
         rsicuG <<- copy(x)
       } else {
@@ -321,7 +301,7 @@ function(input, output) {
     }
   )
   estdtcuR <-  #---custom estdt select  ----
-  eventReactive( 
+  bindEvent( 
     list(
       rsicuR()
     ),
@@ -333,7 +313,7 @@ function(input, output) {
     }
   )
   rsscuR <-    #---custom rss select    ----
-  eventReactive( 
+  bindEvent( 
     list(
       rsicuR()
     ),
@@ -346,7 +326,7 @@ function(input, output) {
   )
   #---qtile    section----
   geoqR <-     #---qtile geo select     ----
-  eventReactive( 
+  bindEvent( 
     list(geoaR(),geotR()#,
     ),
     {
@@ -359,7 +339,7 @@ function(input, output) {
     }
   )
   nxqR <-      #---qtile nx compute     ----
-  eventReactive( 
+  bindEvent( 
     geoqR(),
     {
       if(verbose) print('enter nxqR')
@@ -371,7 +351,7 @@ function(input, output) {
     }
   )
   estdtlR <-   #---local estdt compute  ----
-  eventReactive( 
+  bindEvent( 
     nxqR(),
     {
       if(verbose) print('enter estdtlR')
@@ -384,7 +364,7 @@ function(input, output) {
   )
   #---area     section----
   geoaR <-     #---area geo compute     ----
-  eventReactive( 
+  bindEvent( 
     rc6tR(),
     {
       if(verbose) print('enter geoaR')
@@ -396,7 +376,7 @@ function(input, output) {
     }
   )
   nxaR <-      #---area nx select       ----
-  eventReactive( 
+  bindEvent( 
     geoaR(),
     {
       if(verbose) print('enter nxaR')
@@ -408,7 +388,7 @@ function(input, output) {
     }
   )
   estdtaR <-   #---area estdt compute   ----
-  eventReactive( 
+  bindEvent( 
     nxaR(),
     {
       if(verbose) print('enter estdtaR')
@@ -420,7 +400,7 @@ function(input, output) {
     }
   )
   rssaR <-     #---area rss compute     ----
-  eventReactive( 
+  bindEvent( 
     nxaR(),
     {
       if(verbose) print('enter rssaR')
@@ -445,7 +425,7 @@ function(input, output) {
   #festdtxX()
   
   estdtxR <- #----112 x(t)              ----
-  eventReactive(
+  bindEvent(
     list(estdtcuR(),estdtaR(),geocuX=geocuR())
     ,
     {
@@ -458,7 +438,7 @@ function(input, output) {
   
   #---utility  section----
   ylimR <-     #ylim                    ----
-  eventReactive( 
+  bindEvent( 
     estdtxR(),
     {
       x <- 
@@ -512,7 +492,7 @@ function(input, output) {
   
   
   #f111D()
-  x111D <- eventReactive(list(rc6tR(),rc6cuR(),geoaR(),pxosrdo2ddR(),z110R()),       #111 map ----
+  x111D <- bindEvent(list(rc6tR(),rc6cuR(),geoaR(),pxosrdo2ddR(),z110R()),       #111 map ----
                          {
                            if(verbose) print('enter x111D')
                            x <-   f111D(
@@ -577,7 +557,7 @@ function(input, output) {
   }
   #f112D()
   
-  x112D <- eventReactive(list(input$tslider,estdtxR(),ylimR()),#112 x(t)----
+  x112D <- bindEvent(list(input$tslider,estdtxR(),ylimR()),#112 x(t)----
                          {
                            if(verbose) print('enter x112D')
                            x <- 
@@ -621,7 +601,7 @@ function(input, output) {
     x2
   }
   
-  x121D <- eventReactive(list(estdtlR(),estdtcuR(),dfnxxR()),  #121 winding----
+  x121D <- bindEvent(list(estdtlR(),estdtcuR(),dfnxxR()),  #121 winding----
                          {
                            if(verbose) print('enter x121D')
                            x2 <- f121D(estdt=estdtlR(),
@@ -694,7 +674,7 @@ function(input, output) {
   }
   #f122D()
   
-  x122D <- eventReactive(list(rc6tR(),rssaR(),rsscuR(),z110R()), #122 characteristics---- 
+  x122D <- bindEvent(list(rc6tR(),rssaR(),rsscuR(),z110R()), #122 characteristics---- 
                          {
                            if(verbose) print('enter x122D')
                            x <- f122D(
@@ -734,7 +714,7 @@ function(input, output) {
     x
   }
   
-  x131D <- eventReactive(list(tslideR(),estdtxR()),#131 summary----
+  x131D <- bindEvent(list(tslideR(),estdtxR()),#131 summary----
                          {
                            if(verbose) print('enter x131D')
                            x <-  f131D(
@@ -845,7 +825,7 @@ function(input, output) {
     x
   }
   
-  x132D <- eventReactive(list(tslideR(),geoqR(),estdtlR()),#132 trade summary(2)----
+  x132D <- bindEvent(list(tslideR(),geoqR(),estdtlR()),#132 trade summary(2)----
                          {
                            if(verbose) print('enter x132D')
                            x <- f132D(
@@ -956,7 +936,7 @@ function(input, output) {
     x
   }
   #  f211D()
-  x211D <- eventReactive(list(estdtlR(),geoqR(),dfnxxR()),       #211 listing----
+  x211D <- bindEvent(list(estdtlR(),geoqR(),dfnxxR()),       #211 listing----
                          {
                            if(verbose) print('enter x211D')
                            x <- f211D(
@@ -968,7 +948,7 @@ function(input, output) {
                            x
                          }
   )
-  x211cuD <- eventReactive(list(estdtcuR(),geocuR(),dfnxxR()),           #211cu listing----
+  x211cuD <- bindEvent(list(estdtcuR(),geocuR(),dfnxxR()),           #211cu listing----
                            {
                              if(verbose) print('enter x211D')
                              geox <- copy(geocuR())[,let(rc6,rc9)] #used for aggregation and label
@@ -1011,7 +991,7 @@ function(input, output) {
     x
   }
   
-  x311D <- eventReactive(list(geo0R(),z110R(),rc6tX=rc6tR()),     #311 custom constituents output table----
+  x311D <- bindEvent(list(geo0R(),z110R(),rc6tX=rc6tR()),     #311 custom constituents output table----
                          {
                            if(verbose) print('enter 311')
                            x <- f311D(
@@ -1207,7 +1187,7 @@ function(input, output) {
   
   
   #-----------------------------reactive
-  x411D <- eventReactive(list(geoqR(),rc6tR(),rssR()),        #2x11 accuracy----tbin----
+  x411D <- bindEvent(list(geoqR(),rc6tR(),rssR()),        #2x11 accuracy----tbin----
                          {
                            if(verbose) print('enter x411G')
                            x <- f411D(geoqX=geoqR(),rc6tX=rc6tR(),rssX=rssR())
@@ -1216,7 +1196,7 @@ function(input, output) {
                          }
   )
   
-  x412D <- eventReactive(list(geocuR(),rc6tR(),rsscuR()),      #2x11cu accuracy--custom--tbin----
+  x412D <- bindEvent(list(geocuR(),rc6tR(),rsscuR()),      #2x11cu accuracy--custom--tbin----
                          {
                            if(verbose) print('enter x411Gcu')
                            x <-  f412D(geocuX=geocuR(),rc6tX=rc6tR(),rsscuX=rsscuR())
@@ -1225,7 +1205,7 @@ function(input, output) {
                          }
   )
   
-  x421D <- eventReactive(list(geoqR(),rc6tR(),rssR()),        #221 accuracy----trim----
+  x421D <- bindEvent(list(geoqR(),rc6tR(),rssR()),        #221 accuracy----trim----
                          {
                            if(verbose) print('enter x421D')
                            x <-  f421D(geoqX=geoqR(),rc6tX=rc6tR(),rssX=rssR())
@@ -1234,7 +1214,7 @@ function(input, output) {
                          }
   )
   
-  x422D <- eventReactive(list(geocuR(),rc6tR(),rsscuR()),      #221cu accuracy----trim----
+  x422D <- bindEvent(list(geocuR(),rc6tR(),rsscuR()),      #221cu accuracy----trim----
                          {
                            if(verbose) print('enter x422D')
                            x <- f422D(geocuX=geocuR(),rc6tX=rc6tR(),rsscuX=rsscuR())
@@ -1243,7 +1223,7 @@ function(input, output) {
                          }
   )
   
-  x431D <- eventReactive(list(geoqR(),rc6tR(),rssR()),        #231 accuracy----in/out----
+  x431D <- bindEvent(list(geoqR(),rc6tR(),rssR()),        #231 accuracy----in/out----
                          {
                            if(verbose) print('enter x431D')
                            x <- f431D(geoqX=geoqR(),rc6tX=rc6tR(),rssX=rssR())
@@ -1252,7 +1232,7 @@ function(input, output) {
                          }
   )
   
-  x432D <- eventReactive(list(geocuR(),rc6tR(),rsscuR()),      #231cu accuracy----in/out----
+  x432D <- bindEvent(list(geocuR(),rc6tR(),rsscuR()),      #231cu accuracy----in/out----
                          {
                            if(verbose) print('enter x432D')
                            x <- f432D(geocuX=geocuR(),rc6tX=rc6tR(),rsscuX=rsscuR())
@@ -1283,7 +1263,3 @@ function(input, output) {
   output$x311 <- DT::renderDT(x311D())
   
 }
-
-#shinyApp(ui, server)
-
-
