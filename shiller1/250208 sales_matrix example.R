@@ -60,8 +60,9 @@ x1%>% #check sell exists
 #   `<`(.,value=0)%>%
 #   which(.)
 # x1[x2]
-
-rcx='NG-7--'
+  geo0 <- f230703d()
+rcx='NG-2--'
+rcx='S--11-'
 sfn=#seas 'from nowt'
   getlast('f220822ad')
 x0 <- 
@@ -112,6 +113,15 @@ xx <- x4[,-(1:2),with=F]%>%setnames(.,paste0('p',gsub('-','',substr(names(.),1,7
   data.frame(.)
 x5 <- 
   cbind(yy,xx)
+zmat <- as.matrix(xx/abs(xx))
+zmat[is.nan(zmat)] <- 0
+xmat <- as.matrix(xx)
+ymat <- as.matrix(yy)
+
+beta_hat <- lm.fit(t(zmat) %*% xmat, t(zmat) %*% ymat)$coefficients
+index <- 1/beta_hat
+plot(log(index))
+
 x6 <- 
   lm(p0~.-1,x5)%>%
   coefficients(.)
