@@ -1,0 +1,118 @@
+---
+title: "Untitled"
+output: html_document
+date: "2025-02-06"
+---
+### 🚀 **Why Can't We Solve the IV Estimator for \( \hat{\beta} \) in Closed Form?**
+
+You're asking an excellent question. Let's take this step-by-step.
+
+---
+
+## **1️⃣ The IV Estimator Formula**
+We write the **instrumental variables (IV) estimator** as:
+
+\[
+\hat{\beta} = (Z'X)^{-1} Z'Y
+\]
+
+where:
+- **\( Y \)** = Base period prices.
+- **\( X \)** = Later period prices (zero-filled except for two nonzero entries per row).
+- **\( Z = \text{sign}(X) \)**, containing only \( \pm1, 0 \).
+
+At first glance, this looks like a **closed-form solution**, because it’s simply:
+
+\[
+\hat{\beta} = A^{-1} b
+\]
+
+where \( A = Z'X \) and \( b = Z'Y \).
+
+---
+
+## **2️⃣ The Hidden Non-Linearity**
+The problem arises because **\( X \) itself depends on \( \hat{\beta} \)**.
+
+Expanding \( X \):
+
+\[
+X_{jt} = P_{jt} \cdot Z_{jt}
+\]
+
+but the second price in a repeat sale is:
+
+\[
+P_{jt} = P_{j0} \cdot \beta_t
+\]
+
+substituting this into \( X \):
+
+\[
+X_{jt} = P_{j0} \cdot \beta_t \cdot Z_{jt}
+\]
+
+which means **\( X \) contains \( \beta \) implicitly**.
+
+Now, our IV estimator equation:
+
+\[
+\hat{\beta} = (Z'X(\hat{\beta}))^{-1} Z'Y
+\]
+
+actually **contains \( \hat{\beta} \) inside \( X \)**. This makes the equation **nonlinear in \( \beta \)**.
+
+---
+
+## **3️⃣ Why This Prevents a Closed-Form Solution**
+Normally, for a closed-form solution, we require a system of **linear** equations:
+
+\[
+A \hat{\beta} = b
+\]
+
+which we can solve as:
+
+\[
+\hat{\beta} = A^{-1} b
+\]
+
+However, because **\( A = Z'X \) is a function of \( \hat{\beta} \)**, we cannot compute \( A^{-1} \) directly. Instead, we have an **implicit equation** for \( \hat{\beta} \):
+
+\[
+\hat{\beta} = (Z'X(\hat{\beta}))^{-1} Z'Y
+\]
+
+This means:
+1. **\( \hat{\beta} \) appears on both sides**, preventing direct inversion.
+2. We need an **iterative method** to solve for \( \hat{\beta} \), such as:
+   - **Fixed-point iteration**
+   - **Newton-Raphson**
+   - **Nonlinear solvers like `nleqslv`**
+
+---
+
+## **4️⃣ Summary**
+✅ **IV estimation normally allows a closed-form solution**.  
+🚫 **But here, \( X \) depends on \( \beta \), making the system nonlinear**.  
+⚡ **Thus, we need numerical methods to solve for \( \beta \).**
+
+---
+
+### 🚀 **Next Steps**
+Would you like to:
+1. **See a Newton-Raphson implementation in R** for solving \( \hat{\beta} \)?  
+2. **Compare iterative methods (e.g., fixed-point vs. Newton) for speed?**  
+3. **Simulate different levels of measurement error to test IV robustness?**  
+
+Let me know where you'd like to proceed! 🚀
+
+---
+
+## ✅ **The "Correct" Way to Compute \( \hat{\beta} \) in R**
+Here are the **best numerical methods** ranked by stability:
+
+### **1️⃣ Using `qr.solve()` (Recommended)**
+QR decomposition is **more stable** than direct matrix inversion.
+```r
+beta_hat <- qr.solve(t(Z) %*% X, t(Z) %*% Y)

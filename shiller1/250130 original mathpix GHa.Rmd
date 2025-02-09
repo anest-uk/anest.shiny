@@ -1,0 +1,243 @@
+---
+title: "case-shiller extract"
+output: html_document
+date: "2025-01-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+## Repeat Sales Methodology
+
+## Introduction
+
+The S&P CoreLogic Case-Shiller Home Price Indices are calculated using a Robust Interval and ValueWeighted Arithmetic Repeat Sales algorithm (Robust IVWARS). Before describing the details of the algorithm, an example of a Value-Weighted Arithmetic repeat sales index is described below. In the next section, the value-weighted arithmetic model is augmented with interval weights, which account for errors that arise in repeat sale pairs due to the length of time between transactions. The final section describes pre-base period, simultaneous index estimation and post-base period, chain-weighted index estimation.
+
+## Value-Weighted Arithmetic Repeat Sales Indices ${ }^{8}$
+
+Value-weighted arithmetic repeat sales indices are estimated by first defining a matrix $X$ of independent variables which has $N$ rows and $T-1$ columns, where $N$ is the number of sale pairs and $T$ is the number of index periods. The elements of the $X$ matrix are either prices or zeroes (element $n, t$ of the matrix will contain a price if one sale of pair $n$ took place in period $t$, otherwise it will be zero). Next, an $N$-row vector of dependent variables, $Y$, is defined, with the price level entered in rows where a sale was recorded during the base period for the index and zeros appear in all other rows. If we define a vector of regression coefficients, $\beta$, which has $T-1$ rows, then an arithmetic index can be calculating by estimating the coefficients of the basic regression model: $Y=X \beta+U$, where $U$ is a vector of error terms. The levels of the value-weighted arithmetic index are the reciprocals of the estimated regression coefficients, $\hat{\beta}$.
+
+A simple example illustrates the structure of the regression model used to estimate value-weighted arithmetic index points. Suppose that we have sale pair information for 5 properties (a sale pair is two recorded sales for the same property) for transactions that occurred in 3 time periods ( $t=0,1,2$ ). Let $P_{n t}$ be the sale price for pair $n$ recorded during period $t$.
+
+Then, for this example, suppose we have the following matrix of independent variables and vector of dependent variables:
+
+$$
+X=\left[\begin{array}{cc}
+P_{11} & 0 \\
+P_{21} & 0 \\
+0 & P_{32} \\
+0 & P_{42} \\
+-P_{51} & P_{52}
+\end{array}\right], \quad Y=\left[\begin{array}{c}
+P_{10} \\
+P_{20} \\
+P_{30} \\
+P_{40} \\
+0
+\end{array}\right]
+$$
+
+In this example, $t=0$ is specified to be the base period, so the first sale pair ( $n=1$ ) describes a property that was sold during the base period and the first period after the base period ( $t=1$ ). Similarly, the fifth sale pair $(n=5)$ describes a property that was sold in both the first and second index periods.
+
+Because home prices are measured with errors, the matrix of independent variables is stochastic, and likely to be correlated with the vector of error terms, $U$. Therefore, in order to estimate consistent estimates of the model coefficients, $\beta$, we use an instrumental variables estimator, $\beta=\left(Z^{\prime} X\right)^{-1} Z^{\prime} Y$, where Z is a matrix with $N$ rows and $T-1$ columns that indicates when the sales for each property occurred. The $Z$ matrix is constructed by replacing the positive or negative price levels in $X$ with 1 or -1 , respectively.
+
+[\^0]For our example, the matrix of instrumental variables looks like this:
+
+$$
+Z=\left[\begin{array}{cc}
+1 & 0 \\
+1 & 0 \\
+0 & 1 \\
+0 & 1 \\
+-1 & 1
+\end{array}\right]
+$$
+
+The OLS normal equations for this example (using the instrumental variables estimator) are:
+
+$$
+\begin{aligned}
+& \hat{\beta}_{1}^{-1}=\text { Index }_{1}=\frac{P_{11}+P_{21}+P_{51}}{P_{10}+P_{20}+\hat{\beta}_{2} P_{52}} \\
+& \hat{\beta}_{2}^{-1}=\text { Index }_{2}=\frac{P_{32}+P_{42}+P_{52}}{P_{30}+P_{40}+\hat{\beta}_{1} P_{51}}
+\end{aligned}
+$$
+
+``` R
+set.seed(123)
+z = matrix(c(1,1,0,0,1,0,0,1,1,1),5,2)
+x = runif(10)*z
+rhs=x[,1]
+```
+
+Notice that the index level for the first period is equal to the aggregate change in the value of all properties that were sold in period 1 ( $\hat{\beta}_{2} P_{52}$ is the second period price of property 5 discounted back to the base period). Similarly, the index level for the second period is equal to the aggregate change in the value (from the base period) of all properties sold in period 2 ( $\hat{\beta}_{1} P_{51}$ is the first period price of property 5 discounted back to the base period). ${ }^{9}$ Also notice that the estimated value of each index point is conditional on the estimated value of the other index point. In this model formulation, the index points are estimated simultaneously. That is, the value of each estimated index point is conditional of the values of all other index point estimates.
+
+This example also illustrates that the price indices are value-weighted. Each index point is found by calculating the aggregate change in the value of properties sold during that point's time period. So, each sale pair is weighted by the value of its first sale price. Value weighting ensures that the S&P CoreLogic Case-Shiller Home Price Indices track the aggregate value of a residential real estate market. Valueweighted repeat sales indices are analogous to capitalization-weighted stock market indices. In both cases, if you hold a representative portfolio (of houses or stocks), both types of indices will track the aggregate value of that portfolio.
+
+## Interval and Value-Weighted Arithmetic Repeat Sales Indices ${ }^{10}$
+
+The value-weighted arithmetic repeat sales model described above assumes that the error terms for each sale pair are identically distributed. However, in practice, this is unlikely to be the case, because the time intervals between the sales in each pair will be different. Over longer time intervals, the price changes for an individual home are more likely to be caused by factors other than market forces. For example, a home may be remodeled, rooms added, or it may be completely rebuilt. Some properties are allowed to deteriorate, or, in extreme cases, are abandoned. In these situations, price changes are driven mostly by modifications to the physical characteristics of the property, rather than changes in market value.
+
+Consequently, sale pairs with longer time intervals will tend to have larger pricing errors than pairs with shorter time intervals (i.e., the value-weighted arithmetic repeat sales regression model has heteroskedastic errors). We can control for heteroskedastic errors, thereby increasing the precision of the index estimates, by applying weights to each of the sale prices before estimating the index points.
+
+[^1]Returning to the example from the previous section, we apply a weight, $W_{n}$, to pair $n$ :
+
+[^1]: ${ }^{9}$ Note: CoreLogic Case-Shiller normalizes all indices so that their base period value equals 100 . So, in the preceding example, Inde $x_{0}=100$ and the gross changes in aggregate value from the base period (Index $x_{1}$ and Index $x_{2}$ ) are multiplied by 100. ${ }^{10}$ This extension of the example to include weights to control for heteroskedastic errors is given in Shiller, R.J. (1993) Macro Markets, Clarendon Press, Oxford, p. 149. The description of the sources of pricing errors appears in Case, K.E. and R.J. Shiller (1987) "Prices of Single-Family Homes Since 1970: New Indices for Four Cities" New England Economic Review, pp. 45-56.
+
+$$
+\begin{aligned}
+& \hat{\beta}_{1}^{-1}=\text { Index }_{1}=\frac{w_{1} P_{11}+w_{2} P_{21}+w_{5} P_{51}}{w_{1} P_{10}+w_{2} P_{20}+w_{5} \hat{\beta}_{2} P_{52}} \\
+& \hat{\beta}_{2}^{-1}=\text { Index }_{2}=\frac{w_{3} P_{32}+w_{4} P_{42}+w_{5} P_{52}}{w_{3} P_{30}+w_{4} P_{40}+w_{5} \hat{\beta}_{1} P_{51}}
+\end{aligned}
+$$
+
+The weight applies to the sale pair, so for each property, the same weight is applied to both prices in the pair.
+
+To explicitly account for the interval-dependent heteroskedasticity of the errors in the sale pairs, assume that the error vector has the following structure:
+
+$$
+U_{n}=e_{n t(2)}-e_{n t(1)}
+$$
+
+where $e_{n(1)}$ is the error in the first sale price of pair $n$ and $e_{n(2)}$ is the error in the second sale price. Furthermore, assume that the error in any sale price comes from two sources: 1) mispricing at the time of sale (mispricing error) and 2 ) the drift over time of the price of an individual home away from the market trend (interval error). Mispricing error occurs because homebuyers and sellers have imperfect information about the value of a property, so sale prices will not be precise estimates of property values at the time of sale. Interval error occurs for the reasons outlined above -- over longer time intervals, the price changes for an individual home are more likely to be caused by factors other than market forces (e.g., physical changes to a property). So, define the error for any single price as:
+
+$$
+e_{n t}=h_{n t}+m_{n}
+$$
+
+where $h_{n t}$ is the interval error for pair $n$ and $m_{n}$ is the mispricing error. Mispricing errors are likely to be independent, both across properties and time intervals, and can be represented by an identically distributed white-noise term: $m \sim \operatorname{Normal}\left(0, \sigma_{m}^{2}\right)$ where $\sigma_{m}^{2}$ is the variance of the mispricing errors. The interval errors are assumed to follow a Gaussian random walk, so $\Delta h \sim \operatorname{Normal}\left(0, \sigma_{h}^{2}\right)$ and the variance of the interval error increases linearly with the length of the interval between sales. Consequently, the variance of the combined mispricing and interval errors for any sale pair may be written as: $2 \sigma_{m}^{2}+I_{n} \sigma_{h}^{2}$ where $I_{n}$ is the time interval between sales for pair $n$.
+
+If the errors of the value-weighted arithmetic repeat sales model have this heteroskedastic variance structure, then more precise index estimates can be produced by estimating a weighted regression model, $\beta=\left(Z^{\prime} \Omega^{-1} X\right)^{-1} Z^{\prime} \Omega^{-1} Y$, where $\Omega$ is a diagonal matrix containing the combined mispricing and interval error variance for each sale pair. Since $\Omega$ is unknown, the interval and value-weighted arithmetic repeat sales model is estimated using a three-stage procedure. First, the coefficients of the valueweighted arithmetic repeat sales model are estimated. Second, the residuals from this model are used to estimate $\Omega$. Finally, the interval and value-weighted arithmetic repeat sales index is estimated by plugging $\hat{\Omega}$ into the weighted regression estimator.
+
+Returning to our example, the terms of the error variance matrix act as the weights that control for the presence of mispricing and heteroskedastic interval errors:
+
+$$
+\omega_{n}^{-1}=w_{n}
+$$
+
+where $\omega_{n}^{-1}$ is the reciprocal of the $n^{\text {th }}$ diagonal term in the error variance matrix, $\Omega .{ }^{11}$
+
+## Pre-Base and Post-Base Index Estimation ${ }^{12}$
+
+The base period of the tradable S&P CoreLogic Case-Shiller Home Price Indices is January 2000, where the index point is set equal to 100.0. All index points prior to the base period are estimated simultaneously using the weighted reg ression model described above. The estimation is simultaneous because all of the estimated index points (or $\hat{\beta}_{t}^{-1}$ ) are conditional on the estimates of all other index points.
+
+After the base period, the index points are estimated using a chain-weighting procedure in which an index point is conditional on all previous index points, but independent of all subsequent index points. The purpose of the post-base, chain-weighting procedure is to limit revisions to recently estimated index points while maintaining accurate estimates of market trends.
+
+Returning to our example, the post-base, chain-weighting procedure can be illustrated by modifying the matrices of independent and dependent variables. Suppose that the index point for first period, $\hat{\beta}_{1}^{-1}$, has already been estimated.
+
+This means the matrices used for estimating the robust interval and value-weighted arithmetic repeat sales model can be re-written as:
+
+$$
+X=\left[\begin{array}{c}
+0 \\
+0 \\
+P_{32} \\
+P_{42} \\
+P_{52}
+\end{array}\right], \quad Y=\left[\begin{array}{c}
+\hat{\beta}_{0} P_{10} \\
+\hat{\beta}_{0} P_{20} \\
+\hat{\beta}_{0} P_{30} \\
+\hat{\beta}_{0} P_{40} \\
+\hat{\beta}_{1} P_{51}
+\end{array}\right], \quad Z=\left[\begin{array}{l}
+0 \\
+0 \\
+1 \\
+1 \\
+1
+\end{array}\right]
+$$
+
+Since the first index point has already been estimated, the columns in $X$ and $Z$ that correspond to the first index period can be dropped. The normal equation for the second period index point, $\beta_{2}^{-1}$, using the weighted regression model is:
+
+$$
+\hat{\beta}_{2}^{-1}=\text { Index }_{2}=\frac{w_{3} P_{32}+w_{4} P_{42}+w_{5} P_{52}}{w_{3} \hat{\beta}_{0} P_{30}+w_{4} \hat{\beta}_{0} P_{40}+w_{5} \hat{\beta}_{1} P_{51}}
+$$
+
+[^2]Again, as for the simultaneous index estimation procedure, the index level for the second period is equal to the aggregate change in the value (from the base period) of all properties sold in period 2 ( $\hat{\beta}_{1} P_{51}$ is the first period price of property 5 discounted back to the base period, and $\hat{\beta}_{0}=1.0$ by definition), but with a robust interval-weight attached to each sale pair. The example of post-base index estimation can be generalized as:
+
+[^2]: ${ }^{11}$ CoreLogic augments the interval and value-weights with a robust weighting procedure. This procedure mitigates the influence of sale pairs with extreme price changes (which are more likely to result from physical changes to properties or data errors, rather than market forces). Sale pairs with very large price changes (positive or negative, relative to the market trend) are downweighted to prevent them from adding error to the index estimates. ${ }^{12}$ See Shiller, R.J. (1993) Macro Markets, Clarendon Press, Oxford, pp. 195-199 for a discussion of chain-weighted repeat sales indices.
+
+$$
+\text { Index }_{t}=\frac{\sum_{n \in t} w_{n} P_{n \tau(2, n)}}{\sum_{n \in t} w_{n} P_{n \tau(1, n)} / \operatorname{Index}_{\tau(1, n)}}
+$$
+
+where $\tau(2, n)$ is the period of the second sale, $\tau(1, n)$ is the period of the first sale, and $n \in t$ indicates the set of pairs with second sales in period $t$.
+
+To compute three-month moving average indices, the $n$th sale pair is used in the above formulas as if it were three sale pairs with the same weight $w_{n}, n_{1}$ with dates $\tau(1, n)$ and $\tau(2, n), n_{2}$ with dates $\tau(1, n)+1$ and $\tau(2, n)+1$, and $n_{3}$ with dates $\tau(1, n)+2$ and $\tau(2, n)+2$.
+
+## U.S. National Index Methodology
+
+## Introduction
+
+The S&P CoreLogic Case-Shiller U.S. National Home Price Index ('the U.S. national index') tracks the value of single-family housing within the United States. The index is a composite of single-family home price indices and FHFA data for the nine U.S. Census divisions: where Indexus,t is the level of the US National index in period t , Indexit is the level of the home price index for Census division i in period t , and Indexid is the level of the index for Census division i in reference period d, and $V_{i d}$ is the aggregate value of housing stock in Census division i in reference period d. The reference periods are based on the US Census of Housing. Each reference period is ten years: 1990-1999, 2000-2009, 2010-2019.
+
+The Divisord is chosen to ensure that the level of the composite index does not change because of changes in the reference period weights ( $V_{i d}$ ).
+
+## Calculating U.S. National Index History
+
+Calculating historical estimates of the U.S. national index requires setting the reference periods and estimating of the aggregate value of single-family housing stock in each Census division for those periods. The reference period Census division aggregate values are updated with the Census division price indexes to calculate Census division housing stock values in non-reference periods. For each period, the composite index is equal to the sum of the Census division housing stock values for that period divided by the reference period divisor.
+
+The reference periods are January 1990, January 2000, and January 2010. The decennial U.S. Census provided estimates of the aggregate value of single-family housing units for the Census divisions for 1990 and 2000. Estimates of the aggregate value of single-family housing for 2010 were taken from the American Community Survey. The aggregate value estimates by Census division are listed in Table 6.
+
+The aggregate value estimates and divisor for the January 1990 reference period were used to calculate composite index data for the period from January 1975 to December 1999. The January 2000 reference period estimates were used to calculate data from January 2000 until December 2009. The January 2010 reference period estimates are used to calculate index data from January 2010 until the present. The Divisors for these reference periods are set so that the composite index equals 100.0 in January 2010. The national index is then rebased, so that it equals 100.0 in January 2000, to maintain consistency with the metro area and metro area composite indexes.
+
+Table 6: Aggregate Value of Single-Family Housing Stock (US\$)
+
+|   | $\mathbf{1 9 9 0}$ |   | $\mathbf{2 0 0 0}$ |
+|:-----------------|-----------------:|-----------------:|-----------------:|
+| North Central | $765,418,398,000$ | $1,528,000,592,500$ | $2,137,949,847,500$ |
+| East South Central | $224,148,387,500$ | $448,817,717,500$ | $733,666,571,000$ |
+| Middle Atlantic | $975,073,121,500$ | $1,322,860,220,000$ | $2,488,150,340,900$ |
+
+| Mountain | $248,195,528,000$ | $659,289,495,000$ | $1,254,997,320,900$ |
+|:-----------------|-----------------:|-----------------:|-----------------:|
+| New England | $467,867,938,500$ | $618,272,542,500$ | $1,161,281,404,200$ |
+| Pacific | $1,397,627,457,000$ | $2,140,886,697,500$ | $4,111,981,534,400$ |
+| South Atlantic | $924,261,612,000$ | $1,691,801,012,500$ | $3,383,979,252,300$ |
+| West North Central | $294,495,739,500$ | $578,345,765,000$ | $970,117,448,200$ |
+
+|   | $\mathbf{1 9 9 0}$ | $\mathbf{2 0 0 0}$ | $\mathbf{2 0 1 0}$ |
+|:-----------------|:----------------:|:----------------:|:----------------:|
+| West South Central | $384,583,746,000$ | $700,764,790,000$ | $1,310,808,810,400$ |
+|  |  |  |  |
+| Divisor | $10,765,643,970,234$ | $14,049,409,871,541$ | $17,552,932,529,800$ |
+
+Source: U.S. Census Bureau ![](https://cdn.mathpix.com/cropped/2025_01_30_cc5510c39352dafa2f36g-25.jpg?height=980&width=1288&top_left_y=757&top_left_x=489)
+
+## Updating the U.S. National Index
+
+When new estimates of the aggregate value of single-family housing units from either the U.S. Census or the American Community Survey (or another, accurate and widely accepted source for this data) become available, new reference period estimates of aggregate value may be used for calculating updates to the U.S. national home price index.
+
+## Adding Reference Period Weights
+
+If new estimates of the aggregate value of single-family housing units by division are chosen to be employed, a new set of reference period weights used for the calculation of the U.S. national index will be created and a new reference period (d) will be added. The divisors for all reference periods may be reset to reflect the addition of new reference period weights.
+
+## Index Maintenance
+
+## Updating the Composite Indices
+
+Going forward, the 2010 reference period measures of the value of aggregate housing stock will be used for calculating monthly updates of the composite home price indices, until new Census counts of singlefamily housing units (or another accurate and widely accepted source for this data) become available.
+
+## Adding Reference Period Weights
+
+New reference period weights used in the calculation of the composite indices may be added when new metro area counts of single-family housing units become available. ${ }^{13} \mathrm{~A}$ new divisor will be calculated to ensure that the level of the composite indices do not change due to the addition of new reference period weights. The base period of the composite indices (i.e., the period where the index equals 100.0) will remain the same as the base period of the individual metro area home price indices.
+
+## Seasonal Adjustment
+
+The S&P CoreLogic Case-Shiller home price indexes are calculated on a non-seasonally adjusted (NSA) basis, so they include the effects of seasonal fluctuations on each market's price level. Seasonally adjusted (SA) versions of the NSA indexes are also provided to track market price trends with seasonal fluctuations removed. The seasonally adjusted indexes are calculated by applying the U.S. Census Bureau's X-13ARIMA-SEATS seasonal adjustment program to the NSA indexes.
+
+## Revisions
+
+With the calculation of the latest index data point, each month, revised data may be computed. Index data points are subject to revision as new sales transaction data becomes available. Although most sale transactions are recorded and collected expeditiously, some sale prices for the period covered by the index may have not yet been recorded at the time of the calculation. ${ }^{14}$ When this information becomes available, the corresponding index data points are revised to maximize the accuracy of the indices. Index revisions for additional transactional data are limited to the last 24 -months. The full history is subject to revision for changes in seasonal factors for all seasonally adjusted indices and FHFA data for the U.S. national index.
+
+## Base Date
+
+The indices have a base value of 100 on January 2000.
+
+[^3] [\^0]: ${ }^{8}$ The example in this section is taken from Shiller, R.J. (1993) Macro Markets, Clarendon Press, Oxford, pp. 146-149.
+
+[^3]: ${ }^{13}$ The U.S. Census counts of single-family housing units by metro area are typically available two to three years after the completion of the decennial Census survey. ${ }^{14}$ Generally, more than $85 \%$ of the sales data for the latest index period are available when the indices are calculated. However, the completeness of the sales data for each update period and metro area will differ depending on real estate market conditions a nd the efficiency of the public recording and collection of sales deed records.

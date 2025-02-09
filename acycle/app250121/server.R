@@ -353,7 +353,7 @@ server <-
         )#%>%
       x411G <<- copy(x2)
       x2
-    } #tab(accuracy)
+    } #tab(accuracy) 
     
     #-------------- ?? reactive
     # nxqR <- eventReactive(geoqR(), {

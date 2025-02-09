@@ -1,0 +1,157 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+### 📊 **Deriving the Non-Linear Case-Shiller Equations (General Case)**
+
+You’ve pinpointed the heart of the issue: how do we get from the **normal equations** to the **non-linear system**, especially as the system scales?
+
+---
+
+### 🔑 **1. Starting Point: The Normal Equations (IV Estimator)**
+
+The **IV estimator** is given by:
+
+$$
+\hat{\beta} = (Z'X)^{-1} Z'P
+$$
+
+Where:
+- \( Z \) is the **instrument matrix** (with dummies \(-1, 0, 1\)).
+- \( X \) is the **design matrix** (price-based).
+- \( P \) is the vector of observed prices.
+
+This leads to the **normal equations**:
+
+$$
+Z'P = Z'X \hat{\beta}
+$$
+
+Now, for a system with \( T \) time periods, \( \hat{\beta} \) is a \( (T-1) \)-dimensional vector, and \( Z'X \) is a \( (T-1) \times (T-1) \) matrix.
+
+---
+
+### 🔍 **2. Rearranging the Normal Equations**
+
+Rearranging gives:
+
+$$
+\hat{\beta} = (Z'X)^{-1} Z'P
+$$
+
+To avoid explicitly inverting \( Z'X \), we can rewrite this as a **system of linear equations**:
+
+$$
+Z'X \hat{\beta} = Z'P
+$$
+
+For each time period \( t \), this expands to:
+
+$$
+\sum_{j=1}^{T-1} (Z'X)_{tj} \hat{\beta}_j = (Z'P)_t
+$$
+
+Where:
+- \( (Z'X)_{tj} \) represents the **interaction between instruments and prices** for time periods \( t \) and \( j \).
+- \( (Z'P)_t \) is the **sum of instrument-weighted prices** for period \( t \).
+
+---
+
+### ⚡ **3. Introducing Non-Linearity**
+
+Here’s where the **non-linearity emerges**:
+
+- The matrix \( Z'X \) includes terms like **\( \hat{\beta} P \)** because the instruments interact with prices that depend on \( \hat{\beta} \) from other periods.
+- When you expand the system, each equation for \( \hat{\beta}_t \) includes **products of \( \hat{\beta} \)** terms from different periods.
+
+For example, with **2 periods**, we have:
+
+$$
+(Z'X) =
+\begin{bmatrix}
+  a_{11} & a_{12} \\
+  a_{21} & a_{22}
+\end{bmatrix}, \quad
+\hat{\beta} =
+\begin{bmatrix}
+  \hat{\beta}_1 \\
+  \hat{\beta}_2
+\end{bmatrix}, \quad
+Z'P =
+\begin{bmatrix}
+  b_1 \\
+  b_2
+\end{bmatrix}
+$$
+
+Expanding:
+
+$$
+ a_{11} \hat{\beta}_1 + a_{12} \hat{\beta}_2 = b_1 \\
+ a_{21} \hat{\beta}_1 + a_{22} \hat{\beta}_2 = b_2
+$$
+
+Now, because **\( a_{12} \)** and **\( a_{21} \)** depend on \( \hat{\beta} \), you get **recursive terms**:
+
+$$
+\hat{\beta}_1 = \frac{b_1 - a_{12} \hat{\beta}_2}{a_{11}} \\
+\Longrightarrow \quad
+\hat{\beta}_1 = \frac{\text{Prices}}{\text{Prices + Adjustments involving } \hat{\beta}_2}
+$$
+
+This is exactly the non-linear structure you see in the Case-Shiller methodology.
+
+---
+
+### 🤯 **4. Scaling Up: Why This Gets Hard for 4+ Periods**
+
+For \( T > 2 \):
+- The system becomes a **coupled non-linear system**, with each \( \hat{\beta}_t \) depending on multiple other \( \hat{\beta} \)'s.
+- You’d have to expand the matrix, isolate each \( \hat{\beta}_t \), and rearrange—**which quickly becomes algebraically intractable**.
+
+For example, with 4 periods:
+
+$$
+\begin{bmatrix}
+  a_{11} & a_{12} & a_{13} \\
+  a_{21} & a_{22} & a_{23} \\
+  a_{31} & a_{32} & a_{33}
+\end{bmatrix}
+\begin{bmatrix}
+  \hat{\beta}_1 \\
+  \hat{\beta}_2 \\
+  \hat{\beta}_3
+\end{bmatrix}
+=
+\begin{bmatrix}
+  b_1 \\
+  b_2 \\
+  b_3
+\end{bmatrix}
+$$
+
+Each \( a_{ij} \) includes terms that depend on \( \hat{\beta}_k \) for various \( k \), leading to **nested dependencies**.
+
+---
+
+### 🚩 **5. Why We Rely on Solvers**
+
+- **No Closed-Form Solution:** The complexity of dependencies makes it impossible to isolate \( \hat{\beta}_t \) for each time period.
+- **Numerical Solvers Handle This Naturally:**  
+   - Solvers like `nleqslv` treat this as a **root-finding problem**.  
+   - They iteratively adjust all \( \hat{\beta} \)'s simultaneously, respecting the system’s interdependencies.
+
+This is why, beyond the simplest cases, we **abandon algebraic manipulation** and rely on **numerical solvers**.
+
+---
+
+### 🚀 **Next Step**
+
+Would you like to:
+1. **See this logic applied in code** for a 3-period example?  
+2. Discuss **optimization strategies** for large-scale systems (e.g., sparse matrices, parallel solvers)?
+
+Let me know how you'd like to proceed! 🚀
