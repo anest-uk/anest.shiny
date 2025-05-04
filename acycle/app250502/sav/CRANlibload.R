@@ -1,0 +1,28 @@
+library(magrittr)
+c( 
+'beepr',
+'broom',
+'car', #linear hypothesis test
+'colorspace',
+'data.table',
+'devtools',
+'forecast',
+'ggplot2',    
+'ggpubr',
+'ggrepel',   
+'grid',
+'gt',
+'lubridate',
+'magrittr',   
+'plotly',  
+'scales',
+'signal',     
+'snowfall',   
+'urca',       
+'vars',       
+'zoo'
+)%>%
+  unique(.)%>%
+  sort(.)%>%
+  sapply(.,library,character.only=T)%>%
+  suppressPackageStartupMessages(.)
