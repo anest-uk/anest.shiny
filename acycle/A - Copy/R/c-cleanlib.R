@@ -5,13 +5,13 @@ function( # abbrev - abbreviate and remove forbidden characters
     rep = "", 
     patt = list("\\.", "/", "&", "\\*", ":",","), 
     nospace = TRUE
-  ) {
+    ) {
     if (nospace)
-      patt <- union(patt, " ")
+        patt <- union(patt, " ")
     x <- abbreviate(x, minl = len)
     x <- gsub(x = x, patt = grepstring(patt,caret=F), rep = rep)
     x
-  }
+}
 accrue2 <-
 function(  #for vector of dates, accrue days from buydate to selldate
     pdate=round(seq(from=fur[,min(buydate)],to=fur[,max(selldate)],length.out=10)),
@@ -86,27 +86,27 @@ circlefit <-
 function ( #from package pracma modified: silent, returns rms DEPRECATED due to shared name :(
     xp, 
     yp
-  ) 
-  {
+    ) 
+{
     if (!is.vector(xp, mode = "numeric") || !is.vector(yp, mode = "numeric")) 
-      stop("Arguments 'xp' and 'yp' must be numeric vectors.")
+        stop("Arguments 'xp' and 'yp' must be numeric vectors.")
     if (length(xp) != length(yp)) 
-      stop("Vectors 'xp' and 'yp' must be of the same length.")
+        stop("Vectors 'xp' and 'yp' must be of the same length.")
     n <- length(xp)
     p <- qr.solve(cbind(xp, yp, 1), matrix(xp^2 + yp^2, ncol = 1))
     v <- c(p[1]/2, p[2]/2, sqrt((p[1]^2 + p[2]^2)/4 + p[3]))
     rms <- sqrt(sum((sqrt((xp - v[1])^2 + (yp - v[2])^2) - v[3])^2)/n)
     x <- c(x=v[1],y=v[2],r=v[3],rms=rms)
     return(x)
-  }
+}
 cobalt <-
 function(){
-  c(
-    blue='#0082F4',
-    green='#35CA05',
-    onch='#ED9304',
-    punk='#FF628C',
-    midnight='#002170')
+c(
+  blue='#0082F4',
+  green='#35CA05',
+  onch='#ED9304',
+  punk='#FF628C',
+  midnight='#002170')
 }
 cocomkd <-
 function(#make subdir for csv(postcode) WINDOWS
@@ -171,7 +171,7 @@ function( #read data from csv in subdir
         load(file=fp)
       } else if(ext=='csv') {
         x <- fread(file=fp,colClasses=colClasses,nrows=nrows)
-        jdate <- grep('^[a-z]+date',colnames(x)) #exclude e.g. idhash.selldate
+        jdate <- grep('date',colnames(x))
         jname <- colnames(x)[jdate]
         for(j in seq_along(jdate)) {
           # txt <- 
@@ -411,8 +411,7 @@ function( #FIS: parallel wrapper to f230311a
     parx=(3<geo[,length(unique(nx))]),
     tssdo=T,
     onepass=F,
-    q1=.1,
-    nch=max(geo[1,nchar(lab)-1],3)
+    q1=.1
   ) {
     sfInit(par=parx,cpus=min(ncpus(),geo[,length(sort(unique(nx)))]))
     x1 <- sfLapply(
@@ -427,7 +426,7 @@ function( #FIS: parallel wrapper to f230311a
     )
     sfStop()
     t1 <- max(names(coread(step=steppra))%>%.[grep('....-..-..',.)]) #parse out final date
-    names(x1) <- paste0(t1,'.',zeroprepend(seq_along(x1),ntotal=nch)) #list label for 1206a
+    names(x1) <- paste0(t1,'.',zeroprepend(seq_along(x1),3)) #list label for 1206a
     x2 <- f221206a(bso=x1,geo=geo)
     x2a <- NULL
     if(tssdo) {
@@ -1776,7 +1775,6 @@ function( #fanchart
     x1=f230903b(x1=x0,nahead=naheadx),
     naheadx=20
   ) {
-    #browser()
     ggplot(x1[[i]],aes(ii,value,quantile=qq))+
       ggfan::geom_fan()+
       geom_line(data=x1[[3]][variable==colnames(x0$y)[i]],aes(ii,value),color=cols[i,hi])+
@@ -2431,7 +2429,6 @@ function(
     ii=seq(from=-4,to=length(z222$date)+4,by=1),
     pars=z222$zcycle
   ) {
-    #browser()
     pars <- setNames(as.numeric(pars),c('w','phi','r','c2','c3'))
     addm <- T
     x1 <- data.table(
@@ -2482,11 +2479,10 @@ function(  #SOL sinusoid parameter solve
     x=x2,
     iix
       ) {
-        #browser()
         x1 <- (x-f240115a(
           pars=pars,
           ii=iix
-        )[,.(z2,z3)])%>% #ii from x FIT ###this was z002 z003 but 11151 now returns z2 z3
+        )[,.(z002,z003)])%>% #ii from x FIT
           unlist(.)%>%
           `^`(.,i=2)%>%
           sum(.)
@@ -2495,8 +2491,6 @@ function(  #SOL sinusoid parameter solve
     ccon <- F #convergence status
     pars1 <- pars0 #working copy
     trycount <- 0
-    #browser()
-    
     while(!ccon&(trycount<100)) { #attempt different starting values
       trycount <- trycount+1
       print(paste0('try: ',trycount))
@@ -2555,7 +2549,6 @@ function( #SIN solves/adds sinusoid parameters to pcaest
     perturb=.1 #try different starting values (or set =0)
   ) {
     set.seed(1)
-    #browser()
     x1 <- f240115b(  #SOL sinusoid parameter solve
       pcax=pcax,
       iix=0:length(pcax$date),
@@ -3302,8 +3295,14 @@ function(  #solve single nx -> estdt with no pra; replaces f240710a
         step=stepprax,
         colClasses=list(numeric='retsa')
       )
-      x2[,idhash.selldate:=as.character(1:.N)] #make order consistent with !usepra
     } else {
+      #browser()
+      # x1 <- #rip read
+      #   coread(
+      #     rcx=geo[nx==nxx][,rc9],
+      #     step=steprip1,
+      #     colClasses=list(numeric=c('retsa'),Date=c('buydate','selldate')) #c('retraw','retsa')
+      #   )
       x1 <- #rip read coread2 steprip2
         coread2(
           rcx=geo[nx==nxx][,rc9],
@@ -3321,11 +3320,7 @@ function(  #solve single nx -> estdt with no pra; replaces f240710a
           dfn=dfn,
           applygeo=F
         )
-      stopifnot(all.equal(x1[,idhash.selldate],x2[,idhash.selldate]))
     }
-    
-    #print(x2) #ok
-    
     x4 <- lm(
       retsa~.-1,
       x2[,!c('idhash.selldate','rc9')] #all, no outlier reject
@@ -3346,12 +3341,6 @@ function(  #solve single nx -> estdt with no pra; replaces f240710a
     } else {
       x6d[,ktile:=((1:.N))%%kfold+1]
     }
-
-    
-    # print(x2) #ok
-    # print(x6d[,12:23])
-    # if(usepra==T) {xpra <<- x6d} else {xrsi <<- x6d}
-    
     x10 <- as.list(NULL)
     for(i in 1:kfold) {
       x7 <- x6d[ktile==i,] #target ktile inlier
@@ -3372,16 +3361,12 @@ function(  #solve single nx -> estdt with no pra; replaces f240710a
       retsa~.-1,
       x6d[,!c('idhash.selldate','rc9','ktile')] #all inlier
     )
+    
     x11a <- #Inlier
       data.table(x6d[,.(rc6=substr(rc9,1,6))],res=residuals(x12))%>%
       .[,.(ssei=sum(res^2),n=.N),rc6] 
     x11b <- #kfold 
       x11[,.(rc6,ssek=sse,n)] 
-    
-    #print(x6d[,10],collapse='')
-    #print(openssl::md5(paste0(x6d[,10],collapse='')))
-    #browser()
-    
     x11c <- #Raw
       data.table(x2[,.(rc6=substr(rc9,1,6))],res=residuals(x4))%>%
       .[,.(sser=sum(res^2),n=.N),rc6]
@@ -3438,11 +3423,11 @@ function(#grep for any in x
     x=regpcode(metro()), #character vector
     dollar=F,
     caret=T
-  ) {
-    if(caret) x <- paste0('^',x)
-    if(dollar) x <- paste0(x,'$')
-    paste(x,collapse='|') #OR function does the work
-  }
+    ) {
+  if(caret) x <- paste0('^',x)
+  if(dollar) x <- paste0(x,'$')
+  paste(x,collapse='|') #OR function does the work
+}
 irregpcode <-
 function( #convert regular (area,district,sector,unit) 12 char to 'normal' postcode
     x
@@ -3462,19 +3447,24 @@ function( #convenience labeller
 mkdirn <-
 function( #make dir (WINDOWS)
     dd
-  ) {
+    ) {
     if (all(is.na(file.info(dd))))
-      suppressWarnings(shell(paste0("mkdir ", dd)))
-  }
+        suppressWarnings(shell(paste0("mkdir ", dd)))
+}
 ncpus <-
 function( #number of CPUs for snow 
-  )
-  {
-    parallel::detectCores()%>%
-      as.numeric(.)%>%
-      max(.,na.rm=T)%>%
-      min(.,8)
-  }
+)
+{
+shell(
+  "wmic cpu get NumberOfCores,NumberOfLogicalProcessors",
+  intern=TRUE
+)%>%
+  strsplit(.," ")%>%
+  `[[`(.,i=2)%>%
+  as.numeric(.)%>%
+  max(.,na.rm=T)%>%
+  min(.,8)
+}
 pad1 <-
 function(x) {
   n1 <- nchar(x)
@@ -3863,18 +3853,18 @@ function(#parse irregular postcode to regular 12-char (area,district,sector,unit
   }
 rmifgl <-
 function( #remove if global
-    x #character=names of non-function objects in .GlobalEnv
+  x #character=names of non-function objects in .GlobalEnv
   ) {
-    for(i in seq_along(x)) {
-      if(
-        exists(x[i],envir=globalenv())
-        &&
-        mode(get(x[i],envir=globalenv()))!='function'
-      ) {
-        rm(list=x[i],envir=globalenv())
+  for(i in seq_along(x)) {
+    if(
+      exists(x[i],envir=globalenv())
+      &&
+      mode(get(x[i],envir=globalenv()))!='function'
+    ) {
+      rm(list=x[i],envir=globalenv())
       }
-    }
   }
+}
 rr3 <-
 function( # rotate 2 out of jbar in the (x1,xjrot) plane
     tantheta = 1,
@@ -3947,11 +3937,11 @@ zeroprepend <-
 function( #left-pad integer with zeros
     x,
     ntotal
-  ) {
-    x <- as.character(x)
-    stopifnot(all(nchar(x)<=ntotal)) #otherwise x is right-truncated
-    z <- paste(rep("0",ntotal),collapse="")
-    zz <- rep(z,length(x))
-    substr(zz,1+nchar(zz)-nchar(x), nchar(zz)) <- x
-    zz
-  }
+    ) {
+  x <- as.character(x)
+  stopifnot(all(nchar(x)<=ntotal)) #otherwise x is right-truncated
+  z <- paste(rep("0",ntotal),collapse="")
+  zz <- rep(z,length(x))
+  substr(zz,1+nchar(zz)-nchar(x), nchar(zz)) <- x
+  zz
+}

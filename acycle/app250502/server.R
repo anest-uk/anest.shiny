@@ -20,7 +20,7 @@ server <-
       compxrc6R()
     })
     output$cuseqcom <- renderText({
-      'Custom index matches selection'
+      'bespoke index matches selection'
     })
     output$cusnecom <- renderText({
       'Recalc for selected districts'
@@ -52,7 +52,7 @@ server <-
     
     
     #-------------------------------------control cleaned 
-    #---select=target+custom
+    #---select=target+bespoke
     #-------------------------------------------------------------------------------
     selxrc6R <-  eventReactive(list(rccuR(), rctaR()), {
       if (verbose) {print('X - enter selxrc6R')   }
@@ -109,14 +109,14 @@ server <-
     })
     
     #------------------------------------display function
-    #---custom: geo
+    #---bespoke: geo
     #-------------------------------------------------------------------------------
     fgeocuX <-  function(rccuX = rccuG) {
       if (verbose) {print('enter fgeocuX')}
       x <-
         data.table(rc9 = rccuX, nx = 0, lab = 'CU00')
       x
-    } #construct geo from custom
+    } #construct geo from bespoke
     #---
     #-------------------------------------------------------------------------------
     festdtxX <- function(estdtcuX = estdtcuG,
@@ -164,7 +164,7 @@ server <-
           maxzoom = 12
         ) %>%
         addPolygons(
-          #outline custom districts
+          #outline bespoke districts
           data = pxosrdo2ddX[which(pxosrdo2ddX@data$name %in% irregpcode(rccuX)), ],
           fill = F,
           color = "orange",
@@ -207,7 +207,7 @@ server <-
         geom_point(size = .3) +
         geom_text_repel() +
         ylim(ylimX - x3) +
-        labs(caption = geocuX[, paste0('Custom districts: ', paste0(sort(irregpcode(rc9)), collapse =
+        labs(caption = geocuX[, paste0('bespoke districts: ', paste0(sort(irregpcode(rc9)), collapse =
                                                                       ', '))]) +
         xlab('') +
         ylab(bquote(Delta ~ P ~ log ~ price ~ change)) +
@@ -467,7 +467,7 @@ server <-
                       x
                     })
     #-------------------------------------------------------------------------------
-    estdtcuR <-  #---custom estdt select
+    estdtcuR <-  #---bespoke estdt select
       eventReactive(list(rsicuR()), {
         if (verbose) {print('X - enter estdtcuR')}
         x <- rsicuR()$estdt
@@ -529,7 +529,7 @@ server <-
     #-------------------------------------------------------------------------------
     geocuR <-
       eventReactive(rccuR(), {
-        #---custom geo compute
+        #---bespoke geo compute
         if (verbose) {print('X - enter geocuR')}
         x <-
           fgeocuX(rccuX = rccuR())
@@ -565,7 +565,7 @@ server <-
     
     #-------------------------------------------------------------------------------
     rccuR <-  eventReactive(list(rctaR(), input$rccuC), {
-      #-custom rc6
+      #-bespoke rc6
       if (verbose) {print('X - enter rccuR')}
       x <- sort(unique(c(rctaR(), input$rccuC))) %>%
         fcheckrc6(.) #valid
@@ -589,7 +589,7 @@ server <-
     #-------------------------------------------------------------------------------
     rc6deR <-
       eventReactive(rctaR(), {
-        #eR-default custom rc6 <<<<<<
+        #eR-default bespoke rc6 <<<<<<
         if (verbose) {print('X - enter rc6deR')}
         if ((!is.null(rctaR())) &
             (all(nchar(rctaR()) == 6))) {
@@ -601,7 +601,7 @@ server <-
       })
     
     #-------------------------------------------------------------------------------
-    rsicuR <-    #---custom rsi compute
+    rsicuR <-    #---bespoke rsi compute
       eventReactive(list(input$docusabC), {
         if (verbose){print('X - enter rsicuR')}
         geox <- isolate(geocuR())
@@ -702,7 +702,7 @@ server <-
       ), #8x13 numerics plus one for bespoke; accuracy----tbin
                            {
                              if (verbose){ print('X - enter x411D')}
-                             x0 <- #composite of 1-row custom and library
+                             x0 <- #composite of 1-row bespoke and library
                                rbind(
                                  f250110ad, #is a global
                                  x4xxD()[,-c('ssei','ssek','lab')][,ngrp:=Inf] #bespoke
@@ -748,7 +748,7 @@ server <-
     
     #-------------------------------------------------------------------------------
     observe({
-      #o-update tree with custom peers ----
+      #o-update tree with bespoke peers ----
       if (verbose){ print('X - enter observe updateTreeInput')}
       if (#guard against invalid selection
         (!is.null(rctaR())) &

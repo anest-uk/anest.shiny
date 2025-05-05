@@ -85,8 +85,8 @@ server <-
     
     
     
-    #--------------------------------------------------------Time-series summary ####
-    #-----------------------------------------111 map
+    #----------------------------------------------------1ij-Time-series summary
+    #------------------------------------------111 map
     x111D <- eventReactive(
       list(rc6tR(),rc6cuR(),geoaR(),pxosrdo2ddR(),z110R()),
       {
@@ -119,7 +119,7 @@ server <-
           geoaX%>%
           .[,.(
             rc6,
-            col=lighten(colX,lightx)[.BY[[1]]],   ### capital in colX <<<<<<<<<<<<<<<<<<<<
+            col=lighten(colX,lightx)[.BY[[1]]],   ### capital in colX <<<<
             qtile, #shade tiles light
             lab
           ),by=.(qtile)]%>%
@@ -145,7 +145,7 @@ server <-
         x
       }
     
-    #------------------------112 timeseries
+    #------------------------------------------112 timeseries
     f112D <- 
       function(
     tslideX=tslideG,
@@ -211,52 +211,57 @@ server <-
         }
       )
     
-    #---------------------------121 winding
-    f121D <- function(estdtX =estdtlG,dfnxX  =dfnxG, #----
-                      drangeX=range(dfnxxX),
-                      typeX  =typeC, #L
-                      tbinX  =tbinC, 
-                      dfnxxX =dfnxX[-1,tbinC+1,with=F]%>%setnames(.,'x')%>%.[,sort(unique(x))],#current tbin
-                      d2X    =dfnxX[-1,tbinC+2,with=F]%>%setnames(.,'x')%>%.[,sort(unique(x))] #annual dates t>0
-    ) {
-      d1 <- #daily
-        seq.Date(from=drangeX[1],to=drangeX[2],by='d')
-      x1 <-
-        estdtX%>% #local
-        .[.(date=d1),on=c(date='date'),roll=-Inf,j=.(date,xdotd)]%>%
-        .[,.(ii=1:.N,date,x=cumsum(xdotd))]%>%
-        .[.(date2=d2X),on=c(date='date2')]%>%
-        .[,.(date,x,xdot=c(x[1],diff(x)),ii=1:.N)]%>%
-        .[,.(ii,date,xdot,x)]%>%
-        .[,.(date,xdot)]%>%
-        .[date==as.Date('2009-02-28'),let(date,as.Date('2008-12-31'))]%>%
-        .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
-        dcast(.,decade~yr,value.var='xdot')%>%
-        .[,decade:=c(1990,2000,2010,2020)]
-      for(i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]),'',as.character(round(x1[[i]],3)))
-      x2 <- gt::gt(x1)%>%gt::tab_footnote(
-        footnote=f241108a(typeX,tbinX)[[1]]
-      )%>%gt::tab_footnote(
-        footnote=f241108a(typeX,tbinX)[[2]]
+    #-------------------------------------------121 winding
+    
+    f121D <- 
+      function(
+    estdtX =estdtlG,dfnxX  =dfnxG, #----
+    drangeX=range(dfnxxX),
+    typeX  =typeC, #L
+    tbinX  =tbinC, 
+    dfnxxX =dfnxX[-1,tbinC+1,with=F]%>%setnames(.,'x')%>%.[,sort(unique(x))],#current tbin
+    d2X    =dfnxX[-1,tbinC+2,with=F]%>%setnames(.,'x')%>%.[,sort(unique(x))] #annual dates t>0
+      ) 
+      {
+        d1 <- #daily
+          seq.Date(from=drangeX[1],to=drangeX[2],by='d')
+        x1 <-
+          estdtX%>% #local
+          .[.(date=d1),on=c(date='date'),roll=-Inf,j=.(date,xdotd)]%>%
+          .[,.(ii=1:.N,date,x=cumsum(xdotd))]%>%
+          .[.(date2=d2X),on=c(date='date2')]%>%
+          .[,.(date,x,xdot=c(x[1],diff(x)),ii=1:.N)]%>%
+          .[,.(ii,date,xdot,x)]%>%
+          .[,.(date,xdot)]%>%
+          .[date==as.Date('2009-02-28'),let(date,as.Date('2008-12-31'))]%>%
+          .[,.(decade=substr(date,1,3),yr=substr(date,4,4),xdot=round(xdot,3))]%>%
+          dcast(.,decade~yr,value.var='xdot')%>%
+          .[,decade:=c(1990,2000,2010,2020)]
+        for(i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]),'',as.character(round(x1[[i]],3)))
+        x2 <- gt::gt(x1)%>%gt::tab_footnote(
+          footnote=f241108a(typeX,tbinX)[[1]]
+        )%>%gt::tab_footnote(
+          footnote=f241108a(typeX,tbinX)[[2]]
+        )
+        x2
+      }
+    
+    x121D <- 
+      eventReactive(list(estdtlR(),estdtcuR(),dfnxxR()),  #121 winding----
+                    {
+                      if(verbose) print('enter x121D')
+                      x2 <- f121D(estdt=estdtlR(),
+                                  dfnxX=dfnxR())
+                      x4 <- f121D(estdt=estdtcuR(),
+                                  dfnxX=dfnxR(),
+                                  typeX='C')
+                      x <- list(x2,x4)
+                      x121G <<- copy(x)
+                      x
+                    }
       )
-      x2
-    }
     
-    x121D <- eventReactive(list(estdtlR(),estdtcuR(),dfnxxR()),  #121 winding----
-                           {
-                             if(verbose) print('enter x121D')
-                             x2 <- f121D(estdt=estdtlR(),
-                                         dfnxX=dfnxR())
-                             x4 <- f121D(estdt=estdtcuR(),
-                                         dfnxX=dfnxR(),
-                                         typeX='C')
-                             x <- list(x2,x4)
-                             x121G <<- copy(x)
-                             x
-                           }
-    )
-    
-    #---------------------------------122 characterristics
+    #------------------------------------------122 characteristics
     f122D <- function( #122 characteristics----
                        rc6tX=rc6tG,
                        rssaX=rssaG,
@@ -328,7 +333,7 @@ server <-
                            }
     )
     
-    #----------------------------------131 summary
+    #------------------------------------------131 summary
     f131D <- function(#131 summary----
                       estdtxX=estdtxG,
                       tslideX=tslideG
@@ -367,121 +372,126 @@ server <-
                            }
     )
     
-    f132 <- function(
-    geox=geoqG,
-    steprip='smallrip/',
-    estdtlx=estdtlG, #only used for its date(ii) relation
-    tmin=20
-    ) {#tmin=input$tslider
-      x0 <-
-        geox[,grepstring(rc6)]%>%
-        coread2(.,steprip)%>% #or rc6tC
-        .[,.(N=.N,mean=round(mean(as.numeric(retsa)),4)),.(buy=substr(as.Date(buydate),1,4),sell=substr(as.Date(selldate),1,4))]%>%
-        .[(buy>=estdtlx[ii>=tmin,substr(min(as.character(date)),1,4)])]
-      x1 <- 
-        x0%>%
-        dcast(.,
-              buy~sell,
-              value.var='mean' #the value is unique so any aggregator function is ok
-        )
-      for(i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]),'',as.character(round(x1[[i]],3)))
-      x2 <-
-        x0%>%
-        dcast(.,
-              buy~sell,
-              value.var='N'
-        )
-      for(i in 2:length(x2)) x2[[i]] <- ifelse(is.na(x2[[i]]),'',x2[[i]])
-      x3 <- list(x1,x2)
-      x3
-    }
+    f132 <- 
+      function(#
+        geox=geoqG,
+        steprip='smallrip/',
+        estdtlx=estdtlG, #only used for its date(ii) relation
+        tmin=20
+      ) 
+      {#tmin=input$tslider
+        x0 <-
+          geox[,grepstring(rc6)]%>%
+          coread2(.,steprip)%>% #or rc6tC
+          .[,.(N=.N,mean=round(mean(as.numeric(retsa)),4)),.(buy=substr(as.Date(buydate),1,4),sell=substr(as.Date(selldate),1,4))]%>%
+          .[(buy>=estdtlx[ii>=tmin,substr(min(as.character(date)),1,4)])]
+        x1 <- 
+          x0%>%
+          dcast(.,
+                buy~sell,
+                value.var='mean' #the value is unique so any aggregator function is ok
+          )
+        for(i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]),'',as.character(round(x1[[i]],3)))
+        x2 <-
+          x0%>%
+          dcast(.,
+                buy~sell,
+                value.var='N'
+          )
+        for(i in 2:length(x2)) x2[[i]] <- ifelse(is.na(x2[[i]]),'',x2[[i]])
+        x3 <- list(x1,x2)
+        x3
+      }
     
-    #---------------------------------------131 trade summary
-    f132D <- function( #132 trade summary(2)----
-                       tslideX=tslideG,
-                       geoqX=geoqG,
-                       geocuX=geocuG,
-                       estdtlX=estdtlG
-    )
-    {
-      steprip='smallrip/'
-      tminx <- tslideX
-      x1 <- f132(
-        geox=geoqX,#geoqR()
-        steprip=steprip,
-        estdtlx=estdtlX,#estdtlR()
-        tmin=tminx#tmin=input$tslider
+    #------------------------------------------132 trade summary
+    f132D <- 
+      function( #132 trade summary(2)----
+                tslideX=tslideG,
+                geoqX=geoqG,
+                geocuX=geocuG,
+                estdtlX=estdtlG
       )
-      x2 <- f132(
-        geox=geocuX[,.(rc6=rc9)],#geoqR()
-        steprip=steprip,
-        estdtlx=estdtlX,#estdtlR()
-        tmin=tminx#tmin=input$tslider
-      )
-      x <- list(
-        local=x1,
-        custom=x2
-      )
-      x[['local']][[1]] <- 
-        x[['local']][[1]]%>%
-        gt::gt(.)%>%
-        tab_header(.,title = 'Local - Return')%>%
-        opt_align_table_header(., align = "left")%>%
-        tab_options(heading.title.font.size =14)%>%
-        tab_spanner(
-          label = gt::html("sell"),
-          columns = 2:ncol(x[['local']][[1]])
+      {
+        steprip='smallrip/'
+        tminx <- tslideX
+        x1 <- f132(
+          geox=geoqX,#geoqR()
+          steprip=steprip,
+          estdtlx=estdtlX,#estdtlR()
+          tmin=tminx#tmin=input$tslider
         )
-      x[['local']][[2]] <- 
-        x[['local']][[2]]%>%
-        gt::gt(.)%>%
-        tab_header(., title='Local - Number')%>%
-        opt_align_table_header(., align = "left")%>%
-        tab_options(heading.title.font.size =14)%>%
-        tab_spanner(
-          label = gt::html("sell"),
-          columns = 2:ncol(x[['local']][[2]])
+        x2 <- f132(
+          geox=geocuX[,.(rc6=rc9)],#geoqR()
+          steprip=steprip,
+          estdtlx=estdtlX,#estdtlR()
+          tmin=tminx#tmin=input$tslider
         )
-      x[['custom']][[1]] <- 
-        x[['custom']][[1]]%>%
-        gt::gt(.)%>%
-        tab_header(., title='Custom - Return')%>%
-        opt_align_table_header(., align = "left")%>%
-        tab_options(heading.title.font.size =14)%>%
-        tab_spanner(
-          label = gt::html("sell"),
-          columns = 2:ncol(x[['custom']][[1]])
+        x <- list(
+          local=x1,
+          custom=x2
         )
-      x[['custom']][[2]] <- 
-        x[['custom']][[2]]%>%
-        gt::gt(.)%>%
-        tab_header(., title='Custom - Number')%>%
-        opt_align_table_header(., align = "left")%>%
-        tab_options(heading.title.font.size =14)%>%
-        tab_spanner(
-          label = gt::html("sell"),
-          columns = 2:ncol(x[['custom']][[2]])
-        )
-      x132G <<- copy(x)
-      if(verbose) print('exit x132D')
-      x
-    }
+        x[['local']][[1]] <- 
+          x[['local']][[1]]%>%
+          gt::gt(.)%>%
+          tab_header(.,title = 'Local - Return')%>%
+          opt_align_table_header(., align = "left")%>%
+          tab_options(heading.title.font.size =14)%>%
+          tab_spanner(
+            label = gt::html("sell"),
+            columns = 2:ncol(x[['local']][[1]])
+          )
+        x[['local']][[2]] <- 
+          x[['local']][[2]]%>%
+          gt::gt(.)%>%
+          tab_header(., title='Local - Number')%>%
+          opt_align_table_header(., align = "left")%>%
+          tab_options(heading.title.font.size =14)%>%
+          tab_spanner(
+            label = gt::html("sell"),
+            columns = 2:ncol(x[['local']][[2]])
+          )
+        x[['custom']][[1]] <- 
+          x[['custom']][[1]]%>%
+          gt::gt(.)%>%
+          tab_header(., title='Custom - Return')%>%
+          opt_align_table_header(., align = "left")%>%
+          tab_options(heading.title.font.size =14)%>%
+          tab_spanner(
+            label = gt::html("sell"),
+            columns = 2:ncol(x[['custom']][[1]])
+          )
+        x[['custom']][[2]] <- 
+          x[['custom']][[2]]%>%
+          gt::gt(.)%>%
+          tab_header(., title='Custom - Number')%>%
+          opt_align_table_header(., align = "left")%>%
+          tab_options(heading.title.font.size =14)%>%
+          tab_spanner(
+            label = gt::html("sell"),
+            columns = 2:ncol(x[['custom']][[2]])
+          )
+        x132G <<- copy(x)
+        if(verbose) print('exit x132D')
+        x
+      }
     
-    x132D <- eventReactive(list(tslideR(),geoqR(),estdtlR()),#132 trade summary(2)----
-                           {
-                             if(verbose) print('enter x132D')
-                             x <- f132D(
-                               tslideX=tslideR(),
-                               geoqX=geoqR(),
-                               geocuX=geocuR(),
-                               estdtlX=estdtlR()
-                             )
-                             x132G <<- copy(x)
-                             if(verbose) print('exit x132D')
-                             x
-                           }
-    )
-    #--------------------------------------------------------Time-series summary end
+    x132D <- 
+      eventReactive(
+        list(tslideR(),geoqR(),estdtlR()),#132 trade summary(2)----
+        {
+          if(verbose) print('enter x132D')
+          x <- f132D(
+            tslideX=tslideR(),
+            geoqX=geoqR(),
+            geocuX=geocuR(),
+            estdtlX=estdtlR()
+          )
+          x132G <<- copy(x)
+          if(verbose) print('exit x132D')
+          x
+        }
+      )
+    #----------------------------------------------------Time-series summary end
     
     
     
@@ -927,7 +937,7 @@ server <-
     
     #-----------------------
     
-
+    
     
     #211 listing----
     f211D <- function(

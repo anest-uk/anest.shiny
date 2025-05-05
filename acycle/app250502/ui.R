@@ -21,12 +21,12 @@ grid_page( ###grid page ----
              card_header("Custom"),
              card_body(
                div(style = "padding:4px",
-                   actionButton("docusabC", "Recompute custom"),
-                   conditionalPanel( #custom == computed
+                   actionButton("docusabC", "Recompute bespoke"),
+                   conditionalPanel( #bespoke == computed
                      condition="output.comrc6forjstest==output.selrc6forjstest",#"all.equal('A','B')",
                      span(textOutput('cuseqcom'), style="color:black;font-size:12px")
                    ),
-                   conditionalPanel(#custom != computed
+                   conditionalPanel(#bespoke != computed
                      condition="output.comrc6forjstest!=output.selrc6forjstest",#"all.equal('A','B')",
                      span(textOutput('cusnecom'), style="color:red;font-size:12px")
                    ),
@@ -58,7 +58,7 @@ grid_page( ###grid page ----
                ),
                shinyWidgets::treeInput( #districts
                  inputId = "rccuC",
-                 label = "Custom selection",
+                 label = "Bespoke selection",
                  choices = create_tree(f240824b(rev(sort(unique(substr(dir('smallrip/'),1,3)))))[(order(regionx,lab))]),
                  selected = rc6cuC, 
                  returnValue = "text",
@@ -80,10 +80,6 @@ grid_page( ###grid page ----
                page_navbar(#tabsetPanel(#----
                            fillable=F,
                            position='fixed-top',
-                           
-
-                           
-                           
                            nav_panel(title = "Time-series summary",#----
                                      
                                      grid_container(
