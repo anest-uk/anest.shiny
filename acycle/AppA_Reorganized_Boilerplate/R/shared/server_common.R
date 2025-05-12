@@ -1,0 +1,1 @@
+server_common <- function(input, output, session) list()

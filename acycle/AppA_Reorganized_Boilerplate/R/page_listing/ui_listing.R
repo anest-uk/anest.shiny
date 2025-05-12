@@ -1,0 +1,1 @@
+ui_navpanel_listing <- function() nav_panel(title = 'Listing', 'Listing content')

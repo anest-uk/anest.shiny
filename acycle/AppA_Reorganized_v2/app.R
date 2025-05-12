@@ -24,9 +24,11 @@ library(zoo)
 library(plotly)
 library(gridlayout)
 #------------------------------source
+#setwd('c:/temp')
+setwd('c:/users/giles/anest.repo/anest.shiny/acycle/appa_reorganized_v2')
 stepripG <<- "data/smallrip/"
-source("R/c-cleanlib.R")
-source("R/rctree.R")
+source("R/shared/c-cleanlib.R")
+source("R/shared/rctree.R")
 #load("acycle/A - copy/data/.RData")
 #--------------------------------ui
 gridheight <<- "630px"
@@ -36,14 +38,14 @@ colx <<- cobalt()[c(4, 2, 1)]
 sf <<- 3
 pgmc <<- "grey50"
 source("ui_main.R")
-source("R/ui_accuracy.R")
-source("R/ui_action.R")
-source("R/ui_constituents.R")
-source("R/ui_header.R")
-source("R/ui_listing.R")
-source("R/ui_notes.R")
-source("R/ui_sidebar.R")
-source("R/ui_timeseries.R")
+source("R/page_accuracy/ui_accuracy.R")
+source("R/shared/ui_action.R")
+source("R/page_constituents/ui_constituents.R")
+source("R/shared/ui_header.R")
+source("R/page_listing/ui_listing.R")
+source("R/page_notes/ui_notes.R")
+source("R/shared/ui_sidebar.R")
+source("R/page_timeseries/ui_timeseries.R")
 
 #--------------------------------Pseudo=Control----2----
 hoflC <<- c("house", "flat", "all")[3] # ,
@@ -83,6 +85,7 @@ ui <- grid_page(
 )
 
 #---server
+
 server <-  function(
     input, 
     output,
@@ -99,8 +102,8 @@ server <-  function(
   z110G <- z110
   
   #--------------------------------server
-  source("R/server_common.R")
-  source("R/server_listing.R")
+  source("R/shared/server_common.R")
+  source("R/page_listing/server_listing.R")
   
   common <- server_common(input, output, session)
   

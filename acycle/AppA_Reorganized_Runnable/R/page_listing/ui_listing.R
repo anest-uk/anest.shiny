@@ -1,5 +1,6 @@
 ui_navpanel_listing <- function(id=NULL) {
     # 211 = listing ----
+  print("ui_navpanel_listing")
   nav_panel(title = "Listing",
             
             grid_container(

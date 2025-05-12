@@ -83,6 +83,7 @@ ui <- grid_page(
 )
 
 #---server
+
 server <-  function(
     input, 
     output,
@@ -524,6 +525,10 @@ server <-  function(
     }
   )
   #----------------------------------------------------Time-series summary end
+  
+  
+  
+  
   selectedrc6R <- reactive({
     x0 <- sort(unique(input$rctreeC))
     x1 <- # exclude non-rc6 higher tree nodes
@@ -568,6 +573,23 @@ server <-  function(
   output$cusnecom <- renderText({
     "Recalc for selected districts"
   }) # span(, style="size:8")
+  
+  #---global   section----
+  # x00R <- reactive({
+  #   x <- copy(f241021ad)
+  #   x00G <<- copy(x)
+  #   x
+  # })
+  # geoplusR <- reactive({
+  #   x <- copy(x00R()$geoplus)[, let(lab, des)]
+  #   geoplusG <<- copy(x)
+  #   x
+  # })
+  # estdtR <- reactive({
+  #   x <- copy(x00R()$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]
+  #   estdtG <<- copy(x)
+  #   x
+  # })
   rssR <- reactive({
     #x <- copy(common$x00R()$rss)
     x <- copy(f241021ad$rss)
@@ -579,22 +601,98 @@ server <-  function(
     pxosrdo2ddG <<- copy(x)
     x
   })
+  # z110R <- reactive({
+  #   x <- copy(z110)
+  #   z110G <<- copy(x)
+  #   x
+  # })
   x101R <- reactive({
     x <- copy(x101) # initial dates
     x101G <<- copy(x)
     x
   })
+  # geo0R <- reactive({
+  #   x <-
+  #     geoplusR() %>%
+  #     .[type == "L"] %>%
+  #     .[itrim == itriC] %>%
+  #     .[tbin == tbinC] %>%
+  #     .[, .(
+  #       nx,
+  #       gx,
+  #       lab = des,
+  #       rc6 = rc9,
+  #       rc3 = substr(rc9, 1, 3),
+  #       qtile = as.numeric(substr(des, 4, 4))
+  #     )] %>%
+  #     z110R()[., on = c(rcx = "rc6")] %>%
+  #     .[, .(nx, gx, lab, rc3, rc6 = rcx, qtile)]
+  #   geo0G <<- copy(x)
+  #   x
+  # })
   dfnR <- reactive({ # not used?
     x <- data.table(date = c(as.Date("1994-12-31"), common$estdtR()[, sort(unique(date))]))[, let(i, (0:(.N - 1)))]
     dfnG <<- copy(x)
     x
   })
-
-    tslideR <- reactive({
+  # dfnxR <- reactive({ # 4-col table with NA
+  #   x <-
+  #     dcast(x00R()$estdt[, .(tbin, date)] %>% unique(.) %>% .[order(tbin, date)], date ~ tbin, value.var = "date") %>% # lo, hi, an
+  #     rbind(as.data.table(as.list(rep(as.Date("1994-12-31"), 4))), ., use.names = F) %>%
+  #     setnames(., c("date", "tbin1", "tbin2", "tbin3"))
+  #   dfnxG <<- copy(x)
+  #   x
+  # })
+  # dfnxxR <- reactive({ # vector of current date
+  #   x <-
+  #     dfnxR()[, paste0("tbin", tbinC), with = F] %>%
+  #     setnames(., "x") %>%
+  #     .[, sort(unique(x))]
+  #   dfnxxG <<- copy(x)
+  #   x
+  # })
+  
+  tslideR <- reactive({
     x <- input$tslider
     tslideG <<- copy(x)
     x
   })
+  
+  
+  # dfnF <- function(# date extractor using globals
+  #   nn = c("tbinC", "dfnxG")
+  # ) {
+  #   x <- dfnxR()[, paste0("tbin", tbinC), with = F] %>%
+  #     setnames(., "x") %>%
+  #     .[, sort(unique(x))]
+  #   x # vector of Date 0:tbar
+  # }
+  
+  #------------------------reactive + global
+  #---target   section----
+  # geotR <- eventReactive(#---target geo compute   ----
+  #                        
+  #                        rc6tR(),
+  #                        {
+  #                          if (verbose) print("enter geotR")
+  #                          x <-
+  #                            geoaR() %>%
+  #                            .[rc6 == rc6tR()]
+  #                          geotG <<- copy(x)
+  #                          x
+  #                        }
+  # )
+  
+  # rc6tR <- eventReactive(#---target rc6 reformat  ----
+  #    input$rc6tC,
+  #    {
+  #      if (verbose) print("enter rc6tR")
+  #      x <-
+  #        regpcode(input$rc6tC)[1]
+  #      rc6tG <<- copy(x)
+  #      x
+  #    }
+  # )
   
   #---custom   section----
   observe(
@@ -627,6 +725,8 @@ server <-  function(
     }
   )
   
+  
+  
   rc6deR <- #---default custom rc6 ----
   eventReactive(
     list(
@@ -653,6 +753,35 @@ server <-  function(
     }
   )
   
+  # rc6cuR <- #---custom rc6 control   ----
+  #   eventReactive(
+  #     list(rc6tR(), input$rctreeC), #+control
+  #     {
+  #       if (verbose) print("enter rc6cuR")
+  #       x <- sort(unique(c(rc6tR(), input$rctreeC))) %>% .[nchar(.) == 6]
+  #       rc6cuG <<- copy(x)
+  #       x
+  #     }
+  #   )
+  # fgeocuX <- #---custom geo compute   -----
+  #   function(
+    #       rc6cuX = rc6cuG) {
+  #     x <-
+  #       data.table(rc9 = rc6cuX, nx = 0, lab = "CU00")
+  #     x
+  #   }
+  # 
+  # geocuR <- #---custom geo compute   -----
+  #   eventReactive(
+  #     rc6cuR(),
+  #     {
+  #       if (verbose) print("enter geocuR")
+  #       x <-
+  #         fgeocuX(rc6cuX = rc6cuR())
+  #       geocuG <<- copy(x)
+  #       x
+  #     }
+  #   )
   nxcuR <- #---custom nx compute    ----
   eventReactive(
     common$geocuR(),
@@ -665,7 +794,56 @@ server <-  function(
       x
     }
   )
-
+  # rsicuR <- #---custom rsi compute   ----
+  #   eventReactive(
+  #     list(
+  #       input$docusabC
+  #     ),
+  #     {
+  #       if (verbose) print("enter rsicuR<<<<<<<<<<<<<<<<<<<<<<<<<<")
+  #       geox <- isolate(common$geocuR())
+  #       dfnx <- isolate(common$dfnxxR()) # source of truth
+  #       rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
+  #       rc6valid <- isolate(geo0R()[, rc6])
+  #       if (
+  #         (irregpcode(regpcode(rc6tx)) == rc6tx) &
+  #           (nchar(regpcode(rc6tx)) == 6) &
+  #           (regpcode(rc6tx) %in% rc6valid)
+  #       ) {
+  #         print("recalc accepted in rsicuR")
+  #         x <-
+  #           f241119a( # returns estdt, kfoldsse, all
+  #             nxx = 0,
+  #             steprip2 = stepripG, # smaller format
+  #             dfn = dfnx, # R
+  #             geo = geox, # R
+  #             outthresh = .1,
+  #             kfold = 5,
+  #             sectorwise = T,
+  #             usepra = F,
+  #             newused = c("."),
+  #             houseflat = c(".")
+  #           )
+  #         rsicuG <<- copy(x)
+  #       } else {
+  #         print("recalc rejected in rsicuR")
+  #         x <- copy(rsicuG)
+  #       }
+  #       x
+  #     }
+  #   )
+  # estdtcuR <- #---custom estdt select  ----
+  #   eventReactive(
+  #     list(
+  #       rsicuR()
+  #     ),
+  #     {
+  #       if (verbose) print("enter estdtcuR")
+  #       x <- rsicuR()$estdt
+  #       estdtcuG <<- copy(x)
+  #       x
+  #     }
+  #   )
   rsscuR <- #---custom rss select    ----
   eventReactive(
     list(
@@ -678,7 +856,58 @@ server <-  function(
       x
     }
   )
- 
+  #---qtile    section----
+  # geoqR <- #---qtile geo select     ----
+  #   eventReactive(
+  #     list(
+  #       geoaR(), geotR() # ,
+  #     ),
+  #     {
+  #       if (verbose) print("enter geoqR")
+  #       x <- geoaR() %>%
+  #         .[geotR()[, .(qtile)],
+  #           on = c(qtile = "qtile")
+  #         ]
+  #       geoqG <<- copy(x)
+  #       x
+  #     }
+  #   )
+  # nxqR <- #---qtile nx compute     ----
+  #   eventReactive(
+  #     common$geoqR(),
+  #     {
+  #       if (verbose) print("enter nxqR")
+  #       x <-
+  #         common$geoqR()[, .(nx, rc3, qtile, lab)] %>%
+  #         unique(.)
+  #       nxqG <<- copy(x)
+  #       x
+  #     }
+  #   )
+  # estdtlR <- #---local estdt compute  ----
+  #   eventReactive(
+  #     nxqR(),
+  #     {
+  #       if (verbose) print("enter estdtlR")
+  #       x <-
+  #         estdtR()[nxqR(), on = c(nx = "nx")] %>%
+  #         .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
+  #       estdtlG <<- copy(x)
+  #       x
+  #     }
+  #   )
+  #---area     section----
+  # geoaR <- #---area geo compute     ----
+  #   eventReactive(
+  #     rc6tR(),
+  #     {
+  #       if (verbose) print("enter geoaR")
+  #       x <- geo0R() %>%
+  #         .[rc3 == substr(rc6tR(), 1, 3)]
+  #       geoaG <<- copy(x)
+  #       x
+  #     }
+  #   )
   nxaR <- #---area nx select       ----
   eventReactive(
     common$geoaR(),
@@ -755,7 +984,143 @@ server <-  function(
       x
     }
   )
-
+  #---display  section----
+  #---Time-series summary 6 displays----
+  #------------------------------working-------------
+  
+  # revised---------------------
+  
+  #-----------------------
+  
+  
+  
+  # 211 listing----
+  # f211D <- function(
+    #     estdtlX = estdtlG, # single
+  #     geoqX = geoqG, # footnote only 'this qtile'
+  #     dfnxxX = dfnxxG, # single
+  #     typeX = typeC) {
+  #   if (verbose) print("enter x211D")
+  #   x1 <-
+  #     fread("data/f241122ad.csv") %>%
+  #     .[geoqX[, .(rc6, lab)], on = c(rc6 = "rc6")] %>%
+  #     .[, .(cum = sum(cum)), .(lab, nh, date)] %>%
+  #     .[data.table(date = dfnxxX[-1], i = 1:(length(dfnxxX) - 1)), on = c(date = "date")] %>% # dfnG is all dates, all frequencies
+  #     dcast(., date + i + lab ~ nh, value.var = "cum") %>% #
+  #     .[order(date), .(date, t = i, lab, NF, NH, UF, UH)]
+  #   x2 <-
+  #     estdtlX %>%
+  #     .[, .(t = c(0, ii), days = c(NA, days), date = c(date[1] - days[1], date), xdot = c(NA, xdot), x = c(0, x))] %>%
+  #     x1[., on = c(t = "t")] %>%
+  #     .[1, let(NF, 0)] %>%
+  #     .[1, let(NH, 0)] %>%
+  #     .[1, let(UF, 0)] %>%
+  #     .[1, let(UH, 0)] %>%
+  #     .[, .(t,
+  #       date = i.date, days, xdot, x,
+  #       NF = c(0, diff(NF)),
+  #       NH = c(0, diff(NH)),
+  #       UF = c(0, diff(UF)),
+  #       UH = c(0, diff(UH)),
+  #       tot = c(0, diff(NF + NH + UF + UH))
+  #     )] %>%
+  #     .[-1, .(
+  #       t,
+  #       date,
+  #       days,
+  #       return = round(xdot, sf),
+  #       cumreturn = round(x, sf),
+  #       newhouse = round(NH / tot, sf),
+  #       usedhouse = round(UH / tot, sf),
+  #       newflat = round(NF / tot, sf),
+  #       usedflat = round(UF / tot, sf),
+  #       total = round(tot),
+  #       perday = round(tot / days, 1)
+  #     )]
+  #   x3 <- # districts footnote
+  #     geoqX[
+  #       , paste0("Districts: ", paste0(sort(irregpcode(rc6)), collapse = ", "))
+  #     ]
+  #   x <-
+  #     gt::gt(x2) %>%
+  #     gt::tab_footnote(
+  #       footnote = f241108a(typeX, tbinC)[[1]]
+  #     ) %>%
+  #     gt::tab_footnote(
+  #       footnote = f241108a(typeX, tbinC)[[2]],
+  #       locations = NULL,
+  #       placement = c("auto", "right", "left")
+  #     ) %>%
+  #     gt::tab_header(
+  #       title = x3
+  #     ) %>%
+  #     cols_label(
+  #       date = gt::html("end date"),
+  #       cumreturn = gt::html("cumulative"),
+  #       newhouse = gt::html("new house"),
+  #       usedhouse = gt::html("used house"),
+  #       newflat = gt::html("new flat"),
+  #       usedflat = gt::html("used flat"),
+  #       perday = gt::html("per day"),
+  #       total = gt::html("total")
+  #     ) %>%
+  #     tab_spanner(
+  #       label = gt::html("Period"),
+  #       columns = c(date, days)
+  #     ) %>%
+  #     tab_spanner(
+  #       label = gt::html("Log price"),
+  #       columns = c(return, cumreturn)
+  #     ) %>%
+  #     tab_spanner(
+  #       label = gt::html("Fraction"),
+  #       columns = c(newhouse, usedhouse, newflat, usedflat)
+  #     ) %>%
+  #     tab_spanner(
+  #       label = gt::html("Count"),
+  #       columns = c(total, perday)
+  #     ) %>%
+  #     tab_spanner(
+  #       label = gt::html("Sales Breakdown"),
+  #       columns = c(newhouse, usedhouse, newflat, usedflat, total, perday)
+  #     ) %>%
+  #     tab_options(
+  #       heading.align = "left",
+  #       heading.title.font.size = 12
+  #     )
+  # 
+  #   x211G <<- copy(x)
+  #   x
+  # }
+  #  f211D()
+  # x211D <- eventReactive(
+  #   list(estdtlR(), geoqR(), dfnxxR()), # 211 listing----
+  #   {
+  #     if (verbose) print("enter x211D")
+  #     x <- f211D(
+  #       estdtlX = estdtlR(),
+  #       geoqX = geoqR(),
+  #       dfnxxX = dfnxxR()
+  #     )
+  #     x211G <<- copy(x)
+  #     x
+  #   }
+  # )
+  # x211cuD <- eventReactive(
+  #   list(estdtcuR(), geocuR(), dfnxxR()), # 211cu listing----
+  #   {
+  #     if (verbose) print("enter x211D")
+  #     geox <- copy(geocuR())[, let(rc6, rc9)] # used for aggregation and label
+  #     x <- f211D(
+  #       estdtlX = estdtcuR(),
+  #       geoqX = geocuR()[, .(nx, lab, rc6 = rc9)], # non-standard geo
+  #       dfnxxX = dfnxxR(),
+  #       typeX = "C"
+  #     )
+  #     x211cuG <<- copy(x)
+  #     x
+  #   }
+  # )
   
   f311D <- function(geo0X = geo0G, z110X = z110G, rc6tX = rc6tG) # 311 constituents----
   {
