@@ -588,7 +588,12 @@ server <-  function(
     x
   })
 
-  
+   
+    tslideR <- reactive({
+    x <- input$tslider
+    tslideG <<- copy(x)
+    x
+  })
   #---custom   section----
   observe(
     x = {

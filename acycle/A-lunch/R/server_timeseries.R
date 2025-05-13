@@ -299,7 +299,6 @@
       x
     }
   )
-  browser()
   f132 <-      function( #
     geox = geoqG,
     steprip = stepripG,
