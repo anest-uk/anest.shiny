@@ -60,7 +60,7 @@ zerorefC <- F # , #set reference asset NULL
 showtradetriangle <- F
 
 #-----------------Load static data (global) ------------------4
-load("data/.RData") # creates: f241021ad, pxosrdo2dd, x101, z110
+load("data/.RData")  # creates: f241021ad, pxosrdo2dd, x101, z110
 f241021adG <- f241021ad
 pxosrdo2ddG <- pxosrdo2dd
 x101G <- x101
@@ -90,10 +90,12 @@ ui <- grid_page(
 
 #---server----------------------------------------------------6
 
-server <- function(
-    input,
+server <-  function(
+    input, 
     output,
-    session) {
+    session
+) {
+  
   #--------------------------------server
   source("R/server_common.R")
   source("R/server_listing.R")
@@ -101,15 +103,17 @@ server <- function(
   common <- server_common(input, output, session)
   
   server_listing(input, output, session, common)
-                                                                               
+  
   #----------------------------------------------------1ij-Time-series summary
-  x111D <- eventReactive(#-------------111 map----
+  #------------------------------------------111 map
+  
+  x111D <- eventReactive(
     list(common$rc6tR(), common$rc6cuR(), common$geoaR(), pxosrdo2ddR(), common$z110R()),
     {
       if (verbose) {
         print("enter x111D")
       }
-      # browser()
+      #browser()
       
       x <- f111D(
         rc6tX = common$rc6tR(),
@@ -124,7 +128,7 @@ server <- function(
     }
   )
   
-  f111D <- function(#------------------111 map----
+  f111D <- function(
     rc6tX = rc6tG,
     rc6cuX = rc6cuG,
     geoaX = geoaG,
@@ -163,11 +167,13 @@ server <- function(
       )
     x
   }
-  f112D <- function( #----------112 timeseries----
+  #------------------------------------------112 timeseries
+  f112D <-   function(
     tslideX = tslideG,
     estdtxX = estdtxG,
     ylimX = ylimG,
-    geocuX = geocuG) {
+    geocuX = geocuG
+  ) {
     x2c <- estdtxX %>%
       .[, .SD[, .(ii, date, lab, x = x - ifelse(tslideX == 0, 0, x[tslideX]))], .(qtile)] %>%
       .[, .SD[, .(ii, date, lab, x)], .(qtile)] %>%
@@ -196,7 +202,6 @@ server <- function(
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
         panel.background = element_blank(),
-        
         text = element_text(size = 16, face = "plain"),
         axis.line.y.left = element_line(size = .1),
         axis.line.x.bottom = element_line(size = .1),
@@ -211,8 +216,8 @@ server <- function(
     x
   }
   
-  x112D <- eventReactive(#------112 timeseries----
-    list(input$tslider, estdtxR(), ylimR()),
+  x112D <-  eventReactive(
+    list(input$tslider, estdtxR(), ylimR()), # 112 x(t)----
     {
       if (verbose) print("enter x112D")
       x <-
@@ -227,7 +232,9 @@ server <- function(
     }
   )
   
-  f121D <- function(#--------------121 winding----
+  #-------------------------------------------121 winding
+  
+  f121D <-function(
     estdtX = estdtlG, dfnxX = dfnxG, #----
     drangeX = range(dfnxxX),
     typeX = typeC, # L
@@ -264,8 +271,9 @@ server <- function(
     x2
   }
   
-  x121D <- eventReactive(#---------121 winding----
-      list(common$estdtlR(), common$estdtcuR(), common$dfnxxR()),
+  x121D <-
+    eventReactive(
+      list(common$estdtlR(), common$estdtcuR(), common$dfnxxR()), # 121 winding----
       {
         if (verbose) print("enter x121D")
         x2 <- f121D(
@@ -283,11 +291,13 @@ server <- function(
       }
     )
   
-  f122D <- function(#-----122 characteristics-----
+  #------------------------------------------122 characteristics
+  f122D <- function( # 122 characteristics----
                      rc6tX = rc6tG,
                      rssaX = rssaG,
                      rsscuX = rsscuG,
-                     z110X = z110G) {
+                     z110X = z110G
+  ) {
     rsscux <- copy(rsscuX)[, lab := "CU000"] # R()
     f122 <- # combine rss and P characteristics
       function(rssx, z110X) {
@@ -342,14 +352,14 @@ server <- function(
     x
   }
   
-  x122D <- eventReactive(#--122 characteristics----
+  x122D <- eventReactive(
     list(common$rc6tR(), rssaR(), rsscuR(), common$z110R()), # 122 characteristics----
     {
       if (verbose) print("enter x122D")
       x <- f122D(
         rc6tX = common$rc6tR(),
         rssaX = rssaR(),
-        rsscuX = rsscuR(),
+        rsscuX = rsscuR(), 
         z110X = common$z110R()
       )
       x122G <<- copy(x)
@@ -358,9 +368,11 @@ server <- function(
     }
   )
   
-  f131D <- function( #-------------131 summary----
+  #------------------------------------------131 summary
+  f131D <- function( # 131 summary----
                      estdtxX = estdtxG,
-                     tslideX = tslideG) {
+                     tslideX = tslideG
+  ) {
     x <-
       estdtxX %>%
       .[ii >= tslideX] %>%
@@ -384,8 +396,8 @@ server <- function(
     x
   }
   
-  x131D <- eventReactive(#---------131 summary----
-    list(tslideR(), estdtxR()),
+  x131D <- eventReactive(
+    list(tslideR(), estdtxR()), # 131 summary----
     {
       if (verbose) print("enter x131D")
       x <- f131D(
@@ -397,7 +409,7 @@ server <- function(
     }
   )
   
-  f132 <- function(#------132 trade summary(2)----
+  f132 <-      function( #
     geox = geoqG,
     steprip = stepripG,
     estdtlx = estdtlG, # only used for its date(ii) relation
@@ -425,11 +437,12 @@ server <- function(
     x3
   }
   
-  f132D <- function(#-----132 trade summary(2)----
-                     tslideX = tslideG,
-                     geoqX = geoqG,
-                     geocuX = geocuG,
-                     estdtlX = estdtlG) {
+  #------------------------------------------132 trade summary
+  f132D <-      function( # 132 trade summary(2)----
+                          tslideX = tslideG,
+                          geoqX = geoqG,
+                          geocuX = geocuG,
+                          estdtlX = estdtlG) {
     steprip <- stepripG
     tminx <- tslideX
     x1 <- f132(
@@ -493,8 +506,8 @@ server <- function(
     x
   }
   
-  x132D <- eventReactive(#132 trade summary(2)----
-    list(tslideR(), common$geoqR(), common$estdtlR()),
+  x132D <-      eventReactive(
+    list(tslideR(), common$geoqR(), common$estdtlR()), # 132 trade summary(2)----
     {
       if (verbose) print("enter x132D")
       x <- f132D(
@@ -508,8 +521,8 @@ server <- function(
       x
     }
   )
-  #--------------------Time-series summary end----
-  selectedrc6R <- reactive({#string: rc6 selected----
+  #----------------------------------------------------Time-series summary end
+  selectedrc6R <- reactive({
     x0 <- sort(unique(input$rctreeC))
     x1 <- # exclude non-rc6 higher tree nodes
       x0[
@@ -523,7 +536,7 @@ server <- function(
     selectedrc6G <<- copy(x)
     x
   })
-  computedrc6R <- reactive({#string: rc6 computed----
+  computedrc6R <- reactive({
     rsicuX <- common$rsicuR()
     x1 <- rsicuX$kfoldsse[, rc6] %>% .[nchar(.) == 6]
     x <- paste0(paste0(sort(unique(x1)), collapse = ","))
@@ -531,8 +544,6 @@ server <- function(
     computedrc6G <<- copy(x)
     x
   })
-  #-output----------------------------------------
-  #-messages about selected/computed/suggested----
   output$selrc6 <- renderText({
     paste0("selected:   ", selectedrc6R())
   })
@@ -548,26 +559,26 @@ server <- function(
   output$comrc6forjstest <- renderText({
     computedrc6R()
   })
+  
   output$cuseqcom <- renderText({
     "Custom index matches selection"
   }) # span(, style="size:8")
   output$cusnecom <- renderText({
     "Recalc for selected districts"
   }) # span(, style="size:8")
-  
-  #----------------------------a few reactives----
-  rssR <- reactive({#----------------------rss----
+  rssR <- reactive({
+    #x <- copy(common$x00R()$rss)
     x <- copy(f241021ad$rss)
     rssG <<- copy(x)
     x
   })
-  pxosrdo2ddR <- reactive({#--------pxosrdo2dd----
+  pxosrdo2ddR <- reactive({
     x <- copy(pxosrdo2dd)
     pxosrdo2ddG <<- copy(x)
     x
   })
-  x101R <- reactive({#---------==initial dates----
-    x <- copy(x101) 
+  x101R <- reactive({
+    x <- copy(x101) # initial dates
     x101G <<- copy(x)
     x
   })
@@ -577,14 +588,14 @@ server <- function(
     x
   })
   
-  tslideR <- reactive({#----------------slider----
+  
+  tslideR <- reactive({
     x <- input$tslider
     tslideG <<- copy(x)
     x
   })
-  
-  #-----------------------------custom section----
-  observe(#------observe target, update custom----
+  #---custom   section----
+  observe(
     x = {
       if (verbose) {
         print("enter updateTreeInput")
@@ -614,7 +625,8 @@ server <- function(
     }
   )
   
-  rc6deR <- eventReactive(#--------------default custom rc6 ----
+  rc6deR <- #---default custom rc6 ----
+  eventReactive(
     list(
       input$rc6tC, # target
       common$rc6tR()
@@ -639,7 +651,8 @@ server <- function(
     }
   )
   
-  nxcuR <- eventReactive(#---custom nx compute----
+  nxcuR <- #---custom nx compute    ----
+  eventReactive(
     common$geocuR(),
     {
       if (verbose) print("enter nxcuR")
@@ -651,7 +664,8 @@ server <- function(
     }
   )
   
-  rsscuR <- eventReactive(#--custom rss select----
+  rsscuR <- #---custom rss select    ----
+  eventReactive(
     list(
       common$rsicuR()
     ),
@@ -663,7 +677,8 @@ server <- function(
     }
   )
   
-  nxaR <- eventReactive(#-------area nx select----
+  nxaR <- #---area nx select       ----
+  eventReactive(
     common$geoaR(),
     {
       if (verbose) print("enter nxaR")
@@ -675,7 +690,8 @@ server <- function(
       x
     }
   )
-  estdtaR <- eventReactive(#area estdt compute----
+  estdtaR <- #---area estdt compute   ----
+  eventReactive(
     list(
       nxaR(),
       common$estdtR()
@@ -689,7 +705,8 @@ server <- function(
       x
     }
   )
-  rssaR <- eventReactive(#----area rss compute----
+  rssaR <- #---area rss compute     ----
+  eventReactive(
     nxaR(),
     {
       if (verbose) print("enter rssaR")
@@ -699,8 +716,9 @@ server <- function(
       x
     }
   )
-  #---combo section----
-  festdtxX <- function(#--------------112 x(t)----
+  #---combo    section                  ----
+  festdtxX <- #----112 x(t)              ----
+  function(
     estdtcuX = estdtcuG, estdtaX = estdtaG, geocuX = geocuG) {
     x <-
       rbind(
@@ -711,20 +729,22 @@ server <- function(
     x
   }
   
-  estdtxR <- eventReactive(#----------112 x(t)----
+  estdtxR <- #----112 x(t)              ----
+  eventReactive(
     list(common$estdtcuR(), estdtaR(), geocuX = common$geocuR()),
     {
-      print("enter estdtxR")
+      print('enter estdtxR')
       x <-
         festdtxX(estdtcuX = common$estdtcuR(), estdtaX = estdtaR(), geocuX = common$geocuR())
       estdtxG <<- copy(x)
-      print("exit estdtxR")
+      print('exit estdtxR')
       x
     }
   )
   
-  #---utility----
-  ylimR <- eventReactive(#---------------ylim ----
+  #---utility  section----
+  ylimR <- # ylim                    ----
+  eventReactive(
     estdtxR(),
     {
       x <-
@@ -765,10 +785,9 @@ server <- function(
   
   x311D <- eventReactive(
     list(
-      common$geo0R(),
-      common$z110R(),
-      rc6tX = common$rc6tR()
-    ), # 311 custom constituents output table----
+      common$geo0R(), 
+      common$z110R(), 
+      rc6tX = common$rc6tR()), # 311 custom constituents output table----
     {
       if (verbose) print("enter 311")
       x <- f311D(
@@ -939,6 +958,10 @@ server <- function(
     x432G <<- copy(x)
     x
   }
+  
+  
+  
+  
   
   #-----------------------------reactive
   x411D <- eventReactive(
