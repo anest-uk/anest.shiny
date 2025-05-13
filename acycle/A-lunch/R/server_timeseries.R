@@ -1,64 +1,63 @@
-  #----------------------------------------------------1ij-Time-series summary
-  #------------------------------------------111 map
-  
-  x111D <- eventReactive(
-    list(rc6tR(), rc6cuR(), geoaR(), pxosrdo2ddR(), z110R()),
-    {
-      if (verbose) {
-        print("enter x111D")
-      }
-      x <- f111D(
-        rc6tX = rc6tR(),
-        rc6cuX = rc6cuR(),
-        geoaX = geoaR(),
-        pxosrdo2ddX = pxosrdo2ddR(),
-        z110X = z110R(),
-        colX = colx # punk green blue
-      )
-      x111G <<- copy(x)
-      x
-    }
-  )
-  
-  f111D <- function(
-    rc6tX = rc6tG,
-    rc6cuX = rc6cuG,
-    geoaX = geoaG,
-    pxosrdo2ddX = pxosrdo2ddG,
-    z110X = z110G,
-    colX = colx, # punk green blue
-    minzoom = 9, # 7 for national
-    lightx = .7 # higher is lighter
-  ) {
-    x <-
-      geoaX %>%
-      .[, .(
-        rc6,
-        col = lighten(colX, lightx)[.BY[[1]]], ### capital in colX <<<<
-        qtile, # shade tiles light
-        lab
-      ), by = .(qtile)] %>%
-      .[
-        rc6 == rc6tX, # with target district darker
-        col := colX[.BY[[1]]],
-        by = .(qtile)
-      ] %>%
-      f240810b( #->leaflet, colours for areas-to-shade in column 'col'
-        .,
-        x2 = pxosrdo2ddX,
-        pva = z110X,
-        minzoom = minzoom,
-        maxzoom = 12
-      ) %>%
-      addPolygons( # outline custom districts
-        data = pxosrdo2ddX[which(pxosrdo2ddX@data$name %in% irregpcode(rc6cuX)), ],
-        fill = F,
-        color = "orange",
-        weight = 1,
-        opacity = 1
-      )
-    x
-  }
+ x111D <- eventReactive(
+   list(common$rc6tR(), common$rc6cuR(), common$geoaR(), pxosrdo2ddR(), common$z110R()),
+   {
+     if (verbose) {
+       print("enter x111D")
+     }
+     #browser()
+
+     x <- f111D(
+       rc6tX = common$rc6tR(),
+       rc6cuX = common$rc6cuR(),
+       geoaX = common$geoaR(),
+       pxosrdo2ddX = pxosrdo2ddR(),
+       z110X = common$z110R(),
+       colX = colx # punk green blue
+     )
+     x111G <<- copy(x)
+     x
+   }
+ )
+
+ f111D <- function(
+   rc6tX = rc6tG,
+   rc6cuX = rc6cuG,
+   geoaX = geoaG,
+   pxosrdo2ddX = pxosrdo2ddG,
+   z110X = z110G,
+   colX = colx, # punk green blue
+   minzoom = 9, # 7 for national
+   lightx = .7 # higher is lighter
+ ) {
+   x <-
+     geoaX %>%
+     .[, .(
+       rc6,
+       col = lighten(colX, lightx)[.BY[[1]]], ### capital in colX <<<<
+       qtile, # shade tiles light
+       lab
+     ), by = .(qtile)] %>%
+     .[
+       rc6 == rc6tX, # with target district darker
+       col := colX[.BY[[1]]],
+       by = .(qtile)
+     ] %>%
+     f240810b( #->leaflet, colours for areas-to-shade in column 'col'
+       .,
+       x2 = pxosrdo2ddX,
+       pva = z110X,
+       minzoom = minzoom,
+       maxzoom = 12
+     ) %>%
+     addPolygons( # outline custom districts
+       data = pxosrdo2ddX[which(pxosrdo2ddX@data$name %in% irregpcode(rc6cuX)), ],
+       fill = F,
+       color = "orange",
+       weight = 1,
+       opacity = 1
+     )
+   x
+ }
   #------------------------------------------112 timeseries
   f112D <-   function(
     tslideX = tslideG,
@@ -109,19 +108,15 @@
   }
   
   x112D <-  eventReactive(
-    list(
-      input$tslider, 
-      estdtxR(), 
-      ylimR()
-    ), # 112 x(t)----
+    list(input$tslider, estdtxR(), ylimR()), # 112 x(t)----
     {
       if (verbose) print("enter x112D")
       x <-
         f112D(
-          tslideX = tslideR(),
+          tslideX = common$tslideR(),
           estdtxX = estdtxR(),
           ylimX = ylimR(),
-          geocuX = geocuR()
+          geocuX = common$geocuR()
         )
       x112G <<- copy(x)
       x
@@ -167,28 +162,25 @@
     x2
   }
   
-  x121D <-  eventReactive(
-    list(
-      estdtlR(), 
-      estdtcuR(), 
-      dfnxxR()
-    ), # 121 winding----
-    {
-      if (verbose) print("enter x121D")
-      x2 <- f121D(
-        estdt = estdtlR(),
-        dfnxX = dfnxR()
-      )
-      x4 <- f121D(
-        estdt = estdtcuR(),
-        dfnxX = dfnxR(),
-        typeX = "C"
-      )
-      x <- list(x2, x4)
-      x121G <<- copy(x)
-      x
-    }
-  )
+  x121D <-
+    eventReactive(
+      list(common$estdtlR(), common$estdtcuR(), common$dfnxxR()), # 121 winding----
+      {
+        if (verbose) print("enter x121D")
+        x2 <- f121D(
+          estdt = common$estdtlR(),
+          dfnxX = common$dfnxR()
+        )
+        x4 <- f121D(
+          estdt = common$estdtcuR(),
+          dfnxX = common$dfnxR(),
+          typeX = "C"
+        )
+        x <- list(x2, x4)
+        x121G <<- copy(x)
+        x
+      }
+    )
   
   #------------------------------------------122 characteristics
   f122D <- function( # 122 characteristics----
@@ -252,21 +244,17 @@
   }
   
   x122D <- eventReactive(
-    list(
-      rc6tR(), 
-      rssaR(), 
-      rsscuR(), 
-      z110R()
-    ),{ # 122 characteristics----
-      
+    list(common$rc6tR(), rssaR(), rsscuR(), common$z110R()), # 122 characteristics----
+    {
       if (verbose) print("enter x122D")
       x <- f122D(
-        rc6tX = rc6tR(),
+        rc6tX = common$rc6tR(),
         rssaX = rssaR(),
-        rsscuX = rsscuR(),
-        z110X = z110R()
+        rsscuX = rsscuR(), 
+        z110X = common$z110R()
       )
       x122G <<- copy(x)
+      if (verbose) print("exit x122D")
       x
     }
   )
@@ -300,27 +288,23 @@
   }
   
   x131D <- eventReactive(
-    list(
-      tslideR(), 
-      estdtxR()
-    ), # 131 summary----
+    list(common$tslideR(), estdtxR()), # 131 summary----
     {
       if (verbose) print("enter x131D")
       x <- f131D(
         estdtxX = estdtxR(),
-        tslideX = tslideR()
+        tslideX = common$tslideR()
       )
       x131G <<- copy(x)
       x
     }
   )
-  
-  f132 <- function( #
+  browser()
+  f132 <-      function( #
     geox = geoqG,
     steprip = stepripG,
     estdtlx = estdtlG, # only used for its date(ii) relation
-    tmin = 20
-  ) { # tmin=input$tslider
+    tmin = 20) { # tmin=input$tslider
     x0 <-
       geox[, grepstring(rc6)] %>%
       coread2(., steprip) %>% # or rc6tC
@@ -345,12 +329,11 @@
   }
   
   #------------------------------------------132 trade summary
-  f132D <-  function( # 132 trade summary(2)----
-                      tslideX = tslideG,
-                      geoqX = geoqG,
-                      geocuX = geocuG,
-                      estdtlX = estdtlG
-  ) {
+  f132D <-      function( # 132 trade summary(2)----
+                          tslideX = tslideG,
+                          geoqX = geoqG,
+                          geocuX = geocuG,
+                          estdtlX = estdtlG) {
     steprip <- stepripG
     tminx <- tslideX
     x1 <- f132(
@@ -414,19 +397,15 @@
     x
   }
   
-  x132D <-   eventReactive(
-    list(
-      tslideR(), 
-      geoqR(), 
-      estdtlR()
-    ), # 132 trade summary(2)----
+  x132D <-      eventReactive(
+    list(common$tslideR(), common$geoqR(), common$estdtlR()), # 132 trade summary(2)----
     {
       if (verbose) print("enter x132D")
       x <- f132D(
-        tslideX = tslideR(),
-        geoqX = geoqR(),
-        geocuX = geocuR(),
-        estdtlX = estdtlR()
+        tslideX = common$tslideR(),
+        geoqX = common$geoqR(),
+        geocuX = common$geocuR(),
+        estdtlX = common$estdtlR()
       )
       x132G <<- copy(x)
       if (verbose) print("exit x132D")

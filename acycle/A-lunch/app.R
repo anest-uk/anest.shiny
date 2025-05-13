@@ -1,5 +1,5 @@
 library(shiny)
-#-------------------------------packages
+#-------------------------------packages-----------------------1
 library(broom)
 library(bslib)
 library(car) # linear hypothesis test
@@ -23,18 +23,11 @@ library(sp)
 library(zoo)
 library(plotly)
 library(gridlayout)
-#------------------------------source
+#------------------------------source---------------------------2
 stepripG <<- "data/smallrip/"
 source("R/c-cleanlib.R")
 source("R/rctree.R")
-#load("acycle/A - copy/data/.RData")
-#--------------------------------ui
-gridheight <<- "630px"
-gridheight2 <<- "830px"
-gridheight3 <<- "1020px"
-colx <<- cobalt()[c(4, 2, 1)]
-sf <<- 3
-pgmc <<- "grey50"
+#---------------------app code
 source("ui_main.R")
 source("R/ui_accuracy.R")
 source("R/ui_action.R")
@@ -44,8 +37,14 @@ source("R/ui_listing.R")
 source("R/ui_notes.R")
 source("R/ui_sidebar.R")
 source("R/ui_timeseries.R")
-
-#--------------------------------Pseudo=Control----2----
+#--------------------------------parameters---------------------3
+gridheight <<- "630px"
+gridheight2 <<- "830px"
+gridheight3 <<- "1020px"
+colx <<- cobalt()[c(4, 2, 1)]
+sf <<- 3
+pgmc <<- "grey50"
+#-------------------Pseudo=Control
 hoflC <<- c("house", "flat", "all")[3] # ,
 itriC <<- c(".0" = 1, ".1" = 2, ".5" = 3)[2] # , #Trim ---
 neusC <<- c("new", "used", "all")[3] # ,
@@ -57,11 +56,18 @@ typerC <<- typeC
 nfig2 <<- -1 # for ppm2
 nfig3 <<- 4 # for frac
 verbose <<- T
-
 zerorefC <- F # , #set reference asset NULL
 showtradetriangle <- F
 
-#---ui
+#-----------------Load static data (global) ------------------4
+load("data/.RData")  # creates: f241021ad, pxosrdo2dd, x101, z110
+f241021adG <- f241021ad
+pxosrdo2ddG <- pxosrdo2dd
+x101G <- x101
+z110G <- z110
+
+
+#---ui--------------------------------------------------------5
 ui <- grid_page(
   layout = c(
     "action  header",
@@ -82,22 +88,13 @@ ui <- grid_page(
   ui_area2()
 )
 
-#---server
+#---server----------------------------------------------------6
 
 server <-  function(
     input, 
     output,
     session
 ) {
-  
-  #-------------------------------load data, dataprep is in v164/250503 rdata for app.R (probably...)
-  load("data/.RData") # contains "f241021ad"  "f241208fd"  "pxosrdo2dd" "x101"       "z110"
-  
-  f241021adG <- f241021ad
-  #f241208fdG <- f241208fd not used in app A so remove 250506
-  pxosrdo2ddG <- pxosrdo2dd
-  x101G <- x101
-  z110G <- z110
   
   #--------------------------------server
   source("R/server_common.R")
@@ -591,11 +588,6 @@ server <-  function(
     x
   })
 
-    tslideR <- reactive({
-    x <- input$tslider
-    tslideG <<- copy(x)
-    x
-  })
   
   #---custom   section----
   observe(

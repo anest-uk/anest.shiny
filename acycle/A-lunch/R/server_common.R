@@ -110,7 +110,7 @@ server_common <- function(input, output, session) {
   )
   
   geo0R <-    #----
-    reactive({
+  reactive({
     x <-
       geoplusR() %>%
       .[type == "L"] %>%
@@ -131,7 +131,7 @@ server_common <- function(input, output, session) {
   })
   
   geoplusR <- #----
-    reactive({
+  reactive({
     x <- copy(f241021adG$geoplus)[, let(lab, des)]
     geoplusG <<- copy(x)
     x
@@ -144,14 +144,14 @@ server_common <- function(input, output, session) {
   # })
   
   z110R <-    #----
-    reactive({
+  reactive({
     x <- copy(z110)
     z110G <<- copy(x)
     x
   })
   
   estdtR <-   #----
-    reactive({
+  reactive({
     x <- copy(f241021adG$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]
     estdtG <<- copy(x)
     x
@@ -187,14 +187,14 @@ server_common <- function(input, output, session) {
   )
   
   dfnxxR <-   #----
-    reactive({ # vector of current date
-      x <-
-        dfnxR()[, paste0("tbin", tbinC), with = F] %>%
-        setnames(., "x") %>%
-        .[, sort(unique(x))]
-      dfnxxG <<- copy(x)
-      x
-    })
+  reactive({ # vector of current date
+    x <-
+      dfnxR()[, paste0("tbin", tbinC), with = F] %>%
+      setnames(., "x") %>%
+      .[, sort(unique(x))]
+    dfnxxG <<- copy(x)
+    x
+  })
   
   estdtcuR <- #---custom estdt select ----
   eventReactive(
@@ -228,22 +228,31 @@ server_common <- function(input, output, session) {
       data.table(rc9 = rc6cuX, nx = 0, lab = "CU00")
     x
   }
+  
+  tslideR <- reactive({
+    x <- input$tslider
+    tslideG <<- copy(x)
+    x
+  })
+  
+  
   list( #common list #-----
-    estdtR=estdtR,
-    estdtlR=estdtlR,
-    geoqR=geoqR,
-    dfnxxR=dfnxxR,
-    estdtcuR=estdtcuR,
-    geocuR=geocuR,
-    geoaR=geoaR,
-    geotR=geotR,
-    nxqR=nxqR,
-    dfnxR=dfnxR,
-    rsicuR=rsicuR,
-    rc6cuR=rc6cuR,
-    rc6tR=rc6tR,
-    geo0R=geo0R,
-    geoplusR=geoplusR,
-    z110R=z110R
+        estdtR=estdtR,
+        estdtlR=estdtlR,
+        geoqR=geoqR,
+        dfnxxR=dfnxxR,
+        estdtcuR=estdtcuR,
+        geocuR=geocuR,
+        geoaR=geoaR,
+        geotR=geotR,
+        nxqR=nxqR,
+        dfnxR=dfnxR,
+        rsicuR=rsicuR,
+        rc6cuR=rc6cuR,
+        rc6tR=rc6tR,
+        geo0R=geo0R,
+        geoplusR=geoplusR,
+        z110R=z110R,
+        tslideR=tslideR
   )
 }
