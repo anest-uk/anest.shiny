@@ -1,6 +1,6 @@
-ui_navpanel_listing <- function(id=NULL) {
-    # 211 = listing ----
-  nav_panel(title = "Listing",
+ui_navpanel_listing <- function(# 211 = listing ----
+    id=NULL) {
+  nav_panel(title = "Listing", 
             
             grid_container(
               layout = c(

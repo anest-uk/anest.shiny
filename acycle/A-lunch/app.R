@@ -1,116 +1,123 @@
 library(shiny)
-#-------------------------------packages-----------------------1
-library(broom)
-library(bslib)
-library(car) # linear hypothesis test
-library(colorspace)
-library(data.table)
-library(devtools)
-library(DT)
-library(ggplot2)
-library(ggrepel)
-library(grid)
-library(gt)
-library(gtExtras)
-library(leaflet)
-library(lubridate)
-library(magrittr)
-library(PerformanceAnalytics)
-library(scales)
-library(shinyvalidate)
-library(shinyWidgets)
-library(sp)
-library(zoo)
-library(plotly)
-library(gridlayout)
-#------------------------------source---------------------------2
-stepripG <<- "data/smallrip/"
-source("R/c-cleanlib.R")
-source("R/rctree.R")
-#---------------------app code
-source("ui_main.R")
-source("R/ui_accuracy.R")
-source("R/ui_action.R")
-source("R/ui_constituents.R")
-source("R/ui_header.R")
-source("R/ui_listing.R")
-source("R/ui_notes.R")
-source("R/ui_sidebar.R")
-source("R/ui_timeseries.R")
-#--------------------------------parameters---------------------3
-gridheight <<- "630px"
-gridheight2 <<- "830px"
-gridheight3 <<- "1020px"
-colx <<- cobalt()[c(4, 2, 1)]
-sf <<- 3
-pgmc <<- "grey50"
-#-------------------Pseudo=Control
-hoflC <<- c("house", "flat", "all")[3] # ,
-itriC <<- c(".0" = 1, ".1" = 2, ".5" = 3)[2] # , #Trim ---
-neusC <<- c("new", "used", "all")[3] # ,
-rc3coC <<- c("B--", "E--", "AL-") # ,  #comp
-rc6cuC <<- c("W--8--") # , #custom
-tbinC <<- c(lo = 1, hi = 2, an = 3)[2] # ,  #lo hi an ---
-typeC <<- c("A", "L", "N", "C")[2] # , #All Local National ---
-typerC <<- typeC
-nfig2 <<- -1 # for ppm2
-nfig3 <<- 4 # for frac
-verbose <<- T
-zerorefC <- F # , #set reference asset NULL
-showtradetriangle <- F
-
-#-----------------Load static data (global) ------------------4
-load("data/.RData") # creates: f241021ad, pxosrdo2dd, x101, z110
-f241021adG <- f241021ad
-pxosrdo2ddG <- pxosrdo2dd
-x101G <- x101
-z110G <- z110
-
-
-#---ui--------------------------------------------------------5
-ui <- grid_page(
-  layout = c(
-    "action  header",
-    "sidebar  area2 "
-  ),
-  row_sizes = c(
-    "200px",
-    "1fr"
-  ),
-  col_sizes = c(
-    "250px",
-    "1fr"
-  ),
-  gap_size = ".1rem",
-  ui_card_action(),
-  ui_card_sidebar(),
-  ui_card_header(),
-  ui_area2()
-)
-
-#---server----------------------------------------------------6
-
+{#----
+  {#----
+    {#----
+      #-------packages-----------------------1----
+      library(broom)
+      library(bslib)
+      library(car) # linear hypothesis test
+      library(colorspace)
+      library(data.table)
+      library(devtools)
+      library(DT)
+      library(ggplot2)
+      library(ggrepel)
+      library(grid)
+      library(gt)
+      library(gtExtras)
+      library(leaflet)
+      library(lubridate)
+      library(magrittr)
+      library(PerformanceAnalytics)
+      library(scales)
+      library(shinyvalidate)
+      library(shinyWidgets)
+      library(sp)
+      library(zoo)
+      library(plotly)
+      library(gridlayout)
+      #------------------------source--------2----
+      stepripG <<- "data/smallrip/"
+      source("R/c-cleanlib.R")
+      source("R/rctree.R")
+      #---------------------app code
+      source("ui_main.R")
+      source("R/ui_accuracy.R")
+      source("R/ui_action.R")
+      source("R/ui_constituents.R")
+      source("R/ui_header.R")
+      source("R/ui_listing.R")
+      source("R/ui_notes.R")
+      source("R/ui_sidebar.R")
+      source("R/ui_timeseries.R")
+      #--------------------------parameters--3----
+      gridheight <<- "630px"
+      gridheight2 <<- "830px"
+      gridheight3 <<- "1020px"
+      colx <<- cobalt()[c(4, 2, 1)]
+      sf <<- 3
+      pgmc <<- "grey50"
+      #-------------------Pseudo=Control
+      hoflC <<- c("house", "flat", "all")[3] # ,
+      itriC <<- c(".0" = 1, ".1" = 2, ".5" = 3)[2] # , #Trim ---
+      neusC <<- c("new", "used", "all")[3] # ,
+      rc3coC <<- c("B--", "E--", "AL-") # ,  #comp
+      rc6cuC <<- c("W--8--") # , #custom
+      tbinC <<- c(lo = 1, hi = 2, an = 3)[2] # ,  #lo hi an ---
+      typeC <<- c("A", "L", "N", "C")[2] # , #All Local National ---
+      typerC <<- typeC
+      nfig2 <<- -1 # for ppm2
+      nfig3 <<- 4 # for frac
+      verbose <<- T
+      zerorefC <- F # , #set reference asset NULL
+      showtradetriangle <- F
+      
+      #Load static data (global) ------------4----
+      load("data/.RData") # creates: f241021ad, pxosrdo2dd, x101, z110
+      f241021adG <- f241021ad
+      pxosrdo2ddG <- pxosrdo2dd
+      x101G <- x101
+      z110G <- z110
+    }
+  }
+}
+#---ui---------------------------------------5----
+{#----
+  {#----
+    ui <- grid_page(
+      layout = c(
+        "action  header",
+        "sidebar  area2 "
+      ),
+      row_sizes = c(
+        "200px",
+        "1fr"
+      ),
+      col_sizes = c(
+        "250px",
+        "1fr"
+      ),
+      gap_size = ".1rem",
+      ui_card_action(),
+      ui_card_sidebar(),
+      ui_card_header(),
+      ui_area2()
+    )
+  }
+}
+#---server-----------------------------------6----
 server <- function(
     input,
     output,
     session) {
+  # print('check existence: pxosrdo2dd')
+  # length(pxosrdo2dd)
   #--------------------------------server
   source("R/server_common.R")
   source("R/server_listing.R")
-  
+
   common <- server_common(input, output, session)
-  
+
   server_listing(input, output, session, common)
-                                                                               
-  #----------------------------------------------------1ij-Time-series summary
-  x111D <- eventReactive(#-------------111 map----
+  #-----------page 1-Time-series summary start----
+  x111D <- eventReactive( #------------111 map----
     list(common$rc6tR(), common$rc6cuR(), common$geoaR(), pxosrdo2ddR(), common$z110R()),
     {
       if (verbose) {
         print("enter x111D")
       }
       # browser()
-      
+
       x <- f111D(
         rc6tX = common$rc6tR(),
         rc6cuX = common$rc6cuR(),
@@ -123,16 +130,16 @@ server <- function(
       x
     }
   )
-  
-  f111D <- function(#------------------111 map----
-    rc6tX = rc6tG,
-    rc6cuX = rc6cuG,
-    geoaX = geoaG,
-    pxosrdo2ddX = pxosrdo2ddG,
-    z110X = z110G,
-    colX = colx, # punk green blue
-    minzoom = 9, # 7 for national
-    lightx = .7 # higher is lighter
+
+  f111D <- function( #-----------------111 map----
+                    rc6tX = rc6tG,
+                    rc6cuX = rc6cuG,
+                    geoaX = geoaG,
+                    pxosrdo2ddX = pxosrdo2ddG,
+                    z110X = z110G,
+                    colX = colx, # punk green blue
+                    minzoom = 9, # 7 for national
+                    lightx = .7 # higher is lighter
   ) {
     x <-
       geoaX %>%
@@ -164,10 +171,10 @@ server <- function(
     x
   }
   f112D <- function( #----------112 timeseries----
-    tslideX = tslideG,
-    estdtxX = estdtxG,
-    ylimX = ylimG,
-    geocuX = geocuG) {
+                    tslideX = tslideG,
+                    estdtxX = estdtxG,
+                    ylimX = ylimG,
+                    geocuX = geocuG) {
     x2c <- estdtxX %>%
       .[, .SD[, .(ii, date, lab, x = x - ifelse(tslideX == 0, 0, x[tslideX]))], .(qtile)] %>%
       .[, .SD[, .(ii, date, lab, x)], .(qtile)] %>%
@@ -196,7 +203,6 @@ server <- function(
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
         panel.background = element_blank(),
-        
         text = element_text(size = 16, face = "plain"),
         axis.line.y.left = element_line(size = .1),
         axis.line.x.bottom = element_line(size = .1),
@@ -210,8 +216,8 @@ server <- function(
       )
     x
   }
-  
-  x112D <- eventReactive(#------112 timeseries----
+
+  x112D <- eventReactive( #-----112 timeseries----
     list(input$tslider, estdtxR(), ylimR()),
     {
       if (verbose) print("enter x112D")
@@ -226,18 +232,18 @@ server <- function(
       x
     }
   )
-  
-  f121D <- function(#--------------121 winding----
-    estdtX = estdtlG, dfnxX = dfnxG, #----
-    drangeX = range(dfnxxX),
-    typeX = typeC, # L
-    tbinX = tbinC,
-    dfnxxX = dfnxX[-1, tbinC + 1, with = F] %>%
-      setnames(., "x") %>%
-      .[, sort(unique(x))], # current tbin
-    d2X = dfnxX[-1, tbinC + 2, with = F] %>%
-      setnames(., "x") %>%
-      .[, sort(unique(x))] # annual dates t>0
+
+  f121D <- function( #-------------121 winding----
+                    estdtX = estdtlG, dfnxX = dfnxG,
+                    drangeX = range(dfnxxX),
+                    typeX = typeC, # L
+                    tbinX = tbinC,
+                    dfnxxX = dfnxX[-1, tbinC + 1, with = F] %>%
+                      setnames(., "x") %>%
+                      .[, sort(unique(x))], # current tbin
+                    d2X = dfnxX[-1, tbinC + 2, with = F] %>%
+                      setnames(., "x") %>%
+                      .[, sort(unique(x))] # annual dates t>0
   ) {
     d1 <- # daily
       seq.Date(from = drangeX[1], to = drangeX[2], by = "d")
@@ -263,31 +269,31 @@ server <- function(
       )
     x2
   }
-  
-  x121D <- eventReactive(#---------121 winding----
-      list(common$estdtlR(), common$estdtcuR(), common$dfnxxR()),
-      {
-        if (verbose) print("enter x121D")
-        x2 <- f121D(
-          estdt = common$estdtlR(),
-          dfnxX = common$dfnxR()
-        )
-        x4 <- f121D(
-          estdt = common$estdtcuR(),
-          dfnxX = common$dfnxR(),
-          typeX = "C"
-        )
-        x <- list(x2, x4)
-        x121G <<- copy(x)
-        x
-      }
-    )
-  
-  f122D <- function(#-----122 characteristics-----
-                     rc6tX = rc6tG,
-                     rssaX = rssaG,
-                     rsscuX = rsscuG,
-                     z110X = z110G) {
+
+  x121D <- eventReactive( #--------121 winding----
+    list(common$estdtlR(), common$estdtcuR(), common$dfnxxR()),
+    {
+      if (verbose) print("enter x121D")
+      x2 <- f121D(
+        estdt = common$estdtlR(),
+        dfnxX = common$dfnxR()
+      )
+      x4 <- f121D(
+        estdt = common$estdtcuR(),
+        dfnxX = common$dfnxR(),
+        typeX = "C"
+      )
+      x <- list(x2, x4)
+      x121G <<- copy(x)
+      x
+    }
+  )
+
+  f122D <- function( #-- --122 characteristics-----
+                    rc6tX = rc6tG,
+                    rssaX = rssaG,
+                    rsscuX = rsscuG,
+                    z110X = z110G) {
     rsscux <- copy(rsscuX)[, lab := "CU000"] # R()
     f122 <- # combine rss and P characteristics
       function(rssx, z110X) {
@@ -341,9 +347,9 @@ server <- function(
     x122G <<- copy(x)
     x
   }
-  
-  x122D <- eventReactive(#--122 characteristics----
-    list(common$rc6tR(), rssaR(), rsscuR(), common$z110R()), # 122 characteristics----
+
+  x122D <- eventReactive(# 122 characteristics----
+    list(common$rc6tR(), rssaR(), rsscuR(), common$z110R()), 
     {
       if (verbose) print("enter x122D")
       x <- f122D(
@@ -357,10 +363,10 @@ server <- function(
       x
     }
   )
-  
+
   f131D <- function( #-------------131 summary----
-                     estdtxX = estdtxG,
-                     tslideX = tslideG) {
+                    estdtxX = estdtxG,
+                    tslideX = tslideG) {
     x <-
       estdtxX %>%
       .[ii >= tslideX] %>%
@@ -383,8 +389,8 @@ server <- function(
       )
     x
   }
-  
-  x131D <- eventReactive(#---------131 summary----
+
+  x131D <- eventReactive( #--------131 summary----
     list(tslideR(), estdtxR()),
     {
       if (verbose) print("enter x131D")
@@ -396,12 +402,12 @@ server <- function(
       x
     }
   )
-  
-  f132 <- function(#------132 trade summary(2)----
-    geox = geoqG,
-    steprip = stepripG,
-    estdtlx = estdtlG, # only used for its date(ii) relation
-    tmin = 20) { # tmin=input$tslider
+
+  f132 <- function( #-----132 trade summary(2)----
+                   geox = geoqG,
+                   steprip = stepripG,
+                   estdtlx = estdtlG, # only used for its date(ii) relation
+                   tmin = 20) { # tmin=input$tslider
     x0 <-
       geox[, grepstring(rc6)] %>%
       coread2(., steprip) %>% # or rc6tC
@@ -410,26 +416,26 @@ server <- function(
     x1 <-
       x0 %>%
       dcast(.,
-            buy ~ sell,
-            value.var = "mean" # the value is unique so any aggregator function is ok
+        buy ~ sell,
+        value.var = "mean" # the value is unique so any aggregator function is ok
       )
     for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
     x2 <-
       x0 %>%
       dcast(.,
-            buy ~ sell,
-            value.var = "N"
+        buy ~ sell,
+        value.var = "N"
       )
     for (i in 2:length(x2)) x2[[i]] <- ifelse(is.na(x2[[i]]), "", x2[[i]])
     x3 <- list(x1, x2)
     x3
   }
-  
-  f132D <- function(#-----132 trade summary(2)----
-                     tslideX = tslideG,
-                     geoqX = geoqG,
-                     geocuX = geocuG,
-                     estdtlX = estdtlG) {
+
+  f132D <- function( #----132 trade summary(2)----
+                    tslideX = tslideG,
+                    geoqX = geoqG,
+                    geocuX = geocuG,
+                    estdtlX = estdtlG) {
     steprip <- stepripG
     tminx <- tslideX
     x1 <- f132(
@@ -492,8 +498,8 @@ server <- function(
     if (verbose) print("exit x132D")
     x
   }
-  
-  x132D <- eventReactive(#132 trade summary(2)----
+
+  x132D <- eventReactive( # 132  trade summary----
     list(tslideR(), common$geoqR(), common$estdtlR()),
     {
       if (verbose) print("enter x132D")
@@ -509,7 +515,7 @@ server <- function(
     }
   )
   #--------------------Time-series summary end----
-  selectedrc6R <- reactive({#string: rc6 selected----
+  selectedrc6R <- reactive({ # string: rc6 selected----
     x0 <- sort(unique(input$rctreeC))
     x1 <- # exclude non-rc6 higher tree nodes
       x0[
@@ -523,7 +529,7 @@ server <- function(
     selectedrc6G <<- copy(x)
     x
   })
-  computedrc6R <- reactive({#string: rc6 computed----
+  computedrc6R <- reactive({ # string: rc6 computed----
     rsicuX <- common$rsicuR()
     x1 <- rsicuX$kfoldsse[, rc6] %>% .[nchar(.) == 6]
     x <- paste0(paste0(sort(unique(x1)), collapse = ","))
@@ -554,20 +560,20 @@ server <- function(
   output$cusnecom <- renderText({
     "Recalc for selected districts"
   }) # span(, style="size:8")
-  
+
   #----------------------------a few reactives----
-  rssR <- reactive({#----------------------rss----
+  rssR <- reactive({ #---------------------rss----
     x <- copy(f241021ad$rss)
     rssG <<- copy(x)
     x
   })
-  pxosrdo2ddR <- reactive({#--------pxosrdo2dd----
+  pxosrdo2ddR <- reactive({ #-------pxosrdo2dd----
     x <- copy(pxosrdo2dd)
     pxosrdo2ddG <<- copy(x)
     x
   })
-  x101R <- reactive({#---------==initial dates----
-    x <- copy(x101) 
+  x101R <- reactive({ #---------=initial dates----
+    x <- copy(x101)
     x101G <<- copy(x)
     x
   })
@@ -576,22 +582,22 @@ server <- function(
     dfnG <<- copy(x)
     x
   })
-  
-  tslideR <- reactive({#----------------slider----
+
+  tslideR <- reactive({ #---------------slider----
     x <- input$tslider
     tslideG <<- copy(x)
     x
   })
-  
+
   #-----------------------------custom section----
-  observe(#------observe target, update custom----
+  observe( #-----observe target, update custom----
     x = {
       if (verbose) {
         print("enter updateTreeInput")
       }
       if ( # guard against invalid selection
         (!is.null(input$rc6tC)) & # empty tree
-        (all(nchar(input$rc6tC) == 6)) # non-leaf selection
+          (all(nchar(input$rc6tC) == 6)) # non-leaf selection
       ) {
         rc6c <-
           rc6deR()
@@ -613,8 +619,8 @@ server <- function(
       } # length(rc6c)>0 end
     }
   )
-  
-  rc6deR <- eventReactive(#--------------default custom rc6 ----
+
+  rc6deR <- eventReactive( #--ault custom rc6 ----
     list(
       input$rc6tC, # target
       common$rc6tR()
@@ -625,7 +631,7 @@ server <- function(
       }
       if ( # guard against invalid selection
         (!is.null(input$rc6tC)) & # empty tree
-        (all(nchar(input$rc6tC) == 6)) # non-leaf selection
+          (all(nchar(input$rc6tC) == 6)) # non-leaf selection
       ) {
         x <-
           f241229bd[common$rc6tR() == target, f240920b(id)]
@@ -638,8 +644,8 @@ server <- function(
       }
     }
   )
-  
-  nxcuR <- eventReactive(#---custom nx compute----
+
+  nxcuR <- eventReactive( #--custom nx compute----
     common$geocuR(),
     {
       if (verbose) print("enter nxcuR")
@@ -650,8 +656,8 @@ server <- function(
       x
     }
   )
-  
-  rsscuR <- eventReactive(#--custom rss select----
+
+  rsscuR <- eventReactive( #-custom rss select----
     list(
       common$rsicuR()
     ),
@@ -662,8 +668,8 @@ server <- function(
       x
     }
   )
-  
-  nxaR <- eventReactive(#-------area nx select----
+
+  nxaR <- eventReactive( #------area nx select----
     common$geoaR(),
     {
       if (verbose) print("enter nxaR")
@@ -689,7 +695,7 @@ server <- function(
       x
     }
   )
-  rssaR <- eventReactive(#----area rss compute----
+  rssaR <- eventReactive( #---area rss compute----
     nxaR(),
     {
       if (verbose) print("enter rssaR")
@@ -700,8 +706,8 @@ server <- function(
     }
   )
   #---combo section----
-  festdtxX <- function(#--------------112 x(t)----
-    estdtcuX = estdtcuG, estdtaX = estdtaG, geocuX = geocuG) {
+  festdtxX <- function( #-------------112 x(t)----
+                       estdtcuX = estdtcuG, estdtaX = estdtaG, geocuX = geocuG) {
     x <-
       rbind(
         # estdtcuX[,.(nx,date,xdotd,days,xdot,x,lab,ii,qtile=0,rc3=geocuX[,substr(rc9,1,3)])],
@@ -710,8 +716,8 @@ server <- function(
       )[, qq := as.factor(qtile)]
     x
   }
-  
-  estdtxR <- eventReactive(#----------112 x(t)----
+
+  estdtxR <- eventReactive( #---------112 x(t)----
     list(common$estdtcuR(), estdtaR(), geocuX = common$geocuR()),
     {
       print("enter estdtxR")
@@ -722,9 +728,9 @@ server <- function(
       x
     }
   )
-  
+
   #---utility----
-  ylimR <- eventReactive(#---------------ylim ----
+  ylimR <- eventReactive( #--------------ylim ----
     estdtxR(),
     {
       x <-
@@ -733,10 +739,12 @@ server <- function(
       x
     }
   )
-  
-  
-  f311D <- function(geo0X = geo0G, z110X = z110G, rc6tX = rc6tG) # 311 constituents----
-  {
+
+
+  f311D <- function( #--------311 constituents----
+                    geo0X = geo0G,
+                    z110X = z110G,
+                    rc6tX = rc6tG) {
     if (verbose) print("enter 311")
     x1 <-
       geo0X[, .(rc3, rc6, qtile)] %>%
@@ -762,13 +770,13 @@ server <- function(
     x311G <<- copy(x)
     x
   }
-  
-  x311D <- eventReactive(
+
+  x311D <- eventReactive(#-----311 constituents----
     list(
       common$geo0R(),
       common$z110R(),
       rc6tX = common$rc6tR()
-    ), # 311 custom constituents output table----
+    ), # -311 custom constituents output table----
     {
       if (verbose) print("enter 311")
       x <- f311D(
@@ -780,10 +788,12 @@ server <- function(
       x
     }
   )
-  
+
   #------------------ accuracy
-  
-  f411D <- function(geoqX = geoqG, rc6tX = rc6tG, rssX = rssG) { # 2x11 accuracy----tbin----
+  f411D <- function(# ---   accuracy------tbin----
+      geoqX = geoqG,
+      rc6tX = rc6tG,
+      rssX = rssG) {
     if (verbose) print("enter f411G")
     x1 <-
       data.table(tbin = 1:3, freq = c("lo", "hi", "an"))
@@ -809,9 +819,12 @@ server <- function(
     x411G <<- copy(x)
     x
   }
-  
-  
-  f412D <- function(geocuX = geocuG, rc6tX = rc6tG, rsscuX = rsscuG) { # 2x11cu accuracy--custom--tbin----
+
+
+  f412D <- function(# - accuracy--custom--tbin----
+      geocuX = geocuG,
+      rc6tX = rc6tG,
+      rsscuX = rsscuG) {
     x1 <-
       data.table(tbin = 1:3, freq = c("lo", "hi", "an"))
     x2 <-
@@ -833,9 +846,12 @@ server <- function(
     x412G <<- copy(x)
     x
   }
-  
-  
-  f421D <- function(geoqX = geoqG, rc6tX = rc6tG, rssX = rssG) { # 221 accuracy----trim----
+
+
+  f421D <- function(# --------accuracy----trim----
+      geoqX = geoqG,
+      rc6tX = rc6tG,
+      rssX = rssG) {
     x1 <-
       data.table(itrim = 1:3, threshold = c("0.0", "0.1", "0.5"))
     x2 <-
@@ -862,9 +878,12 @@ server <- function(
     x421G <<- copy(x)
     x
   }
-  
-  
-  f422D <- function(geocuX = geocuG, rc6tX = rc6tG, rsscuX = rsscuG) { # 221cu accuracy----trim----
+
+
+  f422D <- function(# ------- accuracy----trim----
+      geocuX = geocuG,
+      rc6tX = rc6tG,
+      rsscuX = rsscuG) {
     x1 <-
       data.table(itrim = 1:3, threshold = c("0.0", "0.1", "0.5"))
     x2 <-
@@ -885,9 +904,12 @@ server <- function(
     x432G <<- copy(x)
     x
   }
-  
-  
-  f431D <- function(geoqX = geoqG, rc6tX = rc6tG, rssX = rssG) { # 231 accuracy----in/out----
+
+
+  f431D <- function(# ------accuracy----in/out----
+      geoqX = geoqG,
+      rc6tX = rc6tG,
+      rssX = rssG) {
     x1 <-
       rssX %>%
       .[geoqX, on = c(rc6 = "rc6")] %>%
@@ -916,9 +938,13 @@ server <- function(
     x431G <<- copy(x)
     x
   }
-  
-  
-  f432D <- function(geocuX = geocuG, rc6tX = rc6tG, rsscuX = rsscuG) { # 231cu accuracy----in/out----
+
+
+  f432D <- function(# ------accuracy----in/out----
+      geocuX = geocuG,
+      rc6tX = rc6tG,
+      rsscuX =
+        rsscuG) {
     x1 <-
       rsscuX %>%
       .[geocuX, on = c(rc6 = "rc9")] %>%
@@ -939,10 +965,10 @@ server <- function(
     x432G <<- copy(x)
     x
   }
-  
-  #-----------------------------reactive
-  x411D <- eventReactive(
-    list(common$geoqR(), common$rc6tR(), rssR()), # 2x11 accuracy----tbin----
+
+
+  x411D <- eventReactive( # --accuracy----tbin----
+    list(common$geoqR(), common$rc6tR(), rssR()),
     {
       if (verbose) print("enter x411G")
       x <- f411D(geoqX = common$geoqR(), rc6tX = common$rc6tR(), rssX = rssR())
@@ -950,9 +976,9 @@ server <- function(
       x
     }
   )
-  
-  x412D <- eventReactive(
-    list(common$geocuR(), common$rc6tR(), rsscuR()), # 2x11cu accuracy--custom--tbin----
+
+  x412D <- eventReactive( #accuracy--custom--tbin----
+    list(common$geocuR(), common$rc6tR(), rsscuR()),
     {
       if (verbose) print("enter x411Gcu")
       x <- f412D(geocuX = common$geocuR(), rc6tX = common$rc6tR(), rsscuX = rsscuR())
@@ -960,9 +986,9 @@ server <- function(
       x
     }
   )
-  
-  x421D <- eventReactive(
-    list(common$geoqR(), common$rc6tR(), rssR()), # 221 accuracy----trim----
+
+  x421D <- eventReactive( #-- accuracy----trim----
+    list(common$geoqR(), common$rc6tR(), rssR()),
     {
       if (verbose) print("enter x421D")
       x <- f421D(geoqX = common$geoqR(), rc6tX = common$rc6tR(), rssX = rssR())
@@ -970,9 +996,9 @@ server <- function(
       x
     }
   )
-  
-  x422D <- eventReactive(
-    list(common$geocuR(), common$rc6tR(), rsscuR()), # 221cu accuracy----trim----
+
+  x422D <- eventReactive( #-- accuracy----trim----
+    list(common$geocuR(), common$rc6tR(), rsscuR()),
     {
       if (verbose) print("enter x422D")
       x <- f422D(geocuX = common$geocuR(), rc6tX = common$rc6tR(), rsscuX = rsscuR())
@@ -980,9 +1006,9 @@ server <- function(
       x
     }
   )
-  
-  x431D <- eventReactive(
-    list(common$geoqR(), common$rc6tR(), rssR()), # 231 accuracy----in/out----
+
+  x431D <- eventReactive( #-accuracy----in/out----
+    list(common$geoqR(), common$rc6tR(), rssR()),
     {
       if (verbose) print("enter x431D")
       x <- f431D(geoqX = common$geoqR(), rc6tX = common$rc6tR(), rssX = rssR())
@@ -990,9 +1016,9 @@ server <- function(
       x
     }
   )
-  
-  x432D <- eventReactive(
-    list(common$geocuR(), common$rc6tR(), rsscuR()), # 231cu accuracy----in/out----
+
+  x432D <- eventReactive( #-accuracy----in/out----
+    list(common$geocuR(), common$rc6tR(), rsscuR()),
     {
       if (verbose) print("enter x432D")
       x <- f432D(geocuX = common$geocuR(), rc6tX = common$rc6tR(), rsscuX = rsscuR())
@@ -1000,8 +1026,8 @@ server <- function(
       x
     }
   )
-  
-  #---render section------------
+
+  #---render section----
   output$x111 <- renderLeaflet(x111D())
   output$x112 <- renderPlot(x112D())
   output$x121a <- gt::render_gt(x121D()[[1]])
