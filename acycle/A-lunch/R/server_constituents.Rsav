@@ -1,4 +1,4 @@
-server_constituents <-
+server_constitutents <-
   function(
       input, output, session, common
       ) {
@@ -48,4 +48,3 @@ server_constituents <-
     )
     output$x311 <- DT::renderDT(x311D())
   }
-print('exit ss')
