@@ -1,9 +1,8 @@
 server_common <-
-  function(
-      input,
-      output,
-      session) {
-    geoaR <- #---area geo compute       ----
+  function(input,
+           output,
+           session) {
+    geoaR <- #----------------area geo compute----
       eventReactive(
         rc6tR(),
         {
@@ -15,7 +14,7 @@ server_common <-
         }
       )
 
-    geotR <- #---target geo compute     ----
+    geotR <- #--------------target geo compute----
       eventReactive(
         rc6tR(),
         {
@@ -29,7 +28,7 @@ server_common <-
         }
       )
 
-    nxqR <- #---qtile nx compute        ----
+    nxqR <- #-----------------qtile nx compute----
       eventReactive(
         geoqR(),
         {
@@ -42,13 +41,13 @@ server_common <-
         }
       )
 
-    rsicuR <- #---custom rsi compute    ----
+    rsicuR <- #-------------custom rsi compute----
       eventReactive(
         list(
           input$docusabC
         ),
         {
-          if (verbose) print("enter rsicuR<<<<<<<<<<<<<<<<<<<<<<<<<<")
+          if (verbose) print("enter rsicuR")
           geox <- isolate(geocuR())
           dfnx <- isolate(dfnxxR()) # source of truth
           rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
@@ -81,7 +80,7 @@ server_common <-
         }
       )
 
-    rc6cuR <- #---custom rc6 control    ----
+    rc6cuR <- #-------------custom rc6 control----
       eventReactive(
         list(rc6tR(), input$rctreeC), #+control
         {
@@ -92,7 +91,7 @@ server_common <-
         }
       )
 
-    rc6tR <- #---target rc6 reformat    ----
+    rc6tR <- #-------------target rc6 reformat----
       eventReactive(
         input$rc6tC,
         {
@@ -104,7 +103,7 @@ server_common <-
         }
       )
 
-    geo0R <- #----
+    geo0R <- #----------------------------geo0----
       reactive({
         x <-
           geoplusR() %>%
@@ -125,34 +124,28 @@ server_common <-
         x
       })
 
-    geoplusR <- #----
+    geoplusR <- #----------------------geoplus----
       reactive({
         x <- copy(f241021adG$geoplus)[, let(lab, des)]
         geoplusG <<- copy(x)
         x
       })
 
-    # x00R <- reactive({
-    #   x <- copy(f241021ad)
-    #   x00G <<- copy(x)
-    #   x
-    # })
-
-    z110R <- #----
+    z110R <- #---------------------------z110R----
       reactive({
         x <- copy(z110)
         z110G <<- copy(x)
         x
       })
 
-    estdtR <- #----
+    estdtR <- #-------------------------estdtR----
       reactive({
         x <- copy(f241021adG$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]
         estdtG <<- copy(x)
         x
       })
 
-    estdtlR <- #---local estdt compute  ----
+    estdtlR <- #---------local estdt compute  ----
       eventReactive(
         nxqR(),
         {
@@ -165,7 +158,7 @@ server_common <-
         }
       )
 
-    geoqR <- #---qtile geo select       ----
+    geoqR <- #----------------qtile geo select----
       eventReactive(
         list(
           geoaR(), geotR() # ,
@@ -181,7 +174,7 @@ server_common <-
         }
       )
 
-    dfnxR <- reactive({ # 4-col table with NA----
+    dfnxR <- reactive({ # -4-col table with NA----
       x <-
         dcast(f241021adG$estdt[, .(tbin, date)] %>% unique(.) %>% .[order(tbin, date)], date ~ tbin, value.var = "date") %>% # lo, hi, an
         rbind(as.data.table(as.list(rep(as.Date("1994-12-31"), 4))), ., use.names = F) %>%
@@ -190,8 +183,8 @@ server_common <-
       x
     })
 
-    dfnxxR <- #----
-      reactive({ # vector of current date
+    dfnxxR <- #---------vector of current date----
+      reactive({
         x <-
           dfnxR()[, paste0("tbin", tbinC), with = F] %>%
           setnames(., "x") %>%
@@ -200,7 +193,7 @@ server_common <-
         x
       })
 
-    estdtcuR <- #---custom estdt select ----
+    estdtcuR <- #---------custom estdt select ----
       eventReactive(
         list(
           rsicuR()
@@ -213,7 +206,7 @@ server_common <-
         }
       )
 
-    geocuR <- #---custom geo compute    -----
+    geocuR <- #-------------custom geo compute----
       eventReactive(
         rc6cuR(),
         {
@@ -225,15 +218,14 @@ server_common <-
         }
       )
 
-    fgeocuX <- #---custom geo compute   -----
-      function(
-          rc6cuX = rc6cuG) {
+    fgeocuX <- #-----------custom geo compute-----
+      function(rc6cuX = rc6cuG) {
         x <-
           data.table(rc9 = rc6cuX, nx = 0, lab = "CU00")
         x
       }
 
-    rsscuR <- eventReactive( #-custom rss select----
+    rsscuR <- eventReactive( # custom rss select----
       list(
         rsicuR()
       ),
@@ -245,7 +237,7 @@ server_common <-
       }
     )
 
-    nxaR <- eventReactive( #------area nx select----
+    nxaR <- eventReactive( #----area nx select----
       geoaR(),
       {
         if (verbose) print("enter nxaR")
@@ -273,22 +265,17 @@ server_common <-
       }
     )
 
-    estdtxR <- eventReactive( #---------112 x(t)----
+    estdtxR <- eventReactive( #-------112 x(t)----
       list(estdtcuR(), estdtaR(), geocuR()),
       {
-        festdtxX <- function( #-------------112 x(t)----
-                             estdtcuX = estdtcuG, estdtaX = estdtaG, geocuX = geocuG) {
+        festdtxX <- function(estdtcuX = estdtcuG, estdtaX = estdtaG, geocuX = geocuG) {
           x <-
             rbind(
-              # estdtcuX[,.(nx,date,xdotd,days,xdot,x,lab,ii,qtile=0,rc3=geocuX[,substr(rc9,1,3)])],
               estdtcuX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
               estdtaX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile, rc3)]
             )[, qq := as.factor(qtile)]
           x
         }
-
-
-
         print("enter estdtxR")
         x <-
           festdtxX(estdtcuX = estdtcuR(), estdtaX = estdtaR(), geocuX = geocuR())
@@ -298,7 +285,7 @@ server_common <-
       }
     )
 
-    rssaR <- eventReactive( #---area rss compute----
+    rssaR <- eventReactive( #-area rss compute----
       nxaR(),
       {
         if (verbose) print("enter rssaR")
@@ -309,19 +296,19 @@ server_common <-
       }
     )
 
-    rssR <- reactive({ #---------------------rss----
+    rssR <- reactive({ #-------------------rss----
       x <- copy(f241021ad$rss)
       rssG <<- copy(x)
       x
     })
 
-    pxosrdo2ddR <- reactive({ #-------pxosrdo2dd----
+    pxosrdo2ddR <- reactive({ #-----pxosrdo2dd----
       x <- copy(pxosrdo2dd)
       pxosrdo2ddG <<- copy(x)
       x
     })
 
-    ylimR <- eventReactive( #--------------ylim ----
+    ylimR <- eventReactive( #------------ylim ----
       estdtxR(),
       {
         x <-
@@ -336,9 +323,8 @@ server_common <-
       tslideG <<- copy(x)
       x
     })
-    # tslideR is elsewhere----
 
-    list( # common list #-----
+    list( # --------------------common list #-----
       geoaR = geoaR,
       geotR = geotR,
       nxqR = nxqR,

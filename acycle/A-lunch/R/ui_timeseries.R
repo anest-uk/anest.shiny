@@ -1,6 +1,6 @@
 ui_navpanel_tss <- function(id = NULL) {
   nav_panel(
-    title = "Time-series summary", #--------------------------Time-series summary
+    title = "Time-series summary", #---------.----
     grid_container(
       layout = c(
         "x111     xtimeseries    ",
@@ -24,7 +24,7 @@ ui_navpanel_tss <- function(id = NULL) {
           "Postcode area map"
         ),
         card_body(
-          leaflet::leafletOutput("x111"), #-----------leaflet x111
+          leaflet::leafletOutput("x111"), #--.----
           height = gridheight
         )
       ),
@@ -35,7 +35,7 @@ ui_navpanel_tss <- function(id = NULL) {
           "Indices"
         ),
         card_body(
-          plotOutput("x112"), #----------------------plot x112
+          plotOutput("x112"), #--------------.----
           height = gridheight
         )
       ),
@@ -45,7 +45,7 @@ ui_navpanel_tss <- function(id = NULL) {
         card_header(
           "Price return summary"
         ),
-        card_body( #----------------------------------winding table 121
+        card_body( #-----------------------121----
           gt::gt_output("x121a"),
           gt::gt_output("x121b"),
           height = gridheight
@@ -57,7 +57,7 @@ ui_navpanel_tss <- function(id = NULL) {
         card_header(
           "Index characteristics"
         ),
-        card_body( #---------------------------------characteristics table x122
+        card_body( # characteristics table x122----
           gt::gt_output("x122")
         )
       ),
@@ -67,7 +67,7 @@ ui_navpanel_tss <- function(id = NULL) {
         card_header(
           "Summary"
         ),
-        card_body( #--------------------------------return summary table x131
+        card_body( #-return summary table x131----
           gt::gt_output("x131"),
           height = gridheight
         )
@@ -78,7 +78,7 @@ ui_navpanel_tss <- function(id = NULL) {
         card_header(
           "Trade recap"
         ),
-        card_body( #--------------------------------trade recap table x132
+        card_body( #----trade recap table x132----
           gt::gt_output("x132a"),
           gt::gt_output("x132b"),
           gt::gt_output("x132c"),

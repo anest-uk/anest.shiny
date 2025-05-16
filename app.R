@@ -1,9 +1,9 @@
 #----------------------------------shared across sessions
-#setwd("C:/Users/Giles/anest.repo/anest.shiny/acycle")
-#load(file='z110.Rdata')
-pgmt='dotted'
-pgmc='grey80'
-pgms=.2
+# setwd("C:/Users/Giles/anest.repo/anest.shiny/acycle")
+# load(file='z110.Rdata')
+pgmt <- "dotted"
+pgmc <- "grey80"
+pgms <- .2
 
 #---------------------CRAN package
 library(bslib)
@@ -22,27 +22,26 @@ library(shinyWidgets)
 library(shiny)
 
 #---------------------function lib
-#source('applib.R')
+# source('applib.R')
 # pal <- leaflet::colorNumeric(palette=cobalt()[c(2,4)],domain=0:1)
 
 #-------------------------------------------------------------------------------ui
 ui <- page_sidebar(
   title = "Index",
   sidebar = sidebar(
-    textInput("tgtrc6",label='Target RC6',value='WV-1--'),
-    width=140
+    textInput("tgtrc6", label = "Target RC6", value = "WV-1--"),
+    width = 140
   ),
-  
   navset_card_underline(
     # nav_panel(
-    #   title = "National", 
+    #   title = "National",
     #   grid_page(
     #     layout = c(
     #       "header  header  header header header",
     #       "spacel graphic table map spacer"
     #     ),
     #     row_sizes = c(
-    #       "1fr" 
+    #       "1fr"
     #     ),
     #     col_sizes = c(
     #       ".03fr",".7fr",".7fr",".7fr",".03fr"
@@ -71,14 +70,14 @@ ui <- page_sidebar(
     #   )
     # ),
     # nav_panel(
-    #   title = "Local", 
+    #   title = "Local",
     #   p("graphic"),
     #   card(p("graphic")),
     #   p("map"),
     #   card(p("map")),
     #   p("table")
     # ),
-    # nav_panel(title = "Custom", 
+    # nav_panel(title = "Custom",
     #           sidebarLayout(
     #             sidebarPanel(
     #               card(
@@ -90,7 +89,7 @@ ui <- page_sidebar(
     #               ),
     #               width=2
     #             ),
-    #             
+    #
     #             mainPanel(
     #               p("map")
     #             )
@@ -112,8 +111,8 @@ server <- function(input, output) {
   #   )
   # rmifgl(vbl)
   # for(i in seq_along(vbl)) {load(paste0(vbl[i],'.Rdata'))}
-  # 
-  # 
+  #
+  #
   # #national estdt
   # output$estdt.nat.t <-  #gt estdt
   #   render_gt(
@@ -145,13 +144,12 @@ server <- function(input, output) {
   #         limits=c(as.Date(c('1994-12-31','2027-12-31')))
   #       )
   #   )
-  # 
+  #
   # output$geo.nat.l <- #leaflet np
   #   renderLeaflet(
   #     z321$geo[nx==z321$geo[rc9==input$tgtrc6,nx],rc9]%>%
   #       f240810a(rcx=.,x3a=pxosrdo2dd,target=input$tgtrc6,pva=z110,palx=pal)
   #   )
-  
 }
 
 #-------------------------------------------------------------------------------Run

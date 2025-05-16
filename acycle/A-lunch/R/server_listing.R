@@ -1,11 +1,9 @@
 server_listing <- function(input, output, session, common) {
-  # 211 = listing ----
-  f211D <- # data summary called in both listings ----
-    function(
-        estdtlX = common$estdtlR(), # single
-        geoqX = common$geoqR(), # footnote only 'this qtile'
-        dfnxxX = common$dfnxxR(), # single
-        typeX = typeC) {
+  f211D <- #---summary called in both listings ----
+    function(estdtlX = common$estdtlR(), # single
+             geoqX = common$geoqR(), # footnote only 'this qtile'
+             dfnxxX = common$dfnxxR(), # single
+             typeX = typeC) {
       if (verbose) print("enter x211D")
       x1 <-
         fread("data/f241122ad.csv") %>%
@@ -98,7 +96,7 @@ server_listing <- function(input, output, session, common) {
       x
     }
 
-  x211D <- # listing-1-local-estdtl,qeoq,dfn       ----
+  x211D <- # ---listing-1-local-estdtl,qeoq,dfn----
     eventReactive(
       list(
         common$estdtlR(),
@@ -116,7 +114,7 @@ server_listing <- function(input, output, session, common) {
         x
       }
     )
-  x211cuD <- # listing-2-custom-estdtcu,qeocu,dfn  ----
+  x211cuD <- # listing-2-custom-estdtcu,qeocu,dfn----
     eventReactive(
       list(
         common$estdtcuR(),
@@ -136,6 +134,6 @@ server_listing <- function(input, output, session, common) {
         x
       }
     )
-  output$x211 <- gt::render_gt(x211D()) #----
-  output$x211cu <- gt::render_gt(x211cuD()) #----
+  output$x211 <- gt::render_gt(x211D()) #-----.#----
+  output$x211cu <- gt::render_gt(x211cuD()) #--.#----
 }
