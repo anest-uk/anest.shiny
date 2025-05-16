@@ -236,22 +236,22 @@ server_common <-
     
     rsscuR <- eventReactive( #-custom rss select----
     list(
-      common$rsicuR()
+      rsicuR()
     ),
     {
       if (verbose) print("enter rsscuR")
-      x <- cbind(common$rsicuR()$kfoldsse, common$rsicuR()$all)
+      x <- cbind(rsicuR()$kfoldsse, rsicuR()$all)
       rsscuG <<- copy(x)
       x
     }
   )
   
     nxaR <- eventReactive( #------area nx select----
-    common$geoaR(),
+    geoaR(),
     {
       if (verbose) print("enter nxaR")
       x <-
-        common$geoaR()[, .(nx, rc3, qtile, lab)] %>%
+        geoaR()[, .(nx, rc3, qtile, lab)] %>%
         unique(.)
       nxaG <<- copy(x)
       if (verbose) print("exit nxaR")
@@ -261,13 +261,13 @@ server_common <-
 
     estdtaR <- eventReactive(#area estdt compute----
     list(
-      common$nxaR(),
-      common$estdtR()
+      nxaR(),
+      estdtR()
     ),
     {
       if (verbose) print("enter estdtaR")
       x <-
-        common$estdtR()[common$nxaR(), on = c(nx = "nx")] %>%
+        estdtR()[nxaR(), on = c(nx = "nx")] %>%
         .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
       estdtaG <<- copy(x)
       x
@@ -275,7 +275,7 @@ server_common <-
   )
 
     estdtxR <- eventReactive( #---------112 x(t)----
-    list(common$estdtcuR(), common$estdtaR(), common$geocuR()),
+    list(estdtcuR(), estdtaR(), geocuR()),
     {
         festdtxX <- function( #-------------112 x(t)----
                        estdtcuX = estdtcuG, estdtaX = estdtaG, geocuX = geocuG) {
@@ -292,7 +292,7 @@ server_common <-
 
       print("enter estdtxR")
       x <-
-        festdtxX(estdtcuX = common$estdtcuR(), estdtaX = common$estdtaR(), geocuX = common$geocuR())
+        festdtxX(estdtcuX = estdtcuR(), estdtaX = estdtaR(), geocuX = geocuR())
       estdtxG <<- copy(x)
       print("exit estdtxR")
       x
@@ -300,15 +300,21 @@ server_common <-
   )
 
       rssaR <- eventReactive( #---area rss compute----
-    common$nxaR(),
+    nxaR(),
     {
       if (verbose) print("enter rssaR")
       x <-
-        rssR()[common$nxaR(), on = c(nx = "nx")]
+        rssR()[nxaR(), on = c(nx = "nx")]
       rssaG <<- copy(x)
       x
     }
   )
+      
+  rssR <- reactive({ #---------------------rss----
+    x <- copy(f241021ad$rss)
+    rssG <<- copy(x)
+    x
+  })
 
  pxosrdo2ddR <- reactive({ #-------pxosrdo2dd----
     x <- copy(pxosrdo2dd)
@@ -317,10 +323,10 @@ server_common <-
   })
  
    ylimR <- eventReactive( #--------------ylim ----
-    common$estdtxR(),
+    estdtxR(),
     {
       x <-
-        common$estdtxR()[, range(x)] * 1.1
+        estdtxR()[, range(x)] * 1.1
       ylimG <<- copy(x)
       x
     }
@@ -356,6 +362,7 @@ server_common <-
           estdtaR=estdtaR,
           estdtxR=estdtxR,
           rssaR=rssaR,
+          rssR=rssR,
           pxosrdo2ddR=pxosrdo2ddR,
           ylimR=ylimR
     )

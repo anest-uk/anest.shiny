@@ -31,13 +31,13 @@
   }
   
   x311D <- eventReactive(
-    list(geo0R(), z110R(), rc6tX = rc6tR()), # 311 custom constituents output table----
+    list(common$geo0R(), common$z110R(), rc6tX = common$rc6tR()), # 311 custom constituents output table----
     {
       if (verbose) print("enter 311")
       x <- f311D(
-        geo0X = geo0R(),
-        z110X = z110R(),
-        rc6tX = substr(rc6tR(), 1, 3) # arbitrarily initialise it to the area
+        geo0X = common$geo0R(),
+        z110X = common$z110R(),
+        rc6tX = substr(common$rc6tR(), 1, 3) # arbitrarily initialise it to the area
       )
       x311G <<- copy(x)
       x

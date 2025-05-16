@@ -159,11 +159,6 @@ server <- function(
   }) # span(, style="size:8")
 
   #----------------------------a few reactives----
-  rssR <- reactive({ #---------------------rss----
-    x <- copy(f241021ad$rss)
-    rssG <<- copy(x)
-    x
-  })
 
   x101R <- reactive({ #---------=initial dates----
     x <- copy(x101)

@@ -182,10 +182,10 @@
   
   #-----------------------------reactive
   x411D <- eventReactive(
-    list(geoqR(), rc6tR(), rssR()), # 2x11 accuracy----tbin----
+    list(geoqR(), rc6tR(), common$rssR()), # 2x11 accuracy----tbin----
     {
       if (verbose) print("enter x411G")
-      x <- f411D(geoqX = geoqR(), rc6tX = rc6tR(), rssX = rssR())
+      x <- f411D(geoqX = geoqR(), rc6tX = rc6tR(), rssX = common$rssR())
       x411G <<- copy(x)
       x
     }
@@ -202,10 +202,10 @@
   )
   
   x421D <- eventReactive(
-    list(geoqR(), rc6tR(), rssR()), # 221 accuracy----trim----
+    list(geoqR(), rc6tR(), common$rssR()), # 221 accuracy----trim----
     {
       if (verbose) print("enter x421D")
-      x <- f421D(geoqX = geoqR(), rc6tX = rc6tR(), rssX = rssR())
+      x <- f421D(geoqX = geoqR(), rc6tX = rc6tR(), rssX = common$rssR())
       x421G <<- copy(x)
       x
     }
@@ -222,10 +222,10 @@
   )
   
   x431D <- eventReactive(
-    list(geoqR(), rc6tR(), rssR()), # 231 accuracy----in/out----
+    list(geoqR(), rc6tR(), common$rssR()), # 231 accuracy----in/out----
     {
       if (verbose) print("enter x431D")
-      x <- f431D(geoqX = geoqR(), rc6tX = rc6tR(), rssX = rssR())
+      x <- f431D(geoqX = geoqR(), rc6tX = rc6tR(), rssX = common$rssR())
       x431G <<- copy(x)
       x
     }

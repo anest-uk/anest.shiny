@@ -74,33 +74,31 @@ server_timeseries <- function(input, output, session, common) {
     x
   }
   #------------------------------------------112 timeseries
-  # x112D <- eventReactive( # 112 x(t)----
-  #   list(input$tslider, common$estdtxR(), common$ylimR()),
-  #   {
-  #     if (verbose) print("enter x112D<<<<<<<<<<<<<<<<<<<<<<<<")
-  #     browser()
-  # 
-  #     x <-
-  #       f112D(
-  #         tslideX = common$tslideR(),
-  #         estdtxX = common$estdtxR(),
-  #         ylimX = common$ylimR(),
-  #         geocuX = common$geocuR()
-  #       )
-  #     x112G <<- copy(x)
-  #     x
-  #   }
-  # )
-  print("Creating x112D...")
   x112D <- eventReactive( # 112 x(t)----
-                          list(input$tslider),#input$tslider,
-                          #list(common$tslideR),
-                          {
-                            req(common$estdtxR())
-                            x <- ggplot(mtcars,aes(wt,drat))+geom_point()
-                            x
-                          }
+    list(input$tslider, common$estdtxR(), common$ylimR()),
+    {
+      if (verbose) print("enter x112D<<<<<<<<<<<<<<<<<<<<<<<<")
+      x <-
+        f112D(
+          tslideX = common$tslideR(),
+          estdtxX = common$estdtxR(),
+          ylimX = common$ylimR(),
+          geocuX = common$geocuR()
+        )
+      x112G <<- copy(x)
+      x
+    }
   )
+  # print("Creating x112D...")
+  # x112D <- eventReactive( # 112 x(t)----
+  #                         list(input$tslider),#input$tslider,
+  #                         #list(common$tslideR),
+  #                         {
+  #                           req(common$estdtxR())
+  #                           x <- ggplot(mtcars,aes(wt,drat))+geom_point()
+  #                           x
+  #                         }
+  # )
   
   f112D <- function( #----
                      tslideX = tslideG,
