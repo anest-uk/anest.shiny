@@ -194,7 +194,7 @@
   x412D <- eventReactive(
     list(geocuR(), rc6tR(), rsscuR()), # 2x11cu accuracy--custom--tbin----
     {
-      if (verbose) print("enter x411Gcu")
+      if (verbose) print("enter x412D")
       x <- f412D(geocuX = geocuR(), rc6tX = rc6tR(), rsscuX = rsscuR())
       x412G <<- copy(x)
       x

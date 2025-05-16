@@ -43,15 +43,6 @@ server_common <-
       }
     )
     
-    dfnxR <- reactive({ # 4-col table with NA
-      x <-
-        dcast(f241021adG$estdt[, .(tbin, date)] %>% unique(.) %>% .[order(tbin, date)], date ~ tbin, value.var = "date") %>% # lo, hi, an
-        rbind(as.data.table(as.list(rep(as.Date("1994-12-31"), 4))), ., use.names = F) %>%
-        setnames(., c("date", "tbin1", "tbin2", "tbin3"))
-      dfnxG <<- copy(x)
-      x
-    })
-    
     rsicuR <- #---custom rsi compute    ----
     eventReactive(
       list(
@@ -191,6 +182,15 @@ server_common <-
       }
     )
     
+    dfnxR <- reactive({ # 4-col table with NA----
+      x <-
+        dcast(f241021adG$estdt[, .(tbin, date)] %>% unique(.) %>% .[order(tbin, date)], date ~ tbin, value.var = "date") %>% # lo, hi, an
+        rbind(as.data.table(as.list(rep(as.Date("1994-12-31"), 4))), ., use.names = F) %>%
+        setnames(., c("date", "tbin1", "tbin2", "tbin3"))
+      dfnxG <<- copy(x)
+      x
+    })
+    
     dfnxxR <-   #----
     reactive({ # vector of current date
       x <-
@@ -234,30 +234,129 @@ server_common <-
       x
     }
     
-    tslideR <- reactive({
+    rsscuR <- eventReactive( #-custom rss select----
+    list(
+      common$rsicuR()
+    ),
+    {
+      if (verbose) print("enter rsscuR")
+      x <- cbind(common$rsicuR()$kfoldsse, common$rsicuR()$all)
+      rsscuG <<- copy(x)
+      x
+    }
+  )
+  
+    nxaR <- eventReactive( #------area nx select----
+    common$geoaR(),
+    {
+      if (verbose) print("enter nxaR")
+      x <-
+        common$geoaR()[, .(nx, rc3, qtile, lab)] %>%
+        unique(.)
+      nxaG <<- copy(x)
+      if (verbose) print("exit nxaR")
+      x
+    }
+  )
+
+    estdtaR <- eventReactive(#area estdt compute----
+    list(
+      common$nxaR(),
+      common$estdtR()
+    ),
+    {
+      if (verbose) print("enter estdtaR")
+      x <-
+        common$estdtR()[common$nxaR(), on = c(nx = "nx")] %>%
+        .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
+      estdtaG <<- copy(x)
+      x
+    }
+  )
+
+    estdtxR <- eventReactive( #---------112 x(t)----
+    list(common$estdtcuR(), common$estdtaR(), common$geocuR()),
+    {
+        festdtxX <- function( #-------------112 x(t)----
+                       estdtcuX = estdtcuG, estdtaX = estdtaG, geocuX = geocuG) {
+    x <-
+      rbind(
+        # estdtcuX[,.(nx,date,xdotd,days,xdot,x,lab,ii,qtile=0,rc3=geocuX[,substr(rc9,1,3)])],
+        estdtcuX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
+        estdtaX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile, rc3)]
+      )[, qq := as.factor(qtile)]
+    x
+  }
+
+  
+
+      print("enter estdtxR")
+      x <-
+        festdtxX(estdtcuX = common$estdtcuR(), estdtaX = common$estdtaR(), geocuX = common$geocuR())
+      estdtxG <<- copy(x)
+      print("exit estdtxR")
+      x
+    }
+  )
+
+      rssaR <- eventReactive( #---area rss compute----
+    common$nxaR(),
+    {
+      if (verbose) print("enter rssaR")
+      x <-
+        rssR()[common$nxaR(), on = c(nx = "nx")]
+      rssaG <<- copy(x)
+      x
+    }
+  )
+
+ pxosrdo2ddR <- reactive({ #-------pxosrdo2dd----
+    x <- copy(pxosrdo2dd)
+    pxosrdo2ddG <<- copy(x)
+    x
+  })
+ 
+   ylimR <- eventReactive( #--------------ylim ----
+    common$estdtxR(),
+    {
+      x <-
+        common$estdtxR()[, range(x)] * 1.1
+      ylimG <<- copy(x)
+      x
+    }
+  )
+
+    tslideR <- reactive({ #control-slider   -----
       x <- input$tslider
       tslideG <<- copy(x)
       x
     })
-    
+    #tslideR is elsewhere----
     
     list( #common list #-----
-          estdtR=estdtR,
-          estdtlR=estdtlR,
-          geoqR=geoqR,
-          dfnxxR=dfnxxR,
-          estdtcuR=estdtcuR,
-          geocuR=geocuR,
           geoaR=geoaR,
           geotR=geotR,
           nxqR=nxqR,
-          dfnxR=dfnxR,
           rsicuR=rsicuR,
           rc6cuR=rc6cuR,
           rc6tR=rc6tR,
           geo0R=geo0R,
           geoplusR=geoplusR,
           z110R=z110R,
-          tslideR=tslideR
+          estdtR=estdtR,
+          estdtlR=estdtlR,
+          geoqR=geoqR,
+          dfnxR=dfnxR,
+          dfnxxR=dfnxxR,
+          estdtcuR=estdtcuR,
+          geocuR=geocuR,
+          tslideR=tslideR,
+          rsscuR=rsscuR,
+          nxaR=nxaR,
+          estdtaR=estdtaR,
+          estdtxR=estdtxR,
+          rssaR=rssaR,
+          pxosrdo2ddR=pxosrdo2ddR,
+          ylimR=ylimR
     )
   }
