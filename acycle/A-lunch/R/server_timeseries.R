@@ -1,48 +1,48 @@
 server_timeseries <- function(input, output, session, common) {
-    #---combo section----
-  
+  #---combo section----
+
   x111D <- eventReactive( # 111 leaflet----
-                          list(
-                            common$rc6tR(),
-                            common$rc6cuR(),
-                            common$geoaR(),
-                            common$pxosrdo2ddR(),
-                            common$z110R()
-                          ),
-                          {
-                            print("=== enter server_timeseries ===")
-                            
-                            
-                            
-                            if (verbose) {
-                              print("enter x111D xxx")
-                            }
-                            x <- f111D(
-                              rc6tX = common$rc6tR(),
-                              rc6cuX = common$rc6cuR(),
-                              geoaX = common$geoaR(),
-                              pxosrdo2ddX = common$pxosrdo2ddR(),
-                              z110X = common$z110R(),
-                              colX = colx # punk green blue
-                            )
-                            x111G <<- copy(x)
-                            if (verbose) {
-                              print("exit x111D")
-                            }
-                            
-                            x
-                          }
+    list(
+      common$rc6tR(),
+      common$rc6cuR(),
+      common$geoaR(),
+      common$pxosrdo2ddR(),
+      common$z110R()
+    ),
+    {
+      print("=== enter server_timeseries ===")
+
+
+
+      if (verbose) {
+        print("enter x111D xxx")
+      }
+      x <- f111D(
+        rc6tX = common$rc6tR(),
+        rc6cuX = common$rc6cuR(),
+        geoaX = common$geoaR(),
+        pxosrdo2ddX = common$pxosrdo2ddR(),
+        z110X = common$z110R(),
+        colX = colx # punk green blue
+      )
+      x111G <<- copy(x)
+      if (verbose) {
+        print("exit x111D")
+      }
+
+      x
+    }
   )
-  
+
   f111D <- function( #----
-                     rc6tX = rc6tG,
-                     rc6cuX = rc6cuG,
-                     geoaX = geoaG,
-                     pxosrdo2ddX = pxosrdo2ddG,
-                     z110X = z110G,
-                     colX = colx, # punk green blue
-                     minzoom = 9, # 7 for national
-                     lightx = .7 # higher is lighter
+                    rc6tX = rc6tG,
+                    rc6cuX = rc6cuG,
+                    geoaX = geoaG,
+                    pxosrdo2ddX = pxosrdo2ddG,
+                    z110X = z110G,
+                    colX = colx, # punk green blue
+                    minzoom = 9, # 7 for national
+                    lightx = .7 # higher is lighter
   ) {
     x <-
       geoaX %>%
@@ -99,12 +99,12 @@ server_timeseries <- function(input, output, session, common) {
   #                           x
   #                         }
   # )
-  
+
   f112D <- function( #----
-                     tslideX = tslideG,
-                     estdtxX = estdtxG,
-                     ylimX = ylimG,
-                     geocuX = geocuG) {
+                    tslideX = tslideG,
+                    estdtxX = estdtxG,
+                    ylimX = ylimG,
+                    geocuX = geocuG) {
     x2c <- estdtxX %>%
       .[, .SD[, .(ii, date, lab, x = x - ifelse(tslideX == 0, 0, x[tslideX]))], .(qtile)] %>%
       .[, .SD[, .(ii, date, lab, x)], .(qtile)] %>%
@@ -147,38 +147,38 @@ server_timeseries <- function(input, output, session, common) {
     x
   }
   #-------------------------------------------121 winding
-  
+
   x121D <- eventReactive( # 121 winding----
-                          list(common$estdtlR(), common$estdtcuR(), common$dfnxxR()),
-                          {
-                            if (verbose) print("enter x121D")
-                            x2 <- f121D(
-                              estdt = common$estdtlR(),
-                              dfnxX = common$dfnxR()
-                            )
-                            x4 <- f121D(
-                              estdt = common$estdtcuR(),
-                              dfnxX = common$dfnxR(),
-                              typeX = "C"
-                            )
-                            x <- list(x2, x4)
-                            x121G <<- copy(x)
-                            x
-                          }
+    list(common$estdtlR(), common$estdtcuR(), common$dfnxxR()),
+    {
+      if (verbose) print("enter x121D")
+      x2 <- f121D(
+        estdt = common$estdtlR(),
+        dfnxX = common$dfnxR()
+      )
+      x4 <- f121D(
+        estdt = common$estdtcuR(),
+        dfnxX = common$dfnxR(),
+        typeX = "C"
+      )
+      x <- list(x2, x4)
+      x121G <<- copy(x)
+      x
+    }
   )
-  
+
   #------------------------------------------122 characteristics
   f121D <- function( #----
-                     estdtX = estdtlG, dfnxX = dfnxG,
-                     drangeX = range(dfnxxX),
-                     typeX = typeC, # L
-                     tbinX = tbinC,
-                     dfnxxX = dfnxX[-1, tbinC + 1, with = F] %>%
-                       setnames(., "x") %>%
-                       .[, sort(unique(x))], # current tbin
-                     d2X = dfnxX[-1, tbinC + 2, with = F] %>%
-                       setnames(., "x") %>%
-                       .[, sort(unique(x))] # annual dates t>0
+                    estdtX = estdtlG, dfnxX = dfnxG,
+                    drangeX = range(dfnxxX),
+                    typeX = typeC, # L
+                    tbinX = tbinC,
+                    dfnxxX = dfnxX[-1, tbinC + 1, with = F] %>%
+                      setnames(., "x") %>%
+                      .[, sort(unique(x))], # current tbin
+                    d2X = dfnxX[-1, tbinC + 2, with = F] %>%
+                      setnames(., "x") %>%
+                      .[, sort(unique(x))] # annual dates t>0
   ) {
     d1 <- # daily
       seq.Date(from = drangeX[1], to = drangeX[2], by = "d")
@@ -204,29 +204,29 @@ server_timeseries <- function(input, output, session, common) {
       )
     x2
   }
-  
+
   x122D <- eventReactive( #----
-                          list(common$rc6tR(), common$rssaR(), common$rsscuR(), common$z110R()),
-                          {
-                            if (verbose) print("enter x122D")
-                            x <- f122D(
-                              rc6tX = common$rc6tR(),
-                              rssaX = common$rssaR(),
-                              rsscuX = common$rsscuR(),
-                              z110X = common$z110R()
-                            )
-                            x122G <<- copy(x)
-                            if (verbose) print("exit x122D")
-                            x
-                          }
+    list(common$rc6tR(), common$rssaR(), common$rsscuR(), common$z110R()),
+    {
+      if (verbose) print("enter x122D")
+      x <- f122D(
+        rc6tX = common$rc6tR(),
+        rssaX = common$rssaR(),
+        rsscuX = common$rsscuR(),
+        z110X = common$z110R()
+      )
+      x122G <<- copy(x)
+      if (verbose) print("exit x122D")
+      x
+    }
   )
-  
+
   #------------------------------------------131 summary
   f122D <- function( # 122 characteristics----
-                     rc6tX = rc6tG,
-                     rssaX = rssaG,
-                     rsscuX = rsscuG,
-                     z110X = z110G) {
+                    rc6tX = rc6tG,
+                    rssaX = rssaG,
+                    rsscuX = rsscuG,
+                    z110X = z110G) {
     rsscux <- copy(rsscuX)[, lab := "CU000"] # R()
     f122 <- # combine rss and P characteristics
       function(rssx, z110X) {
@@ -280,24 +280,25 @@ server_timeseries <- function(input, output, session, common) {
     x122G <<- copy(x)
     x
   }
-  
+
   x131D <- eventReactive( #----
-                          list(common$tslideR(), common$estdtxR()),
-                          {
-                            if (verbose) print("enter x131D")
-                            x <- f131D(
-                              estdtxX = common$estdtxR(),
-                              tslideX = common$tslideR()
-                            )
-                            x131G <<- copy(x)
-                            x
-                          }
+    list(common$tslideR(), common$estdtxR()),
+    {
+      if (verbose) print("enter x131D")
+      x <- f131D(
+        estdtxX = common$estdtxR(),
+        tslideX = common$tslideR()
+      )
+      x131G <<- copy(x)
+      x
+    }
   )
-  f132 <- function( #
-    geox = geoqG,
-    steprip = stepripG,
-    estdtlx = estdtlG, # only used for its date(ii) relation
-    tmin = 20) { # tmin=input$tslider
+  f132 <- function(
+      #
+      geox = geoqG,
+      steprip = stepripG,
+      estdtlx = estdtlG, # only used for its date(ii) relation
+      tmin = 20) { # tmin=input$tslider
     x0 <-
       geox[, grepstring(rc6)] %>%
       coread2(., steprip) %>% # or rc6tC
@@ -306,25 +307,25 @@ server_timeseries <- function(input, output, session, common) {
     x1 <-
       x0 %>%
       dcast(.,
-            buy ~ sell,
-            value.var = "mean" # the value is unique so any aggregator function is ok
+        buy ~ sell,
+        value.var = "mean" # the value is unique so any aggregator function is ok
       )
     for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
     x2 <-
       x0 %>%
       dcast(.,
-            buy ~ sell,
-            value.var = "N"
+        buy ~ sell,
+        value.var = "N"
       )
     for (i in 2:length(x2)) x2[[i]] <- ifelse(is.na(x2[[i]]), "", x2[[i]])
     x3 <- list(x1, x2)
     x3
   }
-  
+
   #------------------------------------------132 trade summary
   f131D <- function( # 131 summary----
-                     estdtxX = estdtxG,
-                     tslideX = tslideG) {
+                    estdtxX = estdtxG,
+                    tslideX = tslideG) {
     x <-
       estdtxX %>%
       .[ii >= tslideX] %>%
@@ -347,27 +348,27 @@ server_timeseries <- function(input, output, session, common) {
       )
     x
   }
-  
+
   x132D <- eventReactive( # 132 trade summary(2)----
-                          list(common$tslideR(), common$geoqR(), common$estdtlR()),
-                          {
-                            if (verbose) print("enter x132D")
-                            x <- f132D(
-                              tslideX = common$tslideR(),
-                              geoqX = common$geoqR(),
-                              geocuX = common$geocuR(),
-                              estdtlX = common$estdtlR()
-                            )
-                            x132G <<- copy(x)
-                            if (verbose) print("exit x132D")
-                            x
-                          }
+    list(common$tslideR(), common$geoqR(), common$estdtlR()),
+    {
+      if (verbose) print("enter x132D")
+      x <- f132D(
+        tslideX = common$tslideR(),
+        geoqX = common$geoqR(),
+        geocuX = common$geocuR(),
+        estdtlX = common$estdtlR()
+      )
+      x132G <<- copy(x)
+      if (verbose) print("exit x132D")
+      x
+    }
   )
   f132D <- function( # 132 trade summary(2)----
-                     tslideX = tslideG,
-                     geoqX = geoqG,
-                     geocuX = geocuG,
-                     estdtlX = estdtlG) {
+                    tslideX = tslideG,
+                    geoqX = geoqG,
+                    geocuX = geocuG,
+                    estdtlX = estdtlG) {
     steprip <- stepripG
     tminx <- tslideX
     x1 <- f132(
@@ -430,14 +431,14 @@ server_timeseries <- function(input, output, session, common) {
     if (verbose) print("exit x132D")
     x
   }
-  
-  
-  
+
+
+
   f132 <- function( #-----132 trade summary(2)----
-                    geox = geoqG,
-                    steprip = stepripG,
-                    estdtlx = estdtlG, # only used for its date(ii) relation
-                    tmin = 20) { # tmin=input$tslider
+                   geox = geoqG,
+                   steprip = stepripG,
+                   estdtlx = estdtlG, # only used for its date(ii) relation
+                   tmin = 20) { # tmin=input$tslider
     x0 <-
       geox[, grepstring(rc6)] %>%
       coread2(., steprip) %>% # or rc6tC
@@ -446,27 +447,27 @@ server_timeseries <- function(input, output, session, common) {
     x1 <-
       x0 %>%
       dcast(.,
-            buy ~ sell,
-            value.var = "mean" # the value is unique so any aggregator function is ok
+        buy ~ sell,
+        value.var = "mean" # the value is unique so any aggregator function is ok
       )
     for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
     x2 <-
       x0 %>%
       dcast(.,
-            buy ~ sell,
-            value.var = "N"
+        buy ~ sell,
+        value.var = "N"
       )
     for (i in 2:length(x2)) x2[[i]] <- ifelse(is.na(x2[[i]]), "", x2[[i]])
     x3 <- list(x1, x2)
     x3
   }
-  
-  
+
+
   #---render section----
   output$x111 <- renderLeaflet(x111D())
-  
-  
-  #stoutput$x112 <- renderPlot(x112D())
+
+
+  # stoutput$x112 <- renderPlot(x112D())
   output$x112 <- renderPlot({
     print("=== in renderPlot for x112 ===")
     print("execute: req(common$estdtxR())")
@@ -476,12 +477,13 @@ server_timeseries <- function(input, output, session, common) {
       error = function(e) {
         print("!!! Error inside renderPlot(x112D())")
         print(e)
-        ggplot() + ggtitle("ERROR")
+        ggplot() +
+          ggtitle("ERROR")
       }
     )
     x112D()
   })
-  
+
   output$x121a <- gt::render_gt(x121D()[[1]])
   output$x121b <- gt::render_gt(x121D()[[2]])
   output$x122 <- gt::render_gt(x122D())

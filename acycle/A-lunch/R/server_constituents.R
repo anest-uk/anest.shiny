@@ -1,11 +1,8 @@
 server_constituents <-
-  function(
-      input, output, session, common
-      ) {
-    f311D <- function(
-        geo0X = geo0G,
-        z110X = z110G,
-        rc6tX = rc6tG) # 311 constituents----
+  function(input, output, session, common) {
+    f311D <- function(geo0X = geo0G,
+                      z110X = z110G,
+                      rc6tX = rc6tG) # 311 constituents----
     {
       if (verbose) print("enter 311")
       x1 <-
@@ -48,4 +45,4 @@ server_constituents <-
     )
     output$x311 <- DT::renderDT(x311D())
   }
-print('exit ss')
+print("exit ss")

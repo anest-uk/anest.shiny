@@ -1,11 +1,10 @@
 server_accuracy <- function(input, output, session, common) {
   #------------------ accuracy
-  
+
   f411D <- function(
-    geoqX = geoqG, 
-    rc6tX = rc6tG, 
-    rssX = rssG
-  ) { # 2x11 accuracy----tbin----
+      geoqX = geoqG,
+      rc6tX = rc6tG,
+      rssX = rssG) { # 2x11 accuracy----tbin----
     if (verbose) print("enter f411G")
     x1 <-
       data.table(tbin = 1:3, freq = c("lo", "hi", "an"))
@@ -31,13 +30,12 @@ server_accuracy <- function(input, output, session, common) {
     x411G <<- copy(x)
     x
   }
-  
-  
+
+
   f412D <- function(
-    geocuX = geocuG, 
-    rc6tX = rc6tG, 
-    rsscuX = rsscuG
-  ) { # 2x11cu accuracy--custom--tbin----
+      geocuX = geocuG,
+      rc6tX = rc6tG,
+      rsscuX = rsscuG) { # 2x11cu accuracy--custom--tbin----
     x1 <-
       data.table(tbin = 1:3, freq = c("lo", "hi", "an"))
     x2 <-
@@ -59,13 +57,12 @@ server_accuracy <- function(input, output, session, common) {
     x412G <<- copy(x)
     x
   }
-  
-  
+
+
   f421D <- function(
-    geoqX = geoqG, 
-    rc6tX = rc6tG, 
-    rssX = rssG
-  ) { # 221 accuracy----trim----
+      geoqX = geoqG,
+      rc6tX = rc6tG,
+      rssX = rssG) { # 221 accuracy----trim----
     x1 <-
       data.table(itrim = 1:3, threshold = c("0.0", "0.1", "0.5"))
     x2 <-
@@ -92,12 +89,11 @@ server_accuracy <- function(input, output, session, common) {
     x421G <<- copy(x)
     x
   }
-  
+
   f422D <- function(
-    geocuX = geocuG, 
-    rc6tX = rc6tG, 
-    rsscuX = rsscuG
-  ) { # 221cu accuracy----trim----
+      geocuX = geocuG,
+      rc6tX = rc6tG,
+      rsscuX = rsscuG) { # 221cu accuracy----trim----
     x1 <-
       data.table(itrim = 1:3, threshold = c("0.0", "0.1", "0.5"))
     x2 <-
@@ -118,13 +114,12 @@ server_accuracy <- function(input, output, session, common) {
     x432G <<- copy(x)
     x
   }
-  
-  
+
+
   f431D <- function(
-    geoqX = geoqG, 
-    rc6tX = rc6tG, 
-    rssX = rssG
-  ) { # 231 accuracy----in/out----
+      geoqX = geoqG,
+      rc6tX = rc6tG,
+      rssX = rssG) { # 231 accuracy----in/out----
     x1 <-
       rssX %>%
       .[geoqX, on = c(rc6 = "rc6")] %>%
@@ -153,13 +148,12 @@ server_accuracy <- function(input, output, session, common) {
     x431G <<- copy(x)
     x
   }
-  
-  
+
+
   f432D <- function(
-    geocuX = geocuG, 
-    rc6tX = rc6tG, 
-    rsscuX = rsscuG
-  ) { # 231cu accuracy----in/out----
+      geocuX = geocuG,
+      rc6tX = rc6tG,
+      rsscuX = rsscuG) { # 231cu accuracy----in/out----
     x1 <-
       rsscuX %>%
       .[geocuX, on = c(rc6 = "rc9")] %>%
@@ -180,7 +174,7 @@ server_accuracy <- function(input, output, session, common) {
     x432G <<- copy(x)
     x
   }
-  
+
   #-----------------------------reactive
   x411D <- eventReactive(
     list(common$geoqR(), common$rc6tR(), common$rssR()), # 2x11 accuracy----tbin----
@@ -191,7 +185,7 @@ server_accuracy <- function(input, output, session, common) {
       x
     }
   )
-  
+
   x412D <- eventReactive(
     list(common$geocuR(), common$rc6tR(), common$rsscuR()), # 2x11cu accuracy--custom--tbin----
     {
@@ -201,7 +195,7 @@ server_accuracy <- function(input, output, session, common) {
       x
     }
   )
-  
+
   x421D <- eventReactive(
     list(common$geoqR(), common$rc6tR(), common$rssR()), # 221 accuracy----trim----
     {
@@ -211,7 +205,7 @@ server_accuracy <- function(input, output, session, common) {
       x
     }
   )
-  
+
   x422D <- eventReactive(
     list(common$geocuR(), common$rc6tR(), common$rsscuR()), # 221cu accuracy----trim----
     {
@@ -221,7 +215,7 @@ server_accuracy <- function(input, output, session, common) {
       x
     }
   )
-  
+
   x431D <- eventReactive(
     list(common$geoqR(), common$rc6tR(), common$rssR()), # 231 accuracy----in/out----
     {
@@ -231,7 +225,7 @@ server_accuracy <- function(input, output, session, common) {
       x
     }
   )
-  
+
   x432D <- eventReactive(
     list(common$geocuR(), common$rc6tR(), common$rsscuR()), # 231cu accuracy----in/out----
     {
@@ -241,12 +235,12 @@ server_accuracy <- function(input, output, session, common) {
       x
     }
   )
-  
-    output$x411 <- gt::render_gt(x411D())
+
+  output$x411 <- gt::render_gt(x411D())
   output$x421 <- gt::render_gt(x421D())
   output$x431 <- gt::render_gt(x431D())
   output$x412 <- gt::render_gt(x412D())
   output$x422 <- gt::render_gt(x422D())
   output$x432 <- gt::render_gt(x432D())
-  #output$x311 <- DT::renderDT(x311D())
+  # output$x311 <- DT::renderDT(x311D())
 }
