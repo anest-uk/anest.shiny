@@ -223,7 +223,7 @@ server_accuracy <- function(input, output, session, common) {
   )
   
   x431D <- eventReactive(
-    list(common$geoqR(), common$rc6tR(), common$common$rssR()), # 231 accuracy----in/out----
+    list(common$geoqR(), common$rc6tR(), common$rssR()), # 231 accuracy----in/out----
     {
       if (verbose) print("enter x431D")
       x <- f431D(geoqX = common$geoqR(), rc6tX = common$rc6tR(), rssX = common$rssR())
