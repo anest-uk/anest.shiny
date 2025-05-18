@@ -1,4 +1,4 @@
-ui_navpanel_xtss <- function(id = NULL) {
+ui_navpanel_xtimes <- function(id = NULL) {
   nav_panel(
     title = "x Time-series summary", #---------.----
     grid_container(

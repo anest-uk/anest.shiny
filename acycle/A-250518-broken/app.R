@@ -40,6 +40,7 @@ library(shiny)
       source("R/ui_notes.R")
       source("R/ui_sidebar.R")
       source("R/ui_timeseries.R")
+      source("R/ui_xtimes.R")
       #--------------------------=parameters--3----
       gridheight <<- "630px"
       gridheight2 <<- "830px"
@@ -106,6 +107,7 @@ server <- function(
   source("R/server_timeseries.R")
   source("R/server_constituents.R")
   source("R/server_accuracy.R")
+  source("R/server_control.R")
 
   common <- server_common(input, output, session)
 
@@ -115,6 +117,7 @@ server <- function(
   server_accuracy(input, output, session, common)
 
   # ===-output: controls select/compute/suggest----
+
   selectedrc6R <- reactive({ # --rc6 selected----
     x0 <- sort(unique(input$rctreeC))
     x1 <- # exclude non-rc6 higher tree nodes
@@ -129,6 +132,7 @@ server <- function(
     selectedrc6G <<- copy(x)
     x
   })
+
   computedrc6R <- reactive({ # ---rc6 computed----
     rsicuX <- common$rsicuR()
     x1 <- rsicuX$kfoldsse[, rc6] %>% .[nchar(.) == 6]
@@ -158,7 +162,6 @@ server <- function(
   output$cusnecom <- renderText({ #------recalc----
     "Recalc for selected districts"
   }) # span(, style="size:8")
-
 
   observe( #-----observe target, update custom----
     x = {
