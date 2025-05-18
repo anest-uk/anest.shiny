@@ -1,1 +1,0 @@
-ui_navpanel_notes <- function() nav_panel(title = 'Notes', 'Notes content')

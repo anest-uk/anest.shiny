@@ -1,1 +1,0 @@
-server_notes <- function(input, output, session, common) {}

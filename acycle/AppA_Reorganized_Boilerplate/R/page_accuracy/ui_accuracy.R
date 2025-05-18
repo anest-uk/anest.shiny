@@ -1,1 +1,0 @@
-ui_navpanel_accuracy <- function() nav_panel(title = 'Accuracy', 'Accuracy content')

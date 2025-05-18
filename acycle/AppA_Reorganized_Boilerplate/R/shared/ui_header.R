@@ -1,1 +1,0 @@
-ui_card_header <- function() grid_card(area='header', 'Header')

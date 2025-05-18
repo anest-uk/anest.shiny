@@ -1,1 +1,0 @@
-server_constituents <- function(input, output, session, common) {}

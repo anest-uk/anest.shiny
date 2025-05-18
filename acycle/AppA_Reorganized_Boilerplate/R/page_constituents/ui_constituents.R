@@ -1,1 +1,0 @@
-ui_navpanel_constituents <- function() nav_panel(title = 'Constituents', 'Constituents content')

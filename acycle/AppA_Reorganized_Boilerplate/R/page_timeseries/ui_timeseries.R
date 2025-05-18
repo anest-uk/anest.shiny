@@ -1,1 +1,0 @@
-ui_navpanel_tss <- function() nav_panel(title = 'Timeseries', 'Timeseries content')

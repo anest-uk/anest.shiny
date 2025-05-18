@@ -1,1 +1,0 @@
-ui_card_sidebar <- function() grid_card(area='sidebar', 'Sidebar')

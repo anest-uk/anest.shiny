@@ -1,1 +1,0 @@
-ui_card_action <- function() grid_card(area='action', 'Action')
