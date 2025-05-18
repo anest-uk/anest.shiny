@@ -40,6 +40,7 @@ library(shiny)
       source("R/ui_notes.R")
       source("R/ui_sidebar.R")
       source("R/ui_timeseries.R")
+      source("R/ui_xtimeseries.R")
       #--------------------------=parameters--3----
       gridheight <<- "630px"
       gridheight2 <<- "830px"

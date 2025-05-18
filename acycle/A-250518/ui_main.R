@@ -17,6 +17,8 @@ ui_area2 <- function(id=NULL) {
         ui_navpanel_accuracy()#---------------------Accuracy
         ,
         ui_navpanel_notes()#------------------------Notes
+        ,
+        ui_navpanel_xtss()
       )
     )
   )
