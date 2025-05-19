@@ -40,6 +40,7 @@ library(shiny)
       source("R/ui_notes.R")
       source("R/ui_sidebar.R")
       source("R/ui_timeseries.R")
+      source("R/ui_tim1.R")
       #--------------------------=parameters--3----
       gridheight <<- "630px"
       gridheight2 <<- "830px"
@@ -64,6 +65,8 @@ library(shiny)
 
       # Load static data (global) ------------4----
       load("data/.RData") # creates: f241021ad, pxosrdo2dd, x101, z110
+      load("data/dataG.RData")
+      stopifnot(class(dataG)=='list')
       f241021adG <- f241021ad
       pxosrdo2ddG <- pxosrdo2dd
       x101G <- x101
@@ -106,13 +109,15 @@ server <- function(
   source("R/server_timeseries.R")
   source("R/server_constituents.R")
   source("R/server_accuracy.R")
-
+  source("R/server_tim1.R")
+  
   common <- server_common(input, output, session)
 
   server_timeseries(input, output, session, common)
   server_listing(input, output, session, common)
   server_constituents(input, output, session, common)
   server_accuracy(input, output, session, common)
+  server_tim1(input, output, session, common)
 
   # ===-output: controls select/compute/suggest----
   selectedrc6R <- reactive({ # --rc6 selected----
