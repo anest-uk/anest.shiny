@@ -67,10 +67,11 @@ library(shiny)
       load("data/.RData") # creates: f241021ad, pxosrdo2dd, x101, z110
       load("data/dataG.RData")
       stopifnot(class(dataG)=='list')
-      f241021adG <- f241021ad
-      pxosrdo2ddG <- pxosrdo2dd
-      x101G <- x101
-      z110G <- z110
+      dataG <<- dataG
+      f241021adG <<- f241021ad
+      pxosrdo2ddG <<- pxosrdo2dd
+      x101G <<- x101
+      z110G <<- z110
     }
   }
 }

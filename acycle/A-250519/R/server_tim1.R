@@ -6,10 +6,22 @@ server_tim1 <- function(input, output, session, common) {
     ),
     {
       print("enter tim111")
-      x <- ggplot(mtcars, aes(drat, wt)) + geom_point()
+      #x <- ggplot(mtcars, aes(drat, wt)) + geom_point()
+      #x <- ggplot(dataG$f250509ed$estdt[nx==min(nx)], aes(date, x)) + geom_point()
+  #     x <- f250517a <- #map 1/2/3 colour + 'specials'=peers+
+  # function(
+  #   rc6x='SW-8--', #target
+  #   x0=f250509ed,  #SOT
+  #   x1=pxosrdo2dd,
+  #   rc6all=z110[nchar(rcx)==6,][grep(rc3x,rcx)][rcx!=rc6x][1,c(rcx,rc6x)], #peers to highlight
+  #   rc3x=substr(rc6x,1,3) #target area
+  # )
+  #     x
+  #   }
+      x <- f250517a(rc6x=common$rc6tR(),x0=dataG$f250509ed,x1=dataG$pxosrdo2dd)
       x
     }
-  )
+  )#eventreactive
   
   tim112D <- eventReactive( # -------112 ----
     list(
@@ -61,7 +73,7 @@ server_tim1 <- function(input, output, session, common) {
     }
   )
   
-  output$tim111 <- renderPlot(tim111D()) #---render----
+  output$tim111 <- renderLeaflet(tim111D()) #---render----
   output$tim112 <- renderPlot(tim112D()) 
   output$tim121 <- renderPlot(tim121D()) 
   output$tim122 <- renderPlot(tim122D()) 

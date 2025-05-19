@@ -24,7 +24,7 @@ ui_navpanel_tim1 <- function(id = NULL) {
           "tim111"
         ),
         card_body(
-          plotOutput("tim111"),
+          leafletOutput("tim111"),
           height = gridheight
         )
       ) # gridcard
