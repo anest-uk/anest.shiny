@@ -5,13 +5,29 @@ server_listing <- function(input, output, session, common) {
              dfnxxX = common$dfnxxR(), # single
              typeX = typeC) {
       if (verbose) print("enter x211D")
-      x1 <-
-        fread("data/f241122ad.csv") %>%
+        #fread("data/f241122ad.csv") %>%
+        fpx <- file.path(data_dirG, "f241122ad.csv")
+        print(paste0('filepath : ',fpx))
+        ddd <- fread(fpx)[,sort(unique(date))]
+        x1 <-
+        fread(fpx) %>%
         .[geoqX[, .(rc6, lab)], on = c(rc6 = "rc6")] %>%
         .[, .(cum = sum(cum)), .(lab, nh, date)] %>%
-        .[data.table(date = dfnxxX[-1], i = 1:(length(dfnxxX) - 1)), on = c(date = "date")] %>% # dfnG is all dates, all frequencies
+        .[data.table(date = ddd[-1], i = 1:(length(ddd) - 1)), on = c(date = "date")] %>% # dfnG is all dates, all frequencies
         dcast(., date + i + lab ~ nh, value.var = "cum") %>% #
         .[order(date), .(date, t = i, lab, NF, NH, UF, UH)]
+         #
+        #browser()
+        # 
+        # 
+        # browser()
+        # fread(fpx) %>% #250520 remove dependency on dfnxxX
+        # .[geoqX[, .(rc6, lab)], on = c(rc6 = "rc6")] %>%
+        # .[, .(cum = sum(cum)), .(lab, nh, date)] %>%
+        # .[data.table(date = dfnxxX[-1], i = 1:(length(dfnxxX) - 1)), on = c(date = "date")] %>% # dfnG is all dates, all frequencies
+        # dcast(., date + i + lab ~ nh, value.var = "cum") %>% #
+        # .[order(date), .(date, t = i, lab, NF, NH, UF, UH)]
+        
       x2 <-
         estdtlX %>%
         .[, .(t = c(0, ii), days = c(NA, days), date = c(date[1] - days[1], date), xdot = c(NA, xdot), x = c(0, x))] %>%

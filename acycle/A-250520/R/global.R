@@ -1,8 +1,11 @@
-library(shiny)
-#-------------------------------load data, dataprep is in v164/250503 rdata for app.R (probably...)
-load("data/.RData") # contains "f241021ad"  "f241208fd"  "pxosrdo2dd" "x101"       "z110"
+app_dirG <- normalizePath(".") 
+data_dirG <- file.path(app_dirG, "data")
+print(paste0('data_dirG : ',data_dirG))
 
-f241021adG <- f241021ad
-pxosrdo2ddG <- pxosrdo2dd
-x101G <- x101
-z110G <- z110
+f250509ed <- readRDS(file = file.path(app_dirG, "data", "f250509ed.rds"))
+f241021ad <- readRDS(file = file.path(app_dirG, "data", "f241021ad.rds"))
+f250519ad <- readRDS(file = file.path(app_dirG, "data", "f250519ad.rds"))
+pxosrdo2dd <- readRDS(file = file.path(app_dirG, "data", "pxosrdo2dd.rds"))
+f241229bd <- readRDS(file = file.path(app_dirG, "data", "f241229bd.rds"))
+z110 <- readRDS(file = file.path(app_dirG, "data", "z110.rds"))
+x101 <- readRDS(file = file.path(app_dirG, "data", "x101.rds"))

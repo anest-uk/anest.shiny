@@ -64,14 +64,41 @@ library(shiny)
       showtradetriangle <- F
 
       # Load static data (global) ------------4----
-      load("data/.RData") # creates: f241021ad, pxosrdo2dd, x101, z110
-      load("data/dataG.RData")
-      stopifnot(class(dataG)=='list')
-      dataG <<- dataG
+      # load("data/.RData") # creates: f241021ad, pxosrdo2dd, x101, z110
+      # load("data/dataG.RData")
+      # stopifnot(class(dataG)=='list')
+      # dataG <<- dataG
+      # f241021adG <<- f241021ad
+      # pxosrdo2ddG <<- pxosrdo2dd
+      # x101G <<- x101
+      # z110G <<- z110
+      # app_dir <- normalizePath(file.path(get_script_dir())) # app folder
+      # f241021ad <- readRDS(file = file.path(app_dir, "data", "f241021ad.rds"))
+      # f250519ad <- readRDS(file = file.path(app_dir, "data", "f250519ad.rds"))
+      # #f250509ed <- readRDS(file = file.path(app_dir, "data", "f250509ed.rds"))
+      # pxosrdo2dd <- readRDS(file = file.path(app_dir, "data", "pxosrdo2dd.rds"))
+      # f241229bd <- readRDS(file = file.path(app_dir, "data", "f241229bd.rds"))
+      # z110 <- readRDS(file = file.path(app_dir, "data", "z110.rds"))
+      # x101 <- readRDS(file = file.path(app_dir, "data", "x101.rds"))
+      
+      print('######################################################################## app.R global assign')
       f241021adG <<- f241021ad
-      pxosrdo2ddG <<- pxosrdo2dd
-      x101G <<- x101
+      f250519adG <<- f250519ad
+      #f250509edG <<- f250509ed
+      pxosrdo2ddG <<-pxosrdo2dd
+      f241229bdG <<-f241229bd
       z110G <<- z110
+      x101G <<- x101
+      
+      # f241021ad<<- f241021ad
+      # f250519ad<<- f250519ad
+      # #f250509ed<<- f250509ed
+      # pxosrdo2dd<<-pxosrdo2dd
+      # f241229bd<<-f241229bd
+      # z110<<- z110
+      # x101G <<- x101
+
+      
     }
   }
 }

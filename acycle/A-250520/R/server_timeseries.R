@@ -151,7 +151,8 @@ server_timeseries <- function(input, output, session, common) {
   )
 
   f121D <- function( #-------------121 winding----
-                    estdtX = estdtlG, dfnxX = dfnxG,
+                    estdtX = estdtlG,
+                    dfnxX = dfnxG,
                     drangeX = range(dfnxxX),
                     typeX = typeC, # L
                     tbinX = tbinC,
@@ -273,6 +274,33 @@ server_timeseries <- function(input, output, session, common) {
       x
     }
   )
+
+  f131D <- function( #-------------131 summary----
+                    estdtxX = estdtxG,
+                    tslideX = tslideG) {
+    x <-
+      estdtxX %>%
+      .[ii >= tslideX] %>%
+      dcast(., ii ~ lab, value.var = "xdot") %>%
+      .[, -"ii"] %>%
+      as.matrix(.) %>%
+      zoo(., estdtxX[, sort(unique(date))]) %>%
+      table.Stats(., digits = 3) %>%
+      data.table(., keep.rownames = T) %>%
+      `[`(., i = -c(1, 2, 7, 11, 12, 13)) %>%
+      gt::gt(.) %>%
+      cols_label(
+        rn = gt::html("Log return<br>summary")
+      ) %>%
+      gt::tab_footnote(
+        footnote = f241108a(typeC, tbinC)[[1]]
+      ) %>%
+      gt::tab_footnote(
+        footnote = f241108a(typeC, tbinC)[[2]]
+      )
+    x
+  }
+
   f132 <- function( #-------------------------.#----
                    geox = geoqG,
                    steprip = stepripG,
@@ -301,31 +329,6 @@ server_timeseries <- function(input, output, session, common) {
     x3
   }
 
-  f131D <- function( #-------------131 summary----
-                    estdtxX = estdtxG,
-                    tslideX = tslideG) {
-    x <-
-      estdtxX %>%
-      .[ii >= tslideX] %>%
-      dcast(., ii ~ lab, value.var = "xdot") %>%
-      .[, -"ii"] %>%
-      as.matrix(.) %>%
-      zoo(., estdtxX[, sort(unique(date))]) %>%
-      table.Stats(., digits = 3) %>%
-      data.table(., keep.rownames = T) %>%
-      `[`(., i = -c(1, 2, 7, 11, 12, 13)) %>%
-      gt::gt(.) %>%
-      cols_label(
-        rn = gt::html("Log return<br>summary")
-      ) %>%
-      gt::tab_footnote(
-        footnote = f241108a(typeC, tbinC)[[1]]
-      ) %>%
-      gt::tab_footnote(
-        footnote = f241108a(typeC, tbinC)[[2]]
-      )
-    x
-  }
 
   x132D <- eventReactive( # 132 trade summary(2)----
     list(common$tslideR(), common$geoqR(), common$estdtlR()),

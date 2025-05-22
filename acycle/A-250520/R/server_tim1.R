@@ -18,7 +18,7 @@ server_tim1 <- function(input, output, session, common) {
   # )
   #     x
   #   }
-      x <- f250517a(rc6x=common$rc6tR())
+      x <- f250517a(rc6x=common$rc6tR(),x1=pxosrdo2dd,x2=z110,x3=f250519ad)
       x
     }
   )#eventreactive
@@ -29,7 +29,7 @@ server_tim1 <- function(input, output, session, common) {
     ),
     {
       x <- 
-        dataG$f250509ed$estdt[lab==common$labxR()[1,lab]]%>%
+        f250509ed$estdt[lab==common$labxR()[1,lab]]%>%
         ggplot(., aes(date, x)) + geom_point()
       x
     }

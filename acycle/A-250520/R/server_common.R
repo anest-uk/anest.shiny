@@ -2,23 +2,132 @@ server_common <-
   function(input,
            output,
            session) {
-    labxR <- #-----------optimum index label----
+    dfnxR <- # -----------4-col table with NA----
+      reactive({
+        x <-
+          dcast(f241021adG$estdt[, .(tbin, date)] %>% unique(.) %>% .[order(tbin, date)], date ~ tbin, value.var = "date") %>% # lo, hi, an
+          rbind(as.data.table(as.list(rep(as.Date("1994-12-31"), 4))), ., use.names = F) %>%
+          setnames(., c("date", "tbin1", "tbin2", "tbin3"))
+        dfnxG <<- copy(x)
+        x
+      })
+
+    dfnxxR <- #---------vector of current date----
+      reactive({
+        x <-
+          dfnxR()[, paste0("tbin", tbinC), with = F] %>%
+          setnames(., "x") %>%
+          .[, sort(unique(x))]
+        dfnxxG <<- copy(x)
+        x
+      })
+
+    estdtaR <- #---------- area estdt compute----
       eventReactive(
-        rc6tR(),
+        list(
+          nxaR(),
+          estdtR()
+        ),
         {
-          if (verbose) print("enter labxR")
+          if (verbose) print("enter estdtaR")
           x <-
-            dataG$f250509ed$geo %>%
-            .[rc9 %in% rc6tR()] %>%
-            .[grep("^L", lab)] %>%
-            .[dataG$f250509ed$kfoldsse, on = c(nx = "nx"), nomatch = NULL] %>% # local only
-            .[rc6 == rc6tR()] %>% # target rc6
-            .[order(ssek), .(rc6, ssek, n, nx, lab)]
-          labxG <<- copy(x)
+            estdtR()[nxaR(), on = c(nx = "nx")] %>%
+            .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
+          estdtaG <<- copy(x)
           x
         }
       )
 
+    estdtcuR <- #---------custom estdt select ----
+      eventReactive(
+        list(
+          rsicuR()
+        ),
+        {
+          if (verbose) print("enter estdtcuR")
+          x <- rsicuR()$estdt
+          estdtcuG <<- copy(x)
+          x
+        }
+      )
+
+    estdtlR <- #---------local estdt compute  ----
+      eventReactive(
+        nxqR(),
+        {
+          if (verbose) print("enter estdtlR")
+          x <-
+            estdtR()[nxqR(), on = c(nx = "nx")] %>%
+            .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
+          estdtlG <<- copy(x)
+          x
+        }
+      )
+
+    estdtlnewR <- #------local estdt compute  ----
+      eventReactive(
+        nxqR(),
+        {
+          if (verbose) print("enter estdtlnewR")
+          x <-
+            copy(f250509ed$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)] %>%
+            .[nxqR(), on = c(nx = "nx")] %>%
+            .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
+          estdtlnewG <<- copy(x)
+          x
+        }
+      )
+    
+    estdtR <- #-------------------------estdtR----
+      reactive({
+        x <- copy(f241021adG$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]
+        # x <- copy(f250509ed$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]
+        estdtG <<- copy(x)
+        x
+      })
+
+    estdtxR <- #---------------------112 x(t)----
+      eventReactive(
+        list(estdtcuR(), estdtaR(), geocuR()),
+        {
+          festdtxX <- function(estdtcuX = estdtcuG, estdtaX = estdtaG, geocuX = geocuG) {
+            x <-
+              rbind(
+                estdtcuX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
+                estdtaX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile, rc3)]
+              )[, qq := as.factor(qtile)]
+            x
+          }
+          print("enter estdtxR")
+          x <-
+            festdtxX(estdtcuX = estdtcuR(), estdtaX = estdtaR(), geocuX = geocuR())
+          estdtxG <<- copy(x)
+          print("exit estdtxR")
+          x
+        }
+      )
+    
+    geo0R <- #----------------------------geo0----
+      reactive({
+        x <-
+          geoplusR() %>%
+          .[type == "L"] %>%
+          .[itrim == itriC] %>%
+          .[tbin == tbinC] %>%
+          .[, .(
+            nx,
+            gx,
+            lab = des,
+            rc6 = rc9,
+            rc3 = substr(rc9, 1, 3),
+            qtile = as.numeric(substr(des, 4, 4))
+          )] %>%
+          z110R()[., on = c(rcx = "rc6")] %>%
+          .[, .(nx, gx, lab, rc3, rc6 = rcx, qtile)]
+        geo0G <<- copy(x)
+        x
+      })
+    
     geoaR <- #----------------area geo compute----
       eventReactive(
         rc6tR(),
@@ -30,7 +139,42 @@ server_common <-
           x
         }
       )
-
+    
+    geocuR <- #-------------custom geo compute----
+      eventReactive(
+        rc6cuR(),
+        {
+          if (verbose) print("enter geocuR")
+          x <-
+            fgeocuX(rc6cuX = rc6cuR())
+          geocuG <<- copy(x)
+          x
+        }
+      )
+    
+    geoplusR <- #----------------------geoplus----
+      reactive({
+        x <- copy(f241021adG$geoplus)[, let(lab, des)]
+        geoplusG <<- copy(x)
+        x
+      })
+    
+    geoqR <- #----------------qtile geo select----
+      eventReactive(
+        list(
+          geoaR(), geotR() # ,
+        ),
+        {
+          if (verbose) print("enter geoqR")
+          x <- geoaR() %>%
+            .[geotR()[, .(qtile)],
+              on = c(qtile = "qtile")
+            ]
+          geoqG <<- copy(x)
+          x
+        }
+      )
+    
     geotR <- #--------------target geo compute----
       eventReactive(
         rc6tR(),
@@ -44,7 +188,38 @@ server_common <-
           x
         }
       )
+    
+    labxR <- #-------------optimum index label----
+      eventReactive(
+        rc6tR(),
+        {
+          if (verbose) print("enter labxR")
+          x <-
+            f250509ed$geo %>%
+            .[rc9 %in% rc6tR()] %>%
+            .[grep("^L", lab)] %>%
+            .[f250509ed$kfoldsse, on = c(nx = "nx"), nomatch = NULL] %>% # local only
+            .[rc6 == rc6tR()] %>% # target rc6
+            .[order(ssek), .(rc6, ssek, n, nx, lab)]
+          labxG <<- copy(x)
+          x
+        }
+      )
 
+    nxaR <- #------------------area nx select----
+      eventReactive(
+        geoaR(),
+        {
+          if (verbose) print("enter nxaR")
+          x <-
+            geoaR()[, .(nx, rc3, qtile, lab)] %>%
+            unique(.)
+          nxaG <<- copy(x)
+          if (verbose) print("exit nxaR")
+          x
+        }
+      )
+    
     nxqR <- #-----------------qtile nx compute----
       eventReactive(
         geoqR(),
@@ -57,7 +232,37 @@ server_common <-
           x
         }
       )
-
+    
+    pxosrdo2ddR <- #---------------pxosrdo2dd----
+      reactive({
+        x <- copy(pxosrdo2dd)
+        pxosrdo2ddG <<- copy(x)
+        x
+      })
+    
+    rc6cuR <- #-------------custom rc6 control----
+      eventReactive(
+        list(rc6tR(), input$rctreeC), #+control
+        {
+          if (verbose) print("enter rc6cuR")
+          x <- sort(unique(c(rc6tR(), input$rctreeC))) %>% .[nchar(.) == 6]
+          rc6cuG <<- copy(x)
+          x
+        }
+      )
+    
+    rc6tR <- #-------------target rc6 reformat----
+      eventReactive(
+        input$rc6tC,
+        {
+          if (verbose) print("enter rc6tR")
+          x <-
+            regpcode(input$rc6tC)[1]
+          rc6tG <<- copy(x)
+          x
+        }
+      )
+    
     rsicuR <- #-------------custom rsi compute----
       eventReactive(
         list(
@@ -96,277 +301,98 @@ server_common <-
           x
         }
       )
-
-    rc6cuR <- #-------------custom rc6 control----
+    
+    rssaR <- #---------------area rss compute----
       eventReactive(
-        list(rc6tR(), input$rctreeC), #+control
+        nxaR(),
         {
-          if (verbose) print("enter rc6cuR")
-          x <- sort(unique(c(rc6tR(), input$rctreeC))) %>% .[nchar(.) == 6]
-          rc6cuG <<- copy(x)
-          x
-        }
-      )
-
-    rc6tR <- #-------------target rc6 reformat----
-      eventReactive(
-        input$rc6tC,
-        {
-          if (verbose) print("enter rc6tR")
+          if (verbose) print("enter rssaR")
           x <-
-            regpcode(input$rc6tC)[1]
-          rc6tG <<- copy(x)
+            rssR()[nxaR(), on = c(nx = "nx")]
+          rssaG <<- copy(x)
           x
         }
       )
-
-    geo0R <- #----------------------------geo0----
+    
+    rsscuR <- # ------------custom rss select----
+      eventReactive(
+        list(
+          rsicuR()
+        ),
+        {
+          if (verbose) print("enter rsscuR")
+          x <- cbind(rsicuR()$kfoldsse, rsicuR()$all)
+          rsscuG <<- copy(x)
+          x
+        }
+      )
+    
+    rssR <- #-----------------------------rss----
       reactive({
-        x <-
-          geoplusR() %>%
-          .[type == "L"] %>%
-          .[itrim == itriC] %>%
-          .[tbin == tbinC] %>%
-          .[, .(
-            nx,
-            gx,
-            lab = des,
-            rc6 = rc9,
-            rc3 = substr(rc9, 1, 3),
-            qtile = as.numeric(substr(des, 4, 4))
-          )] %>%
-          z110R()[., on = c(rcx = "rc6")] %>%
-          .[, .(nx, gx, lab, rc3, rc6 = rcx, qtile)]
-        geo0G <<- copy(x)
+        x <- copy(f241021ad$rss)
+        rssG <<- copy(x)
         x
       })
-
-    geoplusR <- #----------------------geoplus----
+    
+    tslideR <- # --------------control-slider----
       reactive({
-        x <- copy(f241021adG$geoplus)[, let(lab, des)]
-        geoplusG <<- copy(x)
+        x <- input$tslider
+        tslideG <<- copy(x)
         x
       })
-
+    
+    ylimR <- #--------------------------ylim ----
+      eventReactive(
+        estdtxR(),
+        {
+          x <-
+            estdtxR()[, range(x)] * 1.1
+          ylimG <<- copy(x)
+          x
+        }
+      )
+    
     z110R <- #---------------------------z110R----
       reactive({
         x <- copy(z110)
         z110G <<- copy(x)
         x
       })
-
-    estdtR <- #-------------------------estdtR----
-      reactive({
-        x <- copy(f241021adG$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]
-        estdtG <<- copy(x)
-        x
-      })
-
-    estdtlR <- #---------local estdt compute  ----
-      eventReactive(
-        nxqR(),
-        {
-          if (verbose) print("enter estdtlR")
-          x <-
-            estdtR()[nxqR(), on = c(nx = "nx")] %>%
-            .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
-          estdtlG <<- copy(x)
-          x
-        }
-      )
-
-    geoqR <- #----------------qtile geo select----
-      eventReactive(
-        list(
-          geoaR(), geotR() # ,
-        ),
-        {
-          if (verbose) print("enter geoqR")
-          x <- geoaR() %>%
-            .[geotR()[, .(qtile)],
-              on = c(qtile = "qtile")
-            ]
-          geoqG <<- copy(x)
-          x
-        }
-      )
-
-    dfnxR <- reactive({ # -4-col table with NA----
-      x <-
-        dcast(f241021adG$estdt[, .(tbin, date)] %>% unique(.) %>% .[order(tbin, date)], date ~ tbin, value.var = "date") %>% # lo, hi, an
-        rbind(as.data.table(as.list(rep(as.Date("1994-12-31"), 4))), ., use.names = F) %>%
-        setnames(., c("date", "tbin1", "tbin2", "tbin3"))
-      dfnxG <<- copy(x)
-      x
-    })
-
-    dfnxxR <- #---------vector of current date----
-      reactive({
-        x <-
-          dfnxR()[, paste0("tbin", tbinC), with = F] %>%
-          setnames(., "x") %>%
-          .[, sort(unique(x))]
-        dfnxxG <<- copy(x)
-        x
-      })
-
-    estdtcuR <- #---------custom estdt select ----
-      eventReactive(
-        list(
-          rsicuR()
-        ),
-        {
-          if (verbose) print("enter estdtcuR")
-          x <- rsicuR()$estdt
-          estdtcuG <<- copy(x)
-          x
-        }
-      )
-
-    geocuR <- #-------------custom geo compute----
-      eventReactive(
-        rc6cuR(),
-        {
-          if (verbose) print("enter geocuR")
-          x <-
-            fgeocuX(rc6cuX = rc6cuR())
-          geocuG <<- copy(x)
-          x
-        }
-      )
-
-    fgeocuX <- #-----------custom geo compute-----
+    
+    fgeocuX <- #------------custom geo compute----
       function(rc6cuX = rc6cuG) {
         x <-
           data.table(rc9 = rc6cuX, nx = 0, lab = "CU00")
         x
       }
 
-    rsscuR <- eventReactive( # custom rss select----
-      list(
-        rsicuR()
-      ),
-      {
-        if (verbose) print("enter rsscuR")
-        x <- cbind(rsicuR()$kfoldsse, rsicuR()$all)
-        rsscuG <<- copy(x)
-        x
-      }
-    )
-
-    nxaR <- eventReactive( #----area nx select----
-      geoaR(),
-      {
-        if (verbose) print("enter nxaR")
-        x <-
-          geoaR()[, .(nx, rc3, qtile, lab)] %>%
-          unique(.)
-        nxaG <<- copy(x)
-        if (verbose) print("exit nxaR")
-        x
-      }
-    )
-
-    estdtaR <- eventReactive( # area estdt compute----
-      list(
-        nxaR(),
-        estdtR()
-      ),
-      {
-        if (verbose) print("enter estdtaR")
-        x <-
-          estdtR()[nxaR(), on = c(nx = "nx")] %>%
-          .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
-        estdtaG <<- copy(x)
-        x
-      }
-    )
-
-    estdtxR <- eventReactive( #-------112 x(t)----
-      list(estdtcuR(), estdtaR(), geocuR()),
-      {
-        festdtxX <- function(estdtcuX = estdtcuG, estdtaX = estdtaG, geocuX = geocuG) {
-          x <-
-            rbind(
-              estdtcuX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
-              estdtaX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile, rc3)]
-            )[, qq := as.factor(qtile)]
-          x
-        }
-        print("enter estdtxR")
-        x <-
-          festdtxX(estdtcuX = estdtcuR(), estdtaX = estdtaR(), geocuX = geocuR())
-        estdtxG <<- copy(x)
-        print("exit estdtxR")
-        x
-      }
-    )
-
-    rssaR <- eventReactive( #-area rss compute----
-      nxaR(),
-      {
-        if (verbose) print("enter rssaR")
-        x <-
-          rssR()[nxaR(), on = c(nx = "nx")]
-        rssaG <<- copy(x)
-        x
-      }
-    )
-
-    rssR <- reactive({ #-------------------rss----
-      x <- copy(f241021ad$rss)
-      rssG <<- copy(x)
-      x
-    })
-
-    pxosrdo2ddR <- reactive({ #-----pxosrdo2dd----
-      x <- copy(pxosrdo2dd)
-      pxosrdo2ddG <<- copy(x)
-      x
-    })
-
-    ylimR <- eventReactive( #------------ylim ----
-      estdtxR(),
-      {
-        x <-
-          estdtxR()[, range(x)] * 1.1
-        ylimG <<- copy(x)
-        x
-      }
-    )
-
-    tslideR <- reactive({ # control-slider   -----
-      x <- input$tslider
-      tslideG <<- copy(x)
-      x
-    })
-
-    list( # --------------------common list #-----
-      labxR = labxR,
-      geoaR = geoaR,
-      geotR = geotR,
-      nxqR = nxqR,
-      rsicuR = rsicuR,
-      rc6cuR = rc6cuR,
-      rc6tR = rc6tR,
-      geo0R = geo0R,
-      geoplusR = geoplusR,
-      z110R = z110R,
-      estdtR = estdtR,
-      estdtlR = estdtlR,
-      geoqR = geoqR,
+    list( # ---------------------common list #----
       dfnxR = dfnxR,
       dfnxxR = dfnxxR,
-      estdtcuR = estdtcuR,
-      geocuR = geocuR,
-      tslideR = tslideR,
-      rsscuR = rsscuR,
-      nxaR = nxaR,
       estdtaR = estdtaR,
+      estdtcuR = estdtcuR,
+      estdtlR = estdtlR,
+      estdtlnewR = estdtlnewR,
+      estdtR = estdtR,
       estdtxR = estdtxR,
-      rssaR = rssaR,
-      rssR = rssR,
+      geo0R = geo0R,
+      geoaR = geoaR,
+      geocuR = geocuR,
+      geoplusR = geoplusR,
+      geoqR = geoqR,
+      geotR = geotR,
+      labxR = labxR,
+      nxaR = nxaR,
+      nxqR = nxqR,
       pxosrdo2ddR = pxosrdo2ddR,
-      ylimR = ylimR
+      rc6cuR = rc6cuR,
+      rc6tR = rc6tR,
+      rsicuR = rsicuR,
+      rssaR = rssaR,
+      rsscuR = rsscuR,
+      rssR = rssR,
+      tslideR = tslideR,
+      ylimR = ylimR,
+      z110R = z110R
     )
   }

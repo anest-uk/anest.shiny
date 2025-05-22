@@ -18,7 +18,7 @@ ui_area2 <- function(id=NULL) {
         ,
         ui_navpanel_notes()#-----------------Notes
         ,
-        ui_navpanel_tim1()
+        ui_navpanel_tim1()#-test page addition----
       )
     )
   )
