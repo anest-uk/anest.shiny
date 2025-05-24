@@ -38,15 +38,15 @@ server_common <-
         }
       )
 
-    estdtcuR <- #---------custom estdt select ----
+    estdtccR <- #---------custom estdt select ----
       eventReactive(
         list(
-          rsicuR()
+          rsiccR()
         ),
         {
-          if (verbose) print("enter estdtcuR")
-          x <- rsicuR()$estdt
-          estdtcuG <<- copy(x)
+          if (verbose) print("enter estdtccR")
+          x <- rsiccR()$estdt
+          estdtccG <<- copy(x)
           x
         }
       )
@@ -88,19 +88,19 @@ server_common <-
 
     estdtxR <- #---------------------112 x(t)----
       eventReactive(
-        list(estdtcuR(), estdtaR(), geocuR()),
+        list(estdtccR(), estdtaR(), geoccR()),
         {
-          festdtxX <- function(estdtcuX = estdtcuG, estdtaX = estdtaG, geocuX = geocuG) {
+          festdtxX <- function(estdtccX = estdtccG, estdtaX = estdtaG, geoccX = geoccG) {
             x <-
               rbind(
-                estdtcuX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
+                estdtccX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
                 estdtaX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile, rc3)]
               )[, qq := as.factor(qtile)]
             x
           }
           print("enter estdtxR")
           x <-
-            festdtxX(estdtcuX = estdtcuR(), estdtaX = estdtaR(), geocuX = geocuR())
+            festdtxX(estdtccX = estdtccR(), estdtaX = estdtaR(), geoccX = geoccR())
           estdtxG <<- copy(x)
           print("exit estdtxR")
           x
@@ -140,14 +140,14 @@ server_common <-
         }
       )
     
-    geocuR <- #-------------custom geo compute----
+    geoccR <- #-------------custom geo compute----
       eventReactive(
-        rc6cuR(),
+        rc6ccR(),
         {
-          if (verbose) print("enter geocuR")
+          if (verbose) print("enter geoccR")
           x <-
-            fgeocuX(rc6cuX = rc6cuR())
-          geocuG <<- copy(x)
+            fgeoccX(rc6ccX = rc6ccR())
+          geoccG <<- copy(x)
           x
         }
       )
@@ -240,13 +240,13 @@ server_common <-
         x
       })
     
-    rc6cuR <- #-------------custom rc6 control----
+    rc6ccR <- #-------------custom rc6 control----
       eventReactive(
         list(rc6tR(), input$rctreeC), #+control
         {
-          if (verbose) print("enter rc6cuR")
+          if (verbose) print("enter rc6ccR")
           x <- sort(unique(c(rc6tR(), input$rctreeC))) %>% .[nchar(.) == 6]
-          rc6cuG <<- copy(x)
+          rc6ccG <<- copy(x)
           x
         }
       )
@@ -263,14 +263,14 @@ server_common <-
         }
       )
     
-    rsicuR <- #-------------custom rsi compute----
+    rsiccR <- #-------------custom rsi compute----
       eventReactive(
         list(
           input$docusabC
         ),
         {
-          if (verbose) print("enter rsicuR")
-          geox <- isolate(geocuR())
+          if (verbose) print("enter rsiccR")
+          geox <- isolate(geoccR())
           dfnx <- isolate(dfnxxR()) # source of truth
           rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
           rc6valid <- isolate(geo0R()[, rc6])
@@ -279,7 +279,7 @@ server_common <-
               (nchar(regpcode(rc6tx)) == 6) &
               (regpcode(rc6tx) %in% rc6valid)
           ) {
-            print("recalc accepted in rsicuR")
+            print("recalc accepted in rsiccR")
             x <-
               f241119a( # returns estdt, kfoldsse, all
                 nxx = 0,
@@ -293,10 +293,10 @@ server_common <-
                 newused = c("."),
                 houseflat = c(".")
               )
-            rsicuG <<- copy(x)
+            rsiccG <<- copy(x)
           } else {
-            print("recalc rejected in rsicuR")
-            x <- copy(rsicuG)
+            print("recalc rejected in rsiccR")
+            x <- copy(rsiccG)
           }
           x
         }
@@ -314,15 +314,15 @@ server_common <-
         }
       )
     
-    rsscuR <- # ------------custom rss select----
+    rssccR <- # ------------custom rss select----
       eventReactive(
         list(
-          rsicuR()
+          rsiccR()
         ),
         {
-          if (verbose) print("enter rsscuR")
-          x <- cbind(rsicuR()$kfoldsse, rsicuR()$all)
-          rsscuG <<- copy(x)
+          if (verbose) print("enter rssccR")
+          x <- cbind(rsiccR()$kfoldsse, rsiccR()$all)
+          rssccG <<- copy(x)
           x
         }
       )
@@ -359,10 +359,10 @@ server_common <-
         x
       })
     
-    fgeocuX <- #------------custom geo compute----
-      function(rc6cuX = rc6cuG) {
+    fgeoccX <- #------------custom geo compute----
+      function(rc6ccX = rc6ccG) {
         x <-
-          data.table(rc9 = rc6cuX, nx = 0, lab = "CU00")
+          data.table(rc9 = rc6ccX, nx = 0, lab = "CU00")
         x
       }
 
@@ -370,14 +370,14 @@ server_common <-
       dfnxR = dfnxR,
       dfnxxR = dfnxxR,
       estdtaR = estdtaR,
-      estdtcuR = estdtcuR,
+      estdtccR = estdtccR,
       estdtlR = estdtlR,
       estdtlnewR = estdtlnewR,
       estdtR = estdtR,
       estdtxR = estdtxR,
       geo0R = geo0R,
       geoaR = geoaR,
-      geocuR = geocuR,
+      geoccR = geoccR,
       geoplusR = geoplusR,
       geoqR = geoqR,
       geotR = geotR,
@@ -385,11 +385,11 @@ server_common <-
       nxaR = nxaR,
       nxqR = nxqR,
       pxosrdo2ddR = pxosrdo2ddR,
-      rc6cuR = rc6cuR,
+      rc6ccR = rc6ccR,
       rc6tR = rc6tR,
-      rsicuR = rsicuR,
+      rsiccR = rsiccR,
       rssaR = rssaR,
-      rsscuR = rsscuR,
+      rssccR = rssccR,
       rssR = rssR,
       tslideR = tslideR,
       ylimR = ylimR,

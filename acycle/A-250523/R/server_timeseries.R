@@ -2,7 +2,7 @@ server_timeseries <- function(input, output, session, common) {
   x111D <- eventReactive( # -------111 leaflet----
     list(
       common$rc6tR(),
-      common$rc6cuR(),
+      common$rc6ccR(),
       common$geoaR(),
       common$pxosrdo2ddR(),
       common$z110R()
@@ -13,7 +13,7 @@ server_timeseries <- function(input, output, session, common) {
       }
       x <- f111D(
         rc6tX = common$rc6tR(),
-        rc6cuX = common$rc6cuR(),
+        rc6ccX = common$rc6ccR(),
         geoaX = common$geoaR(),
         pxosrdo2ddX = common$pxosrdo2ddR(),
         z110X = common$z110R(),
@@ -30,7 +30,7 @@ server_timeseries <- function(input, output, session, common) {
 
   f111D <- function( #-----------------------.#----
                     rc6tX = rc6tG,
-                    rc6cuX = rc6cuG,
+                    rc6ccX = rc6ccG,
                     geoaX = geoaG,
                     pxosrdo2ddX = pxosrdo2ddG,
                     z110X = z110G,
@@ -59,7 +59,7 @@ server_timeseries <- function(input, output, session, common) {
         maxzoom = 12
       ) %>%
       addPolygons( # outline custom districts
-        data = pxosrdo2ddX[which(pxosrdo2ddX@data$name %in% irregpcode(rc6cuX)), ],
+        data = pxosrdo2ddX[which(pxosrdo2ddX@data$name %in% irregpcode(rc6ccX)), ],
         fill = F,
         color = "orange",
         weight = 1,
@@ -77,7 +77,7 @@ server_timeseries <- function(input, output, session, common) {
           tslideX = common$tslideR(),
           estdtxX = common$estdtxR(),
           ylimX = common$ylimR(),
-          geocuX = common$geocuR()
+          geoccX = common$geoccR()
         )
       x112G <<- copy(x)
       x
@@ -88,7 +88,7 @@ server_timeseries <- function(input, output, session, common) {
                     tslideX = tslideG,
                     estdtxX = estdtxG,
                     ylimX = ylimG,
-                    geocuX = geocuG) {
+                    geoccX = geoccG) {
     x2c <- estdtxX %>%
       .[, .SD[, .(ii, date, lab, x = x - ifelse(tslideX == 0, 0, x[tslideX]))], .(qtile)] %>%
       .[, .SD[, .(ii, date, lab, x)], .(qtile)] %>%
@@ -107,7 +107,7 @@ server_timeseries <- function(input, output, session, common) {
       geom_point(size = .3) +
       geom_text_repel() +
       # ylim(ylimX - x3) +
-      labs(caption = geocuX[, paste0("Custom districts: ", paste0(sort(irregpcode(rc9)), collapse = ", "))]) +
+      labs(caption = geoccX[, paste0("Custom districts: ", paste0(sort(irregpcode(rc9)), collapse = ", "))]) +
       xlab("") +
       ylab(bquote(Delta ~ P ~ log ~ price ~ change)) +
       theme_bw() +
@@ -132,7 +132,7 @@ server_timeseries <- function(input, output, session, common) {
   }
 
   x121D <- eventReactive( #--------121 winding----
-    list(common$estdtlR(), common$estdtcuR(), common$dfnxxR()),
+    list(common$estdtlR(), common$estdtccR(), common$dfnxxR()),
     {
       if (verbose) print("enter x121D")
       x2 <- f121D(
@@ -140,7 +140,7 @@ server_timeseries <- function(input, output, session, common) {
         dfnxX = common$dfnxR()
       )
       x4 <- f121D(
-        estdt = common$estdtcuR(),
+        estdt = common$estdtccR(),
         dfnxX = common$dfnxR(),
         typeX = "C"
       )
@@ -189,13 +189,13 @@ server_timeseries <- function(input, output, session, common) {
   }
 
   x122D <- eventReactive( #------------------.#----
-    list(common$rc6tR(), common$rssaR(), common$rsscuR(), common$z110R()),
+    list(common$rc6tR(), common$rssaR(), common$rssccR(), common$z110R()),
     {
       if (verbose) print("enter x122D")
       x <- f122D(
         rc6tX = common$rc6tR(),
         rssaX = common$rssaR(),
-        rsscuX = common$rsscuR(),
+        rssccX = common$rssccR(),
         z110X = common$z110R()
       )
       x122G <<- copy(x)
@@ -207,9 +207,9 @@ server_timeseries <- function(input, output, session, common) {
   f122D <- function( # ----122 characteristics----
                     rc6tX = rc6tG,
                     rssaX = rssaG,
-                    rsscuX = rsscuG,
+                    rssccX = rssccG,
                     z110X = z110G) {
-    rsscux <- copy(rsscuX)[, lab := "CU000"] # R()
+    rsscux <- copy(rssccX)[, lab := "CU000"] # R()
     f122 <- # combine rss and P characteristics
       function(rssx, z110X) {
         x0 <-
@@ -337,7 +337,7 @@ server_timeseries <- function(input, output, session, common) {
       x <- f132D(
         tslideX = common$tslideR(),
         geoqX = common$geoqR(),
-        geocuX = common$geocuR(),
+        geoccX = common$geoccR(),
         estdtlX = common$estdtlR()
       )
       x132G <<- copy(x)
@@ -348,7 +348,7 @@ server_timeseries <- function(input, output, session, common) {
   f132D <- function( # ---132 trade summary(2)----
                     tslideX = tslideG,
                     geoqX = geoqG,
-                    geocuX = geocuG,
+                    geoccX = geoccG,
                     estdtlX = estdtlG) {
     steprip <- stepripG
     tminx <- tslideX
@@ -359,7 +359,7 @@ server_timeseries <- function(input, output, session, common) {
       tmin = tminx # tmin=input$tslider
     )
     x2 <- f132(
-      geox = geocuX[, .(rc6 = rc9)], # geoqR()
+      geox = geoccX[, .(rc6 = rc9)], # geoqR()
       steprip = steprip,
       estdtlx = estdtlX, # estdtlR()
       tmin = tminx # tmin=input$tslider

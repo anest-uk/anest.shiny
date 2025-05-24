@@ -31,14 +31,14 @@ server_accuracy <- function(input, output, session, common) {
 
 
   f412D <- function( #--------412 accuracy tbin----
-                    geocuX = geocuG,
+                    geoccX = geoccG,
                     rc6tX = rc6tG,
-                    rsscuX = rsscuG) {
+                    rssccX = rssccG) {
     x1 <-
       data.table(tbin = 1:3, freq = c("lo", "hi", "an"))
     x2 <-
-      rsscuX %>% # use global no filters
-      .[geocuX, on = c(rc6 = "rc9")] %>%
+      rssccX %>% # use global no filters
+      .[geoccX, on = c(rc6 = "rc9")] %>%
       .[, .(n, ssek, tbin = tbinC, rc6)]
     x3 <-
       rbind(
@@ -89,14 +89,14 @@ server_accuracy <- function(input, output, session, common) {
   }
 
   f422D <- function( # #--------422 accuracy trim----
-                    geocuX = geocuG,
+                    geoccX = geoccG,
                     rc6tX = rc6tG,
-                    rsscuX = rsscuG) {
+                    rssccX = rssccG) {
     x1 <-
       data.table(itrim = 1:3, threshold = c("0.0", "0.1", "0.5"))
     x2 <-
-      rsscuX %>%
-      .[geocuX, on = c(rc6 = "rc9")] %>%
+      rssccX %>%
+      .[geoccX, on = c(rc6 = "rc9")] %>%
       .[, .(n, ssek, itrim = itriC, rc6)]
     x3 <- rbind(
       x2[, .(span = "index.average", mse = round(sqrt(sum(ssek) / sum(n)), 4)), itrim],
@@ -149,12 +149,12 @@ server_accuracy <- function(input, output, session, common) {
 
 
   f432D <- function( #------432 accuracy in/out----
-                    geocuX = geocuG,
+                    geoccX = geoccG,
                     rc6tX = rc6tG,
-                    rsscuX = rsscuG) {
+                    rssccX = rssccG) {
     x1 <-
-      rsscuX %>%
-      .[geocuX, on = c(rc6 = "rc9")] %>%
+      rssccX %>%
+      .[geoccX, on = c(rc6 = "rc9")] %>%
       .[, .(n, ssek, ssei, itrim = itriC, rc6)]
     x2 <-
       rbind(
@@ -184,10 +184,10 @@ server_accuracy <- function(input, output, session, common) {
   )
 
   x412D <- eventReactive( #-----------------412----
-    list(common$geocuR(), common$rc6tR(), common$rsscuR()),
+    list(common$geoccR(), common$rc6tR(), common$rssccR()),
     {
       if (verbose) print("enter x412D")
-      x <- f412D(geocuX = common$geocuR(), rc6tX = common$rc6tR(), rsscuX = common$rsscuR())
+      x <- f412D(geoccX = common$geoccR(), rc6tX = common$rc6tR(), rssccX = common$rssccR())
       x412G <<- copy(x)
       x
     }
@@ -204,10 +204,10 @@ server_accuracy <- function(input, output, session, common) {
   )
 
   x422D <- eventReactive( #-----------------422----
-    list(common$geocuR(), common$rc6tR(), common$rsscuR()),
+    list(common$geoccR(), common$rc6tR(), common$rssccR()),
     {
       if (verbose) print("enter x422D")
-      x <- f422D(geocuX = common$geocuR(), rc6tX = common$rc6tR(), rsscuX = common$rsscuR())
+      x <- f422D(geoccX = common$geoccR(), rc6tX = common$rc6tR(), rssccX = common$rssccR())
       x422G <<- copy(x)
       x
     }
@@ -224,10 +224,10 @@ server_accuracy <- function(input, output, session, common) {
   )
 
   x432D <- eventReactive( #-----------------432----
-    list(common$geocuR(), common$rc6tR(), common$rsscuR()),
+    list(common$geoccR(), common$rc6tR(), common$rssccR()),
     {
       if (verbose) print("enter x432D")
-      x <- f432D(geocuX = common$geocuR(), rc6tX = common$rc6tR(), rsscuX = common$rsscuR())
+      x <- f432D(geoccX = common$geoccR(), rc6tX = common$rc6tR(), rssccX = common$rssccR())
       x432G <<- copy(x)
       x
     }
