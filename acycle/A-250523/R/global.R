@@ -1,5 +1,6 @@
 app_dirG <- normalizePath(".") 
 data_dirG <- file.path(app_dirG, "data")
+print(paste0('app_dirG : ',app_dirG))
 print(paste0('data_dirG : ',data_dirG))
 
 f250509ed <- readRDS(file = file.path(app_dirG, "data", "f250509ed.rds"))

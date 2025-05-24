@@ -1,4 +1,6 @@
 library(shiny)
+
+
 { #----
   { #----
     { #----
@@ -80,15 +82,28 @@ library(shiny)
       # f241229bd <- readRDS(file = file.path(app_dir, "data", "f241229bd.rds"))
       # z110 <- readRDS(file = file.path(app_dir, "data", "z110.rds"))
       # x101 <- readRDS(file = file.path(app_dir, "data", "x101.rds"))
-      
-      print('######################################################################## app.R global assign')
+            #f250509edG <<- f250509ed
+
+# 
+#       print('######################################################################## app.R global assign')
       f241021adG <<- f241021ad
       f250519adG <<- f250519ad
-      #f250509edG <<- f250509ed
       pxosrdo2ddG <<-pxosrdo2dd
       f241229bdG <<-f241229bd
       z110G <<- z110
       x101G <<- x101
+      
+f250509ed #no
+f241021ad #yes
+f250519ad #yes
+pxosrdo2dd#yes
+f241229bd #yes
+z110      #yes
+x101      #yes
+rm(f250509ed)
+      
+      
+      
       
       # f241021ad<<- f241021ad
       # f250519ad<<- f250519ad
