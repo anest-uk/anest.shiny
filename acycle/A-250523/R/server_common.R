@@ -77,7 +77,7 @@ server_common <-
           x
         }
       )
-    
+
     estdtR <- #-------------------------estdtR----
       reactive({
         x <- copy(f241021adG$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]
@@ -90,14 +90,14 @@ server_common <-
       eventReactive(
         list(estdtccR(), estdtaR(), geoccR()),
         {
-          festdtxX <- function(estdtccX = estdtccG, estdtaX = estdtaG, geoccX = geoccG) {
-            x <-
-              rbind(
-                estdtccX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
-                estdtaX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile, rc3)]
-              )[, qq := as.factor(qtile)]
-            x
-          }
+          # festdtxX <- function(estdtccX = estdtccG, estdtaX = estdtaG, geoccX = geoccG) {
+          #   x <-
+          #     rbind(
+          #       estdtccX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
+          #       estdtaX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile, rc3)]
+          #     )[, qq := as.factor(qtile)]
+          #   x
+          # }
           print("enter estdtxR")
           x <-
             festdtxX(estdtccX = estdtccR(), estdtaX = estdtaR(), geoccX = geoccR())
@@ -106,7 +106,7 @@ server_common <-
           x
         }
       )
-    
+
     geo0R <- #----------------------------geo0----
       reactive({
         x <-
@@ -127,7 +127,7 @@ server_common <-
         geo0G <<- copy(x)
         x
       })
-    
+
     geoaR <- #----------------area geo compute----
       eventReactive(
         rc6tR(),
@@ -139,7 +139,7 @@ server_common <-
           x
         }
       )
-    
+
     geoccR <- #-------------custom geo compute----
       eventReactive(
         rc6ccR(),
@@ -151,14 +151,14 @@ server_common <-
           x
         }
       )
-    
+
     geoplusR <- #----------------------geoplus----
       reactive({
         x <- copy(f241021adG$geoplus)[, let(lab, des)]
         geoplusG <<- copy(x)
         x
       })
-    
+
     geoqR <- #----------------qtile geo select----
       eventReactive(
         list(
@@ -174,7 +174,7 @@ server_common <-
           x
         }
       )
-    
+
     geotR <- #--------------target geo compute----
       eventReactive(
         rc6tR(),
@@ -188,7 +188,7 @@ server_common <-
           x
         }
       )
-    
+
     labxR <- #-------------optimum index label----
       eventReactive(
         rc6tR(),
@@ -219,7 +219,7 @@ server_common <-
           x
         }
       )
-    
+
     nxqR <- #-----------------qtile nx compute----
       eventReactive(
         geoqR(),
@@ -232,14 +232,14 @@ server_common <-
           x
         }
       )
-    
+
     pxosrdo2ddR <- #---------------pxosrdo2dd----
       reactive({
         x <- copy(pxosrdo2dd)
         pxosrdo2ddG <<- copy(x)
         x
       })
-    
+
     rc6ccR <- #-------------custom rc6 control----
       eventReactive(
         list(rc6tR(), input$rctreeC), #+control
@@ -250,7 +250,7 @@ server_common <-
           x
         }
       )
-    
+
     rc6tR <- #-------------target rc6 reformat----
       eventReactive(
         input$rc6tC,
@@ -262,7 +262,7 @@ server_common <-
           x
         }
       )
-    
+
     rsiccR <- #-------------custom rsi compute----
       eventReactive(
         list(
@@ -301,7 +301,7 @@ server_common <-
           x
         }
       )
-    
+
     rssaR <- #---------------area rss compute----
       eventReactive(
         nxaR(),
@@ -313,7 +313,7 @@ server_common <-
           x
         }
       )
-    
+
     rssccR <- # ------------custom rss select----
       eventReactive(
         list(
@@ -326,21 +326,21 @@ server_common <-
           x
         }
       )
-    
+
     rssR <- #-----------------------------rss----
       reactive({
         x <- copy(f241021ad$rss)
         rssG <<- copy(x)
         x
       })
-    
+
     tslideR <- # --------------control-slider----
       reactive({
         x <- input$tslider
         tslideG <<- copy(x)
         x
       })
-    
+
     ylimR <- #--------------------------ylim ----
       eventReactive(
         estdtxR(),
@@ -351,20 +351,20 @@ server_common <-
           x
         }
       )
-    
+
     z110R <- #---------------------------z110R----
       reactive({
         x <- copy(z110)
         z110G <<- copy(x)
         x
       })
-    
-    fgeoccX <- #------------custom geo compute----
-      function(rc6ccX = rc6ccG) {
-        x <-
-          data.table(rc9 = rc6ccX, nx = 0, lab = "CU00")
-        x
-      }
+
+    # fgeoccX <- #------------custom geo compute----
+    #   function(rc6ccX = rc6ccG) {
+    #     x <-
+    #       data.table(rc9 = rc6ccX, nx = 0, lab = "CU00")
+    #     x
+    #   }
 
     list( # ---------------------common list #----
       dfnxR = dfnxR,
