@@ -68,7 +68,7 @@ server_timeseries <- function(input, output, session, common) {
     x
   }
   x112D <- eventReactive( # ----------112 x(t)----
-    list(input$tslider, common$estdtxR(), common$ylimR()),
+    list(common$tslideR(), common$estdtxR(), common$ylimR()),
     {
       if (verbose) print("enter x112D")
       # browser()

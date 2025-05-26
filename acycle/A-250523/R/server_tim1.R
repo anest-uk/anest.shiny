@@ -28,6 +28,8 @@ server_tim1 <- function(input, output, session, common) {
       common$rc6tR()
     ),
     {
+      print('print f250509ed:')
+      print(f250509ed)
       x <- 
         f250509ed$estdt[lab==common$labxR()[1,lab]]%>%
         ggplot(., aes(date, x)) + geom_point()
@@ -83,6 +85,7 @@ server_tim1 <- function(input, output, session, common) {
       x
     }
   )
+  
   
   output$tim111 <- renderLeaflet(tim111D()) #---render----
   output$tim112 <- renderPlot(tim112D()) 
