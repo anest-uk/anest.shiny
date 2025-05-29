@@ -1,5 +1,15 @@
 #--------------functions
 
+# utility----
+sco <- function(x,namesonly=T){
+  x1 <- setcolorder(x, order(names(x)))
+  if(namesonly==T){
+    x1 <- x1%>%names(.)%>%c('{',.,'}')%>%paste0(.,collapse=' ')
+    
+  }
+  x1
+}
+
 # common----
 festdtxX <- function(estdtccX = estdtccG, estdtaX = estdtaG, geoccX = geoccG) {
   x <-
@@ -21,14 +31,14 @@ fgeoccX <- #------------custom geo compute----
 # timeseries
 
 f111D <- function( #-----------------------.#----
-                  rc6tX = rc6tG,
-                  rc6ccX = rc6ccG,
-                  geoaX = geoaG,
-                  pxosrdo2ddX = pxosrdo2ddG,
-                  z110X = z110G,
-                  colX = colx, # punk green blue
-                  minzoom = 9, # 7 for national
-                  lightx = .7 # higher is lighter
+                  rc6tX = rc6tG,                  #scalar: target rc6 that implicitly defines rc3
+                  rc6ccX = rc6ccG,                #vector: to outline
+                  geoaX = geoaG,                  #geo {nx    gx    lab    rc3    rc6 qtile} : shade by qtile this-rc3-geo
+                  pxosrdo2ddX = pxosrdo2ddG,      #global
+                  z110X = z110G,                  #global {rcx ppm2} : pva
+                  colX = colx,                    #global named vector : punk green blue 
+                  minzoom = 9,                    #7 for national
+                  lightx = .7                     #higher is lighter
 ) {
   x <-
     geoaX %>%
@@ -58,13 +68,15 @@ f111D <- function( #-----------------------.#----
       opacity = 1
     )
   x
-}
+} #"leaflet"  "htmlwidget"
+#geo non-standard adds: gx rc3 qtile; rc6 replaces rc9
 
 f112D <- function( #-----------------------.#----
-                  tslideX = tslideG,
-                  estdtxX = estdtxG,
-                  ylimX = ylimG,
-                  geoccX = geoccG) {
+                  tslideX = tslideG,              #integer: zero index
+                  estdtxX = estdtxG,              #estdt: nx date xdotd days xdot x lab  ii qtile rc3 qq
+                  ylimX = ylimG,                  #vector: ylim
+                  geoccX = geoccG)                #geo {rc9 nx lab}: custom 
+  {
   x2c <- estdtxX %>%
     .[, .SD[, .(ii, date, lab, x = x - ifelse(tslideX == 0, 0, x[tslideX]))], .(qtile)] %>%
     .[, .SD[, .(ii, date, lab, x)], .(qtile)] %>%
@@ -105,20 +117,23 @@ f112D <- function( #-----------------------.#----
       limits = c(as.Date(c("1994-12-31", "2027-12-31")))
     )
   x
-}
+} #"gg" "ggplot" 
+#estdtxX non-standard adds: lab, qtile rc3 qq=fctr
 
 f121D <- function( #-------------121 winding----
-                  estdtX = estdtlG,
-                  dfnxX = dfnxG,
+                  estdtX = estdtlG,               #estdt {date days ii lab nx qtile rc3 x xdot xdotd}
+                  dfnxX = dfnxG,                  #date {tbin1 tbin2 tbin3}
                   drangeX = range(dfnxxX),
-                  typeX = typeC, # L
-                  tbinX = tbinC,
-                  dfnxxX = dfnxX[-1, tbinC + 1, with = F] %>%
+                  typeX = typeC,                  #'L' always
+                  tbinX = tbinC,                  #'hi' always, tbinC=2 always
+                  dfnxxX =                        #drc dates excluding date0
+                    dfnxX[-1, tbinC + 1, with = F] %>% 
                     setnames(., "x") %>%
-                    .[, sort(unique(x))], # current tbin
-                  d2X = dfnxX[-1, tbinC + 2, with = F] %>%
+                    .[, sort(unique(x))], 
+                  d2X =                           #annual dates excluding date0
+                    dfnxX[-1, tbinC + 2, with = F] %>%
                     setnames(., "x") %>%
-                    .[, sort(unique(x))] # annual dates t>0
+                    .[, sort(unique(x))]          
 ) {
   d1 <- # daily
     seq.Date(from = drangeX[1], to = drangeX[2], by = "d")
@@ -143,12 +158,12 @@ f121D <- function( #-------------121 winding----
       footnote = f241108a(typeX, tbinX)[[2]]
     )
   x2
-}
+} 
 
 f122D <- function( # ----122 characteristics----
-                  rc6tX = rc6tG,
-                  rssaX = rssaG,
-                  rssccX = rssccG,
+                  rc6tX = rc6tG,                  #scalar: target
+                  rssaX = rssaG,                  #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for area
+                  rssccX = rssccG,                #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for custom geo
                   z110X = z110G) {
   rsscux <- copy(rssccX)[, lab := "CU000"] # R()
   f122 <- # combine rss and P characteristics
@@ -201,7 +216,7 @@ f122D <- function( # ----122 characteristics----
     )
   x122G <<- copy(x)
   x
-}
+}            #global {rcx ppm2} : pva
 
 f131D <- function( #-------------131 summary----
                   estdtxX = estdtxG,
@@ -230,7 +245,7 @@ f131D <- function( #-------------131 summary----
 }
 
 f132 <- function( #-------------------------.#----
-                 geox = geoqG,
+                 geox = geoqG,                    #estdt { gx lab nx qtile rc3 rc6 }
                  steprip = stepripG,
                  estdtlx = estdtlG, # only used for its date(ii) relation
                  tmin = 20) { # tmin=input$tslider

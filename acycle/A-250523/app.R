@@ -67,6 +67,7 @@ library(shiny)
       showtradetriangle <- F
 
       #       print('######################################################################## app.R global assign')
+      #this is done for debug purposes only: the LHS G globals are not used in the app; the app uses RHS as static, types
       f241021adG <<- f241021ad
       f250519adG <<- f250519ad
       pxosrdo2ddG <<- pxosrdo2dd
@@ -74,14 +75,14 @@ library(shiny)
       z110G <<- z110
       x101G <<- x101
 
-      # f250509ed #no
-      f241021ad # yes
-      f250519ad # yes
-      pxosrdo2dd # yes
-      f241229bd # yes
-      z110 # yes
-      x101 # yes
-      rm(f250509ed)
+      # # f250509ed #no
+      # f241021ad # yes
+      # f250519ad # yes
+      # pxosrdo2dd # yes
+      # f241229bd # yes
+      # z110 # yes
+      # x101 # yes
+      # rm(f250509ed)
 
     }
   }
