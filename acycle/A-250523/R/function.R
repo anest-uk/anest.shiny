@@ -16,7 +16,7 @@ festdtxX <- function(estdtccX = estdtccG, estdtaX = estdtaG, geoccX = geoccG) {
     rbind(
       estdtccX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
       estdtaX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile, rc3)]
-    )[, qq := as.factor(qtile)]
+    )#[, qq := as.factor(qtile)]
   x
 }
 
@@ -70,7 +70,7 @@ f111D <- function( #-----------------------.#----
   x
 } #"leaflet"  "htmlwidget"
 #geo non-standard adds: gx rc3 qtile; rc6 replaces rc9
-
+#qq
 f112D <- function( #-----------------------.#----
                   tslideX = tslideG,              #integer: zero index
                   estdtxX = estdtxG,              #estdt: nx date xdotd days xdot x lab  ii qtile rc3 qq
@@ -78,6 +78,7 @@ f112D <- function( #-----------------------.#----
                   geoccX = geoccG)                #geo {rc9 nx lab}: custom 
   {
   x2c <- estdtxX %>%
+    copy(.)%>%
     .[, .SD[, .(ii, date, lab, x = x - ifelse(tslideX == 0, 0, x[tslideX]))], .(qtile)] %>%
     .[, .SD[, .(ii, date, lab, x)], .(qtile)] %>%
     .[, qq := as.factor(qtile)] %>%
@@ -85,9 +86,12 @@ f112D <- function( #-----------------------.#----
   x0 <- setNames(cobalt()[c("punk", "green", "blue")], as.character(1:3))
   x3 <- estdtxX[, .SD[, .(ifelse(tslideX == 0, 0, x[tslideX]))], .(qtile)][, mean(V1)] # base value for rebase level
   x2 <-
-    estdtxX[, .SD[, .(ii, date, lab, x = x - ifelse(tslideX == 0, 0, x[tslideX]))], .(qtile)] %>%
+    estdtxX%>%
+    copy(.)%>%
+    .[, .SD[, .(ii, date, lab, x = x - ifelse(tslideX == 0, 0, x[tslideX]))], .(qtile)] %>%
     .[, qq := as.factor(qtile)] %>%
     .[, labx := ifelse(date == max(date), lab, "")]
+  #browser()
   x <- x2 %>%
     ggplot(., aes(date, x, color = qq, label = labx)) +
     geom_hline(yintercept = 0, linewidth = .4, linetype = "dotted", color = "grey40") +

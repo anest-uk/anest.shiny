@@ -25,13 +25,15 @@ server_common <-
     estdtaR <- #---------- area estdt compute----
       eventReactive(
         list(
-          nxaR(),
-          estdtR()
+          nxaR()#,
+          #estdtR()
         ),
         {
           if (verbose) print("enter estdtaR")
           x <-
-            estdtR()[nxaR(), on = c(nx = "nx")] %>%
+            copy(f241021adG$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]%>%
+            .[nxaR(), on = c(nx = "nx")] %>%
+            #estdtR()[nxaR(), on = c(nx = "nx")] %>%
             .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
           estdtaG <<- copy(x)
           x
@@ -57,34 +59,37 @@ server_common <-
         {
           if (verbose) print("enter estdtlR")
           x <-
-            estdtR()[nxqR(), on = c(nx = "nx")] %>%
+            copy(f241021adG$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]%>%
+            .[nxqR(), on = c(nx = "nx")] %>%
+            #estdtR()[nxqR(), on = c(nx = "nx")] %>%
             .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
           estdtlG <<- copy(x)
           x
         }
       )
 
-    estdtlnewR <- #------local estdt compute  ----
-      eventReactive(
-        nxqR(),
-        {
-          if (verbose) print("enter estdtlnewR")
-          x <-
-            copy(f250509ed$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)] %>%
-            .[nxqR(), on = c(nx = "nx")] %>%
-            .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
-          estdtlnewG <<- copy(x)
-          x
-        }
-      )
+    # estdtlnewR <- #------local estdt compute  ----
+    #   eventReactive(
+    #     nxqR(),
+    #     {
+    #       if (verbose) print("enter estdtlnewR")
+    #       x <-
+    #         copy(f250509ed$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)] %>%
+    #         .[nxqR(), on = c(nx = "nx")] %>%
+    #         .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
+    #       estdtlnewG <<- copy(x)
+    #       x
+    #     }
+    #   )
 
-    estdtR <- #-------------------------estdtR----
-      reactive({
-        x <- copy(f241021adG$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]
-        # x <- copy(f250509ed$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]
-        estdtG <<- copy(x)
-        x
-      })
+    # estdtR <- #-------------------------estdtR----
+    #   reactive({
+    #     print('**********************************************************************************************')
+    #     x <- copy(f241021adG$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]
+    #     # x <- copy(f250509ed$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]
+    #     estdtG <<- copy(x)
+    #     x
+    #   })
 
     estdtxR <- #---------------------112 x(t)----
       eventReactive(
@@ -107,33 +112,49 @@ server_common <-
         }
       )
 
-    geo0R <- #----------------------------geo0----
-      reactive({
-        x <-
-          geoplusR() %>%
-          .[type == "L"] %>%
-          .[itrim == itriC] %>%
-          .[tbin == tbinC] %>%
-          .[, .(
-            nx,
-            gx,
-            lab = des,
-            rc6 = rc9,
-            rc3 = substr(rc9, 1, 3),
-            qtile = as.numeric(substr(des, 4, 4))
-          )] %>%
-          z110R()[., on = c(rcx = "rc6")] %>%
-          .[, .(nx, gx, lab, rc3, rc6 = rcx, qtile)]
-        geo0G <<- copy(x)
-        x
-      })
+    # geo0R <- #----------------------------geo0----
+    #   reactive({
+    #     print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<geo0')
+    #     x <-
+    #       copy(f241021adG$geoplus)%>%
+    #       .[type == "L"] %>%
+    #       .[itrim == itriC] %>%
+    #       .[tbin == tbinC] %>%
+    #       .[, .(
+    #         nx,
+    #         gx,
+    #         lab,
+    #         rc6 = rc9,
+    #         rc3 = substr(rc9, 1, 3),
+    #         qtile = as.numeric(substr(des, 4, 4))
+    #       )] %>%
+    #       z110R()[., on = c(rcx = "rc6")] %>%
+    #       .[, .(nx, gx, lab, rc3, rc6 = rcx, qtile)]
+    #     geo0G <<- copy(x)
+    #     x
+    #   })
 
     geoaR <- #----------------area geo compute----
       eventReactive(
         rc6tR(),
         {
           if (verbose) print("enter geoaR")
-          x <- geo0R() %>%
+          x <-
+          copy(f241021adG$geoplus)%>%
+          .[type == "L"] %>%
+          .[itrim == itriC] %>%
+          .[tbin == tbinC] %>%
+          .[, .(
+            nx,
+            gx,
+            lab,
+            rc6 = rc9,
+            rc3 = substr(rc9, 1, 3),
+            qtile = as.numeric(substr(des, 4, 4))
+          )] %>%
+          z110R()[., on = c(rcx = "rc6")] %>%
+          .[, .(nx, gx, lab, rc3, rc6 = rcx, qtile)]%>%
+          #x <- geo0R() %>%
             .[rc3 == substr(rc6tR(), 1, 3)]
           geoaG <<- copy(x)
           x
@@ -152,12 +173,12 @@ server_common <-
         }
       )
 
-    geoplusR <- #----------------------geoplus----
-      reactive({
-        x <- copy(f241021adG$geoplus)[, let(lab, des)]
-        geoplusG <<- copy(x)
-        x
-      })
+    # geoplusR <- #----------------------geoplus----
+    #   reactive({
+    #     x <- copy(f241021adG$geoplus)[, let(lab, des)]
+    #     geoplusG <<- copy(x)
+    #     x
+    #   })
 
     geoqR <- #----------------qtile geo select----
       eventReactive(
@@ -273,7 +294,8 @@ server_common <-
           geox <- isolate(geoccR())
           dfnx <- isolate(dfnxxR()) # source of truth
           rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
-          rc6valid <- isolate(geo0R()[, rc6])
+          #rc6valid <- isolate(geo0R()[, rc6])
+          rc6valid <- f241021adG$geoplus[,unique(rc9)]
           if (
             (irregpcode(regpcode(rc6tx)) == rc6tx) &
               (nchar(regpcode(rc6tx)) == 6) &
@@ -372,13 +394,13 @@ server_common <-
       estdtaR = estdtaR,
       estdtccR = estdtccR,
       estdtlR = estdtlR,
-      estdtlnewR = estdtlnewR,
-      estdtR = estdtR,
+      #estdtlnewR = estdtlnewR,
+      #estdtR = estdtR,
       estdtxR = estdtxR,
-      geo0R = geo0R,
+      #geo0R = geo0R,
       geoaR = geoaR,
       geoccR = geoccR,
-      geoplusR = geoplusR,
+      #geoplusR = geoplusR,
       geoqR = geoqR,
       geotR = geotR,
       labxR = labxR,
