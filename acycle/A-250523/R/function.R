@@ -11,7 +11,8 @@ sco <- function(x,namesonly=T){
 }
 
 # common----
-festdtxX <- function(estdtccX = estdtccG, estdtaX = estdtaG, geoccX = geoccG) {
+festdtxX <- #------------rbind estdtcc,estdta----
+  function(estdtccX = estdtccG, estdtaX = estdtaG, geoccX = geoccG) {
   x <-
     rbind(
       estdtccX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
@@ -69,8 +70,7 @@ f111D <- function( #-----------------------.#----
     )
   x
 } #"leaflet"  "htmlwidget"
-#geo non-standard adds: gx rc3 qtile; rc6 replaces rc9
-#qq
+
 f112D <- function( #-----------------------.#----
                   tslideX = tslideG,              #integer: zero index
                   estdtxX = estdtxG,              #estdt: nx date xdotd days xdot x lab  ii qtile rc3 qq
@@ -91,7 +91,6 @@ f112D <- function( #-----------------------.#----
     .[, .SD[, .(ii, date, lab, x = x - ifelse(tslideX == 0, 0, x[tslideX]))], .(qtile)] %>%
     .[, qq := as.factor(qtile)] %>%
     .[, labx := ifelse(date == max(date), lab, "")]
-  #browser()
   x <- x2 %>%
     ggplot(., aes(date, x, color = qq, label = labx)) +
     geom_hline(yintercept = 0, linewidth = .4, linetype = "dotted", color = "grey40") +
@@ -122,7 +121,6 @@ f112D <- function( #-----------------------.#----
     )
   x
 } #"gg" "ggplot" 
-#estdtxX non-standard adds: lab, qtile rc3 qq=fctr
 
 f121D <- function( #-------------121 winding----
                   estdtX = estdtlG,               #estdt {date days ii lab nx qtile rc3 x xdot xdotd}
@@ -392,17 +390,6 @@ f211D <- #---summary called in both listings ----
       .[data.table(date = ddd[-1], i = 1:(length(ddd) - 1)), on = c(date = "date")] %>% # dfnG is all dates, all frequencies
       dcast(., date + i + lab ~ nh, value.var = "cum") %>% #
       .[order(date), .(date, t = i, lab, NF, NH, UF, UH)]
-    #
-    # browser()
-    #
-    #
-    # browser()
-    # fread(fpx) %>% #250520 remove dependency on dfnxxX
-    # .[geoqX[, .(rc6, lab)], on = c(rc6 = "rc6")] %>%
-    # .[, .(cum = sum(cum)), .(lab, nh, date)] %>%
-    # .[data.table(date = dfnxxX[-1], i = 1:(length(dfnxxX) - 1)), on = c(date = "date")] %>% # dfnG is all dates, all frequencies
-    # dcast(., date + i + lab ~ nh, value.var = "cum") %>% #
-    # .[order(date), .(date, t = i, lab, NF, NH, UF, UH)]
 
     x2 <-
       estdtlX %>%
@@ -487,11 +474,6 @@ f211D <- #---summary called in both listings ----
     x211G <<- copy(x)
     x
   }
-
-
-
-
-
 
 # constituent----
 f311D <- function( #--'----311 constituents----
