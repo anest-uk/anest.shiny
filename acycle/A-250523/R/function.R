@@ -35,8 +35,8 @@ f111D <- function( #-----------------------.#----
                   rc6tX = rc6tG,                  #scalar: target rc6 that implicitly defines rc3
                   rc6ccX = rc6ccG,                #vector: to outline
                   geoaX = geoaG,                  #geo {nx    gx    lab    rc3    rc6 qtile} : shade by qtile this-rc3-geo
-                  pxosrdo2ddX = pxosrdo2ddG,      #global
-                  z110X = z110G,                  #global {rcx ppm2} : pva
+                  pxosrdo2ddX = pxosrdo2dd,      #global
+                  z110X = z110,                  #global {rcx ppm2} : pva
                   colX = colx,                    #global named vector : punk green blue 
                   minzoom = 9,                    #7 for national
                   lightx = .7                     #higher is lighter
@@ -166,7 +166,7 @@ f122D <- function( # ----122 characteristics----
                   rc6tX = rc6tG,                  #scalar: target
                   rssaX = rssaG,                  #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for area
                   rssccX = rssccG,                #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for custom geo
-                  z110X = z110G) {
+                  z110X = z110) {
   rsscux <- copy(rssccX)[, lab := "CU000"] # R()
   f122 <- # combine rss and P characteristics
     function(rssx, z110X) {
@@ -278,8 +278,8 @@ f132D <- function( # ---132 trade summary(2)----
                   tslideX = tslideG,
                   geoqX = geoqG,
                   geoccX = geoccG,
-                  estdtlX = estdtlG) {
-  steprip <- stepripG
+                  estdtlX = estdtlG,
+                  steprip = stepripG) {
   tminx <- tslideX
   x1 <- f132(
     geox = geoqX, # geoqR()
@@ -478,7 +478,7 @@ f211D <- #---summary called in both listings ----
 # constituent----
 f311D <- function( #--'----311 constituents----
                   geo0X = geo0G,
-                  z110X = z110G,
+                  z110X = z110,
                   rc6tX = rc6tG) {
   if (verbose) print("enter 311")
   x1 <-

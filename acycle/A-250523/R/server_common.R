@@ -5,7 +5,7 @@ server_common <-
     dfnxR <- # -----------4-col table with NA----
       reactive({
         x <-
-          dcast(f241021adG$estdt[, .(tbin, date)] %>% unique(.) %>% .[order(tbin, date)], date ~ tbin, value.var = "date") %>% # lo, hi, an
+          dcast(f241021ad$estdt[, .(tbin, date)] %>% unique(.) %>% .[order(tbin, date)], date ~ tbin, value.var = "date") %>% # lo, hi, an
           rbind(as.data.table(as.list(rep(as.Date("1994-12-31"), 4))), ., use.names = F) %>%
           setnames(., c("date", "tbin1", "tbin2", "tbin3"))
         dfnxG <<- copy(x)
@@ -31,7 +31,7 @@ server_common <-
     #     {
     #       if (verbose) print("enter estdtaR")
     #       x <-
-    #         copy(f241021adG$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]%>%
+    #         copy(f241021ad$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]%>%
     #         .[nxaR(), on = c(nx = "nx")] %>%
     #         #estdtR()[nxaR(), on = c(nx = "nx")] %>%
     #         .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
@@ -59,7 +59,7 @@ server_common <-
         {
           if (verbose) print("enter estdtlR")
           x <-
-            copy(f241021adG$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]%>%
+            copy(f241021ad$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]%>%
             .[nxqR(), on = c(nx = "nx")] %>%
             #estdtR()[nxqR(), on = c(nx = "nx")] %>%
             .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
@@ -92,7 +92,7 @@ server_common <-
         {
           if (verbose) print("enter geoaR")
           x <-
-          copy(f241021adG$geoplus)%>%
+          copy(f241021ad$geoplus)%>%
           .[type == "L"] %>%
           .[itrim == itriC] %>%
           .[tbin == tbinC] %>%
@@ -104,7 +104,8 @@ server_common <-
             rc3 = substr(rc9, 1, 3),
             qtile = as.numeric(substr(des, 4, 4))
           )] %>%
-          z110R()[., on = c(rcx = "rc6")] %>%
+          #z110R()[., on = c(rcx = "rc6")] %>%
+          z110[., on = c(rcx = "rc6")] %>%
           .[, .(nx, gx, lab, rc3, rc6 = rcx, qtile)]%>%
             .[rc3 == substr(rc6tR(), 1, 3)]
           geoaG <<- copy(x)
@@ -199,12 +200,12 @@ server_common <-
         }
       )
 
-    pxosrdo2ddR <- #---------------pxosrdo2dd----
-      reactive({
-        x <- copy(pxosrdo2dd)
-        pxosrdo2ddG <<- copy(x)
-        x
-      })
+    # pxosrdo2ddR <- #---------------pxosrdo2dd----
+    #   reactive({
+    #     x <- copy(pxosrdo2dd)
+    #     pxosrdo2ddG <<- copy(x)
+    #     x
+    #   })
 
     rc6ccR <- #-------------custom rc6 control----
       eventReactive(
@@ -239,7 +240,7 @@ server_common <-
           geox <- isolate(geoccR())
           dfnx <- isolate(dfnxxR()) # source of truth
           rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
-          rc6valid <- f241021adG$geoplus[,unique(rc9)]
+          rc6valid <- f241021ad$geoplus[,unique(rc9)]
           if (
             (irregpcode(regpcode(rc6tx)) == rc6tx) &
               (nchar(regpcode(rc6tx)) == 6) &
@@ -318,12 +319,12 @@ server_common <-
         }
       )
 
-    z110R <- #---------------------------z110R----
-      reactive({
-        x <- copy(z110)
-        z110G <<- copy(x)
-        x
-      })
+    # z110R <- #---------------------------z110R----
+    #   reactive({
+    #     x <- copy(z110)
+    #     z110G <<- copy(x)
+    #     x
+    #   })
 
 
     list( # ---------------------common list #----
@@ -340,7 +341,7 @@ server_common <-
       labxR = labxR,
       nxaR = nxaR,
       nxqR = nxqR,
-      pxosrdo2ddR = pxosrdo2ddR,
+      #pxosrdo2ddR = pxosrdo2ddR,
       rc6ccR = rc6ccR,
       rc6tR = rc6tR,
       rsiccR = rsiccR,
@@ -348,7 +349,7 @@ server_common <-
       rssccR = rssccR,
       rssR = rssR,
       tslideR = tslideR,
-      ylimR = ylimR,
-      z110R = z110R
+      ylimR = ylimR#,
+      #z110R = z110R
     )
   }

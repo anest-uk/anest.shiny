@@ -3,9 +3,9 @@ server_timeseries <- function(input, output, session, common) {
     list(
       common$rc6tR(),
       common$rc6ccR(),
-      common$geoaR(),
-      common$pxosrdo2ddR(),
-      common$z110R()
+      common$geoaR()#,
+      #common$pxosrdo2ddR(),
+      #common$z110R()
     ),
     {
       if (verbose) {
@@ -15,8 +15,8 @@ server_timeseries <- function(input, output, session, common) {
         rc6tX = common$rc6tR(),
         rc6ccX = common$rc6ccR(),
         geoaX = common$geoaR(),
-        pxosrdo2ddX = common$pxosrdo2ddR(),
-        z110X = common$z110R(),
+        pxosrdo2ddX = pxosrdo2dd, #common$pxosrdo2ddR(),
+        z110X = z110,#common$z110R(),
         colX = colx # punk green blue
       )
       x111G <<- copy(x)
@@ -67,14 +67,14 @@ server_timeseries <- function(input, output, session, common) {
 
 
   x122D <- eventReactive( #------------------.#----
-    list(common$rc6tR(), common$rssaR(), common$rssccR(), common$z110R()),
+    list(common$rc6tR(), common$rssaR(), common$rssccR()), #, common$z110R()
     {
       if (verbose) print("enter x122D")
       x <- f122D(
         rc6tX = common$rc6tR(),
         rssaX = common$rssaR(),
         rssccX = common$rssccR(),
-        z110X = common$z110R()
+        z110X = z110#common$z110R()
       )
       x122G <<- copy(x)
       if (verbose) print("exit x122D")
