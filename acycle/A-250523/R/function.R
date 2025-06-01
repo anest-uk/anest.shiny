@@ -46,8 +46,8 @@ f111D <- function( #-----------------------.#----
     .[, .(
       rc6,
       col = lighten(colX, lightx)[.BY[[1]]], ### capital in colX <<<<
-      qtile, # shade tiles light
-      lab
+      #lab,
+      qtile # shade tiles light
     ), by = .(qtile)] %>%
     .[
       rc6 == rc6tX, # with target district darker
@@ -184,7 +184,7 @@ f122D <- function( # ----122 characteristics----
         ] %>%
         .[rssx[, .(R2rsi = 1 - sum(ssek) / sum(sstr)), lab], on = c(lab = "lab")] %>%
         .[, .(
-          lab = substr(lab, 1, 4),
+          lab = substr(lab, 1, 5),
           frac,
           R2rsi = round(R2rsi, 3),
           pnum = p,
