@@ -10,20 +10,20 @@ sco <- function(x,namesonly=T){
 }
 
 # common----
-festdtxX <- #------------rbind estdtcc,estdta----
-  function(estdtccX = estdtccG, estdtaX = estdtaG, geoccX = geoccG) {
+festdtxx <- #------------rbind estdtcc,estdta----
+  function(estdtccx = estdtccG, estdtax = estdtaG, geoccx = geoccG) {
   x <-
     rbind(
-      estdtccX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
-      estdtaX[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile, rc3)]
+      estdtccx[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
+      estdtax[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile, rc3)]
     )#[, qq := as.factor(qtile)]
   x
 }
 
-fgeoccX <- #------------custom geo compute----
-  function(rc6ccX = rc6ccG) {
+fgeoccx <- #------------custom geo compute----
+  function(rc6ccx = rc6ccG) {
     x <-
-      data.table(rc9 = rc6ccX, nx = 0, lab = "CU00")
+      data.table(rc9 = rc6ccx, nx = 0, lab = "CU00")
     x
   }
 
@@ -31,37 +31,37 @@ fgeoccX <- #------------custom geo compute----
 # timeseries
 
 f111D <- function( #-----------------------.#----
-                  rc6tX = rc6tG,                  #scalar: target rc6 that implicitly defines rc3
-                  rc6ccX = rc6ccG,                #vector: to outline
-                  geoaX = geoaG,                  #geo {nx    gx    lab    rc3    rc6 qtile} : shade by qtile this-rc3-geo
-                  pxosrdo2ddX = pxosrdo2dd,      #global
-                  z110X = z110,                  #global {rcx ppm2} : pva
-                  colX = colx,                    #global named vector : punk green blue 
+                  rc6tx = rc6tG,                  #scalar: target rc6 that implicitly defines rc3
+                  rc6ccx = rc6ccG,                #vector: to outline
+                  geoax = geoaG,                  #geo {nx    gx    lab    rc3    rc6 qtile} : shade by qtile this-rc3-geo
+                  pxosrdo2ddx = pxosrdo2dd,      #global
+                  z110x = z110,                  #global {rcx ppm2} : pva
+                  colx = colx,                    #global named vector : punk green blue 
                   minzoom = 9,                    #7 for national
                   lightx = .7                     #higher is lighter
 ) {
   x <-
-    geoaX %>%
+    geoax %>%
     .[, .(
       rc6,
-      col = lighten(colX, lightx)[.BY[[1]]], ### capital in colX <<<<
+      col = lighten(colx, lightx)[.BY[[1]]], ### capital in colx <<<<
       #lab,
       qtile # shade tiles light
     ), by = .(qtile)] %>%
     .[
-      rc6 == rc6tX, # with target district darker
-      col := colX[.BY[[1]]],
+      rc6 == rc6tx, # with target district darker
+      col := colx[.BY[[1]]],
       by = .(qtile)
     ] %>%
     f240810b( #->leaflet, colours for areas-to-shade in column 'col'
       .,
-      x2 = pxosrdo2ddX,
-      pva = z110X,
+      x2 = pxosrdo2ddx,
+      pva = z110x,
       minzoom = minzoom,
       maxzoom = 12
     ) %>%
     addPolygons( # outline custom districts
-      data = pxosrdo2ddX[which(pxosrdo2ddX@data$name %in% irregpcode(rc6ccX)), ],
+      data = pxosrdo2ddx[which(pxosrdo2ddx@data$name %in% irregpcode(rc6ccx)), ],
       fill = F,
       color = "orange",
       weight = 1,
@@ -71,23 +71,23 @@ f111D <- function( #-----------------------.#----
 } #"leaflet"  "htmlwidget"
 
 f112D <- function( #-----------------------.#----
-                  tslideX = tslideG,              #integer: zero index
-                  estdtxX = estdtxG,              #estdt: nx date xdotd days xdot x lab  ii qtile rc3 qq
-                  ylimX = ylimG,                  #vector: ylim
-                  geoccX = geoccG)                #geo {rc9 nx lab}: custom 
+                  tslidex = tslideG,              #integer: zero index
+                  estdtxx = estdtxG,              #estdt: nx date xdotd days xdot x lab  ii qtile rc3 qq
+                  ylimx = ylimG,                  #vector: ylim
+                  geoccx = geoccG)                #geo {rc9 nx lab}: custom 
   {
-  x2c <- estdtxX %>%
+  x2c <- estdtxx %>%
     copy(.)%>%
-    .[, .SD[, .(ii, date, lab, x = x - ifelse(tslideX == 0, 0, x[tslideX]))], .(qtile)] %>%
+    .[, .SD[, .(ii, date, lab, x = x - ifelse(tslidex == 0, 0, x[tslidex]))], .(qtile)] %>%
     .[, .SD[, .(ii, date, lab, x)], .(qtile)] %>%
     .[, qq := as.factor(qtile)] %>%
     .[, labx := ifelse(date == max(date), lab, NA)]
   x0 <- setNames(cobalt()[c("punk", "green", "blue")], as.character(1:3))
-  x3 <- estdtxX[, .SD[, .(ifelse(tslideX == 0, 0, x[tslideX]))], .(qtile)][, mean(V1)] # base value for rebase level
+  x3 <- estdtxx[, .SD[, .(ifelse(tslidex == 0, 0, x[tslidex]))], .(qtile)][, mean(V1)] # base value for rebase level
   x2 <-
-    estdtxX%>%
+    estdtxx%>%
     copy(.)%>%
-    .[, .SD[, .(ii, date, lab, x = x - ifelse(tslideX == 0, 0, x[tslideX]))], .(qtile)] %>%
+    .[, .SD[, .(ii, date, lab, x = x - ifelse(tslidex == 0, 0, x[tslidex]))], .(qtile)] %>%
     .[, qq := as.factor(qtile)] %>%
     .[, labx := ifelse(date == max(date), lab, "")]
   x <- x2 %>%
@@ -96,8 +96,8 @@ f112D <- function( #-----------------------.#----
     geom_line() +
     geom_point(size = .3) +
     geom_text_repel() +
-    # ylim(ylimX - x3) +
-    labs(caption = geoccX[, paste0("Custom districts: ", paste0(sort(irregpcode(rc9)), collapse = ", "))]) +
+    # ylim(ylimx - x3) +
+    labs(caption = geoccx[, paste0("Custom districts: ", paste0(sort(irregpcode(rc9)), collapse = ", "))]) +
     xlab("") +
     ylab(bquote(Delta ~ P ~ log ~ price ~ change)) +
     theme_bw() +
@@ -122,40 +122,40 @@ f112D <- function( #-----------------------.#----
 } #"gg" "ggplot" 
 
 f121D <- function( #-------------121 winding----
-                  estdtX = estdtlG,               #estdt {date days ii lab nx qtile rc3 x xdot xdotd}
-                  dfnxX = dfnxG,                  #date {tbin1 tbin2 tbin3}
-                  drangeX = range(dfnxxX),
-                  typeX = typeC,                  #'L' always
-                  tbinX = tbinC,                  #'hi' always, tbinC=2 always
-                  # dfnxxX =                        #drc dates excluding date0
-                  #   dfnxX[-1, tbinC + 1, with = F] %>% 
+                  estdtx = estdtlG,               #estdt {date days ii lab nx qtile rc3 x xdot xdotd}
+                  dfnxx = dfnxG,                  #date {tbin1 tbin2 tbin3}
+                  drangex = range(dfnxxx),
+                  typex = typeC,                  #'L' always
+                  tbinx = tbinC,                  #'hi' always, tbinC=2 always
+                  # dfnxxx =                        #drc dates excluding date0
+                  #   dfnxx[-1, tbinC + 1, with = F] %>% 
                   #   setnames(., "x") %>%
                   #   .[, sort(unique(x))], 
-                  # d2X =                           #annual dates excluding date0
-                  #   dfnxX[-1, tbinC + 2, with = F] %>%
+                  # d2x =                           #annual dates excluding date0
+                  #   dfnxx[-1, tbinC + 2, with = F] %>%
                   #   setnames(., "x") %>%
                   #   .[, sort(unique(x))]          
-                  dfnxxX =                        #drc dates excluding date0
-                    dfnxX[, tbinC + 1, with = F] %>% 
+                  dfnxxx =                        #drc dates excluding date0
+                    dfnxx[, tbinC + 1, with = F] %>% 
                     setnames(., "x") %>%
                     .[, sort(unique(x))], 
-                  d2X =                           #annual dates excluding date0
-                    dfnxX[, tbinC + 2, with = F] %>%
+                  d2x =                           #annual dates excluding date0
+                    dfnxx[, tbinC + 2, with = F] %>%
                     setnames(., "x") %>%
                     .[, sort(unique(x))]          
 ) {
   d1 <- # daily
-    seq.Date(from = drangeX[1], to = drangeX[2], by = "d")
-  d2X <- 
-    seq.Date(from = drangeX[1], to = drangeX[2], by = "y")%>%
+    seq.Date(from = drangex[1], to = drangex[2], by = "d")
+  d2x <- 
+    seq.Date(from = drangex[1], to = drangex[2], by = "y")%>%
     .[-1]%>% #remove d0
-    c(.,drangeX[2])%>% #add dmax
+    c(.,drangex[2])%>% #add dmax
     unique(.)
   x1 <-
-    estdtX %>% # local
+    estdtx %>% # local
     .[.(date = d1), on = c(date = "date"), roll = -Inf, j = .(date, xdotd)] %>%
     .[, .(ii = 1:.N, date, x = cumsum(xdotd))] %>%
-    .[.(date2 = d2X), on = c(date = "date2")] %>%
+    .[.(date2 = d2x), on = c(date = "date2")] %>%
     .[, .(date, x, xdot = c(x[1], diff(x)), ii = 1:.N)] %>%
     .[, .(ii, date, xdot, x)] %>%
     .[, .(date, xdot)] %>%
@@ -167,20 +167,20 @@ f121D <- function( #-------------121 winding----
   for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
   x2 <- gt::gt(x1) %>%
     gt::tab_footnote(
-      footnote = f241108a(typeX, tbinX)[[1]]
+      footnote = f241108a(typex, tbinx)[[1]]
     ) %>%
     gt::tab_footnote(
-      footnote = f241108a(typeX, tbinX)[[2]]
+      footnote = f241108a(typex, tbinx)[[2]]
     )
   x2
 } 
 f122 <- # combine rss and P characteristics
-  function(rssx, z110X) {
+  function(rssx, z110x) {
     x0 <-
-      z110X[rssx, on = c(rcx = "rc6")] %>%
+      z110x[rssx, on = c(rcx = "rc6")] %>%
       .[
         , .(
-          frac = round(sum(nid) / z110X[nchar(rcx) == 6, sum(nid)], nfig3),
+          frac = round(sum(nid) / z110x[nchar(rcx) == 6, sum(nid)], nfig3),
           nid = sum(nid),
           ppm2max = round(max(ppm2), nfig2),
           ppm2min = round(min(ppm2), nfig2),
@@ -200,13 +200,13 @@ f122 <- # combine rss and P characteristics
   }
 
 f122D <- function( # ----122 characteristics----
-                  rc6tX = rc6tG,                  #scalar: target
-                  rssaX = rssaG,                  #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for area
-                  rssccX = rssccG,                #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for custom geo
-                  z110X = z110) {
-  rsscux <- copy(rssccX)[, lab := "CU000"] # R()
-  x0 <- f122(rssx = rsscux, z110X = z110X)
-  x1 <- f122(rssx = rssaX, z110X = z110X)
+                  rc6tx = rc6tG,                  #scalar: target
+                  rssax = rssaG,                  #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for area
+                  rssccx = rssccG,                #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for custom geo
+                  z110x = z110) {
+  rsscux <- copy(rssccx)[, lab := "CU000"] # R()
+  x0 <- f122(rssx = rsscux, z110x = z110x)
+  x1 <- f122(rssx = rssax, z110x = z110x)
   x2 <-
     rbind(x1, x0)[order(-pnum)][, -"pnum"]
   x <-
@@ -234,15 +234,15 @@ f122D <- function( # ----122 characteristics----
 }            #global {rcx ppm2} : pva
 
 f131D <- function( #-------------131 summary----
-                  estdtxX = estdtxG,
-                  tslideX = tslideG) {
+                  estdtxx = estdtxG,
+                  tslidex = tslideG) {
   x <-
-    estdtxX %>%
-    .[ii >= tslideX] %>%
+    estdtxx %>%
+    .[ii >= tslidex] %>%
     dcast(., ii ~ lab, value.var = "xdot") %>%
     .[, -"ii"] %>%
     as.matrix(.) %>%
-    zoo(., estdtxX[, sort(unique(date))]) %>%
+    zoo(., estdtxx[, sort(unique(date))]) %>%
     table.Stats(., digits = 3) %>%
     data.table(., keep.rownames = T) %>%
     `[`(., i = -c(1, 2, 7, 11, 12, 13)) %>%
@@ -288,22 +288,22 @@ f132 <- function( #-------------------------.#----
 }
 
 f132D <- function( # ---132 trade summary(2)----
-                  tslideX = tslideG,
-                  geoqX = geoqG,
-                  geoccX = geoccG,
-                  estdtlX = estdtlG,
+                  tslidex = tslideG,
+                  geoqx = geoqG,
+                  geoccx = geoccG,
+                  estdtlx = estdtlG,
                   steprip = stepripG) {
-  tminx <- tslideX
+  tminx <- tslidex
   x1 <- f132(
-    geox = geoqX, # geoqR()
+    geox = geoqx, # geoqR()
     steprip = steprip,
-    estdtlx = estdtlX, # estdtlR()
+    estdtlx = estdtlx, # estdtlR()
     tmin = tminx # tmin=input$tslider
   )
   x2 <- f132(
-    geox = geoccX[, .(rc6 = rc9)], # geoqR()
+    geox = geoccx[, .(rc6 = rc9)], # geoqR()
     steprip = steprip,
-    estdtlx = estdtlX, # estdtlR()
+    estdtlx = estdtlx, # estdtlR()
     tmin = tminx # tmin=input$tslider
   )
   x <- list(
@@ -387,10 +387,10 @@ f132 <- function( #-----132 trade summary(2)----
 
 # listing----
 f211D <- #---summary called in both listings ----
-  function(estdtlX = common$estdtlR(), # single
-           geoqX = common$geoqR(), # footnote only 'this qtile'
-           dfnxxX = common$dfnxxR(), # single
-           typeX = typeC) {
+  function(estdtlx = common$estdtlR(), # single
+           geoqx = common$geoqR(), # footnote only 'this qtile'
+           dfnxxx = common$dfnxxR(), # single
+           typex = typeC) {
     if (verbose) print("enter x211D")
     # fread("data/f241122ad.csv") %>%
     fpx <- file.path(data_dirG, "f241122ad.csv")
@@ -398,14 +398,14 @@ f211D <- #---summary called in both listings ----
     ddd <- fread(fpx)[, sort(unique(date))]
     x1 <-
       fread(fpx) %>%
-      .[geoqX[, .(rc6, lab)], on = c(rc6 = "rc6")] %>%
+      .[geoqx[, .(rc6, lab)], on = c(rc6 = "rc6")] %>%
       .[, .(cum = sum(cum)), .(lab, nh, date)] %>%
       .[data.table(date = ddd[-1], i = 1:(length(ddd) - 1)), on = c(date = "date")] %>% # dfnG is all dates, all frequencies
       dcast(., date + i + lab ~ nh, value.var = "cum") %>% #
       .[order(date), .(date, t = i, lab, NF, NH, UF, UH)]
 
     x2 <-
-      estdtlX %>%
+      estdtlx %>%
       .[, .(t = c(0, ii), days = c(NA, days), date = c(date[1] - days[1], date), xdot = c(NA, xdot), x = c(0, x))] %>%
       x1[., on = c(t = "t")] %>%
       .[1, let(NF, 0)] %>%
@@ -434,16 +434,16 @@ f211D <- #---summary called in both listings ----
         perday = round(tot / days, 1)
       )]
     x3 <- # districts footnote
-      geoqX[
+      geoqx[
         , paste0("Districts: ", paste0(sort(irregpcode(rc6)), collapse = ", "))
       ]
     x <-
       gt::gt(x2) %>%
       gt::tab_footnote(
-        footnote = f241108a(typeX, tbinC)[[1]]
+        footnote = f241108a(typex, tbinC)[[1]]
       ) %>%
       gt::tab_footnote(
-        footnote = f241108a(typeX, tbinC)[[2]],
+        footnote = f241108a(typex, tbinC)[[2]],
         locations = NULL,
         placement = c("auto", "right", "left")
       ) %>%
@@ -490,19 +490,19 @@ f211D <- #---summary called in both listings ----
 
 # constituent----
 f311D <- function( #--'----311 constituents----
-                  geo0X = geo0G,
-                  z110X = z110,
-                  rc6tX = rc6tG) {
+                  geo0x = geo0G,
+                  z110x = z110,
+                  rc6tx = rc6tG) {
   if (verbose) print("enter 311")
   x1 <-
-    geo0X[, .(rc3, rc6, qtile)] %>%
-    z110X[., on = c(rcx = "rc6")] %>%
+    geo0x[, .(rc3, rc6, qtile)] %>%
+    z110x[., on = c(rcx = "rc6")] %>%
     .[, .(rc3, rc6 = rcx, nid, ppm2 = round(ppm2), quantile = paste0("local-", qtile))]
   x <-
     DT::datatable(
       x1,
       options = list(
-        search = list(search = rc6tX),
+        search = list(search = rc6tx),
         columnDefs = list(list(className = "dt-center", targets = 1:4, searchable = F, targets = 3:5)),
         paging = T,
         pageLength = 100,
@@ -522,22 +522,22 @@ f311D <- function( #--'----311 constituents----
 # accuracy----
 
 f411D <- function( #-------411 accuracy tbin----
-                  geoqX = geoqG,
-                  rc6tX = rc6tG,
-                  rssX = rssG) {
+                  geoqx = geoqG,
+                  rc6tx = rc6tG,
+                  rssx = rssG) {
   if (verbose) print("enter f411G")
   x1 <-
     data.table(tbin = 1:3, freq = c("lo", "hi", "an"))
   x2 <-
-    rssX %>% # use global no filters
-    .[geoqX, on = c(rc6 = "rc6")] %>%
+    rssx %>% # use global no filters
+    .[geoqx, on = c(rc6 = "rc6")] %>%
     .[type == "L"] %>%
     .[itrim == itriC] %>%
     .[, .(n = sum(n), ssek = sum(ssek)), .(tbin, rc6)]
   x3 <-
     rbind(
       x2[, .(span = "index.average", mse = round(sqrt(sum(ssek) / sum(n)), 4)), tbin],
-      x2[rc6 == rc6tX, .(span = rc6tX, mse = round(sqrt(sum(ssek) / sum(n)), 4)), tbin]
+      x2[rc6 == rc6tx, .(span = rc6tx, mse = round(sqrt(sum(ssek) / sum(n)), 4)), tbin]
     ) %>%
     dcast(., tbin ~ span, value.var = "mse") %>%
     x1[., on = c(tbin = "tbin")] %>%
@@ -553,19 +553,19 @@ f411D <- function( #-------411 accuracy tbin----
 
 
 f412D <- function( #--------412 accuracy tbin----
-                  geoccX = geoccG,
-                  rc6tX = rc6tG,
-                  rssccX = rssccG) {
+                  geoccx = geoccG,
+                  rc6tx = rc6tG,
+                  rssccx = rssccG) {
   x1 <-
     data.table(tbin = 1:3, freq = c("lo", "hi", "an"))
   x2 <-
-    rssccX %>% # use global no filters
-    .[geoccX, on = c(rc6 = "rc9")] %>%
+    rssccx %>% # use global no filters
+    .[geoccx, on = c(rc6 = "rc9")] %>%
     .[, .(n, ssek, tbin = tbinC, rc6)]
   x3 <-
     rbind(
       x2[, .(span = "index.average", mse = round(sqrt(sum(ssek) / sum(n)), 4)), tbin],
-      x2[rc6 == rc6tX, .(span = rc6tX, mse = round(sqrt(sum(ssek) / sum(n)), 4)), tbin]
+      x2[rc6 == rc6tx, .(span = rc6tx, mse = round(sqrt(sum(ssek) / sum(n)), 4)), tbin]
     ) %>%
     dcast(., tbin ~ span, value.var = "mse") %>%
     x1[., on = c(tbin = "tbin")] %>%
@@ -580,20 +580,20 @@ f412D <- function( #--------412 accuracy tbin----
 
 
 f421D <- function( #--------421 accuracy trim----
-                  geoqX = geoqG,
-                  rc6tX = rc6tG,
-                  rssX = rssG) {
+                  geoqx = geoqG,
+                  rc6tx = rc6tG,
+                  rssx = rssG) {
   x1 <-
     data.table(itrim = 1:3, threshold = c("0.0", "0.1", "0.5"))
   x2 <-
-    rssX %>%
-    .[geoqX, on = c(rc6 = "rc6")] %>%
+    rssx %>%
+    .[geoqx, on = c(rc6 = "rc6")] %>%
     .[type == "L"] %>%
     .[tbin == tbinC] %>%
     .[, .(n = sum(n), ssek = sum(ssek)), .(itrim, rc6)]
   x3 <- rbind(
     x2[, .(span = "index.average", mse = round(sqrt(sum(ssek) / sum(n)), 4)), itrim],
-    x2[rc6 == rc6tX, .(span = rc6tX, mse = round(sqrt(sum(ssek) / sum(n)), 4)), itrim]
+    x2[rc6 == rc6tx, .(span = rc6tx, mse = round(sqrt(sum(ssek) / sum(n)), 4)), itrim]
   ) %>%
     dcast(., itrim ~ span, value.var = "mse") %>%
     x1[., on = c(itrim = "itrim")] %>%
@@ -611,18 +611,18 @@ f421D <- function( #--------421 accuracy trim----
 }
 
 f422D <- function( # #--------422 accuracy trim----
-                  geoccX = geoccG,
-                  rc6tX = rc6tG,
-                  rssccX = rssccG) {
+                  geoccx = geoccG,
+                  rc6tx = rc6tG,
+                  rssccx = rssccG) {
   x1 <-
     data.table(itrim = 1:3, threshold = c("0.0", "0.1", "0.5"))
   x2 <-
-    rssccX %>%
-    .[geoccX, on = c(rc6 = "rc9")] %>%
+    rssccx %>%
+    .[geoccx, on = c(rc6 = "rc9")] %>%
     .[, .(n, ssek, itrim = itriC, rc6)]
   x3 <- rbind(
     x2[, .(span = "index.average", mse = round(sqrt(sum(ssek) / sum(n)), 4)), itrim],
-    x2[rc6 == rc6tX, .(span = rc6tX, mse = round(sqrt(sum(ssek) / sum(n)), 4)), itrim]
+    x2[rc6 == rc6tx, .(span = rc6tx, mse = round(sqrt(sum(ssek) / sum(n)), 4)), itrim]
   ) %>%
     dcast(., itrim ~ span, value.var = "mse") %>%
     x1[., on = c(itrim = "itrim")] %>%
@@ -637,12 +637,12 @@ f422D <- function( # #--------422 accuracy trim----
 
 
 f431D <- function( #------431 accuracy in/out----
-                  geoqX = geoqG,
-                  rc6tX = rc6tG,
-                  rssX = rssG) {
+                  geoqx = geoqG,
+                  rc6tx = rc6tG,
+                  rssx = rssG) {
   x1 <-
-    rssX %>%
-    .[geoqX, on = c(rc6 = "rc6")] %>%
+    rssx %>%
+    .[geoqx, on = c(rc6 = "rc6")] %>%
     .[type == "L"] %>%
     .[tbin == tbinC] %>%
     .[itrim == itriC] %>%
@@ -650,12 +650,12 @@ f431D <- function( #------431 accuracy in/out----
   x2 <-
     rbind(
       x1[, .(outsamp = round(sqrt(sum(ssek) / sum(n)), 4), insamp = round(sqrt(sum(ssei) / sum(n)), 4))],
-      x1[rc6 == rc6tX, .(outsamp = round(sqrt(sum(ssek) / sum(n)), 4), insamp = round(sqrt(sum(ssei) / sum(n)), 4))]
+      x1[rc6 == rc6tx, .(outsamp = round(sqrt(sum(ssek) / sum(n)), 4), insamp = round(sqrt(sum(ssei) / sum(n)), 4))]
     ) %>%
     as.matrix(.) %>%
     t(.) %>%
     as.data.table(., keep.rownames = T)
-  setnames(x2, c("domain", "index.average", rc6tX)[1:ncol(x2)])
+  setnames(x2, c("domain", "index.average", rc6tx)[1:ncol(x2)])
   if (ncol(x2) == 3) x2 <- x2[, c(1, 3, 2)]
   x <-
     gt::gt(x2) %>%
@@ -671,22 +671,22 @@ f431D <- function( #------431 accuracy in/out----
 
 
 f432D <- function( #------432 accuracy in/out----
-                  geoccX = geoccG,
-                  rc6tX = rc6tG,
-                  rssccX = rssccG) {
+                  geoccx = geoccG,
+                  rc6tx = rc6tG,
+                  rssccx = rssccG) {
   x1 <-
-    rssccX %>%
-    .[geoccX, on = c(rc6 = "rc9")] %>%
+    rssccx %>%
+    .[geoccx, on = c(rc6 = "rc9")] %>%
     .[, .(n, ssek, ssei, itrim = itriC, rc6)]
   x2 <-
     rbind(
       x1[, .(outsamp = round(sqrt(sum(ssek) / sum(n)), 4), insamp = round(sqrt(sum(ssei) / sum(n)), 4))],
-      x1[rc6 == rc6tX, .(outsamp = round(sqrt(sum(ssek) / sum(n)), 4), insamp = round(sqrt(sum(ssei) / sum(n)), 4))]
+      x1[rc6 == rc6tx, .(outsamp = round(sqrt(sum(ssek) / sum(n)), 4), insamp = round(sqrt(sum(ssei) / sum(n)), 4))]
     ) %>%
     as.matrix(.) %>%
     t(.) %>%
     as.data.table(., keep.rownames = T)
-  setnames(x2, c("domain", "index.average", rc6tX)[1:ncol(x2)])
+  setnames(x2, c("domain", "index.average", rc6tx)[1:ncol(x2)])
   if (ncol(x2) == 3) x2 <- x2[, c(1, 3, 2)]
   x <-
     gt::gt(x2) %>%
@@ -754,15 +754,15 @@ f121g2 <- function( #gen2
 ) {
   x3 <- 
     f121D( #-------------121 winding--------------wind
-    estdtX = x1[lab == x2, .(ii, date, lab, qtile = substr(lab, 5, 7), x, xdotd)],
-    dfnxX = dfnxx, # date {tbin1 tbin2 tbin3}
-    typeX = typex, #' L' always
-    tbinX = tbinx, #' hi' always, tbinC=2 always
-    dfnxxX = # vector: drc dates excluding date0
+    estdtx = x1[lab == x2, .(ii, date, lab, qtile = substr(lab, 5, 7), x, xdotd)],
+    dfnxx = dfnxx, # date {tbin1 tbin2 tbin3}
+    typex = typex, #' L' always
+    tbinx = tbinx, #' hi' always, tbinC=2 always
+    dfnxxx = # vector: drc dates excluding date0
       dfnxx[, tbinx + 1, with = F] %>%
         setnames(., "x") %>%
         .[, sort(unique(x))],
-    d2X = # vector: annual dates excluding date0
+    d2x = # vector: annual dates excluding date0
       dfnxx[, tbinx + 2, with = F] %>%
         setnames(., "x") %>%
         .[, sort(unique(x))]

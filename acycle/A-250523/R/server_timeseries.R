@@ -12,12 +12,12 @@ server_timeseries <- function(input, output, session, common) {
         print("enter x111D xxx")
       }
       x <- f111D(
-        rc6tX = common$rc6tR(),
-        rc6ccX = common$rc6ccR(),
-        geoaX = common$geoaR(),
-        pxosrdo2ddX = pxosrdo2dd, #common$pxosrdo2ddR(),
-        z110X = z110,#common$z110R(),
-        colX = colx # punk green blue
+        rc6tx = common$rc6tR(),
+        rc6ccx = common$rc6ccR(),
+        geoax = common$geoaR(),
+        pxosrdo2ddx = pxosrdo2dd, #common$pxosrdo2ddR(),
+        z110x = z110,#common$z110R(),
+        colx = colx # punk green blue
       )
       x111G <<- copy(x)
       if (verbose) {
@@ -35,10 +35,10 @@ server_timeseries <- function(input, output, session, common) {
       # browser()
       x <-
         f112D(
-          tslideX = common$tslideR(),
-          estdtxX = common$estdtxR(),
-          ylimX = common$ylimR(),
-          geoccX = common$geoccR()
+          tslidex = common$tslideR(),
+          estdtxx = common$estdtxR(),
+          ylimx = common$ylimR(),
+          geoccx = common$geoccR()
         )
       x112G <<- copy(x)
       x
@@ -52,12 +52,12 @@ server_timeseries <- function(input, output, session, common) {
       if (verbose) print("enter x121D")
       x2 <- f121D(
         estdt = common$estdtlR(),
-        dfnxX = common$dfnxR()
+        dfnxx = common$dfnxR()
       )
       x4 <- f121D(
         estdt = common$estdtccR(),
-        dfnxX = common$dfnxR(),
-        typeX = "C"
+        dfnxx = common$dfnxR(),
+        typex = "C"
       )
       x <- list(x2, x4)
       x121G <<- copy(x)
@@ -71,10 +71,10 @@ server_timeseries <- function(input, output, session, common) {
     {
       if (verbose) print("enter x122D")
       x <- f122D(
-        rc6tX = common$rc6tR(),
-        rssaX = common$rssaR(),
-        rssccX = common$rssccR(),
-        z110X = z110#common$z110R()
+        rc6tx = common$rc6tR(),
+        rssax = common$rssaR(),
+        rssccx = common$rssccR(),
+        z110x = z110#common$z110R()
       )
       x122G <<- copy(x)
       if (verbose) print("exit x122D")
@@ -88,8 +88,8 @@ server_timeseries <- function(input, output, session, common) {
     {
       if (verbose) print("enter x131D")
       x <- f131D(
-        estdtxX = common$estdtxR(),
-        tslideX = common$tslideR()
+        estdtxx = common$estdtxR(),
+        tslidex = common$tslideR()
       )
       x131G <<- copy(x)
       x
@@ -102,10 +102,10 @@ server_timeseries <- function(input, output, session, common) {
     {
       if (verbose) print("enter x132D")
       x <- f132D(
-        tslideX = common$tslideR(),
-        geoqX = common$geoqR(),
-        geoccX = common$geoccR(),
-        estdtlX = common$estdtlR()
+        tslidex = common$tslideR(),
+        geoqx = common$geoqR(),
+        geoccx = common$geoccR(),
+        estdtlx = common$estdtlR()
       )
       x132G <<- copy(x)
       if (verbose) print("exit x132D")

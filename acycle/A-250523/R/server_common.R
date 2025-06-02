@@ -75,10 +75,10 @@ server_common <-
         {
           print("enter estdtxR")
           x <-
-            festdtxX(
-              estdtccX = estdtccR(), 
-              estdtaX = f241021ad$estdt[nxaR(), on = c(nx = "nx"), .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)], #was estdtaR() 
-              geoccX = geoccR()
+            festdtxx(
+              estdtccx = estdtccR(), 
+              estdtax = f241021ad$estdt[nxaR(), on = c(nx = "nx"), .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)], #was estdtaR() 
+              geoccx = geoccR()
               )
           estdtxG <<- copy(x)
           print("exit estdtxR")
@@ -119,7 +119,7 @@ server_common <-
         {
           if (verbose) print("enter geoccR")
           x <-
-            fgeoccX(rc6ccX = rc6ccR())
+            fgeoccx(rc6ccx = rc6ccR())
           geoccG <<- copy(x)
           x
         }

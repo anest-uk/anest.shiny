@@ -3,7 +3,7 @@ server_accuracy <- function(input, output, session, common) {
     list(common$geoqR(), common$rc6tR(), common$rssR()),
     {
       if (verbose) print("enter x411G")
-      x <- f411D(geoqX = common$geoqR(), rc6tX = common$rc6tR(), rssX = common$rssR())
+      x <- f411D(geoqx = common$geoqR(), rc6tx = common$rc6tR(), rssx = common$rssR())
       x411G <<- copy(x)
       x
     }
@@ -13,7 +13,7 @@ server_accuracy <- function(input, output, session, common) {
     list(common$geoccR(), common$rc6tR(), common$rssccR()),
     {
       if (verbose) print("enter x412D")
-      x <- f412D(geoccX = common$geoccR(), rc6tX = common$rc6tR(), rssccX = common$rssccR())
+      x <- f412D(geoccx = common$geoccR(), rc6tx = common$rc6tR(), rssccx = common$rssccR())
       x412G <<- copy(x)
       x
     }
@@ -23,7 +23,7 @@ server_accuracy <- function(input, output, session, common) {
     list(common$geoqR(), common$rc6tR(), common$rssR()),
     {
       if (verbose) print("enter x421D")
-      x <- f421D(geoqX = common$geoqR(), rc6tX = common$rc6tR(), rssX = common$rssR())
+      x <- f421D(geoqx = common$geoqR(), rc6tx = common$rc6tR(), rssx = common$rssR())
       x421G <<- copy(x)
       x
     }
@@ -33,7 +33,7 @@ server_accuracy <- function(input, output, session, common) {
     list(common$geoccR(), common$rc6tR(), common$rssccR()),
     {
       if (verbose) print("enter x422D")
-      x <- f422D(geoccX = common$geoccR(), rc6tX = common$rc6tR(), rssccX = common$rssccR())
+      x <- f422D(geoccx = common$geoccR(), rc6tx = common$rc6tR(), rssccx = common$rssccR())
       x422G <<- copy(x)
       x
     }
@@ -43,7 +43,7 @@ server_accuracy <- function(input, output, session, common) {
     list(common$geoqR(), common$rc6tR(), common$rssR()),
     {
       if (verbose) print("enter x431D")
-      x <- f431D(geoqX = common$geoqR(), rc6tX = common$rc6tR(), rssX = common$rssR())
+      x <- f431D(geoqx = common$geoqR(), rc6tx = common$rc6tR(), rssx = common$rssR())
       x431G <<- copy(x)
       x
     }
@@ -53,7 +53,7 @@ server_accuracy <- function(input, output, session, common) {
     list(common$geoccR(), common$rc6tR(), common$rssccR()),
     {
       if (verbose) print("enter x432D")
-      x <- f432D(geoccX = common$geoccR(), rc6tX = common$rc6tR(), rssccX = common$rssccR())
+      x <- f432D(geoccx = common$geoccR(), rc6tx = common$rc6tR(), rssccx = common$rssccR())
       x432G <<- copy(x)
       x
     }
