@@ -2,10 +2,9 @@
 
 # utility----
 sco <- function(x,namesonly=T){
-  x1 <- setcolorder(x, order(names(x)))
+  x1 <- setcolorder(x, order(names(x)))[]
   if(namesonly==T){
     x1 <- x1%>%names(.)%>%c('{',.,'}')%>%paste0(.,collapse=' ')
-    
   }
   x1
 }
@@ -128,17 +127,30 @@ f121D <- function( #-------------121 winding----
                   drangeX = range(dfnxxX),
                   typeX = typeC,                  #'L' always
                   tbinX = tbinC,                  #'hi' always, tbinC=2 always
+                  # dfnxxX =                        #drc dates excluding date0
+                  #   dfnxX[-1, tbinC + 1, with = F] %>% 
+                  #   setnames(., "x") %>%
+                  #   .[, sort(unique(x))], 
+                  # d2X =                           #annual dates excluding date0
+                  #   dfnxX[-1, tbinC + 2, with = F] %>%
+                  #   setnames(., "x") %>%
+                  #   .[, sort(unique(x))]          
                   dfnxxX =                        #drc dates excluding date0
-                    dfnxX[-1, tbinC + 1, with = F] %>% 
+                    dfnxX[, tbinC + 1, with = F] %>% 
                     setnames(., "x") %>%
                     .[, sort(unique(x))], 
                   d2X =                           #annual dates excluding date0
-                    dfnxX[-1, tbinC + 2, with = F] %>%
+                    dfnxX[, tbinC + 2, with = F] %>%
                     setnames(., "x") %>%
                     .[, sort(unique(x))]          
 ) {
   d1 <- # daily
     seq.Date(from = drangeX[1], to = drangeX[2], by = "d")
+  d2X <- 
+    seq.Date(from = drangeX[1], to = drangeX[2], by = "y")%>%
+    .[-1]%>% #remove d0
+    c(.,drangeX[2])%>% #add dmax
+    unique(.)
   x1 <-
     estdtX %>% # local
     .[.(date = d1), on = c(date = "date"), roll = -Inf, j = .(date, xdotd)] %>%
@@ -151,6 +163,7 @@ f121D <- function( #-------------121 winding----
     .[, .(decade = substr(date, 1, 3), yr = substr(date, 4, 4), xdot = round(xdot, 3))] %>%
     dcast(., decade ~ yr, value.var = "xdot") %>%
     .[, decade := c(1990, 2000, 2010, 2020)]
+  #for (i in 2:length(x1)) x1[[i]] <- as.character(x1[[i]])
   for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
   x2 <- gt::gt(x1) %>%
     gt::tab_footnote(
@@ -161,6 +174,30 @@ f121D <- function( #-------------121 winding----
     )
   x2
 } 
+f122 <- # combine rss and P characteristics
+  function(rssx, z110X) {
+    x0 <-
+      z110X[rssx, on = c(rcx = "rc6")] %>%
+      .[
+        , .(
+          frac = round(sum(nid) / z110X[nchar(rcx) == 6, sum(nid)], nfig3),
+          nid = sum(nid),
+          ppm2max = round(max(ppm2), nfig2),
+          ppm2min = round(min(ppm2), nfig2),
+          p = round(sum(pv) / sum(m2), nfig2)
+        ),
+        lab
+      ] %>%
+      .[rssx[, .(R2rsi = 1 - sum(ssek) / sum(sstr)), lab], on = c(lab = "lab")] %>%
+      .[, .(
+        lab = substr(lab, 1, 5),
+        frac,
+        R2rsi = round(R2rsi, 3),
+        pnum = p,
+        p = prettyNum(round(p, nfig3), big.mark = ","),
+        p.cus = paste0(prettyNum(round(ppm2min, nfig2), big.mark = ","), "-", prettyNum(round(ppm2max, nfig2), big.mark = ","))
+      )]
+  }
 
 f122D <- function( # ----122 characteristics----
                   rc6tX = rc6tG,                  #scalar: target
@@ -168,30 +205,6 @@ f122D <- function( # ----122 characteristics----
                   rssccX = rssccG,                #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for custom geo
                   z110X = z110) {
   rsscux <- copy(rssccX)[, lab := "CU000"] # R()
-  f122 <- # combine rss and P characteristics
-    function(rssx, z110X) {
-      x0 <-
-        z110X[rssx, on = c(rcx = "rc6")] %>%
-        .[
-          , .(
-            frac = round(sum(nid) / z110X[nchar(rcx) == 6, sum(nid)], nfig3),
-            nid = sum(nid),
-            ppm2max = round(max(ppm2), nfig2),
-            ppm2min = round(min(ppm2), nfig2),
-            p = round(sum(pv) / sum(m2), nfig2)
-          ),
-          lab
-        ] %>%
-        .[rssx[, .(R2rsi = 1 - sum(ssek) / sum(sstr)), lab], on = c(lab = "lab")] %>%
-        .[, .(
-          lab = substr(lab, 1, 5),
-          frac,
-          R2rsi = round(R2rsi, 3),
-          pnum = p,
-          p = prettyNum(round(p, nfig3), big.mark = ","),
-          p.cus = paste0(prettyNum(round(ppm2min, nfig2), big.mark = ","), "-", prettyNum(round(ppm2max, nfig2), big.mark = ","))
-        )]
-    }
   x0 <- f122(rssx = rsscux, z110X = z110X)
   x1 <- f122(rssx = rssaX, z110X = z110X)
   x2 <-
@@ -681,3 +694,79 @@ f432D <- function( #------432 accuracy in/out----
   x432G <<- copy(x)
   x
 }
+
+
+
+#-----------------------------------------gen2----
+
+f112g2 <- function(
+    x1 = labxG,
+    x2 = rc6tG,
+    nn = c(
+      "f250519ad",
+      "f250509ed"
+    )) {
+  x3 <- # all lab,col
+    f250519ad[, .(lab, col)] %>%
+    unique(.)
+  x4 <- # replace col in estdt with col=colcode
+    x3[f250509ed$estdt[, -"col"], on = c(lab = "lab"), nomatch = NULL] #                      gen2
+  x5 <- # from input
+    substr(x2, 1, 3)
+  x6 <- # optimal lab(rc6) reactive-gen2
+    x1[1, lab]
+  x7 <- # normally 6 rows 2 cols: all tile labs selected, this rc3
+    f250519ad[grep(x5, rc6)][, .(lab, col)] %>%
+    .[order(lab)] %>%
+    unique(.) %>%
+    .[, .(lab, col)]
+  x8 <- # construct labels to plot for this rc6tG
+    c(
+      paste0("L", x5, "1.3BA"),
+      paste0("L", x5, "3.3BA"),
+      paste0("L", x5, "1.3BA"),
+      x6
+    ) %>%
+    unique(.) %>%
+    sort(.) %>%
+    data.table(labx = .)
+  x9 <-
+    rbind(
+      x4 %>% # L-estdt
+        .[x8, on = c(lab = "labx")] # plot selection
+      ,
+      rsiccG$estdt %>% # custom
+        .[, -"col"] %>%
+        copy(.) %>%
+        .[, col := "#444444"]
+    ) %>%
+    .[, col := as.factor(col)] %>%
+    sco(., F)
+  x9
+}
+
+f121g3 <- function(
+    x1 = f250509ed$estdt,
+    x2 = labxG[1, lab],
+    dfnxx = dfnxG,
+    typex = typeC,
+    tbinx = tbinC
+) {
+  x3 <- 
+    f121D( #-------------121 winding--------------wind
+    estdtX = x1[lab == x2, .(ii, date, lab, qtile = substr(lab, 5, 7), x, xdotd)],
+    dfnxX = dfnxx, # date {tbin1 tbin2 tbin3}
+    typeX = typex, #' L' always
+    tbinX = tbinx, #' hi' always, tbinC=2 always
+    dfnxxX = # vector: drc dates excluding date0
+      dfnxx[, tbinx + 1, with = F] %>%
+        setnames(., "x") %>%
+        .[, sort(unique(x))],
+    d2X = # vector: annual dates excluding date0
+      dfnxx[, tbinx + 2, with = F] %>%
+        setnames(., "x") %>%
+        .[, sort(unique(x))]
+  )
+  x3
+}
+

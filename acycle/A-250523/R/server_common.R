@@ -277,6 +277,7 @@ server_common <-
           x <-
             rssR()[nxaR(), on = c(nx = "nx")]
           rssaG <<- copy(x)
+          #print(rssaG)
           x
         }
       )
