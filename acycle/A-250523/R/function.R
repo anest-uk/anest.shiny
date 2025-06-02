@@ -489,7 +489,7 @@ f211D <- #---summary called in both listings ----
   }
 
 # constituent----
-f311D <- function( #--'----311 constituents----
+D311 <- function( #--'----311 constituents----
                   geo0x = geo0G,
                   z110x = z110,
                   rc6tx = rc6tG) {
@@ -515,7 +515,7 @@ f311D <- function( #--'----311 constituents----
       rownames = F
     ) %>%
     DT::formatStyle(0, target = "row", lineHeight = "70%")
-  x311G <<- copy(x)
+  G311 <<- copy(x)
   x
 }
 
