@@ -4,14 +4,14 @@ server_listing <- function(input, output, session, common) {
       list(
         common$estdtlR(),
         common$geoqR(),
-        common$dfnxxR()
+        common$dfnyR()
       ),
       {
         if (verbose) print("enter x211D")
         x <- f211D(
           estdtlx = common$estdtlR(),
           geoqx = common$geoqR(),
-          dfnxxx = common$dfnxxR()
+          dfnz = common$dfnyR()
         )
         x211G <<- copy(x)
         x
@@ -22,7 +22,7 @@ server_listing <- function(input, output, session, common) {
       list(
         common$estdtccR(),
         common$geoccR(),
-        common$dfnxxR()
+        common$dfnyR()
       ),
       {
         if (verbose) print("enter x211D")
@@ -30,7 +30,7 @@ server_listing <- function(input, output, session, common) {
         x <- f211D(
           estdtlx = common$estdtccR(),
           geoqx = common$geoccR()[, .(nx, lab, rc6 = rc9)], # non-standard geo
-          dfnxxx = common$dfnxxR(),
+          dfnz = common$dfnyR(),
           typex = "C"
         )
         x211ccG <<- copy(x)

@@ -10,7 +10,7 @@ sco <- function(x,namesonly=T){
 }
 
 # common----
-festdtxx <- #------------rbind estdtcc,estdta----
+festdty <- #------------rbind estdtcc,estdta----
   function(estdtccx = estdtccG, estdtax = estdtaG, geoccx = geoccG) {
   x <-
     rbind(
@@ -72,20 +72,20 @@ f111D <- function( #-----------------------.#----
 
 f112D <- function( #-----------------------.#----
                   tslidex = tslideG,              #integer: zero index
-                  estdtxx = estdtxG,              #estdt: nx date xdotd days xdot x lab  ii qtile rc3 qq
+                  estdty = estdtxG,              #estdt: nx date xdotd days xdot x lab  ii qtile rc3 qq
                   ylimx = ylimG,                  #vector: ylim
                   geoccx = geoccG)                #geo {rc9 nx lab}: custom 
   {
-  x2c <- estdtxx %>%
+  x2c <- estdty %>%
     copy(.)%>%
     .[, .SD[, .(ii, date, lab, x = x - ifelse(tslidex == 0, 0, x[tslidex]))], .(qtile)] %>%
     .[, .SD[, .(ii, date, lab, x)], .(qtile)] %>%
     .[, qq := as.factor(qtile)] %>%
     .[, labx := ifelse(date == max(date), lab, NA)]
   x0 <- setNames(cobalt()[c("punk", "green", "blue")], as.character(1:3))
-  x3 <- estdtxx[, .SD[, .(ifelse(tslidex == 0, 0, x[tslidex]))], .(qtile)][, mean(V1)] # base value for rebase level
+  x3 <- estdty[, .SD[, .(ifelse(tslidex == 0, 0, x[tslidex]))], .(qtile)][, mean(V1)] # base value for rebase level
   x2 <-
-    estdtxx%>%
+    estdty%>%
     copy(.)%>%
     .[, .SD[, .(ii, date, lab, x = x - ifelse(tslidex == 0, 0, x[tslidex]))], .(qtile)] %>%
     .[, qq := as.factor(qtile)] %>%
@@ -123,24 +123,24 @@ f112D <- function( #-----------------------.#----
 
 f121D <- function( #-------------121 winding----
                   estdtx = estdtlG,               #estdt {date days ii lab nx qtile rc3 x xdot xdotd}
-                  dfnxx = dfnxG,                  #date {tbin1 tbin2 tbin3}
-                  drangex = range(dfnxxx),
+                  dfny = dfnxG,                  #date {tbin1 tbin2 tbin3}
+                  drangex = range(dfnz),
                   typex = typeC,                  #'L' always
                   tbinx = tbinC,                  #'hi' always, tbinC=2 always
-                  # dfnxxx =                        #drc dates excluding date0
-                  #   dfnxx[-1, tbinC + 1, with = F] %>% 
+                  # dfnz =                        #drc dates excluding date0
+                  #   dfny[-1, tbinC + 1, with = F] %>% 
                   #   setnames(., "x") %>%
                   #   .[, sort(unique(x))], 
                   # d2x =                           #annual dates excluding date0
-                  #   dfnxx[-1, tbinC + 2, with = F] %>%
+                  #   dfny[-1, tbinC + 2, with = F] %>%
                   #   setnames(., "x") %>%
                   #   .[, sort(unique(x))]          
-                  dfnxxx =                        #drc dates excluding date0
-                    dfnxx[, tbinC + 1, with = F] %>% 
+                  dfnz =                        #drc dates excluding date0
+                    dfny[, tbinC + 1, with = F] %>% 
                     setnames(., "x") %>%
                     .[, sort(unique(x))], 
                   d2x =                           #annual dates excluding date0
-                    dfnxx[, tbinC + 2, with = F] %>%
+                    dfny[, tbinC + 2, with = F] %>%
                     setnames(., "x") %>%
                     .[, sort(unique(x))]          
 ) {
@@ -234,15 +234,15 @@ f122D <- function( # ----122 characteristics----
 }            #global {rcx ppm2} : pva
 
 f131D <- function( #-------------131 summary----
-                  estdtxx = estdtxG,
+                  estdty = estdtxG,
                   tslidex = tslideG) {
   x <-
-    estdtxx %>%
+    estdty %>%
     .[ii >= tslidex] %>%
     dcast(., ii ~ lab, value.var = "xdot") %>%
     .[, -"ii"] %>%
     as.matrix(.) %>%
-    zoo(., estdtxx[, sort(unique(date))]) %>%
+    zoo(., estdty[, sort(unique(date))]) %>%
     table.Stats(., digits = 3) %>%
     data.table(., keep.rownames = T) %>%
     `[`(., i = -c(1, 2, 7, 11, 12, 13)) %>%
@@ -389,7 +389,7 @@ f132 <- function( #-----132 trade summary(2)----
 f211D <- #---summary called in both listings ----
   function(estdtlx = common$estdtlR(), # single
            geoqx = common$geoqR(), # footnote only 'this qtile'
-           dfnxxx = common$dfnxxR(), # single
+           dfnz = common$dfnyR(), # single
            typex = typeC) {
     if (verbose) print("enter x211D")
     # fread("data/f241122ad.csv") %>%
@@ -748,22 +748,22 @@ f112g2 <- function( #gen2
 f121g2 <- function( #gen2
     x1 = f250509ed$estdt,
     x2 = labxG[1, lab],
-    dfnxx = dfnxG,
+    dfny = dfnxG,
     typex = typeC,
     tbinx = tbinC
 ) {
   x3 <- 
     f121D( #-------------121 winding--------------wind
     estdtx = x1[lab == x2, .(ii, date, lab, qtile = substr(lab, 5, 7), x, xdotd)],
-    dfnxx = dfnxx, # date {tbin1 tbin2 tbin3}
+    dfny = dfny, # date {tbin1 tbin2 tbin3}
     typex = typex, #' L' always
     tbinx = tbinx, #' hi' always, tbinC=2 always
-    dfnxxx = # vector: drc dates excluding date0
-      dfnxx[, tbinx + 1, with = F] %>%
+    dfnz = # vector: drc dates excluding date0
+      dfny[, tbinx + 1, with = F] %>%
         setnames(., "x") %>%
         .[, sort(unique(x))],
     d2x = # vector: annual dates excluding date0
-      dfnxx[, tbinx + 2, with = F] %>%
+      dfny[, tbinx + 2, with = F] %>%
         setnames(., "x") %>%
         .[, sort(unique(x))]
   )

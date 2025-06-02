@@ -9,7 +9,7 @@ server_timeseries <- function(input, output, session, common) {
     ),
     {
       if (verbose) {
-        print("enter x111D xxx")
+        print("enter x111D z")
       }
       x <- f111D(
         rc6tx = common$rc6tR(),
@@ -36,7 +36,7 @@ server_timeseries <- function(input, output, session, common) {
       x <-
         f112D(
           tslidex = common$tslideR(),
-          estdtxx = common$estdtxR(),
+          estdty = common$estdtxR(),
           ylimx = common$ylimR(),
           geoccx = common$geoccR()
         )
@@ -47,16 +47,16 @@ server_timeseries <- function(input, output, session, common) {
 
 
   x121D <- eventReactive( #--------121 winding----
-    list(common$estdtlR(), common$estdtccR(), common$dfnxxR()),
+    list(common$estdtlR(), common$estdtccR(), common$dfnyR()),
     {
       if (verbose) print("enter x121D")
       x2 <- f121D(
         estdt = common$estdtlR(),
-        dfnxx = common$dfnxR()
+        dfny = common$dfnxR()
       )
       x4 <- f121D(
         estdt = common$estdtccR(),
-        dfnxx = common$dfnxR(),
+        dfny = common$dfnxR(),
         typex = "C"
       )
       x <- list(x2, x4)
@@ -88,7 +88,7 @@ server_timeseries <- function(input, output, session, common) {
     {
       if (verbose) print("enter x131D")
       x <- f131D(
-        estdtxx = common$estdtxR(),
+        estdty = common$estdtxR(),
         tslidex = common$tslideR()
       )
       x131G <<- copy(x)

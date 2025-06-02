@@ -12,13 +12,13 @@ server_common <-
         x
       })
 
-    dfnxxR <- #---------vector of current date----
+    dfnyR <- #---------vector of current date----
       reactive({
         x <-
           dfnxR()[, paste0("tbin", tbinC), with = F] %>%
           setnames(., "x") %>%
           .[, sort(unique(x))]
-        dfnxxG <<- copy(x)
+        dfnyG <<- copy(x)
         x
       })
 
@@ -75,7 +75,7 @@ server_common <-
         {
           print("enter estdtxR")
           x <-
-            festdtxx(
+            festdty(
               estdtccx = estdtccR(), 
               estdtax = f241021ad$estdt[nxaR(), on = c(nx = "nx"), .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)], #was estdtaR() 
               geoccx = geoccR()
@@ -238,7 +238,7 @@ server_common <-
         {
           if (verbose) print("enter rsiccR")
           geox <- isolate(geoccR())
-          dfnx <- isolate(dfnxxR()) # source of truth
+          dfnx <- isolate(dfnyR()) # source of truth
           rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
           rc6valid <- f241021ad$geoplus[,unique(rc9)]
           if (
@@ -330,7 +330,7 @@ server_common <-
 
     list( # ---------------------common list #----
       dfnxR = dfnxR,
-      dfnxxR = dfnxxR,
+      dfnyR = dfnyR,
       #estdtaR = estdtaR,
       estdtccR = estdtccR,
       estdtlR = estdtlR,
