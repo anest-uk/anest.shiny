@@ -699,7 +699,7 @@ f432D <- function( #------432 accuracy in/out----
 
 #-----------------------------------------gen2----
 
-f112g2 <- function(
+f112g2 <- function( #gen2
     x1 = labxG,
     x2 = rc6tG,
     nn = c(
@@ -745,7 +745,7 @@ f112g2 <- function(
   x9
 }
 
-f121g3 <- function(
+f121g2 <- function( #gen2
     x1 = f250509ed$estdt,
     x2 = labxG[1, lab],
     dfnxx = dfnxG,
