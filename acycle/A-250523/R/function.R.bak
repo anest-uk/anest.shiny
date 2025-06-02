@@ -521,7 +521,7 @@ D311 <- function( #--'----311 constituents----
 
 # accuracy----
 
-D411 <- function( #-------411 accuracy tbin----
+f411D <- function( #-------411 accuracy tbin----
                   geoqx = geoqG,
                   rc6tx = rc6tG,
                   rssx = rssG) {
@@ -547,12 +547,12 @@ D411 <- function( #-------411 accuracy tbin----
     gt::tab_footnote(
       footnote = f241108a(typeC, tbinC)[[1]]
     )
-  G411 <<- copy(x)
+  x411G <<- copy(x)
   x
 }
 
 
-D412 <- function( #--------412 accuracy tbin----
+f412D <- function( #--------412 accuracy tbin----
                   geoccx = geoccG,
                   rc6tx = rc6tG,
                   rssccx = rssccG) {
@@ -574,12 +574,12 @@ D412 <- function( #--------412 accuracy tbin----
     gt::gt(x3) %>%
     gt::tab_footnote(footnote = f241108a(tc = "C", tbinC)[[1]]) %>%
     gt::tab_footnote(footnote = paste0("only freq=hi is computed for custom"))
-  G412 <<- copy(x)
+  x412G <<- copy(x)
   x
 }
 
 
-D421 <- function( #--------421 accuracy trim----
+f421D <- function( #--------421 accuracy trim----
                   geoqx = geoqG,
                   rc6tx = rc6tG,
                   rssx = rssG) {
@@ -606,11 +606,11 @@ D421 <- function( #--------421 accuracy trim----
     gt::tab_footnote(
       footnote = f241108a(typeC, tbinC)[[2]]
     )
-  G421 <<- copy(x)
+  x421G <<- copy(x)
   x
 }
 
-D422 <- function( # #--------422 accuracy trim----
+f422D <- function( # #--------422 accuracy trim----
                   geoccx = geoccG,
                   rc6tx = rc6tG,
                   rssccx = rssccG) {
@@ -631,12 +631,12 @@ D422 <- function( # #--------422 accuracy trim----
     gt::gt(x3) %>%
     gt::tab_footnote(footnote = f241108a(tc = "C", tbinC)[[1]]) %>%
     gt::tab_footnote(footnote = paste0("only threshold=0.1 is computed for custom"))
-  G432 <<- copy(x)
+  x432G <<- copy(x)
   x
 }
 
 
-D431 <- function( #------431 accuracy in/out----
+f431D <- function( #------431 accuracy in/out----
                   geoqx = geoqG,
                   rc6tx = rc6tG,
                   rssx = rssG) {
@@ -665,12 +665,12 @@ D431 <- function( #------431 accuracy in/out----
     gt::tab_footnote(
       footnote = f241108a(typeC, tbinC)[[2]]
     )
-  G431 <<- copy(x)
+  x431G <<- copy(x)
   x
 }
 
 
-D432 <- function( #------432 accuracy in/out----
+f432D <- function( #------432 accuracy in/out----
                   geoccx = geoccG,
                   rc6tx = rc6tG,
                   rssccx = rssccG) {
@@ -691,7 +691,7 @@ D432 <- function( #------432 accuracy in/out----
   x <-
     gt::gt(x2) %>%
     gt::tab_footnote(footnote = f241108a(tc = "C", tbinC)[[1]])
-  G432 <<- copy(x)
+  x432G <<- copy(x)
   x
 }
 
