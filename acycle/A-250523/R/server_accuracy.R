@@ -60,9 +60,9 @@ server_accuracy <- function(input, output, session, common) {
   )
 
   output$x411 <- gt::render_gt(R411()) #-----.----
-  output$x421 <- gt::render_gt(R421()) #-----.----
-  output$x431 <- gt::render_gt(R431()) #-----.----
   output$x412 <- gt::render_gt(R412()) #-----.----
+  output$x421 <- gt::render_gt(R421()) #-----.----
   output$x422 <- gt::render_gt(R422()) #-----.----
+  output$x431 <- gt::render_gt(R431()) #-----.----
   output$x432 <- gt::render_gt(R432()) #-----.----
 }

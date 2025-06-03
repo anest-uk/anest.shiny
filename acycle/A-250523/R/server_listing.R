@@ -17,7 +17,7 @@ server_listing <- function(input, output, session, common) {
         x
       }
     )
-  R211cc <- # listing-2-custom-estdtcu,qeocu,dfn----
+  R212 <- # listing-2-custom-estdtcu,qeocu,dfn----
     eventReactive(
       list(
         common$estdtccR(),
@@ -33,10 +33,10 @@ server_listing <- function(input, output, session, common) {
           dfnz = common$dfnyR(),
           typex = "C"
         )
-        G211cc <<- copy(x)
+        G212 <<- copy(x)
         x
       }
     )
   output$x211 <- gt::render_gt(R211()) #-----.#----
-  output$x211cu <- gt::render_gt(R211cc()) #--.#----
+  output$x212 <- gt::render_gt(R212()) #--.#----
 }

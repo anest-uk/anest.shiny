@@ -3,9 +3,7 @@ server_timeseries <- function(input, output, session, common) {
     list(
       common$rc6tR(),
       common$rc6ccR(),
-      common$geoaR()#,
-      #common$pxosrdo2ddR(),
-      #common$z110R()
+      common$geoaR()
     ),
     {
       if (verbose) {
@@ -15,8 +13,8 @@ server_timeseries <- function(input, output, session, common) {
         rc6tx = common$rc6tR(),
         rc6ccx = common$rc6ccR(),
         geoax = common$geoaR(),
-        pxosrdo2ddx = pxosrdo2dd, #common$pxosrdo2ddR(),
-        z110x = z110,#common$z110R(),
+        pxosrdo2ddx = pxosrdo2dd, 
+        z110x = z110,
         colx = colx # punk green blue
       )
       G111 <<- copy(x)

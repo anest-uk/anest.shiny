@@ -229,7 +229,7 @@ D122 <- function( # ----122 characteristics----
     gt::tab_footnote(
       footnote = f241108a(typeC, tbinC)[[2]]
     )
-  G122 <<- copy(x)
+  #G122 <<- copy(x)
   x
 }            #global {rcx ppm2} : pva
 
@@ -350,7 +350,7 @@ D132 <- function( # ---132 trade summary(2)----
       label = gt::html("sell"),
       columns = 2:ncol(x[["custom"]][[2]])
     )
-  G132 <<- copy(x)
+  #G132 <<- copy(x)
   if (verbose) print("exit R132")
   x
 }
@@ -484,7 +484,7 @@ D211 <- #---summary called in both listings ----
         heading.align = "left",
         heading.title.font.size = 12
       )
-    G211 <<- copy(x)
+    #G211 <<- copy(x)
     x
   }
 
@@ -515,7 +515,7 @@ D311 <- function( #--'----311 constituents----
       rownames = F
     ) %>%
     DT::formatStyle(0, target = "row", lineHeight = "70%")
-  G311 <<- copy(x)
+  #G311 <<- copy(x)
   x
 }
 
@@ -547,7 +547,7 @@ D411 <- function( #-------411 accuracy tbin----
     gt::tab_footnote(
       footnote = f241108a(typeC, tbinC)[[1]]
     )
-  G411 <<- copy(x)
+  #G411 <<- copy(x)
   x
 }
 
@@ -574,7 +574,7 @@ D412 <- function( #--------412 accuracy tbin----
     gt::gt(x3) %>%
     gt::tab_footnote(footnote = f241108a(tc = "C", tbinC)[[1]]) %>%
     gt::tab_footnote(footnote = paste0("only freq=hi is computed for custom"))
-  G412 <<- copy(x)
+  #G412 <<- copy(x)
   x
 }
 
@@ -606,7 +606,7 @@ D421 <- function( #--------421 accuracy trim----
     gt::tab_footnote(
       footnote = f241108a(typeC, tbinC)[[2]]
     )
-  G421 <<- copy(x)
+  #G421 <<- copy(x)
   x
 }
 
@@ -631,7 +631,7 @@ D422 <- function( # #--------422 accuracy trim----
     gt::gt(x3) %>%
     gt::tab_footnote(footnote = f241108a(tc = "C", tbinC)[[1]]) %>%
     gt::tab_footnote(footnote = paste0("only threshold=0.1 is computed for custom"))
-  G432 <<- copy(x)
+  #G422 <<- copy(x)
   x
 }
 
@@ -665,7 +665,7 @@ D431 <- function( #------431 accuracy in/out----
     gt::tab_footnote(
       footnote = f241108a(typeC, tbinC)[[2]]
     )
-  G431 <<- copy(x)
+  #G431 <<- copy(x)
   x
 }
 
@@ -691,7 +691,7 @@ D432 <- function( #------432 accuracy in/out----
   x <-
     gt::gt(x2) %>%
     gt::tab_footnote(footnote = f241108a(tc = "C", tbinC)[[1]])
-  G432 <<- copy(x)
+  #G432 <<- copy(x)
   x
 }
 

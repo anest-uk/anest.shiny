@@ -30,7 +30,7 @@ ui_navpanel_listing <- function(
           "Custom"
         ),
         card_body( #-------------- listing table 211cu
-          gt::gt_output("x211cu")
+          gt::gt_output("x212")
         )
       )
     )
