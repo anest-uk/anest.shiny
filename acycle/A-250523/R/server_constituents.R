@@ -12,6 +12,6 @@ server_constituents <- function(input, output, session, common) {
       x
     }
   )
-  output$x311 <- DT::renderDT(R311()) # output----
+  output$O311 <- DT::renderDT(R311()) # output----
 }
 print("exit ss")

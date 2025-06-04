@@ -3,9 +3,9 @@ ui_navpanel_tim1 <- function(id = NULL) {
     title = "tim1", #---------.----
     grid_container(
       layout = c(
-        "tim111    tim112 ",
-        "tim121    tim122 ",
-        "tim131    tim132 "
+        "O111x    O112x ",
+        "O121x    O122x ",
+        "O131x    O132x "
       ),
       row_sizes = c(
         "1fr",
@@ -18,60 +18,60 @@ ui_navpanel_tim1 <- function(id = NULL) {
       ),
       gap_size = "10px",
       grid_card(
-        area = "tim111",
+        area = "O111x",
         full_screen = TRUE,
         card_header(
-          "tim111"
+          "O111x"
         ),
         card_body(
-          leafletOutput("tim111"),
+          leafletOutput("O111x"),
           height = gridheight
         )
       ) # gridcard
       ,
       grid_card(
-        area = "tim112",
+        area = "O112x",
         full_screen = TRUE,
         card_header(
-          "tim112"
+          "O112x"
         ),
         card_body(
-          plotOutput("tim112")
+          plotOutput("O112x")
         )
       ) # gridcard
       ,
       grid_card(
-        area = "tim121",
+        area = "O121x",
         full_screen = TRUE,
         card_header(
-          "tim121"
+          "O121x"
         ),
         card_body()
       ) # gridcard
       ,
       grid_card(
-        area = "tim122",
+        area = "O122x",
         full_screen = TRUE,
         card_header(
-          "tim122"
+          "O122x"
         ),
         card_body()
       ) # gridcard
       ,
       grid_card(
-        area = "tim131",
+        area = "O131x",
         full_screen = TRUE,
         card_header(
-          "tim131"
+          "O131x"
         ),
         card_body()
       ) # gridcard
       ,
       grid_card(
-        area = "tim132",
+        area = "O132x",
         full_screen = TRUE,
         card_header(
-          "tim132"
+          "O132x"
         ),
         card_body()
       ) # gridcard

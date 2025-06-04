@@ -7,7 +7,7 @@ ui_navpanel_constituents <- function(id = NULL) {
         "Constituent districts"
       ),
       card_body( #-------------- constituent table 311
-        DT::DTOutput("x311"),
+        DT::DTOutput("O311"),
         height = gridheight3
       ),
       height = gridheight3

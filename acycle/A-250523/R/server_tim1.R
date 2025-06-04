@@ -1,17 +1,15 @@
 server_tim1 <- function(input, output, session, common) {
-  tim111D <- eventReactive( # -------111 leaflet----
+  R111x <- eventReactive( # -------111 leaflet----
     list(
       common$rc6tR()
     ),
     {
-      print("enter tim111")
-    #browser()
       x <- f250517a(rc6x = common$rc6tR(), x1 = pxosrdo2dd, x2 = z110, x3 = f250519ad)
       x
     }
   )
 
-  tim112D <- eventReactive( # -------112 ----
+  R112x <- eventReactive( # -------112 ----
     list(
       common$rc6tR()
     ),
@@ -24,7 +22,7 @@ server_tim1 <- function(input, output, session, common) {
     }
   )
 
-  tim121D <- eventReactive( # -------121 ----
+  R121x <- eventReactive( # -------121 ----
     list(
       common$rc6tR()
     ),
@@ -35,7 +33,7 @@ server_tim1 <- function(input, output, session, common) {
     }
   )
 
-  tim122D <- eventReactive( # -------122 ----
+  R122x <- eventReactive( # -------122 ----
     list(
       common$rc6tR()
     ),
@@ -46,7 +44,7 @@ server_tim1 <- function(input, output, session, common) {
     }
   )
 
-  tim131D <- eventReactive( # -------131 ----
+  R131x <- eventReactive( # -------131 ----
     list(
       common$rc6tR()
     ),
@@ -57,7 +55,7 @@ server_tim1 <- function(input, output, session, common) {
     }
   )
 
-  tim132D <- eventReactive( # -------132 ----
+  R132x <- eventReactive( # -------132 ----
     list(
       common$rc6tR()
     ),
@@ -69,11 +67,11 @@ server_tim1 <- function(input, output, session, common) {
   )
 
 
-  output$tim111 <- renderLeaflet(tim111D()) #---render----
-  output$tim112 <- renderPlot(tim112D())
-  output$tim121 <- renderPlot(tim121D())
-  output$tim122 <- renderPlot(tim122D())
-  output$tim131 <- renderPlot(tim131D())
-  output$tim132 <- renderPlot(tim132D())
-  print("Leaving server_tim1()...")
+  output$O111x <- renderLeaflet(R111x()) #---render----
+  output$O112x <- renderPlot(R112x())
+  output$O121x <- renderPlot(R121x())
+  output$O122x <- renderPlot(R122x())
+  output$O131x <- renderPlot(R131x())
+  output$O132x <- renderPlot(R132x())
+  print("Leaving server_R1()...")
 }

@@ -37,6 +37,6 @@ server_listing <- function(input, output, session, common) {
         x
       }
     )
-  output$x211 <- gt::render_gt(R211()) #-----.#----
-  output$x212 <- gt::render_gt(R212()) #--.#----
+  output$O211 <- gt::render_gt(R211()) #-----.#----
+  output$O212 <- gt::render_gt(R212()) #--.#----
 }

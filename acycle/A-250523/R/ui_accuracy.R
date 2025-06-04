@@ -28,7 +28,7 @@ ui_navpanel_accuracy <- function(id = NULL) {
               "Time Sampling"
             ),
             card_body( #--------------accuracy 411
-              gt::gt_output("x411")
+              gt::gt_output("O411")
             )
           ),
           grid_card(
@@ -38,7 +38,7 @@ ui_navpanel_accuracy <- function(id = NULL) {
               "."
             ),
             card_body( #--------------accuracy 412
-              gt::gt_output("x412")
+              gt::gt_output("O412")
             )
           ),
           grid_card(
@@ -48,7 +48,7 @@ ui_navpanel_accuracy <- function(id = NULL) {
               "Outlier Rejection"
             ),
             card_body( #--------------accuracy 421
-              gt::gt_output("x421")
+              gt::gt_output("O421")
             )
           ),
           grid_card(
@@ -58,7 +58,7 @@ ui_navpanel_accuracy <- function(id = NULL) {
               "."
             ),
             card_body( #--------------accuracy 412
-              gt::gt_output("x422")
+              gt::gt_output("O422")
             )
           ),
           grid_card(
@@ -68,7 +68,7 @@ ui_navpanel_accuracy <- function(id = NULL) {
               "Cross Validation"
             ),
             card_body( #--------------accuracy 431
-              gt::gt_output("x431")
+              gt::gt_output("O431")
             )
           ),
           grid_card(
@@ -78,7 +78,7 @@ ui_navpanel_accuracy <- function(id = NULL) {
               "Cross Validation"
             ),
             card_body( #--------------accuracy 432
-              gt::gt_output("x432")
+              gt::gt_output("O432")
             )
           )
         )

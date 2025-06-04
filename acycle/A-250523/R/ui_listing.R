@@ -20,7 +20,7 @@ ui_navpanel_listing <- function(
           "Local"
         ),
         card_body( #-------------- listing table 211
-          gt::gt_output("x211")
+          gt::gt_output("O211")
         )
       ),
       grid_card(
@@ -30,7 +30,7 @@ ui_navpanel_listing <- function(
           "Custom"
         ),
         card_body( #-------------- listing table 211cu
-          gt::gt_output("x212")
+          gt::gt_output("O212")
         )
       )
     )

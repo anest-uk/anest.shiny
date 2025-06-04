@@ -111,16 +111,16 @@ server_timeseries <- function(input, output, session, common) {
     }
   )
 
-  output$x111 <- renderLeaflet(R111()) # render----
-  output$x112 <- renderPlot(R112()) #---render----
+  output$O111 <- renderLeaflet(R111()) # render----
+  output$O112 <- renderPlot(R112()) #---render----
 
-  output$x121a <- gt::render_gt(R121()[[1]]) # render----
-  output$x121b <- gt::render_gt(R121()[[2]]) # render----
-  output$x122 <- gt::render_gt(R122()) # render----
-  output$x131 <- gt::render_gt(R131()) # render----
-  output$x132a <- gt::render_gt(R132()[["local"]][[1]]) # render----
-  output$x132b <- gt::render_gt(R132()[["local"]][[2]]) # render----
-  output$x132c <- gt::render_gt(R132()[["custom"]][[1]]) # render----
-  output$x132d <- gt::render_gt(R132()[["custom"]][[2]]) # render----
+  output$O121a <- gt::render_gt(R121()[[1]]) # render----
+  output$O121b <- gt::render_gt(R121()[[2]]) # render----
+  output$O122 <- gt::render_gt(R122()) # render----
+  output$O131 <- gt::render_gt(R131()) # render----
+  output$O132a <- gt::render_gt(R132()[["local"]][[1]]) # render----
+  output$O132b <- gt::render_gt(R132()[["local"]][[2]]) # render----
+  output$O132c <- gt::render_gt(R132()[["custom"]][[1]]) # render----
+  output$O132d <- gt::render_gt(R132()[["custom"]][[2]]) # render----
   print("Leaving server_timeseries()...")
 }
