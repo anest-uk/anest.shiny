@@ -1,10 +1,18 @@
 server_tim1 <- function(input, output, session, common) {
   R111x <- eventReactive( # -------111 leaflet----
     list(
-      common$rc6tR()
+      common$rc6tR(),
+      common$rc6ccR()
     ),
     {
-      x <- f250517a(rc6x = common$rc6tR(), x1 = pxosrdo2dd, x2 = z110, x3 = f250519ad)
+      print('enter server_tim1')
+      x <- D111x(
+        rc6x = common$rc6tR(),
+        rc6ccx=common$rc6ccR(),
+        x1 = pxosrdo2dd, 
+        x2 = z110, 
+        x3 = f250519ad
+        )
       x
     }
   )
@@ -75,3 +83,4 @@ server_tim1 <- function(input, output, session, common) {
   output$O132x <- renderPlot(R132x())
   print("Leaving server_R1()...")
 }
+

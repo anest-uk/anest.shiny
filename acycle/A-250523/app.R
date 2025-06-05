@@ -32,7 +32,7 @@ library(shiny)
       stepripG <<- "data/smallrip/"
       source("R/c-cleanlib.R")
       source("R/rctree.R")
-      source("R/function.R")
+      source("R/CDlib.R")
       #---------------------app code
       source("ui_main.R")
       source("R/ui_accuracy.R")

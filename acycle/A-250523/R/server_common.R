@@ -2,6 +2,26 @@ server_common <-
   function(input,
            output,
            session) {
+    
+    # ----lib functions called in common only----
+    festdty <- #------------rbind estdtcc,estdta----
+    function(estdtccx = estdtccG, estdtax = estdtaG, geoccx = geoccG) {
+      x <-
+        rbind(
+          estdtccx[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
+          estdtax[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile, rc3)]
+        )#[, qq := as.factor(qtile)]
+      x
+    }
+    
+    fgeoccx <- #------------custom geo compute----
+    function(rc6ccx = rc6ccG) {
+      x <-
+        data.table(rc9 = rc6ccx, nx = 0, lab = "CU00")
+      x
+    }
+    
+    #----reactive----
     dfnxR <- # -----------4-col table with NA----
       reactive({
         x <-
