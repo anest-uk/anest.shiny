@@ -8,7 +8,7 @@ D111 <- function( #-----------------------.#----
                   geoax = geoaG,                  #geo {nx    gx    lab    rc3    rc6 qtile} : shade by qtile this-rc3-geo
                   pxosrdo2ddx = pxosrdo2dd,      #global
                   z110x = z110,                  #global {rcx ppm2} : pva
-                  colx = colx,                    #global named vector : punk green blue 
+                  colxx = colx,                    #global named vector : punk green blue 
                   minzoom = 9,                    #7 for national
                   lightx = .7                     #higher is lighter
 ) {
@@ -16,13 +16,13 @@ D111 <- function( #-----------------------.#----
     geoax %>%
     .[, .(
       rc6,
-      col = lighten(colx, lightx)[.BY[[1]]], ### capital in colx <<<<
+      col = lighten(colxx, lightx)[.BY[[1]]], 
       #lab,
       qtile # shade tiles light
     ), by = .(qtile)] %>%
     .[
       rc6 == rc6tx, # with target district darker
-      col := colx[.BY[[1]]],
+      col := colxx[.BY[[1]]],
       by = .(qtile)
     ] %>%
     f240810b( #->leaflet, colours for areas-to-shade in column 'col'
@@ -270,7 +270,7 @@ D131 <- function( #-------------131 summary----
   x
 }
 
-f132 <- function( #-------------------------.#----
+C132a <- function( #-------------------------.#----
                  geox = geoqG,                    #estdt { gx lab nx qtile rc3 rc6 }
                  steprip = stepripG,
                  estdtlx = estdtlG, # only used for its date(ii) relation
@@ -305,13 +305,13 @@ D132 <- function( # ---132 trade summary(2)----
                   estdtlx = estdtlG,
                   steprip = stepripG) {
   tminx <- tslidex
-  x1 <- f132(
+  x1 <- C132a(
     geox = geoqx, # geoqR()
     steprip = steprip,
     estdtlx = estdtlx, # estdtlR()
     tmin = tminx # tmin=input$tslider
   )
-  x2 <- f132(
+  x2 <- C132a(
     geox = geoccx[, .(rc6 = rc9)], # geoqR()
     steprip = steprip,
     estdtlx = estdtlx, # estdtlR()
@@ -368,7 +368,7 @@ D132 <- function( # ---132 trade summary(2)----
 
 
 
-f132 <- function( #-----132 trade summary(2)----
+C132a <- function( #-----132 trade summary(2)----
                  geox = geoqG,
                  steprip = stepripG,
                  estdtlx = estdtlG, # only used for its date(ii) relation
@@ -709,51 +709,52 @@ D432 <- function( #------432 accuracy in/out----
 
 #-----------------------------------------gen2----
 
-f112g2 <- function( #gen2
-    x1 = labxG,
-    x2 = rc6tG,
-    nn = c(
-      "f250519ad",
-      "f250509ed"
-    )) {
-  x3 <- # all lab,col
-    f250519ad[, .(lab, col)] %>%
-    unique(.)
-  x4 <- # replace col in estdt with col=colcode
-    x3[f250509ed$estdt[, -"col"], on = c(lab = "lab"), nomatch = NULL] #                      gen2
-  x5 <- # from input
-    substr(x2, 1, 3)
-  x6 <- # optimal lab(rc6) reactive-gen2
-    x1[1, lab]
-  x7 <- # normally 6 rows 2 cols: all tile labs selected, this rc3
-    f250519ad[grep(x5, rc6)][, .(lab, col)] %>%
-    .[order(lab)] %>%
-    unique(.) %>%
-    .[, .(lab, col)]
-  x8 <- # construct labels to plot for this rc6tG
-    c(
-      paste0("L", x5, "1.3BA"),
-      paste0("L", x5, "3.3BA"),
-      paste0("L", x5, "1.3BA"),
-      x6
-    ) %>%
-    unique(.) %>%
-    sort(.) %>%
-    data.table(labx = .)
-  x9 <-
-    rbind(
-      x4 %>% # L-estdt
-        .[x8, on = c(lab = "labx")] # plot selection
-      ,
-      rsiccG$estdt %>% # custom
-        .[, -"col"] %>%
-        copy(.) %>%
-        .[, col := "#444444"]
-    ) %>%
-    .[, col := as.factor(col)] %>%
-    sco(.)[['x']]
-  x9
-}
+# f112g2 <- #superseded by D112x
+#function( #gen2
+#     x1 = labxG,
+#     x2 = rc6tG,
+#     nn = c(
+#       "f250519ad",
+#       "f250509ed"
+#     )) {
+#   x3 <- # all lab,col
+#     f250519ad[, .(lab, col)] %>%
+#     unique(.)
+#   x4 <- # replace col in estdt with col=colcode
+#     x3[f250509ed$estdt[, -"col"], on = c(lab = "lab"), nomatch = NULL] #                      gen2
+#   x5 <- # from input
+#     substr(x2, 1, 3)
+#   x6 <- # optimal lab(rc6) reactive-gen2
+#     x1[1, lab]
+#   x7 <- # normally 6 rows 2 cols: all tile labs selected, this rc3
+#     f250519ad[grep(x5, rc6)][, .(lab, col)] %>%
+#     .[order(lab)] %>%
+#     unique(.) %>%
+#     .[, .(lab, col)]
+#   x8 <- # construct labels to plot for this rc6tG
+#     c(
+#       paste0("L", x5, "1.3BA"),
+#       paste0("L", x5, "3.3BA"),
+#       paste0("L", x5, "1.3BA"),
+#       x6
+#     ) %>%
+#     unique(.) %>%
+#     sort(.) %>%
+#     data.table(labx = .)
+#   x9 <-
+#     rbind(
+#       x4 %>% # L-estdt
+#         .[x8, on = c(lab = "labx")] # plot selection
+#       ,
+#       rsiccG$estdt %>% # custom
+#         .[, -"col"] %>%
+#         copy(.) %>%
+#         .[, col := "#444444"]
+#     ) %>%
+#     .[, col := as.factor(col)] %>%
+#     sco(.)[['x']]
+#   x9
+# }
 
 f121g2 <- function( #gen2
     x1 = f250509ed$estdt,
