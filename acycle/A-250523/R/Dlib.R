@@ -1,7 +1,4 @@
 
-
-# timeseries
-
 D111 <- function( #-----------------------.#----
                   rc6tx = rc6tG,                  #scalar: target rc6 that implicitly defines rc3
                   rc6ccx = rc6ccG,                #vector: to outline
@@ -42,44 +39,6 @@ D111 <- function( #-----------------------.#----
   x
 } #"leaflet"  "htmlwidget"
 
-D111x <-
-function(
-    #rc6x='SW-8--', #target
-    rc6x=rc6tG, #target
-    rc6ccx=rc6ccG, #custom
-    x1=pxosrdo2dd, #dataG$pxosrdo2dd
-    x2=z110, #dataG$z110
-    x3=f250519ad,
-    #rc6all=x2[nchar(rcx)==6,][grep(rc3x,rcx)][rcx!=rc6x][1,c(rcx,rc6x)], #peers to highlight
-    rc6all=c(rc6x,rc6ccx),
-    rc3x=substr(rc6x,1,3), #target area
-    minzoom = 9,
-    maxzoom=12
-  ){
-    x4 <- 
-      f240810b( #->leaflet, colours for areas-to-shade in column 'col'
-      x3[grep(rc3x,rc6),.(col,rc6)],       
-      x2 = x1, #map polygons
-      pva = x2, #for tooltip
-      minzoom = minzoom,
-      maxzoom = maxzoom
-    ) %>%
-      addPolygons(      #outline custom districts
-        data = x1[which(x1@data$name %in% irregpcode(rc6all)), ],
-        fill = F,
-        color = "orange", 
-        weight = 1,
-        opacity = 1
-      )%>%
-      addPolygons(      #outline custom districts
-        data = x1[which(x1@data$name %in% irregpcode(rc6x)), ],
-        fill = F,
-        color = "brown", 
-        weight = 1,
-        opacity = 1
-      )
-    x4
-  }
 
 D112 <- function( #-----------------------.#----
                   tslidex = tslideG,              #integer: zero index
@@ -185,30 +144,7 @@ D121 <- function( #-------------121 winding----
     )
   x2
 } 
-C122 <- # combine rss and P characteristics
-  function(rssx, z110x) {
-    x0 <-
-      z110x[rssx, on = c(rcx = "rc6")] %>%
-      .[
-        , .(
-          frac = round(sum(nid) / z110x[nchar(rcx) == 6, sum(nid)], nfig3),
-          nid = sum(nid),
-          ppm2max = round(max(ppm2), nfig2),
-          ppm2min = round(min(ppm2), nfig2),
-          p = round(sum(pv) / sum(m2), nfig2)
-        ),
-        lab
-      ] %>%
-      .[rssx[, .(R2rsi = 1 - sum(ssek) / sum(sstr)), lab], on = c(lab = "lab")] %>%
-      .[, .(
-        lab = substr(lab, 1, 5),
-        frac,
-        R2rsi = round(R2rsi, 3),
-        pnum = p,
-        p = prettyNum(round(p, nfig3), big.mark = ","),
-        p.cus = paste0(prettyNum(round(ppm2min, nfig2), big.mark = ","), "-", prettyNum(round(ppm2max, nfig2), big.mark = ","))
-      )]
-  }
+
 
 D122 <- function( # ----122 characteristics----
                   rc6tx = rc6tG,                  #scalar: target
@@ -270,33 +206,6 @@ D131 <- function( #-------------131 summary----
   x
 }
 
-C132a <- function( #-------------------------.#----
-                 geox = geoqG,                    #estdt { gx lab nx qtile rc3 rc6 }
-                 steprip = stepripG,
-                 estdtlx = estdtlG, # only used for its date(ii) relation
-                 tmin = 20) { # tmin=input$tslider
-  x0 <-
-    geox[, grepstring(rc6)] %>%
-    coread2(., steprip) %>% # or rc6tC
-    .[, .(N = .N, mean = round(mean(as.numeric(retsa)), 4)), .(buy = substr(as.Date(buydate), 1, 4), sell = substr(as.Date(selldate), 1, 4))] %>%
-    .[(buy >= estdtlx[ii >= tmin, substr(min(as.character(date)), 1, 4)])]
-  x1 <-
-    x0 %>%
-    dcast(.,
-      buy ~ sell,
-      value.var = "mean" # the value is unique so any aggregator function is ok
-    )
-  for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
-  x2 <-
-    x0 %>%
-    dcast(.,
-      buy ~ sell,
-      value.var = "N"
-    )
-  for (i in 2:length(x2)) x2[[i]] <- ifelse(is.na(x2[[i]]), "", x2[[i]])
-  x3 <- list(x1, x2)
-  x3
-}
 
 D132 <- function( # ---132 trade summary(2)----
                   tslidex = tslideG,
@@ -364,36 +273,6 @@ D132 <- function( # ---132 trade summary(2)----
   #G132 <<- copy(x)
   if (verbose) print("exit R132")
   x
-}
-
-
-
-C132a <- function( #-----132 trade summary(2)----
-                 geox = geoqG,
-                 steprip = stepripG,
-                 estdtlx = estdtlG, # only used for its date(ii) relation
-                 tmin = 20) { # tmin=input$tslider
-  x0 <-
-    geox[, grepstring(rc6)] %>%
-    coread2(., steprip) %>% # or rc6tC
-    .[, .(N = .N, mean = round(mean(as.numeric(retsa)), 4)), .(buy = substr(as.Date(buydate), 1, 4), sell = substr(as.Date(selldate), 1, 4))] %>%
-    .[(buy >= estdtlx[ii >= tmin, substr(min(as.character(date)), 1, 4)])]
-  x1 <-
-    x0 %>%
-    dcast(.,
-      buy ~ sell,
-      value.var = "mean" # the value is unique so any aggregator function is ok
-    )
-  for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
-  x2 <-
-    x0 %>%
-    dcast(.,
-      buy ~ sell,
-      value.var = "N"
-    )
-  for (i in 2:length(x2)) x2[[i]] <- ifelse(is.na(x2[[i]]), "", x2[[i]])
-  x3 <- list(x1, x2)
-  x3
 }
 
 # listing----
@@ -530,8 +409,6 @@ D311 <- function( #--'----311 constituents----
   x
 }
 
-# accuracy----
-
 D411 <- function( #-------411 accuracy tbin----
                   geoqx = geoqG,
                   rc6tx = rc6tG,
@@ -561,7 +438,6 @@ D411 <- function( #-------411 accuracy tbin----
   #G411 <<- copy(x)
   x
 }
-
 
 D412 <- function( #--------412 accuracy tbin----
                   geoccx = geoccG,
@@ -646,7 +522,6 @@ D422 <- function( # #--------422 accuracy trim----
   x
 }
 
-
 D431 <- function( #------431 accuracy in/out----
                   geoqx = geoqG,
                   rc6tx = rc6tG,
@@ -680,7 +555,6 @@ D431 <- function( #------431 accuracy in/out----
   x
 }
 
-
 D432 <- function( #------432 accuracy in/out----
                   geoccx = geoccG,
                   rc6tx = rc6tG,
@@ -704,81 +578,5 @@ D432 <- function( #------432 accuracy in/out----
     gt::tab_footnote(footnote = f241108a(tc = "C", tbinC)[[1]])
   #G432 <<- copy(x)
   x
-}
-
-
-#-----------------------------------------gen2----
-
-# f112g2 <- #superseded by D112x
-#function( #gen2
-#     x1 = labxG,
-#     x2 = rc6tG,
-#     nn = c(
-#       "f250519ad",
-#       "f250509ed"
-#     )) {
-#   x3 <- # all lab,col
-#     f250519ad[, .(lab, col)] %>%
-#     unique(.)
-#   x4 <- # replace col in estdt with col=colcode
-#     x3[f250509ed$estdt[, -"col"], on = c(lab = "lab"), nomatch = NULL] #                      gen2
-#   x5 <- # from input
-#     substr(x2, 1, 3)
-#   x6 <- # optimal lab(rc6) reactive-gen2
-#     x1[1, lab]
-#   x7 <- # normally 6 rows 2 cols: all tile labs selected, this rc3
-#     f250519ad[grep(x5, rc6)][, .(lab, col)] %>%
-#     .[order(lab)] %>%
-#     unique(.) %>%
-#     .[, .(lab, col)]
-#   x8 <- # construct labels to plot for this rc6tG
-#     c(
-#       paste0("L", x5, "1.3BA"),
-#       paste0("L", x5, "3.3BA"),
-#       paste0("L", x5, "1.3BA"),
-#       x6
-#     ) %>%
-#     unique(.) %>%
-#     sort(.) %>%
-#     data.table(labx = .)
-#   x9 <-
-#     rbind(
-#       x4 %>% # L-estdt
-#         .[x8, on = c(lab = "labx")] # plot selection
-#       ,
-#       rsiccG$estdt %>% # custom
-#         .[, -"col"] %>%
-#         copy(.) %>%
-#         .[, col := "#444444"]
-#     ) %>%
-#     .[, col := as.factor(col)] %>%
-#     sco(.)[['x']]
-#   x9
-# }
-
- D121x <- #was f121g2
-  function( #gen2
-    x1 = f250509ed$estdt,
-    x2 = labxG[1, lab], #replace this
-    dfny = dfnxG,
-    typex = typeC,
-    tbinx = tbinC
-) {
-  x3 <- 
-    D121( #-------------121 winding--------------wind
-    estdtx = x1[lab == x2, .(ii, date, lab, qtile = substr(lab, 5, 7), x, xdotd)],
-    dfny = dfny, # date {tbin1 tbin2 tbin3}
-    typex = typex, #' L' always
-    tbinx = tbinx, #' hi' always, tbinC=2 always
-    dfnz = # vector: drc dates excluding date0
-      dfny[, tbinx + 1, with = F] %>%
-        setnames(., "x") %>%
-        .[, sort(unique(x))],
-    d2x = # vector: annual dates excluding date0
-      dfny[, tbinx + 2, with = F] %>%
-        setnames(., "x") %>%
-        .[, sort(unique(x))]
-  )
-  x3
 }
 

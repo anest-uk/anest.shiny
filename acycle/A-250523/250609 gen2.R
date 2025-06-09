@@ -1,3 +1,5 @@
+D111x()
+
 D112(
     tslidex = tslideG,
     estdty = estdtxG[, .(ii, date, lab, x, qtile)],
@@ -5,6 +7,7 @@ D112(
     geoccx = geoccG) 
 
 getgd("f250509ed")
+f250509ed
 
 rc6tx=copy(rc6tG)
 
@@ -24,36 +27,36 @@ x1 <-
 
 #exteme tiles for each rc3 in turn, defined by i.n, qq, lab, nx
 
-C112a <- #local optimum kss for all rc6
-  function(
-    x0=f250509ed,
-    nn='f250509ed'#static
-    ) {
-    x1 <-  #local solution for all rc6
-      x0$geo %>%
-      .[grep("^L", lab)] %>%
-      x0$kfoldsse[., on = c(nx = "nx",rc6='rc9'), nomatch = NULL] %>% # local only
-      .[,rc3:=substr(rc6,1,3)]%>%
-      .[order(rc6,ssek)]%>%
-      .[,.SD[1],rc6]
-    x1
-  }
+# C112a <- #local optimum kss for all rc6    TRAMSFERRED tot clib
+#   function(
+#     x0=f250509ed,
+#     nn='f250509ed'#static
+#     ) {
+#     x1 <-  #local solution for all rc6
+#       x0$geo %>%
+#       .[grep("^L", lab)] %>%
+#       x0$kfoldsse[., on = c(nx = "nx",rc6='rc9'), nomatch = NULL] %>% # local only
+#       .[,rc3:=substr(rc6,1,3)]%>%
+#       .[order(rc6,ssek)]%>%
+#       .[,.SD[1],rc6]
+#     x1
+#   }
 C112a()
 
-C112b <- #local lab for all rc6 in rc3tx [join on col here?]
-  function(
-    nn='f250509ed', #static
-    x0=C112a() #over
-  ){
-    x1 <- #local solution set for rc3t
-      x0%>%
-      #.[substr(rc6,1,3) == rc3tx,.(rc3tx,nx,lab)] %>%
-      .[,.(rc3,nx,lab,i.n=substr(lab,5,7))]%>%
-      unique(.)%>%
-      data.table(i.n=c('1.3','1.2','1.1','2.3','2.2','3.3'),qq=c(1/6,1/4,1/2,1/2,3/4,5/6))[.,on=c(i.n='i.n'),mult='all']%>%
-      .[order(i.n)]
-    x1
-  }
+# C112b <- #local lab for all rc6 in rc3tx [join on col here?]    TRAMSFERRED tot clib
+#   function(
+#     nn='f250509ed', #static
+#     x0=C112a() #over
+#   ){
+#     x1 <- #local solution set for rc3t
+#       x0%>%
+#       #.[substr(rc6,1,3) == rc3tx,.(rc3tx,nx,lab)] %>%
+#       .[,.(rc3,nx,lab,i.n=substr(lab,5,7))]%>%
+#       unique(.)%>%
+#       data.table(i.n=c('1.3','1.2','1.1','2.3','2.2','3.3'),qq=c(1/6,1/4,1/2,1/2,3/4,5/6))[.,on=c(i.n='i.n'),mult='all']%>%
+#       .[order(i.n)]
+#     x1
+#   }
 C112bd <- C112b()
 C112b()[rc3=='HG-']
 

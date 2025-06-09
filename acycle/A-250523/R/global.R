@@ -1,5 +1,6 @@
-#app_dirG <- normalizePath("c:/users/giles/anest.repo/anest.shiny/acycle/A-250523");setwd(app_dirG)
-app_dirG <- normalizePath(".") 
+app_dirG <- normalizePath("c:/users/giles/anest.repo/anest.shiny/acycle/A-250523")
+setwd(app_dirG)#does nothing in the app, is here for interactive/debug
+#app_dirG <- normalizePath(".") 
 data_dirG <- file.path(app_dirG, "data")
 print(paste0('app_dirG : ',app_dirG))
 print(paste0('data_dirG : ',data_dirG))
