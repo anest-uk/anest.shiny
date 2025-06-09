@@ -3812,18 +3812,13 @@ function( # rotate 2D from a real number
     matrix(c(cos(th), -sin(th), sin(th), cos(th)), 2, 2)
   }
 sco <-
-function(x){
-  x1 <- 
-    data.table(
-    name=sort(names(x)),
-    ii=1:length(names(x))
-    )
-  x2 <- 
-    setcolorder(x, order(names(x)))
-  list(
-    name=x1,
-    x=x2
-  )
+function(x,namesonly=T){
+  x1 <- setcolorder(x, order(names(x)))
+  if(namesonly==T){
+    x1 <- x1%>%names(.)%>%c('{',.,'}')%>%paste0(.,collapse=' ')
+    
+  }
+  x1
 }
 tanrot <-
 function(#rowvector1 = rowvector0 x tanrot(tantheta); rotate coordinates not axes
