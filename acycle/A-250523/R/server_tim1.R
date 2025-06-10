@@ -2,7 +2,8 @@ server_tim1 <- function(input, output, session, common) {
   R111x <- eventReactive( # -------111 leaflet----
     list(
       common$rc6tR(),
-      common$rc6ccR()
+      common$rc6ccR(),
+      common$tslideR()
     ),
     {
       print('enter server_tim1')
@@ -20,13 +21,15 @@ server_tim1 <- function(input, output, session, common) {
   R112x <- eventReactive( # -------112 ----
     list(
       common$rc6tR(),
-      common$estdtccR()
+      common$estdtccR(),
+      common$tslideR()
     ),
     {
       x <-
         D112x(
           rc6tx = common$rc6tR(),
-          x1 = common$estdtccR()
+          x1 = common$estdtccR(),
+          tslidex = common$tslideR()
         )
       # x <-
       #   f250509ed$estdt[lab == common$labxR()[1, lab]] %>%

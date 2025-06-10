@@ -35,12 +35,13 @@ C112c <-
   ) {
     x1 <- 
       rbind(
-        C112b()[rc3==substr(rc6tx,1,3)][order(qq)][c(1,.N)], #top and bottom
-        C112b()[lab==C112a()[rc6==rc6tx,lab]] #target
+        C112b()[rc3==substr(rc6tx,1,3)][order(qq)][c(1,.N)]#, #top and bottom
+        #C112b()[lab==C112a()[rc6==rc6tx,lab]] #target #clutter/confused if not a tertile-optimum
       )%>%
       unique(.)%>%
       coltab[.,on=c(code='i.n')]%>%
-      .[,legendlab:=ifelse(lab==C112a()[rc6==rc6tx,lab],'target',lab)]%>%
+      #.[,legendlab:=ifelse(lab==C112a()[rc6==rc6tx,lab],'target',lab)]%>%
+      .[,legendlab:=lab]%>%
       .[order(-qq)]
     x1
   }
@@ -65,10 +66,10 @@ C112d <-
       rbind(
       x2[,.(dark,lab,legendlab)],
       data.table(dark='brown',lab='CU00',legendlab='custom'))
-    print(x2)
+    #print(x2)
     x6 <-
       x4[x5,on=c(lab='lab')]%>%
-      .[,.(date,ii,lab,legendlab,x,col)]
+      .[,.(date,ii,lab,legendlab,x,col,dark)]
     x6
   }
 

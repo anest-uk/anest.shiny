@@ -40,15 +40,45 @@ function(
 
 D112x <- function(
     rc6tx=rc6tG,
+    tslidex=tslideG,
     x1=estdtccG #cus
 ) {
   x2 <- C112d(
     rc6t=rc6tx,
     x1=estdtccG
-  )
-  ggplot(x2,aes(ii,x,color=legendlab))+geom_line()
+  )%>%
+  .[, .SD[, .(ii, date, lab, x = x - ifelse(tslidex == 0, 0, x[tslidex]))], .(legendlab,dark)] #rebase
+  last_points <- x2[, .SD[.N], by = legendlab]
+  ggplot(x2,aes(ii,x,color=dark))+
+    geom_line()+
+    scale_color_identity()+
+    geom_text_repel(
+    data = last_points,
+    aes(label = legendlab),
+    nudge_x = 0.1,
+    segment.color = "grey50"
+  ) +
+ geom_point(size = .3) +
+    #geom_text_repel() +
+    # ylim(ylimx - x3) +
+    #labs(caption = geoccx[, paste0("Custom districts: ", paste0(sort(irregpcode(rc9)), collapse = ", "))]) +
+    xlab("") +
+    ylab(bquote(Delta ~ P ~ log ~ price ~ change)) +
+    theme_bw() +
+    theme(
+      axis.line = element_line(colour = "black"),
+      panel.grid.major = element_line(linewidth = .2, linetype = "dotted", color = pgmc),
+      panel.grid.minor = element_blank(),
+      panel.border = element_blank(),
+      panel.background = element_blank(),
+      text = element_text(size = 16, face = "plain"),
+      axis.line.y.left = element_line(linewidth = .1),
+      axis.line.x.bottom = element_line(linewidth = .1),
+      legend.position = "none"
+    ) 
+    
 }
-#D112x('NG-7--')
+
 
  D121x <- #was f121g2
   function( #gen2
