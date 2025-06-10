@@ -20,15 +20,59 @@ C112b <- #local lab for all rc6 in rc3tx [join on col here?]
   ){
     x1 <- #local solution set for rc3t
       x0%>%
-      #.[substr(rc6,1,3) == rc3tx,.(rc3tx,nx,lab)] %>%
       .[,.(rc3,nx,lab,i.n=substr(lab,5,7))]%>%
+      #.[,.(rc3,nx,lab,i.n=paste0(substr(lab,7,7),'.',substr(lab,5,5)))]%>%
       unique(.)%>%
       data.table(i.n=c('1.3','1.2','1.1','2.3','2.2','3.3'),qq=c(1/6,1/4,1/2,1/2,3/4,5/6))[.,on=c(i.n='i.n'),mult='all']%>%
-      .[order(i.n)]
+      .[order(qq)]
     x1
   }
 
+C112c <-
+  function(
+    rc6tx=rc6tG,
+    coltabx=coltab
+  ) {
+    x1 <- 
+      rbind(
+        C112b()[rc3==substr(rc6tx,1,3)][order(qq)][c(1,.N)], #top and bottom
+        C112b()[lab==C112a()[rc6==rc6tx,lab]] #target
+      )%>%
+      unique(.)%>%
+      coltab[.,on=c(code='i.n')]%>%
+      .[,legendlab:=ifelse(lab==C112a()[rc6==rc6tx,lab],'target',lab)]%>%
+      .[order(-qq)]
+    x1
+  }
 
+C112d <- 
+  function(
+    rc6tx=rc6tG, #rc6t
+    x0=f250509ed,#kfx
+    x1=estdtccG, #cus
+    x2=C112c(rc6tx=rc6tx)#local for plot
+  ) {
+    x3 <- 
+      intersect(names(x0$estdt),names(x1))%>%
+      #setdiff(.,'lab')%>%
+      sort(.)
+    x4 <- 
+      rbind(
+        x0$estdt[x2,on=c(nx='nx')][,x3,with=F],
+        estdtccG[,x3,with=F]
+      )
+    x5 <- 
+      rbind(
+      x2[,.(dark,lab,legendlab)],
+      data.table(dark='brown',lab='CU00',legendlab='custom'))
+    print(x2)
+    x6 <-
+      x4[x5,on=c(lab='lab')]%>%
+      .[,.(date,ii,lab,legendlab,x,col)]
+    x6
+  }
+
+#C112d()[,.N,legendlab]
 C122 <- # combine rss and P characteristics
   function(rssx, z110x) {
     x0 <-

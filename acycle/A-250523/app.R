@@ -34,12 +34,13 @@ library(shiny)
       source("R/rctree.R")
       #source("R/CDFlib.R")
       source("R/Dlib.R")
+      source("R/Dxlib.R") #g2
       source("R/Clib.R")
       #---------------------app code
       source("ui_main.R")
       source("R/ui_accuracy.R")
       source("R/ui_action.R")
-      source("R/ui_constituents.R")
+      source("R/ui_constituents.R") 
       source("R/ui_header.R")
       source("R/ui_listing.R")
       source("R/ui_notes.R")
@@ -51,6 +52,7 @@ library(shiny)
       gridheight2 <<- "830px"
       gridheight3 <<- "1020px"
       colx <<- cobalt()[c(4, 2, 1)]
+      coltab <<- data.table(light=cobalt(light=T)[c(4,3,2,2,1,5)],dark=cobalt(light=F)[c(4,3,2,2,1,5)],code=c('1.3','1.2','1.1','2.3','2.2','3.3'))
       sf <<- 3
       pgmc <<- "grey50"
       #-------------------Pseudo=Control

@@ -1,3 +1,100 @@
+x1=f250509ed$estdt
+x2=estdtccG
+
+x3 <- 
+  intersect(colnames(x1),colnames(x2))%>%
+  sort(.)
+
+
+#local indices for plot
+rc6tx=rc6tG
+rc6tx='NG-7--'
+x0=f250509ed
+
+# C112c <-
+#   function(
+#     rc6tx=rc6tG,
+#     coltabx=coltab
+#   ) {
+#     x1 <- 
+#       rbind(
+#         C112b()[rc3==substr(rc6tx,1,3)][order(qq)][c(1,.N)], #top and bottom
+#         C112b()[lab==C112a()[rc6==rc6tx,lab]] #target
+#       )%>%
+#       unique(.)%>%
+#       coltab[.,on=c(code='i.n')]%>%
+#       .[,legendlab:=ifelse(lab==C112a()[rc6==rc6tx,lab],'target',lab)]%>%
+#       .[order(-qq)]
+#     x1
+#   }
+C112c('SY-1--')
+
+
+#x1[] #key for plot
+
+
+#local + custom index for plot
+# C112d <- 
+#   function(
+#     rc6tx=rc6tG, #rc6t
+#     x0=f250509ed,#kfx
+#     x1=estdtccG, #cus
+#     x2=C112c(rc6tx=rc6tx)#local for plot
+#   ) {
+#     x3 <- 
+#       intersect(names(x0$estdt),names(x1))%>%
+#       sort(.)
+#     x4 <- 
+#       rbind(
+#         x0$estdt[x2,on=c(nx='nx')][,x3,with=F],
+#         estdtccG[,x3,with=F]
+#       )
+#     x5 <- 
+#       rbind(
+#       x2[,.(dark,lab,legendlab)],
+#       data.table(dark='brown',lab='CU00',legendlab='custom'))
+#     x6 <-
+#       x5[x4,on=c(lab='lab')]%>%
+#       .[,.(date,ii,x,col)]
+#     x6
+#   }
+
+D112x <- function(
+    rc6tx=rx6tG,
+    x1=estdtccG #cus
+) {
+  x2 <- C112d(rc6t=rc6tx)
+  ggplot(x2,aes(ii,x,color=col))+geom_line()
+}
+
+D112('SE-1--')
+D112('SW-3--')
+
+
+
+x2
+x2[,.N,.(legendlab,dark)]
+
+
+x0$estdt[]
+coltab[x0$estdt,on=c(col=)]
+#color for n.i
+coltab
+#legend label for [this]
+
+
+C112a()
+C112b()
+
+
+x1 <- 
+  union(
+C112b()[rc3==substr(rc6tG,1,3)][c(1,.N),nx],
+C112a()[rc6==rc6tG,nx]
+)%>%
+  
+
+
 D111x()
 
 D112(

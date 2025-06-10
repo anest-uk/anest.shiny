@@ -36,7 +36,19 @@ function(
         opacity = 1
       )
     x4
-  }
+}
+
+D112x <- function(
+    rc6tx=rc6tG,
+    x1=estdtccG #cus
+) {
+  x2 <- C112d(
+    rc6t=rc6tx,
+    x1=estdtccG
+  )
+  ggplot(x2,aes(ii,x,color=legendlab))+geom_line()
+}
+#D112x('NG-7--')
 
  D121x <- #was f121g2
   function( #gen2

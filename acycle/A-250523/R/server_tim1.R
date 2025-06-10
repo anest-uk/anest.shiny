@@ -19,13 +19,19 @@ server_tim1 <- function(input, output, session, common) {
 
   R112x <- eventReactive( # -------112 ----
     list(
-      common$rc6tR()
+      common$rc6tR(),
+      common$estdtccR()
     ),
     {
       x <-
-        f250509ed$estdt[lab == common$labxR()[1, lab]] %>%
-        ggplot(., aes(date, x)) +
-        geom_point()
+        D112x(
+          rc6tx = common$rc6tR(),
+          x1 = common$estdtccR()
+        )
+      # x <-
+      #   f250509ed$estdt[lab == common$labxR()[1, lab]] %>%
+      #   ggplot(., aes(date, x)) +
+      #   geom_point()
       x
     }
   )
