@@ -1,5 +1,5 @@
 server_tim1 <- function(input, output, session, common) {
-  R111x <- eventReactive( # -------111 leaflet----
+  R111x <- eventReactive( # 111 leaflet----
     list(
       common$rc6tR(),
       common$rc6ccR(),
@@ -18,7 +18,7 @@ server_tim1 <- function(input, output, session, common) {
     }
   )
 
-  R112x <- eventReactive( # -------112 ----
+  R112x <- eventReactive( # 112 x(t) ----
     list(
       common$rc6tR(),
       common$estdtccR(),
@@ -31,15 +31,11 @@ server_tim1 <- function(input, output, session, common) {
           x1 = common$estdtccR(),
           tslidex = common$tslideR()
         )
-      # x <-
-      #   f250509ed$estdt[lab == common$labxR()[1, lab]] %>%
-      #   ggplot(., aes(date, x)) +
-      #   geom_point()
       x
     }
   )
 
-  R121x <- eventReactive( # -------121 ----
+  R121x <- eventReactive( # 121 winding ----
     list(
       common$rc6tR()
     ),
@@ -50,7 +46,7 @@ server_tim1 <- function(input, output, session, common) {
     }
   )
 
-  R122x <- eventReactive( # -------122 ----
+  R122x <- eventReactive( # 122 charac ----
     list(
       common$rc6tR()
     ),
@@ -61,7 +57,7 @@ server_tim1 <- function(input, output, session, common) {
     }
   )
 
-  R131x <- eventReactive( # -------131 ----
+  R131x <- eventReactive( # 131 summary ----
     list(
       common$rc6tR()
     ),
@@ -72,7 +68,7 @@ server_tim1 <- function(input, output, session, common) {
     }
   )
 
-  R132x <- eventReactive( # -------132 ----
+  R132x <- eventReactive( # 132 trade ----
     list(
       common$rc6tR()
     ),
@@ -84,7 +80,7 @@ server_tim1 <- function(input, output, session, common) {
   )
 
 
-  output$O111x <- renderLeaflet(R111x()) #---render----
+  output$O111x <- renderLeaflet(R111x()) # render----
   output$O112x <- renderPlot(R112x())
   output$O121x <- renderPlot(R121x())
   output$O122x <- renderPlot(R122x())

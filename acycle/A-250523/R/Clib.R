@@ -1,81 +1,134 @@
-C112a <- #local optimum kss for all rc6
+C112a <- # local optimum kss for all rc6 ----
   function(
-    x0=f250509ed,
-    nn='f250509ed'#static
-    ) {
-    x1 <-  #local solution for all rc6
+      x0 = f250509ed,
+      nn = "f250509ed" # static
+      ) {
+    x1 <- # local solution for all rc6
       x0$geo %>%
       .[grep("^L", lab)] %>%
-      x0$kfoldsse[., on = c(nx = "nx",rc6='rc9'), nomatch = NULL] %>% # local only
-      .[,rc3:=substr(rc6,1,3)]%>%
-      .[order(rc6,ssek)]%>%
-      .[,.SD[1],rc6]
+      x0$kfoldsse[., on = c(nx = "nx", rc6 = "rc9"), nomatch = NULL] %>% # local only
+      .[, rc3 := substr(rc6, 1, 3)] %>%
+      .[order(rc6, ssek)] %>%
+      .[, .SD[1], rc6] %>%
+      sco(.,F)
     x1
   }
 
-C112b <- #local lab for all rc6 in rc3tx [join on col here?]
-  function(
-    nn='f250509ed', #static
-    x0=C112a() #over
-  ){
-    x1 <- #local solution set for rc3t
-      x0%>%
-      .[,.(rc3,nx,lab,i.n=substr(lab,5,7))]%>%
-      #.[,.(rc3,nx,lab,i.n=paste0(substr(lab,7,7),'.',substr(lab,5,5)))]%>%
-      unique(.)%>%
-      data.table(i.n=c('1.3','1.2','1.1','2.3','2.2','3.3'),qq=c(1/6,1/4,1/2,1/2,3/4,5/6))[.,on=c(i.n='i.n'),mult='all']%>%
+C112b <- # local lab for all rc6 in rc3tx [join on col here?] ----
+  function(nn = "f250509ed", # static
+           x0 = C112a() # over
+  ) {
+    x1 <- # local solution set for rc3t
+      x0 %>%
+      .[, .(rc3, nx, lab, i.n = substr(lab, 5, 7))] %>%
+      # .[,.(rc3,nx,lab,i.n=paste0(substr(lab,7,7),'.',substr(lab,5,5)))]%>%
+      unique(.) %>%
+      data.table(i.n = c("1.3", "1.2", "1.1", "2.3", "2.2", "3.3"), qq = c(1 / 6, 1 / 4, 1 / 2, 1 / 2, 3 / 4, 5 / 6))[., on = c(i.n = "i.n"), mult = "all"] %>%
       .[order(qq)]
     x1
   }
 
-C112c <-
+C112c <- #----
   function(
-    rc6tx=rc6tG,
-    coltabx=coltab
-  ) {
-    x1 <- 
+      rc6tx = rc6tG,
+      coltabx = coltab) {
+    x1 <-
       rbind(
-        C112b()[rc3==substr(rc6tx,1,3)][order(qq)][c(1,.N)]#, #top and bottom
-        #C112b()[lab==C112a()[rc6==rc6tx,lab]] #target #clutter/confused if not a tertile-optimum
-      )%>%
-      unique(.)%>%
-      coltab[.,on=c(code='i.n')]%>%
-      #.[,legendlab:=ifelse(lab==C112a()[rc6==rc6tx,lab],'target',lab)]%>%
-      .[,legendlab:=lab]%>%
+        C112b()[rc3 == substr(rc6tx, 1, 3)][order(qq)][c(1, .N)] # , #top and bottom
+        # C112b()[lab==C112a()[rc6==rc6tx,lab]] #target #clutter/confused if not a tertile-optimum
+      ) %>%
+      unique(.) %>%
+      coltab[., on = c(code = "i.n")] %>%
+      # .[,legendlab:=ifelse(lab==C112a()[rc6==rc6tx,lab],'target',lab)]%>%
+      .[, legendlab := lab] %>%
       .[order(-qq)]
     x1
   }
 
-C112d <- 
-  function(
-    rc6tx=rc6tG, #rc6t
-    x0=f250509ed,#kfx
-    x1=estdtccG, #cus
-    x2=C112c(rc6tx=rc6tx)#local for plot
+C112d <- #----
+  function(rc6tx = rc6tG, # rc6t
+           x0 = f250509ed, # kfx
+           x1 = estdtccG, # cus
+           x2 = C112c(rc6tx = rc6tx) # local for plot
   ) {
-    x3 <- 
-      intersect(names(x0$estdt),names(x1))%>%
-      #setdiff(.,'lab')%>%
+    x3 <-
+      intersect(names(x0$estdt), names(x1)) %>%
+      # setdiff(.,'lab')%>%
       sort(.)
-    x4 <- 
+    x4 <-
       rbind(
-        x0$estdt[x2,on=c(nx='nx')][,x3,with=F],
-        estdtccG[,x3,with=F]
+        x0$estdt[x2, on = c(nx = "nx")][, x3, with = F],
+        estdtccG[, x3, with = F]
       )
-    x5 <- 
+    x5 <-
       rbind(
-      x2[,.(dark,lab,legendlab)],
-      data.table(dark='brown',lab='CU00',legendlab='custom'))
-    #print(x2)
+        x2[, .(dark, lab, legendlab)],
+        data.table(dark = "brown", lab = "CU00", legendlab = "custom")
+      )
+    # print(x2)
     x6 <-
-      x4[x5,on=c(lab='lab')]%>%
-      .[,.(date,ii,lab,legendlab,x,col,dark)]
+      x4[x5, on = c(lab = "lab")] %>%
+      .[, .(date, ii, lab, legendlab, x, col, dark)]
     x6
   }
 
-#C112d()[,.N,legendlab]
-C122 <- # combine rss and P characteristics
-  function(rssx, z110x) {
+
+C121a <- # {ii AN BA} dates ----
+  function(x0 = f250509ed$estdt) {
+    x1 <- f250509ed$estdt %>%
+      .[, .(ii = sort(unique(ii)), date = sort(unique(date))), .(tbin = substr(lab, 8, 9))] %>%
+      .[tbin %in% c("BA")] %>%
+      dcast(., ii ~ tbin, value.var = "date") %>%
+      rbind(., data.table(ii = 0, BA = as.Date("1994-12-31"))) %>%
+      .[order(BA)]
+    x1
+  }
+
+C121b <- # {rc6 ssek nx lab} 3 rows i.n ssek-ordered ----
+  function(x0 = f250509ed,
+           rc6tx = rc6tG) {
+    x0$geo %>%
+      .[grep("^L", lab)] %>%
+      .[rc9 == rc6tx, .(nx, lab)] %>%
+      x0$kfoldsse[., on = c(nx = "nx")] %>%
+      .[rc6 == rc6tx] %>%
+      .[order(ssek)] %>%
+      .[, .(rc6, ssek, nx, lab)]
+  }
+
+C121c <- #----
+  function(x0 = f250509ed,
+           x1 = C121a()) {
+    x2 <- # daily
+      seq.Date(from = x1[1, BA], to = x1[.N, BA], by = "d")
+    x3 <- # annual
+      seq.Date(from = x1[1, BA], to = x1[.N, BA], by = "y") %>%
+      .[-1] %>% # remove d0
+      c(., x1[.N, BA]) %>% # add dmax
+      unique(.)
+    x4 <- x0$estdt[nx == C121b()[1, nx]]
+    x5 <-
+      x4 %>%
+      .[.(date = x2), on = c(date = "date"), roll = -Inf, j = .(date, xdotd)] %>%
+      .[, .(ii = 1:.N, date, x = cumsum(xdotd))] %>%
+      .[.(date2 = x3), on = c(date = "date2")] %>%
+      .[, .(date, x, xdot = c(x[1], diff(x)), ii = 1:.N)] %>%
+      .[, .(ii, date, xdot, x)] %>%
+      .[, .(date, xdot)] %>%
+      .[date == as.Date("2009-02-28"), let(date, as.Date("2008-12-31"))] %>%
+      .[, .(decade = substr(date, 1, 3), yr = substr(date, 4, 4), xdot = round(xdot, 3))] %>%
+      dcast(., decade ~ yr, value.var = "xdot") %>%
+      .[, decade := c(1990, 2000, 2010, 2020)] %>%
+      setnames(., old = "decade", new = "decade\\year") %>%
+      .[]
+    x5
+  }
+
+C122 <- # combine rss and P characteristics ----
+  function(
+      rssx,
+      z110x #
+      ) {
     x0 <-
       z110x[rssx, on = c(rcx = "rc6")] %>%
       .[
@@ -99,60 +152,31 @@ C122 <- # combine rss and P characteristics
       )]
   }
 
-# C132a <- function( #-------------------------.#----
-#                  geox = geoqG,                    #estdt { gx lab nx qtile rc3 rc6 }
-#                  steprip = stepripG,
-#                  estdtlx = estdtlG, # only used for its date(ii) relation
-#                  tmin = 20) { # tmin=input$tslider
-#   x0 <-
-#     geox[, grepstring(rc6)] %>%
-#     coread2(., steprip) %>% # or rc6tC
-#     .[, .(N = .N, mean = round(mean(as.numeric(retsa)), 4)), .(buy = substr(as.Date(buydate), 1, 4), sell = substr(as.Date(selldate), 1, 4))] %>%
-#     .[(buy >= estdtlx[ii >= tmin, substr(min(as.character(date)), 1, 4)])]
-#   x1 <-
-#     x0 %>%
-#     dcast(.,
-#       buy ~ sell,
-#       value.var = "mean" # the value is unique so any aggregator function is ok
-#     )
-#   for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
-#   x2 <-
-#     x0 %>%
-#     dcast(.,
-#       buy ~ sell,
-#       value.var = "N"
-#     )
-#   for (i in 2:length(x2)) x2[[i]] <- ifelse(is.na(x2[[i]]), "", x2[[i]])
-#   x3 <- list(x1, x2)
-#   x3
-# }
-# 
-
-C132a <- function( #-----132 trade summary(2)----
-                 geox = geoqG,
-                 steprip = stepripG,
-                 estdtlx = estdtlG, # only used for its date(ii) relation
-                 tmin = 20) { # tmin=input$tslider
-  x0 <-
-    geox[, grepstring(rc6)] %>%
-    coread2(., steprip) %>% # or rc6tC
-    .[, .(N = .N, mean = round(mean(as.numeric(retsa)), 4)), .(buy = substr(as.Date(buydate), 1, 4), sell = substr(as.Date(selldate), 1, 4))] %>%
-    .[(buy >= estdtlx[ii >= tmin, substr(min(as.character(date)), 1, 4)])]
-  x1 <-
-    x0 %>%
-    dcast(.,
-      buy ~ sell,
-      value.var = "mean" # the value is unique so any aggregator function is ok
-    )
-  for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
-  x2 <-
-    x0 %>%
-    dcast(.,
-      buy ~ sell,
-      value.var = "N"
-    )
-  for (i in 2:length(x2)) x2[[i]] <- ifelse(is.na(x2[[i]]), "", x2[[i]])
-  x3 <- list(x1, x2)
-  x3
-}
-
+C132a <- #-----132 trade summary(2)----
+  function(geox = geoqG,
+           steprip = stepripG,
+           estdtlx = estdtlG, # only used for its date(ii) relation
+           tmin = 20 # tmin=input$tslider
+  ) {
+    x0 <-
+      geox[, grepstring(rc6)] %>%
+      coread2(., steprip) %>% # or rc6tC
+      .[, .(N = .N, mean = round(mean(as.numeric(retsa)), 4)), .(buy = substr(as.Date(buydate), 1, 4), sell = substr(as.Date(selldate), 1, 4))] %>%
+      .[(buy >= estdtlx[ii >= tmin, substr(min(as.character(date)), 1, 4)])]
+    x1 <-
+      x0 %>%
+      dcast(.,
+        buy ~ sell,
+        value.var = "mean" # the value is unique so any aggregator function is ok
+      )
+    for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
+    x2 <-
+      x0 %>%
+      dcast(.,
+        buy ~ sell,
+        value.var = "N"
+      )
+    for (i in 2:length(x2)) x2[[i]] <- ifelse(is.na(x2[[i]]), "", x2[[i]])
+    x3 <- list(x1, x2)
+    x3
+  }

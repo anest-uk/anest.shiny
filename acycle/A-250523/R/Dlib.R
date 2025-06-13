@@ -97,14 +97,6 @@ D121 <- function( #-------------121 winding----
                   drangex = range(dfnz),
                   typex = typeC,                  #'L' always
                   tbinx = tbinC,                  #'hi' always, tbinC=2 always
-                  # dfnz =                        #drc dates excluding date0
-                  #   dfny[-1, tbinC + 1, with = F] %>% 
-                  #   setnames(., "x") %>%
-                  #   .[, sort(unique(x))], 
-                  # d2x =                           #annual dates excluding date0
-                  #   dfny[-1, tbinC + 2, with = F] %>%
-                  #   setnames(., "x") %>%
-                  #   .[, sort(unique(x))]          
                   dfnz =                        #drc dates excluding date0
                     dfny[, tbinC + 1, with = F] %>% 
                     setnames(., "x") %>%
@@ -144,6 +136,10 @@ D121 <- function( #-------------121 winding----
     )
   x2
 } 
+
+
+
+
 
 
 D122 <- function( # ----122 characteristics----
