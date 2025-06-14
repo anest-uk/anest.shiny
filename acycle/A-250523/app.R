@@ -33,9 +33,10 @@ library(shiny)
       source("R/c-cleanlib.R")
       source("R/rctree.R")
       #source("R/CDFlib.R")
-      source("R/Dlib.R")
-      source("R/Dxlib.R") #g2
-      source("R/Clib.R")
+      source("R/d-lib.R") 
+      source("R/dx-lib.R") #gen2
+      source("R/c-lib.R")
+      source("R/v-lib.R") #vgeo(); vkss(); vestdt(); vpva()
       #---------------------app code
       source("ui_main.R")
       source("R/ui_accuracy.R")

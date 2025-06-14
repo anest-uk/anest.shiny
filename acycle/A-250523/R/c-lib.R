@@ -149,7 +149,9 @@ C122 <- # combine rss and P characteristics ----
         pnum = p,
         p = prettyNum(round(p, nfig3), big.mark = ","),
         p.cus = paste0(prettyNum(round(ppm2min, nfig2), big.mark = ","), "-", prettyNum(round(ppm2max, nfig2), big.mark = ","))
-      )]
+      )]%>%
+      .[]
+    x0
   }
 
 C132a <- #-----132 trade summary(2)----
