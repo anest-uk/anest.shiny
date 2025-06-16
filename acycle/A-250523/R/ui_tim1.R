@@ -36,7 +36,8 @@ ui_navpanel_tim1 <- function(id = NULL) {
           "O112x"
         ),
         card_body(
-          plotOutput("O112x")
+          plotOutput("O112x"),
+          height = gridheight
         )
       ) # gridcard
       ,
@@ -46,7 +47,10 @@ ui_navpanel_tim1 <- function(id = NULL) {
         card_header(
           "O121x"
         ),
-        card_body()
+        card_body(
+          gt::gt_output("O121x"),
+          height = gridheight
+        )
       ) # gridcard
       ,
       grid_card(
@@ -55,7 +59,10 @@ ui_navpanel_tim1 <- function(id = NULL) {
         card_header(
           "O122x"
         ),
-        card_body()
+        card_body(
+          gt::gt_output("O122x"),
+          height = gridheight
+        )
       ) # gridcard
       ,
       grid_card(

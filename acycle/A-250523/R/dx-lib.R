@@ -73,7 +73,8 @@ D112x <- # x(t) ----
 
 D121x <- # winding ----
   function(
-      x1 = C121c(),
+      rc6t = rc6tG,
+      x1 = C121c(rc6t = rc6t),
       typex = c(A = "All", L = "Local", N = "National", C = "Custom")["C"],
       tbinx = c(L = "Low Frequency", H = "High Frequency", A = "Annual")["H"]) {
     for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
@@ -86,8 +87,7 @@ D121x <- # winding ----
       )
     x2
   }
-
-if (F) {#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<working here
+if (F) { #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<working here
   # custom computed using standard
   # use accessor akss for
   akss(f250509ed$kfoldsse) # this is fine for result, want the same for custom
@@ -123,9 +123,18 @@ D122x <- #----122 characteristics----
     rsscux <- copy(rssccx)[, lab := "CU000"] # R()
     x0 <- C122(rssx = rsscux, z110x = z110x)
     x1 <- C122(rssx = rssax, z110x = z110x)
-    x2 <-
-      rbind(x1, x0)[order(-pnum)][, -"pnum"]
+    # browser()
+
     x <-
+      data.table(coltab[, -"dark"])[, row := 1:.N][]
+    x2 <-
+      cbind(x1, x[c(1, 3, 6), ]) %>%
+      .[, uu := "\u2589"]
+
+
+    # x2 <-
+    #   rbind(x1, x0)[order(-pnum)][, -"pnum"]
+    x3 <-
       x2 %>%
       gt::gt(.) %>%
       cols_label(
@@ -145,6 +154,19 @@ D122x <- #----122 characteristics----
       gt::tab_footnote(
         footnote = f241108a(typeC, tbinC)[[2]]
       )
+    x4 <-
+      x3 %>%
+      text_transform(
+        locations = cells_body(columns = uu),
+        fn = function(codes) {
+          purrr::map2_chr(codes, x2$light, ~ paste0(
+            "<span style='color:", .y, "; font-weight:bold;'>", .x, "</span>"
+          )) %>%
+            purrr::map(htmltools::HTML)
+        }
+      ) %>%
+      cols_hide(columns = light) %>%
+      cols_label(uu = "")
     # G122 <<- copy(x)
-    x
+    x4
   } # global {rcx ppm2} : pva

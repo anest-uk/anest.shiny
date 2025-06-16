@@ -97,8 +97,10 @@ C121b <- # {rc6 ssek nx lab} 3 rows i.n ssek-ordered ----
   }
 
 C121c <- #----
-  function(x0 = f250509ed,
-           x1 = C121a()) {
+  function(
+    rc6tx = rc6tG,
+    x0 = f250509ed,
+    x1 = C121a()) {
     x2 <- # daily
       seq.Date(from = x1[1, BA], to = x1[.N, BA], by = "d")
     x3 <- # annual
@@ -106,7 +108,7 @@ C121c <- #----
       .[-1] %>% # remove d0
       c(., x1[.N, BA]) %>% # add dmax
       unique(.)
-    x4 <- x0$estdt[nx == C121b()[1, nx]]
+    x4 <- x0$estdt[nx == C121b(rc6tx=rc6tx)[1, nx]]
     x5 <-
       x4 %>%
       .[.(date = x2), on = c(date = "date"), roll = -Inf, j = .(date, xdotd)] %>%
@@ -127,7 +129,7 @@ C121c <- #----
 C122 <- # combine rss and P characteristics ----
   function(
       rssx,
-      z110x #
+      z110x=z110 #
       ) {
     x0 <-
       z110x[rssx, on = c(rcx = "rc6")] %>%

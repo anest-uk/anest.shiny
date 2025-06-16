@@ -1,0 +1,43 @@
+commit 491c57480910617e1ef97459998424168c7c8570
+Author: Giles <giles.heywood@gmail.com>
+Date:   Mon Jun 9 11:53:31 2025 +0100
+
+    rename and tidy C,D
+
+diff --git a/acycle/A-250523/R/Dlib.R b/acycle/A-250523/R/Dlib.R
+--- /dev/null
++++ b/acycle/A-250523/R/Dlib.R
+@@ -0,0 +149,33 @@
++D122 <- function( # ----122 characteristics----
++                  rc6tx = rc6tG,                  #scalar: target
++                  rssax = rssaG,                  #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for area
++                  rssccx = rssccG,                #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for custom geo
++                  z110x = z110) {
++  rsscux <- copy(rssccx)[, lab := "CU000"] # R()
++  x0 <- C122(rssx = rsscux, z110x = z110x)
++  x1 <- C122(rssx = rssax, z110x = z110x)
++  x2 <-
++    rbind(x1, x0)[order(-pnum)][, -"pnum"]
++  x <-
++    x2 %>%
++    gt::gt(.) %>%
++    cols_label(
++      lab = gt::html("Area-band"),
++      frac = gt::html("Fraction<br>properties"),
++      R2rsi = gt::html("RSI R<sup>2</sup>"),
++      p = gt::html("Aggregate"),
++      p.cus = gt::html("Range")
++    ) %>%
++    tab_spanner(
++      label = gt::html("£/m<sup>2</sup>"),
++      columns = c(p.cus, p)
++    ) %>%
++    gt::tab_footnote(
++      footnote = f241108a(typeC, tbinC)[[1]]
++    ) %>%
++    gt::tab_footnote(
++      footnote = f241108a(typeC, tbinC)[[2]]
++    )
++  #G122 <<- copy(x)
++  x
++}            #global {rcx ppm2} : pva

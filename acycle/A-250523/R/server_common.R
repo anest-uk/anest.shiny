@@ -238,6 +238,7 @@ server_common <-
                 newused = c("."),
                 houseflat = c(".")
               )
+            #browser()
             rsiccG <<- copy(x)
           } else {
             print("recalc rejected in rsiccR")
