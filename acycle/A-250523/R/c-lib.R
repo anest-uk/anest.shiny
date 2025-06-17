@@ -1,8 +1,7 @@
 C112a <- # local optimum kss for all rc6 ----
-  function(
-      x0 = f250509ed,
-      nn = "f250509ed" # static
-      ) {
+  function(x0 = f250509ed,
+           nn = "f250509ed" # static
+  ) {
     x1 <- # local solution for all rc6
       x0$geo %>%
       .[grep("^L", lab)] %>%
@@ -10,42 +9,43 @@ C112a <- # local optimum kss for all rc6 ----
       .[, rc3 := substr(rc6, 1, 3)] %>%
       .[order(rc6, ssek)] %>%
       .[, .SD[1], rc6] %>%
-      sco(.,F)
+      sco(., F)
     x1
   }
 
 C112b <- # local lab for all rc6 in rc3tx [join on col here?] ----
-  function(nn = "f250509ed", # static
-           x0 = C112a() # over
+  function(nn = c("f250509ed", "coltab"), # static
+           x0 = C112a() #
   ) {
     x1 <- # local solution set for rc3t
       x0 %>%
       .[, .(rc3, nx, lab, i.n = substr(lab, 5, 7))] %>%
       # .[,.(rc3,nx,lab,i.n=paste0(substr(lab,7,7),'.',substr(lab,5,5)))]%>%
       unique(.) %>%
-      data.table(i.n = c("1.3", "1.2", "1.1", "2.3", "2.2", "3.3"), qq = c(1 / 6, 1 / 4, 1 / 2, 1 / 2, 3 / 4, 5 / 6))[., on = c(i.n = "i.n"), mult = "all"] %>%
-      .[order(qq)]
+      .[data.table(i.n = c("1.3", "1.2", "1.1", "2.3", "2.2", "3.3"), qq = c(1 / 6, 1 / 4, 1 / 2, 1 / 2, 3 / 4, 5 / 6)), on = c(i.n = "i.n"), mult = "all"] %>%
+      .[order(qq)] %>%
+      sco(., F) %>%
+      coltab[., on = c(code = "i.n")]
     x1
   }
 
-C112c <- #----
-  function(
-      rc6tx = rc6tG,
-      coltabx = coltab) {
+C112c <- # select extrema and add light dark legendlab ----
+  function(rc6tx = rc6tG,
+           coltabx = coltab) {
     x1 <-
       rbind(
         C112b()[rc3 == substr(rc6tx, 1, 3)][order(qq)][c(1, .N)] # , #top and bottom
-        # C112b()[lab==C112a()[rc6==rc6tx,lab]] #target #clutter/confused if not a tertile-optimum
       ) %>%
       unique(.) %>%
-      coltab[., on = c(code = "i.n")] %>%
-      # .[,legendlab:=ifelse(lab==C112a()[rc6==rc6tx,lab],'target',lab)]%>%
+      # coltab[., on = c(code = "i.n")] %>%
       .[, legendlab := lab] %>%
       .[order(-qq)]
     x1
   }
 
-C112d <- #----
+
+
+C112d <- # estdt for plot 2 local 1 custom ----
   function(rc6tx = rc6tG, # rc6t
            x0 = f250509ed, # kfx
            x1 = estdtccG, # cus
@@ -98,9 +98,9 @@ C121b <- # {rc6 ssek nx lab} 3 rows i.n ssek-ordered ----
 
 C121c <- #----
   function(
-    rc6tx = rc6tG,
-    x0 = f250509ed,
-    x1 = C121a()) {
+      rc6tx = rc6tG,
+      x0 = f250509ed,
+      x1 = C121a()) {
     x2 <- # daily
       seq.Date(from = x1[1, BA], to = x1[.N, BA], by = "d")
     x3 <- # annual
@@ -108,7 +108,7 @@ C121c <- #----
       .[-1] %>% # remove d0
       c(., x1[.N, BA]) %>% # add dmax
       unique(.)
-    x4 <- x0$estdt[nx == C121b(rc6tx=rc6tx)[1, nx]]
+    x4 <- x0$estdt[nx == C121b(rc6tx = rc6tx)[1, nx]]
     x5 <-
       x4 %>%
       .[.(date = x2), on = c(date = "date"), roll = -Inf, j = .(date, xdotd)] %>%
@@ -127,10 +127,9 @@ C121c <- #----
   }
 
 C122 <- # combine rss and P characteristics ----
-  function(
-      rssx,
-      z110x=z110 #
-      ) {
+  function(rssx,
+           z110x = z110 #
+  ) {
     x0 <-
       z110x[rssx, on = c(rcx = "rc6")] %>%
       .[
@@ -151,10 +150,11 @@ C122 <- # combine rss and P characteristics ----
         pnum = p,
         p = prettyNum(round(p, nfig3), big.mark = ","),
         p.cus = paste0(prettyNum(round(ppm2min, nfig2), big.mark = ","), "-", prettyNum(round(ppm2max, nfig2), big.mark = ","))
-      )]%>%
+      )] %>%
       .[]
     x0
   }
+
 
 C132a <- #-----132 trade summary(2)----
   function(geox = geoqG,
@@ -184,3 +184,10 @@ C132a <- #-----132 trade summary(2)----
     x3 <- list(x1, x2)
     x3
   }
+
+
+if (F) {
+  C112c()
+  C112d()
+  C121a()
+}

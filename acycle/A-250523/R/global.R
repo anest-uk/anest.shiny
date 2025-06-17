@@ -5,6 +5,8 @@ data_dirG <- file.path(app_dirG, "data")
 print(paste0('app_dirG : ',app_dirG))
 print(paste0('data_dirG : ',data_dirG))
 
+#coltab <- data.table(light=cobalt(light=T)[c(4,3,2,2,1,5)],dark=cobalt(light=F)[c(4,3,2,2,1,5)],code=c('1.3','1.2','1.1','2.3','2.2','3.3'))
+
 f250509ed <- readRDS(file = file.path(app_dirG, "data", "f250509ed.rds"))
 f241021ad <- readRDS(file = file.path(app_dirG, "data", "f241021ad.rds"))
 f250519ad <- readRDS(file = file.path(app_dirG, "data", "f250519ad.rds"))
