@@ -9,7 +9,7 @@ ageo <- #geo accessor ----
       .[,.(rc9,nx,lab)]%>%
       sco(.,F)
   }
-ageo()
+#ageo()
 
 #estdt
 aestdt1 <- #estdt accessor ----
@@ -51,7 +51,7 @@ aestdt1 <- #estdt accessor ----
     }
     x4[]
   }
-aestdt1()
+#aestdt1()
 
 aestdt2 <- #date accessor: list of 2 vectors ----
   function(
@@ -76,7 +76,7 @@ aestdt2 <- #date accessor: list of 2 vectors ----
         )
     x3
   }
-aestdt2()
+#aestdt2()
 
 akss <- # kfoldsse accessor ----
   function(

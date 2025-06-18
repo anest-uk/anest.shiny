@@ -37,13 +37,16 @@ D112x <- # x(t) ----
   function(
       rc6tx = rc6tG,
       tslidex = tslideG,
+      x0 = f250509ed,
       x1 = estdtccG # cus
       ) {
     x2 <- C112d(
-      rc6t = rc6tx,
-      x1 = estdtccG
+      x1 = x1,
+      rc6tx = rc6tx, # rc6t
+      x0 = x0, # kfx
+      x2 = C112c(rc6tx = rc6tx)
     ) %>%
-      .[, .SD[, .(ii, date, lab, x = x - ifelse(tslidex == 0, 0, x[tslidex]))], .(legendlab, dark)] # rebase
+    .[, .SD[, .(ii, date, lab, x = x - ifelse(tslidex == 0, 0, x[tslidex]))], .(legendlab, dark)] # rebase
     last_points <- x2[, .SD[.N], by = legendlab]
     ggplot(x2, aes(ii, x, color = dark)) +
       geom_line() +
@@ -72,11 +75,14 @@ D112x <- # x(t) ----
   }
 
 D121x <- # winding ----
-  function(
-      rc6t = rc6tG,
-      x1 = C121c(rc6t = rc6t),
-      typex = c(A = "All", L = "Local", N = "National", C = "Custom")["C"],
-      tbinx = c(L = "Low Frequency", H = "High Frequency", A = "Annual")["H"]) {
+  function(rc6t = rc6tG,
+           x1 = C121c(
+             rc6tx = rc6tG,
+             x0 = f250509ed,
+             x1 = C121a(x0 = f250509ed$estdt)
+           ),
+           typex = c(A = "All", L = "Local", N = "National", C = "Custom")["C"],
+           tbinx = c(L = "Low Frequency", H = "High Frequency", A = "Annual")["H"]) {
     for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
     x2 <- gt::gt(x1) %>%
       gt::tab_footnote(

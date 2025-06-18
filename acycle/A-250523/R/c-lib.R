@@ -100,7 +100,8 @@ C121c <- #----
   function(
       rc6tx = rc6tG,
       x0 = f250509ed,
-      x1 = C121a()) {
+      x1 = C121a()
+      ) {
     x2 <- # daily
       seq.Date(from = x1[1, BA], to = x1[.N, BA], by = "d")
     x3 <- # annual
