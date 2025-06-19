@@ -32,16 +32,16 @@ library(shiny)
       stepripG <<- "data/smallrip/"
       source("R/c-cleanlib.R")
       source("R/rctree.R")
-      # source("R/CDFlib.R")
-      source("R/d-lib.R")
-      source("R/dx-lib.R") # gen2
+      #source("R/CDFlib.R")
+      source("R/d-lib.R") 
+      source("R/dx-lib.R") #gen2
       source("R/c-lib.R")
-      source("R/v-lib.R") # vgeo(); vkss(); vestdt(); vpva()
+      source("R/v-lib.R") #vgeo(); vkss(); vestdt(); vpva()
       #---------------------app code
       source("ui_main.R")
       source("R/ui_accuracy.R")
       source("R/ui_action.R")
-      source("R/ui_constituents.R")
+      source("R/ui_constituents.R") 
       source("R/ui_header.R")
       source("R/ui_listing.R")
       source("R/ui_notes.R")
@@ -49,30 +49,28 @@ library(shiny)
       source("R/ui_timeseries.R")
       source("R/ui_tim1.R")
       #--------------------------=parameters--3----
-      if (T) { #revisit this
-        gridheight <<- "630px"
-        gridheight2 <<- "830px"
-        gridheight3 <<- "1020px"
-        coltab <<- data.table(light = cobalt(light = T)[c(4, 3, 2, 2, 1, 5)], dark = cobalt(light = F)[c(4, 3, 2, 2, 1, 5)], code = c("1.3", "1.2", "1.1", "2.3", "2.2", "3.3")) # uses data.table so cannot go in global.R
-        colx <<- cobalt()[c(4, 2, 1)]
-        sf <<- 3
-        pgmc <<- "grey50"
-        #-------------------Pseudo=Control for dev purposes
-        hoflC <<- c("house", "flat", "all")[3] # ,
-        itriC <<- c(".0" = 1, ".1" = 2, ".5" = 3)[2] # , #Trim ---
-        neusC <<- c("new", "used", "all")[3] # ,
-        rc3coC <<- c("B--", "E--", "AL-") # ,  #comp
-        rc6cuC <<- c("W--8--") # , #custom
-        tbinC <<- c(lo = 1, hi = 2, an = 3)[2] # ,  #lo hi an ---
-        typeC <<- c("A", "L", "N", "C")[2] # , #All Local National ---
-        typerC <<- typeC
-        zerorefC <- F # , #set reference asset NULL
-        #---------------#dubious globals needing tidyup
-        nfig2 <<- -1 # for ppm2
-        nfig3 <<- 4 # for frac
-        verbose <<- T
-        showtradetriangle <- F
-      }
+      gridheight <<- "630px"
+      gridheight2 <<- "830px"
+      gridheight3 <<- "1020px"
+      coltab <<- data.table(light=cobalt(light=T)[c(4,3,2,2,1,5)],dark=cobalt(light=F)[c(4,3,2,2,1,5)],code=c('1.3','1.2','1.1','2.3','2.2','3.3')) #uses data.table so cannot go in global.R
+      colx <<- cobalt()[c(4, 2, 1)]
+      sf <<- 3
+      pgmc <<- "grey50"
+      #-------------------Pseudo=Control for dev purposes
+      hoflC <<- c("house", "flat", "all")[3] # ,
+      itriC <<- c(".0" = 1, ".1" = 2, ".5" = 3)[2] # , #Trim ---
+      neusC <<- c("new", "used", "all")[3] # ,
+      rc3coC <<- c("B--", "E--", "AL-") # ,  #comp
+      rc6cuC <<- c("W--8--") # , #custom
+      tbinC <<- c(lo = 1, hi = 2, an = 3)[2] # ,  #lo hi an ---
+      typeC <<- c("A", "L", "N", "C")[2] # , #All Local National ---
+      typerC <<- typeC
+      zerorefC <- F # , #set reference asset NULL
+      #---------------#dubious globals needing tidyup
+      nfig2 <<- -1 # for ppm2
+      nfig3 <<- 4 # for frac
+      verbose <<- T
+      showtradetriangle <- F
     }
   }
 }

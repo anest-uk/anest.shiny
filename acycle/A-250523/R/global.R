@@ -7,11 +7,15 @@ print(paste0('data_dirG : ',data_dirG))
 
 #coltab <- data.table(light=cobalt(light=T)[c(4,3,2,2,1,5)],dark=cobalt(light=F)[c(4,3,2,2,1,5)],code=c('1.3','1.2','1.1','2.3','2.2','3.3'))
 
-f250509ed <- readRDS(file = file.path(app_dirG, "data", "f250509ed.rds"))
 f241021ad <- readRDS(file = file.path(app_dirG, "data", "f241021ad.rds"))
 f250519ad <- readRDS(file = file.path(app_dirG, "data", "f250519ad.rds"))
 pxosrdo2dd <- readRDS(file = file.path(app_dirG, "data", "pxosrdo2dd.rds"))
 f241229bd <- readRDS(file = file.path(app_dirG, "data", "f241229bd.rds"))
-z110 <- readRDS(file = file.path(app_dirG, "data", "z110.rds"))
-x101 <- readRDS(file = file.path(app_dirG, "data", "x101.rds"))
+x101 <- readRDS(file = file.path(app_dirG, "data", "x101.rds")) #date
 
+#gen2
+f250509ed <- readRDS(file = file.path(app_dirG, "data", "f250509ed.rds")) #res
+z110 <- readRDS(file = file.path(app_dirG, "data", "z110.rds"))
+
+
+f250618ad <- readRDS(file = file.path(app_dirG, "data", "f250618ad.rds")) #res
