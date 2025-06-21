@@ -53,7 +53,11 @@ library(shiny)
         gridheight <<- "630px"
         gridheight2 <<- "830px"
         gridheight3 <<- "1020px"
-        coltab <<- data.table(light = cobalt(light = T)[c(4, 3, 2, 2, 1, 5)], dark = cobalt(light = F)[c(4, 3, 2, 2, 1, 5)], code = c("1.3", "1.2", "1.1", "2.3", "2.2", "3.3")) # uses data.table so cannot go in global.R
+        coltab <<- # uses data.table so cannot go in global.R
+          rbind(
+          data.table(light = cobalt(light = T)[c(4, 3, 2, 2, 1, 5)], dark = cobalt(light = F)[c(4, 3, 2, 2, 1, 5)], code = c("1.3", "1.2", "1.1", "2.3", "2.2", "3.3")),
+          data.table(light = 'grey50',dark='grey10',code="0.0")
+        )
         colx <<- cobalt()[c(4, 2, 1)]
         sf <<- 3
         pgmc <<- "grey50"

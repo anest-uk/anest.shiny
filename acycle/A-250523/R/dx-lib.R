@@ -43,7 +43,7 @@ D112x <- # x(t) ----
     x2 <- C112d(
       x1 = x1,
       rc6tx = rc6tx, # rc6t
-      x0 = x0, # kfx
+      #x0 = x0, # kfx
       x2 = C112c(rc6tx = rc6tx)
     ) %>%
     .[, .SD[, .(ii, date, lab, x = x - ifelse(tslidex == 0, 0, x[tslidex]))], .(legendlab, dark)] # rebase

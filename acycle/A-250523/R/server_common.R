@@ -299,6 +299,8 @@ server_common <-
       )
 
 
+    #---- gen2 accessors ----
+    
     list( # ---------------------common list #----
       dfnxR = dfnxR,
       dfnyR = dfnyR,
