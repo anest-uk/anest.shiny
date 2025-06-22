@@ -1,9 +1,11 @@
+
 D111x <- # leaflet ----
   function(rc6x = rc6tG, # target
            rc6ccx = rc6ccG, # custom
            x1 = pxosrdo2dd, # dataG$pxosrdo2dd
            x2 = z110, # dataG$z110
-           x3 = f250519ad,
+           #x3 = f250519ad,
+           x3=C111c(),
            rc6all = c(rc6x, rc6ccx),
            rc3x = substr(rc6x, 1, 3), # target area
            minzoom = 9,
@@ -12,7 +14,7 @@ D111x <- # leaflet ----
       f240810b( #->leaflet, colours for areas-to-shade in column 'col'
         x3[grep(rc3x, rc6), .(col, rc6)],
         x2 = x1, # map polygons
-        pva = x2, # for tooltip
+        pva = pva, # for tooltip
         minzoom = minzoom,
         maxzoom = maxzoom
       ) %>%
@@ -32,6 +34,7 @@ D111x <- # leaflet ----
       )
     x4
   }
+
 
 D112x <- # x(t) ----
   function(

@@ -124,21 +124,6 @@ function(#make subdir for csv(postcode) WINDOWS
   shell(paste0("rd /s /q .\\",type),intern=T)
   mkdirn(type)
 }
-color_price <-
-function(P, Pmin, Pmax, light = FALSE, n_steps = 256) {
-  # Clamp values
-  P <- pmin(pmax(P, Pmin), Pmax)
-  norm_P <- (P - Pmin) / (Pmax - Pmin)
-  
-  # Create interpolator
-  ramp_fn <- make_price_colormap(light)
-  color_vec <- ramp_fn(n_steps)
-  
-  # Map normalized P to color (bugfix applied)
-  #idx <- round(norm_P * (n_steps - 1)) + 1
-  idx <- floor(norm_P * (n_steps - 1)) + 1
-  return(color_vec[idx])
-}
 coread <-
 function( #read data from csv in subdir
   rcx='AL-', #postcodes to read
@@ -3152,7 +3137,7 @@ function(  #solve single nx -> estdt with no pra; replaces f240710a
     setseed=T,#added 250507
     houseflat=c('.','H','F') #typex field added to rip 240826, values UH/NH/UF/NF for new/house
   ) {
-    #browser() 
+    #browser()
     stopifnot(nxx%in%geo[,nx])#add 241116
     # stopifnot(geo[,.(N=length(unique(lab))),nx][,all(N==1)])
     #if(!(geo[,.(N=length(unique(lab))),nx][,all(N==1)])) browser()
@@ -3390,26 +3375,6 @@ function( #convenience labeller
   ) {
     paste0(char,zeroprepend(n,len))
   }
-make_price_colormap <-
-function(light = FALSE) {
-  base_palette <- c( #from cobalt() which is sampled from the Rstudio theme
-    "#FF628C", # punk
-    "#ED9304", # onch
-    "#35CA05", # green
-    "#0082F4", # blue
-    "#7B2FF7"  # midnight
-  )
-  light_palette <- c(
-    "#FF9FB5", # punk
-    "#F7B84F", # onch
-    "#84E26A", # green
-    "#66B2F7", # blue
-    "#BBA3F9"  # midnight
-  )
-  
-  colors <- if (light) light_palette else base_palette
-  grDevices::colorRampPalette(colors, space = "Lab")
-}
 mkdirn <-
 function( #make dir (WINDOWS)
     dd
