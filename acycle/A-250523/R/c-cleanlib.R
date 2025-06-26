@@ -3229,6 +3229,7 @@ function(  #solve single nx -> estdt with no pra; replaces f240710a
     x11 <-  #here sum by rc6
       rbindlist(x10)%>%
       .[,.(sse=sum(sse),n=sum(n)),.(rc6=substr(rc9,1,6))]
+    #browser()
     x12 <- lm(
       retsa~.-1,
       x6d[,!c('idhash.selldate','rc9','ktile')] #all inlier

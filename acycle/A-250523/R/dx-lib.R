@@ -1,6 +1,8 @@
 
 D111x <- # leaflet ----
-  function(rc6x = rc6tG, # target
+  function(
+    nn='res',
+    rc6x = rc6tG, # target
            rc6ccx = rc6ccG, # custom
            x1 = pxosrdo2dd, # dataG$pxosrdo2dd
            x2 = z110, # dataG$z110
@@ -10,11 +12,12 @@ D111x <- # leaflet ----
            rc3x = substr(rc6x, 1, 3), # target area
            minzoom = 9,
            maxzoom = 12) {
+    
     x4 <-
       f240810b( #->leaflet, colours for areas-to-shade in column 'col'
         x3[grep(rc3x, rc6), .(col, rc6)],
         x2 = x1, # map polygons
-        pva = pva, # for tooltip
+        pva = res$pva[,.(rcx=rc6,ppm2=pv/m2)], # for tooltip
         minzoom = minzoom,
         maxzoom = maxzoom
       ) %>%
@@ -35,47 +38,79 @@ D111x <- # leaflet ----
     x4
   }
 
-
-D112x <- # x(t) ----
+D112x <- #was C112d
   function(
-      rc6tx = rc6tG,
-      tslidex = tslideG,
-      x0 = f250509ed,
-      x1 = estdtccG # cus
-      ) {
-    x2 <- C112d(
-      x1 = x1,
-      rc6tx = rc6tx, # rc6t
-      #x0 = x0, # kfx
-      x2 = C112c(rc6tx = rc6tx)
-    ) %>%
-    .[, .SD[, .(ii, date, lab, x = x - ifelse(tslidex == 0, 0, x[tslidex]))], .(legendlab, dark)] # rebase
-    last_points <- x2[, .SD[.N], by = legendlab]
-    ggplot(x2, aes(ii, x, color = dark)) +
-      geom_line() +
-      scale_color_identity() +
-      geom_text_repel(
-        data = last_points,
-        aes(label = legendlab),
-        nudge_x = 0.1,
-        segment.color = "grey50"
-      ) +
-      geom_point(size = .3) +
-      xlab("") +
-      ylab(bquote(Delta ~ P ~ log ~ price ~ change)) +
-      theme_bw() +
-      theme(
-        axis.line = element_line(colour = "black"),
-        panel.grid.major = element_line(linewidth = .2, linetype = "dotted", color = pgmc),
-        panel.grid.minor = element_blank(),
-        panel.border = element_blank(),
-        panel.background = element_blank(),
-        text = element_text(size = 16, face = "plain"),
-        axis.line.y.left = element_line(linewidth = .1),
-        axis.line.x.bottom = element_line(linewidth = .1),
-        legend.position = "none"
-      )
-  }
+    rc6tx = rc6tG,
+    x0 = C111e(), # res
+    x1 = C112a( # nx(rc6tx)
+      res = x0,
+      rc6tx = rc6tx
+    )[, .(nx)],
+    x2 = C112c(res = x0, nx = x1) # hexcodes(nx)
+    ) {
+  x3 <- 
+    x0$rsi %>%
+    .[x1, on = c(nx = "nx")] %>%
+    C112b(rsi = .) %>% # denorm for plot
+    .[, .(nx, date, x)] %>%
+    .[, col := as.factor(nx)]
+  x4 <-
+    x2[, .(col = as.factor(nx), nx, hexcode)] %>%
+    .[col == 0, hexcode := "steelblue"]
+  x5 <-
+    x4[x3, on = c(col = "col")] %>%
+    x0$lab[., on = c(nx = "nx")] %>%
+    .[, lab := ifelse(x == max(x), lab, ""), nx]
+  ggplot(x5, aes(date, x, color = col, label = lab)) +
+    geom_line() +
+    geom_point() +
+    ggrepel::geom_label_repel() +
+    scale_color_manual(
+      values = unique(x4[,.(hexcode,nx)])[,setNames(hexcode,nx)]  
+    ) +
+    theme_minimal() +
+    theme(legend.position = "none")
+}
+# D112x <- # x(t) ----
+#   function(
+#       rc6tx = rc6tG,
+#       tslidex = tslideG,
+#       x0 = f250509ed,
+#       x1 = estdtccG # cus
+#       ) {
+#     x2 <- C112d( #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<args don't match - C112d is doing the plot, should be here
+#       x1 = x1,
+#       rc6tx = rc6tx, # rc6t
+#       #x0 = x0, # kfx
+#       x2 = C112c(rc6tx = rc6tx)
+#     ) %>%
+#     .[, .SD[, .(ii, date, lab, x = x - ifelse(tslidex == 0, 0, x[tslidex]))], .(legendlab, dark)] # rebase
+#     last_points <- x2[, .SD[.N], by = legendlab]
+#     ggplot(x2, aes(ii, x, color = dark)) +
+#       geom_line() +
+#       scale_color_identity() +
+#       geom_text_repel(
+#         data = last_points,
+#         aes(label = legendlab),
+#         nudge_x = 0.1,
+#         segment.color = "grey50"
+#       ) +
+#       geom_point(size = .3) +
+#       xlab("") +
+#       ylab(bquote(Delta ~ P ~ log ~ price ~ change)) +
+#       theme_bw() +
+#       theme(
+#         axis.line = element_line(colour = "black"),
+#         panel.grid.major = element_line(linewidth = .2, linetype = "dotted", color = pgmc),
+#         panel.grid.minor = element_blank(),
+#         panel.border = element_blank(),
+#         panel.background = element_blank(),
+#         text = element_text(size = 16, face = "plain"),
+#         axis.line.y.left = element_line(linewidth = .1),
+#         axis.line.x.bottom = element_line(linewidth = .1),
+#         legend.position = "none"
+#       )
+#   }
 
 D121x <- # winding ----
   function(rc6t = rc6tG,

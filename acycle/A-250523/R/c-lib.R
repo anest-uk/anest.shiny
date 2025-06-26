@@ -1,65 +1,117 @@
 # gen2 accessors
 # lowercase c <<<<<<<<<<<<<<<
 
-C111a <- # 2274 x 3 minimisedkss, for all rc6 ----
-  function(lab = res$lab,
-           geo = res$geo,
-           kss = res$kss[, .(nx, ssrk, rc6)], # some denormalised stuff also
-           pva = res$pva[, .(rc6, pv, m2, ppm2 = pv / m2)]) {
+#moved to global.R
+# C111a <- # 2274 x 3 minimisedkss, for all rc6 ----  
+#   function(lab = res$lab,
+#            geo = res$geo,
+#            kss = res$kss[, .(nx, ssrk, rc6)], # some denormalised stuff also
+#            pva = res$pva[, .(rc6, pv, m2, ppm2 = pv / m2)]) {
+#     x3 <-
+#       geo %>%
+#       .[lab, on = c(nx = "nx"), nomatch = NULL] %>%
+#       .[grep("^L", lab)] %>% # local only
+#       kss[., on = c(nx = "nx", rc6 = "rc6"), nomatch = NULL] %>%
+#       .[order(rc6, ssrk), .SD[1], rc6] %>%
+#       .[, .(rc6, nx, i.n = substr(lab, 5, 7))] %>%
+#       .[pva, on = c(rc6 = "rc6"), nomatch = NULL] %>%
+#       .[
+#         ,
+#         .(
+#           rc6, # *
+#           i.n,
+#           nx,
+#           ppm2rc6 = ppm2 # not needed, not used
+#         )
+#       ]
+#     x3
+#   }
+# C111a()
+
+#moved to global.R
+# C111b <- # 208 x 4 extremal nx and ppm2 for all rc3
+#   function( # res = f250618ad
+#            geo = res$geo,
+#            lab = res$lab,
+#            pva = res$pva) {
+#     x1 <-
+#       geo %>%
+#       .[lab, on = c(nx = "nx")] %>% # to fileter on local
+#       .[grep("^L", lab)] %>% # local
+#       .[pva, on = c(rc6 = "rc6")] %>% # pva
+#       .[, .(rc3 = substr(rc6[1], 1, 3), ppm2 = sum(pv) / sum(m2), ppm2rc6min = min(pv / m2), ppm2rc6max = max(pv / m2)), nx] %>% # aggregate
+#       .[order(rc3, ppm2)] %>% # order
+#       .[
+#         ,
+#         .SD[
+#           c(1, .N),
+#           .(
+#             nx,
+#             type = c("minP", "maxP"),
+#             ppm2agg = ppm2, # nx : aggregate
+#             ppm2rc6min, # nx : lowest ppm2(rc6)
+#             ppm2rc6max # nx : lowest ppm2(rc6)
+#           )
+#         ],
+#         rc3 # per rc3
+#       ]
+#     x1
+#   }
+# C111b()
+# C111a()
+
+
+# f250624c <- #local color per rc6
+#   function(
+#     r=res,
+#     x0 = f250624a()
+#       ) {
+#     r$pva %>%
+#       .[r$geo, on = c(rc6 = "rc6")] %>%
+#       .[, .(ppm2nx = sum(pv) / sum(m2)), nx] %>%
+#       .[x0[, .(i.n, nx, rc6, rc3 = substr(rc6, 1, 3))], on = c(nx = "nx")] %>%
+#       .[order(rc3, ppm2nx), .(i.n, nx, ppm2nx, rc6, rc3, P = log(ppm2nx))] %>%
+#       .[, P := log(ppm2nx)] %>%
+#       .[, .SD[, .(nx, i.n, P, ppm2nx, col = color_price(P, min(P), max(P), light = F), rc6)], rc3] %>%
+#       .[]
+#   }
+#f250624c()
+
+#these could be called gyymmddx but the intention is to move them upstream into the step for 'res'
+#then they would not fit with the general naming rule: fyymmdd
+#for now they live in c-lib 'calculation'
+#they 
+f250624a <- # 2274 x 3 minimisedkss, nx*(rc6) ----
+  function(
+    r=res#,
+    ) {
     x3 <-
-      geo %>%
-      .[lab, on = c(nx = "nx"), nomatch = NULL] %>%
+      r$geo %>%
+      .[r$lab,on=c(nx='nx')] %>%
       .[grep("^L", lab)] %>% # local only
-      kss[., on = c(nx = "nx", rc6 = "rc6"), nomatch = NULL] %>%
+      r$kss[., on = c(nx = "nx", rc6 = "rc6"), nomatch = NULL] %>%
       .[order(rc6, ssrk), .SD[1], rc6] %>%
       .[, .(rc6, nx, i.n = substr(lab, 5, 7))] %>%
-      .[pva, on = c(rc6 = "rc6"), nomatch = NULL] %>%
+      .[r$pva, on = c(rc6 = "rc6"), nomatch = NULL] %>%
       .[
         ,
         .(
           rc6, # *
           i.n,
-          nx,
-          ppm2rc6 = ppm2 # not needed, not used
+          nx
         )
       ]
     x3
   }
-# C111a()
 
-C111b <- # 208 x 4 extremal nx and ppm2 for all rc3
-  function( # res = f250618ad
-           geo = res$geo,
-           lab = res$lab,
-           pva = res$pva) {
-    x1 <-
-      geo %>%
-      .[lab, on = c(nx = "nx")] %>% # to fileter on local
-      .[grep("^L", lab)] %>% # local
-      .[pva, on = c(rc6 = "rc6")] %>% # pva
-      .[, .(rc3 = substr(rc6[1], 1, 3), ppm2 = sum(pv) / sum(m2), ppm2rc6min = min(pv / m2), ppm2rc6max = max(pv / m2)), nx] %>% # aggregate
-      .[order(rc3, ppm2)] %>% # order
-      .[
-        ,
-        .SD[
-          c(1, .N),
-          .(
-            nx,
-            type = c("minP", "maxP"),
-            ppm2agg = ppm2, # nx : aggregate
-            ppm2rc6min, # nx : lowest ppm2(rc6)
-            ppm2rc6max # nx : lowest ppm2(rc6)
-          )
-        ],
-        rc3 # per rc3
-      ]
-    x1
+#----f250624b start : 
+f250624b <- #col(rc6) (static)
+  function() {
+    x1 <- f250624a()[, .(nx = unique(nx))][r$geo, on = c(nx = "nx"), nomatch = NULL][r$pva, on = c(rc6 = "rc6")][, .(Pnx = log(sum(pv) / sum(m2))), nx][f250624a(), on = c(nx = "nx")][, .(Pnx, rc6, rc3 = substr(rc6, 1, 3))]
+    x2 <- r$pva[, .(minPrc6 = min(log(pv / m2)), maxPrc6 = max(log(pv / m2))), .(rc3 = substr(rc6, 1, 3))]
+    x3 <- x1[x2, on = c(rc3 = "rc3")][, col := color_price(Pnx, minPrc6, maxPrc6)][, .(rc6, Pnx, col)]
+    x3
   }
-# C111b()
-# C111a()
-
-
-
 
 
 # this is national so could be C111c
@@ -108,39 +160,115 @@ C111e <-
       res1 = C111d(),
       res2 = res) {
     list(
-      lab = rbind(res1$lab, res2$lab),
-      geo = rbind(res1$geo[, .(nx, rc6)], res2$geo[, .(nx, rc6)]),
-      rsi = rbind(res1$rsi, res2$rsi),
+      lab = rbind(res1$lab, res2$lab)[order(nx)],
+      geo = rbind(res1$geo[, .(nx, rc6)], res2$geo[, .(nx, rc6)])[order(nx)],
+      rsi = rbind(res1$rsi, res2$rsi)[order(nx,date)],
       da0 = res1$da0,
-      kss = rbind(res1$kss, res2$kss),
-      pva = unique(rbind(res1$pva, res2$pva))
+      kss = rbind(res1$kss, res2$kss)[order(nx)],
+      pva = unique(rbind(res1$pva, res2$pva))[order(rc6)]
     )
   }
 # C111e()
 
 
-C112a <- # estdt for plot 2 local 1 custom ----
+C112a <- # nx for plot 2 local 1 custom ----
   function(
       res = C111e(),
       rc6tx = rc6tG) {
     x1 <-
       C111a() %>% # local sometime efficient
       .[grep(substr(rc6tx, 1, 3), rc6)] %>% # this rc3
-      .[order(ppm2rc6)] %>%
+      data.table(i.n=c('1.3','1.2','1.1','2.3','2.2','3.3'),qq=c(1/6,1/4,1/2,1/2,3/4,5/6))[.,on=c(i.n='i.n'),mult='all']%>%
+      .[order(qq)] %>%
       .[c(1, .N), ] %>%
-      .[, .(nx = c(0, nx))] %>%
-      res$rsi[., on = c(nx = "nx")]
+      .[,.(nx = c(0, nx))] #%>%
+      #res$rsi[., on = c(nx = "nx")]
     x1
   }
+#C112a()
 
-# denormalise to x
+C112b <-
+  function(
+    res = C111e(),
+    rsi = res$rsi[nx==1], #all nx -> slow
+    da0 = res$da0) {
+  rsi %>%
+    .[, rbind(.SD[1, .(date = da0, xdotd = 0)], .SD), nx] %>%
+    .[, .(date, xdot = c(0, xdotd[-1] * diff(date))), nx] %>%
+    .[, .(date, xdot, x = cumsum(xdot)), nx]
+}
+#C112b()
+
+C112c <-
+  function(
+      res = C111e(),
+      nxx = C112a()) {
+    res$geo[nxx, on = c(nx = "nx")] %>%
+      res$pva[., on = c(rc6 = "rc6")] %>%
+      .[, .(P = log(sum(pv / sum(m2)))), nx] %>%
+      .[, .(nx, P, hexcode = color_price(P, min(P), max(P)))]
+  }
+#C112c()
+
+C112d <- #doing too much - plot goes in D112
+  function(
+    rc6tx = rc6tG,
+    x0 = C111e(), # res
+    x1 = C112a( # nx(rc6tx)
+      res = x0,
+      rc6tx = rc6tx
+    )[, .(nx)],
+    x2 = C112c(res = x0, nx = x1) # hexcodes(nx)
+    ) {
+  x3 <- 
+    x0$rsi %>%
+    .[x1, on = c(nx = "nx")] %>%
+    C112b(rsi = .) %>% # denorm for plot
+    .[, .(nx, date, x)] %>%
+    .[, col := as.factor(nx)]
+  x4 <-
+    x2[, .(col = as.factor(nx), nx, hexcode)] %>%
+    .[col == 0, hexcode := "steelblue"]
+  x5 <-
+    x4[x3, on = c(col = "col")] %>%
+    x0$lab[., on = c(nx = "nx")] %>%
+    .[, lab := ifelse(x == max(x), lab, ""), nx]
+  ggplot(x5, aes(date, x, color = col, label = lab)) +
+    geom_line() +
+    geom_point() +
+    ggrepel::geom_label_repel() +
+    scale_color_manual(
+      values = unique(x4[,.(hexcode,nx)])[,setNames(hexcode,nx)]  
+    ) +
+    theme_minimal() +
+    theme(legend.position = "none")
+}
+#C112d()
+
+#C112a()
+
+# # denormalise to x  see untitled -same
+# C112b <- function(
+#     rsi = C112a(),
+#     da0 = res$da0) {
+#   rsi %>%
+#     .[, rbind(.SD[1, .(date = da0, xdotd = 0)], .SD), nx] %>%
+#     .[, .(date, xdot = c(0, xdotd[-1] * diff(date))), nx] %>%
+#     .[, .(date, xdot, x = cumsum(xdot)), nx]
+# }
+# C112b()
 # add color
 
-
-
-
-
-
+# xy <- C112b()[,col:=as.factor(nx)]
+# ccc <- data.table(C112b()[,.(nx=sort(unique(nx)))],code=c('#ff0000','#00ff00','#0000ff'),abc=c('a','b','c'),x=1:3,y=(1:3)^2)[,col:=as.factor(abc)][]
+# 
+# ggplot(ccc,aes(x,y))+
+#   geom_point(aes(col=col))+
+#   scale_color_manual(values=c(a='brown',b='green',c='pink'))
+# 
+# ggplot(xy,aes(date,x,color=col))+
+#   geom_point()+
+#   scale_color_manual(values=setNames(ccc[,col],))
 
 # C111c()
 # x1 <- C111c()
@@ -261,7 +389,7 @@ if (F) {
     .[, light := color_price(P, Pmin = x1[, log(min(pv / m2))], Pmax = x1[, log(max(pv / m2))], light = TRUE)] %>%
     .[]
   x2
-}
+
 # this could be d
 C112c <- # select extrema ----
   function(rc6tx = rc6tG,
@@ -335,7 +463,7 @@ C112d <- # estdt for plot 2 local 1 custom ----
       .[, .(date, ii, lab, legendlab, x, col, dark)]
     x6
   }
-
+}
 
 C121a <- # {ii AN BA} dates ----
   function(x0 = f250509ed$estdt) {

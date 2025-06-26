@@ -1,29 +1,45 @@
-#validators
-vresult <-
+# validators
+vres <-
   function(
-      x = f250509ed
-      ) {
-    vestdt(x$estdt)
-    vgeo(x$geo)
-    vkss(x$kss)
+      x = res) {
+    vrsi(x$rsi) &
+      vgeo(x$geo) &
+      vkss(x$kss) &
+      vpva(x$pva)
+    all_equal_elements <- function(lst) {
+      all(vapply(lst[-1], function(x) identical(x, lst[[1]]), logical(1)))
+    }
+    all_equal_elements(list( # test all have same nx
+      c(x$rsi[, sort(unique(nx))]),
+      c(x$geo[, sort(unique(nx))]),
+      c(x$lab[, sort(unique(nx))]),
+      c(x$kss[, sort(unique(nx))])
+    ))
   }
 
 
-vestdt <-
-  function(
-      x = f250509ed$estdt,
-      xclass = c(xdotd = "numeric", days='numeric', nx = "numeric") # should have rc9 also but make-work
-      ) {
+vrsi <-
+  function(x = res$rsi,
+           xclass = c(xdotd = "numeric", date = "Date", nx = "numeric") # should have rc9 also but make-work
+  ) {
     x %>%
       is.data.table(.) &
       vgen(x, xclass)
   }
+# vestdt <-
+#   function(
+#       x = f250509ed$estdt,
+#       xclass = c(xdotd = "numeric", days='numeric', nx = "numeric") # should have rc9 also but make-work
+#       ) {
+#     x %>%
+#       is.data.table(.) &
+#       vgen(x, xclass)
+#   }
 
 vgeo <-
-  function(
-      x = f250509ed$geo,
-      xclass = c(lab = "non-numeric", nx = "numeric") # should have rc9 also but make-work
-      ) {
+  function(x = res$geo,
+           xclass = c(rc6 = "non-numeric", nx = "numeric") # should have rc9 also but make-work
+  ) {
     x %>%
       is.data.table(.) &
       vgen(x, xclass)
@@ -31,17 +47,17 @@ vgeo <-
 # vgeo()
 
 vkss <-
-  function(x=f250509ed$kfoldsse,
-           xclass = c(n = "numeric", nx = "numeric", rc6 = "non-numeric", ssei = "numeric", ssek = "numeric", sser = "numeric", sstr = "numeric", toti = "numeric")) {
+  function(x = res$kss,
+           xclass = c(n = "numeric", nx = "numeric", rc6 = "non-numeric", ssri = "numeric", ssrk = "numeric", ssra = "numeric", ssta = "numeric", ssti = "numeric")) {
     x %>%
       is.data.table(.) &
       vgen(x, xclass)
   }
-# vkss(f250509ed$kfoldsse)
+# vkss()
 
 vpva <-
-  function(x=z110,
-           xclass = c(nid = "numeric", m2 = "numeric", rcx = "non-numeric", pv = "numeric", ppm2 = "numeric")) {
+  function(x = res$pva,
+           xclass = c(nid = "numeric", m2 = "numeric", rc6 = "non-numeric", pv = "numeric")) {
     x %>%
       is.data.table(.) &
       vgen(x, xclass)

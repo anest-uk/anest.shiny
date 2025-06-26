@@ -48,16 +48,20 @@ library(shiny)
       source("R/ui_sidebar.R")
       source("R/ui_timeseries.R")
       source("R/ui_tim1.R")
-      #--------------------------=parameters--3----
-      if (T) { #revisit this
+      if (T) { # revisit this
+        testsingleassign <- 1
+        #---------valid global data--2.1----
+        vres(res)
+
+        #--------------------------=parameters--3----
         gridheight <<- "630px"
         gridheight2 <<- "830px"
         gridheight3 <<- "1020px"
         coltab <<- # uses data.table so cannot go in global.R
           rbind(
-          data.table(light = cobalt(light = T)[c(4, 3, 2, 2, 1, 5)], dark = cobalt(light = F)[c(4, 3, 2, 2, 1, 5)], code = c("1.3", "1.2", "1.1", "2.3", "2.2", "3.3")),
-          data.table(light = 'grey50',dark='grey10',code="0.0")
-        )
+            data.table(light = cobalt(light = T)[c(4, 3, 2, 2, 1, 5)], dark = cobalt(light = F)[c(4, 3, 2, 2, 1, 5)], code = c("1.3", "1.2", "1.1", "2.3", "2.2", "3.3")),
+            data.table(light = "grey50", dark = "grey10", code = "0.0")
+          )
         colx <<- cobalt()[c(4, 2, 1)]
         sf <<- 3
         pgmc <<- "grey50"
@@ -237,6 +241,6 @@ server <- function(
       x
     }
   )
-}
+} #end server
 
 shinyApp(ui, server)
