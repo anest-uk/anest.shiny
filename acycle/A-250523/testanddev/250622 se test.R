@@ -34,6 +34,8 @@ for(i in 1:imax){
 #this is s.e. x[i:ibar] 3% +/-1% but lower for shorter
 #store this and use in the graphic
 #a bit compute heavy - ask how to do it fast
+
+y <- sapply(1:n, function(i) sum(x[i:n, i:n]))
 summary(x6)
 
 barplot(x6)

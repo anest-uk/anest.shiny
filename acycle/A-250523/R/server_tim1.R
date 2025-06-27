@@ -18,6 +18,9 @@ server_tim1 <- function(input, output, session, common) {
     }
   )
 
+  # rc6tx = rc6tG,
+  #     x0 = C111d(cus=rsiccG)
+  
   R112x <- eventReactive( # 112 x(t) ----
     list(
       common$rc6tR(),
@@ -28,7 +31,8 @@ server_tim1 <- function(input, output, session, common) {
       x <-
         D112x(
           rc6tx = common$rc6tR(),
-          x1 = common$estdtccR(),
+          x0 = C111d(cus=common$rsiccR()),
+          # x1 = common$estdtccR(),
           tslidex = common$tslideR()
         )
       x

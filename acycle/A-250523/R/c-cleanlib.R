@@ -3139,7 +3139,8 @@ f241119a <-
 function(  #solve single nx -> estdt with no pra; replaces f240710a
     nxx=1,
     #steprip1=steprip, #old format
-    steprip2='c:\\users\\giles\\anest.repo\\anest.shiny\\acycle\\app241119\\smallrip', #1/3 size format
+    #steprip2='c:\\users\\giles\\anest.repo\\anest.shiny\\acycle\\app241119\\smallrip', #1/3 size format
+    steprip2='c:\\users\\giles\\anest.repo\\anest.shiny\\acycle\\A-250523\\data\\smallrip', #1/3 size format
     stepprax=stepprav2,
     dfn=dfnG[,date],    
     geo=geoaG[,.(nx=nx-min(nx)+1,lab,rc9=rc6)],
@@ -3229,7 +3230,6 @@ function(  #solve single nx -> estdt with no pra; replaces f240710a
     x11 <-  #here sum by rc6
       rbindlist(x10)%>%
       .[,.(sse=sum(sse),n=sum(n)),.(rc6=substr(rc9,1,6))]
-    #browser()
     x12 <- lm(
       retsa~.-1,
       x6d[,!c('idhash.selldate','rc9','ktile')] #all inlier
@@ -3245,6 +3245,16 @@ function(  #solve single nx -> estdt with no pra; replaces f240710a
     x11d <- #tss called ssrt 'sum square total return'
       x2[,.(rc6=substr(rc9,1,6),retsa)]%>%
       .[,.(sstr=sum(retsa^2),n=.N),rc6]
+    x11e <- summary(x12)
+    x11f <- x11e$cov.unscaled*(x11e$sigma^2)*tcrossprod(as.numeric(diff(dfn))) #s.e.^2 of xdot
+    nn <- length(x12$coefficients)
+    nn1 <- nn-1
+    x11g <- sapply(1:nn, function(i) sum(x11f[i:nn, i:nn])) #s.e.^2 of sum from i to n
+    x11h <- sapply(1:nn1, function(i) sum(x11f[i:nn1, i:nn1]))%>% #s.e.^2 of sum from i to n
+      c(.,0)
+   #but it does not agree with s.e. of coeffs in summary, differs by a factor 2.77 - why?
+    #sqrt(diag(x11e$cov.unscaled*x11e$sigma^2))/x11e$coefficients[,2]
+    
     x12a <- #combine 4 ss
       x11a[x11b,on=c(rc6='rc6')][x11c,on=c(rc6='rc6')][x11d,on=c(rc6='rc6')]%>%
       .[,
@@ -3274,7 +3284,8 @@ function(  #solve single nx -> estdt with no pra; replaces f240710a
         xdotd,
         days,
         xdot,
-        #xdotse,for this would need to do summary(lm)
+        xset=sqrt(x11g),
+        xset1=sqrt(x11h),
         x,
         lab=geo[nx==nxx][1,lab])]%>%
       .[,ii:=1:.N,lab]%>%

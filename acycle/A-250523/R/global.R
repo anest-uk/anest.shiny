@@ -19,8 +19,8 @@ f250509ed <- readRDS(file = file.path(app_dirG, "data", "f250509ed.rds")) #res
 z110 <- readRDS(file = file.path(app_dirG, "data", "z110.rds"))
 
 
-f250618ad <- readRDS(file = file.path(app_dirG, "data", "f250618ad.rds")) #res
-res <- data.table::copy(f250618ad) # need data.table::copy
+res <- readRDS(file = file.path(app_dirG, "data", "f250618ad.rds")) #res
+#res <- data.table::copy(f250618ad) # need data.table::copy
 
 #these 2 functions load static into res - they can be run in ff250618a, therefore they are denorm 
 # f250624a <- # 2274 x 3 minimisedkss, for all rc6 ----

@@ -15,7 +15,8 @@ D111x <- # leaflet ----
     
     x4 <-
       f240810b( #->leaflet, colours for areas-to-shade in column 'col'
-        x3[grep(rc3x, rc6), .(col, rc6)],
+        res$f250618c[grep(rc3x, rc6), .(col, rc6)],
+        #x3[grep(rc3x, rc6), .(col, rc6)],
         x2 = x1, # map polygons
         pva = res$pva[,.(rcx=rc6,ppm2=pv/m2)], # for tooltip
         minzoom = minzoom,
@@ -24,53 +25,86 @@ D111x <- # leaflet ----
       addPolygons( # outline custom districts
         data = x1[which(x1@data$name %in% irregpcode(rc6all)), ],
         fill = F,
-        color = "orange",
+        color = "brown",
         weight = 1,
         opacity = 1
       ) %>%
       addPolygons( # outline custom districts
         data = x1[which(x1@data$name %in% irregpcode(rc6x)), ],
         fill = F,
-        color = "brown",
+        color = "black",
         weight = 1,
         opacity = 1
       )
     x4
   }
-
-D112x <- #was C112d
+D112x <-
   function(
-    rc6tx = rc6tG,
-    x0 = C111e(), # res
-    x1 = C112a( # nx(rc6tx)
-      res = x0,
-      rc6tx = rc6tx
-    )[, .(nx)],
-    x2 = C112c(res = x0, nx = x1) # hexcodes(nx)
-    ) {
-  x3 <- 
-    x0$rsi %>%
-    .[x1, on = c(nx = "nx")] %>%
-    C112b(rsi = .) %>% # denorm for plot
-    .[, .(nx, date, x)] %>%
-    .[, col := as.factor(nx)]
-  x4 <-
-    x2[, .(col = as.factor(nx), nx, hexcode)] %>%
-    .[col == 0, hexcode := "steelblue"]
-  x5 <-
-    x4[x3, on = c(col = "col")] %>%
-    x0$lab[., on = c(nx = "nx")] %>%
-    .[, lab := ifelse(x == max(x), lab, ""), nx]
-  ggplot(x5, aes(date, x, color = col, label = lab)) +
-    geom_line() +
-    geom_point() +
-    ggrepel::geom_label_repel() +
-    scale_color_manual(
-      values = unique(x4[,.(hexcode,nx)])[,setNames(hexcode,nx)]  
-    ) +
-    theme_minimal() +
-    theme(legend.position = "none")
-}
+      rc6tx = rc6tG,
+      x0 = C111d(cus=rsiccG),
+      tslidex=0,
+      r = res) {
+    x1 <- # extremal indices  -> {nx,col,lab}(rc3)
+      r$f250618c %>%
+      .[grep(substr(rc6tG, 1, 3), rc6)] %>%
+      .[order(Pnx)] %>%
+      .[c(1, .N), ] %>%
+      .[r$f250618b, on = c(rc6 = "rc6"), nomatch = NULL] %>%
+      .[r$lab, on = c(nx = "nx"), nomatch = NULL] %>%
+      .[, .(Pnx, col, nx, lab = as.factor(lab))]
+    #browser()
+    x2 <- # static + custom
+      rbind(
+        aestdt1(x0$rsi)[, lab := "custom"][],
+        aestdt1(r$rsi[x1[, .(nx)], on = c(nx = "nx")])[r$lab, on = c(nx = "nx"), nomatch = NULL]
+      ) %>%
+      .[, col := as.factor(lab)] %>%
+      .[, lab := ifelse(ii == max(ii), lab, "")]%>%
+      .[, .SD[, .(ii, date, lab, x = x - ifelse(tslidex == 0, 0, x[ii==tslidex]))], .(col)]
+      #.[, x:=x - ifelse(tslidex == 0, 0, x[tslidex])]
+    ggplot(x2, aes(date, x, color = col, label = lab)) +
+      geom_line() +
+      geom_text_repel() +
+      xlab("") +
+      ylab("index") +
+      scale_color_manual(values = setNames(c(x1[, col], "black"), c(x1[, as.character(lab)], "custom"))) +
+      theme_minimal() +
+      theme(legend.position = "none")
+  }
+
+# D112x <- #was C112d
+#   function(
+#     rc6tx = rc6tG,
+#     x0 = C111e(), # res
+#     x1 = C112a( # nx(rc6tx)
+#       res = x0,
+#       rc6tx = rc6tx
+#     )[, .(nx)],
+#     x2 = C112c(res = x0, nx = x1) # hexcodes(nx)
+#     ) {
+#   x3 <- 
+#     x0$rsi %>%
+#     .[x1, on = c(nx = "nx")] %>%
+#     C112b(rsi = .) %>% # denorm for plot
+#     .[, .(nx, date, x)] %>%
+#     .[, col := as.factor(nx)]
+#   x4 <-
+#     x2[, .(col = as.factor(nx), nx, hexcode)] %>%
+#     .[col == 0, hexcode := "steelblue"]
+#   x5 <-
+#     x4[x3, on = c(col = "col")] %>%
+#     x0$lab[., on = c(nx = "nx")] %>%
+#     .[, lab := ifelse(x == max(x), lab, ""), nx]
+#   ggplot(x5, aes(date, x, color = col, label = lab)) +
+#     geom_line() +
+#     geom_point() +
+#     ggrepel::geom_label_repel() +
+#     scale_color_manual(
+#       values = unique(x4[,.(hexcode,nx)])[,setNames(hexcode,nx)]  
+#     ) +
+#     theme_minimal() +
+#     theme(legend.position = "none")
+# }
 # D112x <- # x(t) ----
 #   function(
 #       rc6tx = rc6tG,

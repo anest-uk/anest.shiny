@@ -83,12 +83,13 @@
 #they 
 f250624a <- # 2274 x 3 minimisedkss, nx*(rc6) ----
   function(
-    r=res#,
+    r=res,
+    type="^L"
     ) {
     x3 <-
       r$geo %>%
       .[r$lab,on=c(nx='nx')] %>%
-      .[grep("^L", lab)] %>% # local only
+      .[grep(type, lab)] %>% # local only
       r$kss[., on = c(nx = "nx", rc6 = "rc6"), nomatch = NULL] %>%
       .[order(rc6, ssrk), .SD[1], rc6] %>%
       .[, .(rc6, nx, i.n = substr(lab, 5, 7))] %>%
