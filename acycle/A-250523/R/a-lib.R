@@ -14,7 +14,7 @@ ageo <- #geo accessor ----
 #estdt
 aestdt1 <- #estdt accessor ----
   function(
-    x=f250509ed$estdt,
+    x=res$rsi,
     adddatum=T,
     keepj=T
   ){
@@ -55,7 +55,7 @@ aestdt1 <- #estdt accessor ----
 
 aestdt2 <- #date accessor: list of 2 vectors ----
   function(
-    x=f250509ed$estdt,
+    x=res$lab[res$rsi,on=c(nx='nx')],
     adddatum=T
   ){
     x0 <- as.Date('1994-12-31')

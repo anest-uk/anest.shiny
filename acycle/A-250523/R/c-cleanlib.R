@@ -3153,7 +3153,6 @@ function(  #solve single nx -> estdt with no pra; replaces f240710a
     setseed=T,#added 250507
     houseflat=c('.','H','F') #typex field added to rip 240826, values UH/NH/UF/NF for new/house
   ) {
-    #browser() 
     stopifnot(nxx%in%geo[,nx])#add 241116
     # stopifnot(geo[,.(N=length(unique(lab))),nx][,all(N==1)])
     #if(!(geo[,.(N=length(unique(lab))),nx][,all(N==1)])) browser()
@@ -3246,6 +3245,7 @@ function(  #solve single nx -> estdt with no pra; replaces f240710a
       x2[,.(rc6=substr(rc9,1,6),retsa)]%>%
       .[,.(sstr=sum(retsa^2),n=.N),rc6]
     x11e <- summary(x12)
+    
     x11f <- x11e$cov.unscaled*(x11e$sigma^2)*tcrossprod(as.numeric(diff(dfn))) #s.e.^2 of xdot
     nn <- length(x12$coefficients)
     nn1 <- nn-1

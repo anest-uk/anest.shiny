@@ -45,10 +45,11 @@ ui_navpanel_tim1 <- function(id = NULL) {
         area = "O121x",
         full_screen = TRUE,
         card_header(
-          "O121x"
+          "O121xa"
         ),
         card_body(
-          gt::gt_output("O121x"),
+          gt::gt_output("O121xa"),
+          gt::gt_output("O121xb"),
           height = gridheight
         )
       ) # gridcard

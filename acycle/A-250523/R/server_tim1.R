@@ -11,8 +11,8 @@ server_tim1 <- function(input, output, session, common) {
         rc6x = common$rc6tR(),
         rc6ccx=common$rc6ccR(),
         x1 = pxosrdo2dd, 
-        x2 = z110, 
-        x3 = f250519ad
+        x2 = z110#, 
+        #x3 = f250519ad
         )
       x
     }
@@ -28,6 +28,7 @@ server_tim1 <- function(input, output, session, common) {
       common$tslideR()
     ),
     {
+      #browser()
       x <-
         D112x(
           rc6tx = common$rc6tR(),
@@ -38,13 +39,18 @@ server_tim1 <- function(input, output, session, common) {
       x
     }
   )
+  
 
   R121x <- eventReactive( # 121 winding ----
     list(
-      common$rc6tR()
+      common$rc6tR(),
+      common$estdtccR()
     ),
     {
-      x <- D121x(rc6t=common$rc6tR())
+      x <- D121x(
+        rc6t=common$rc6tR(),
+        cus=common$R111dx()
+        )
       x
     }
   )
@@ -104,7 +110,8 @@ server_tim1 <- function(input, output, session, common) {
   
   output$O111x <- renderLeaflet(R111x()) # render----
   output$O112x <- renderPlot(R112x()) #x(t)
-  output$O121x <- gt::render_gt(R121x()) #wind gt
+  output$O121xa <- gt::render_gt(R121x()[[1]]) #wind gt - custom
+  output$O121xb <- gt::render_gt(R121x()[[2]]) #wind gt - local
   output$O122x <- gt::render_gt(R122x()) #char gt
   
   output$O131x <- gt::render_gt(R131x()) #summ gt

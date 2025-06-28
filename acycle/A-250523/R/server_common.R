@@ -244,9 +244,28 @@ server_common <-
             print("recalc rejected in rsiccR")
             x <- copy(rsiccG)
           }
+          
           x
         }
       )
+    
+  R111dx <- # this may be wrongly named - returns: custom result object
+    eventReactive(
+      list(
+        rsiccR()
+      ),
+      {
+        x <-
+          C111d(
+            cus = rsiccR(),
+            pva = res$pva
+          )
+        G111dx <<- x
+        x
+      }
+    )
+
+
 
     rssaR <- #---------------area rss compute----
       eventReactive(
@@ -313,6 +332,7 @@ server_common <-
       labxR = labxR,
       nxaR = nxaR,
       nxqR = nxqR,
+      R111dx = R111dx,
       rc6ccR = rc6ccR,
       rc6tR = rc6tR,
       rsiccR = rsiccR,

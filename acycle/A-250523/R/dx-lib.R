@@ -7,7 +7,7 @@ D111x <- # leaflet ----
            x1 = pxosrdo2dd, # dataG$pxosrdo2dd
            x2 = z110, # dataG$z110
            #x3 = f250519ad,
-           x3=C111c(),
+           #x3=C111c(),
            rc6all = c(rc6x, rc6ccx),
            rc3x = substr(rc6x, 1, 3), # target area
            minzoom = 9,
@@ -25,7 +25,7 @@ D111x <- # leaflet ----
       addPolygons( # outline custom districts
         data = x1[which(x1@data$name %in% irregpcode(rc6all)), ],
         fill = F,
-        color = "brown",
+        color = "black",
         weight = 1,
         opacity = 1
       ) %>%
@@ -42,7 +42,7 @@ D112x <-
   function(
       rc6tx = rc6tG,
       x0 = C111d(cus=rsiccG),
-      tslidex=0,
+      tslidex=tslideG,
       r = res) {
     x1 <- # extremal indices  -> {nx,col,lab}(rc3)
       r$f250618c %>%
@@ -52,19 +52,40 @@ D112x <-
       .[r$f250618b, on = c(rc6 = "rc6"), nomatch = NULL] %>%
       .[r$lab, on = c(nx = "nx"), nomatch = NULL] %>%
       .[, .(Pnx, col, nx, lab = as.factor(lab))]
-    #browser()
     x2 <- # static + custom
       rbind(
         aestdt1(x0$rsi)[, lab := "custom"][],
         aestdt1(r$rsi[x1[, .(nx)], on = c(nx = "nx")])[r$lab, on = c(nx = "nx"), nomatch = NULL]
       ) %>%
       .[, col := as.factor(lab)] %>%
-      .[, lab := ifelse(ii == max(ii), lab, "")]%>%
-      .[, .SD[, .(ii, date, lab, x = x - ifelse(tslidex == 0, 0, x[ii==tslidex]))], .(col)]
-      #.[, x:=x - ifelse(tslidex == 0, 0, x[tslidex])]
-    ggplot(x2, aes(date, x, color = col, label = lab)) +
+      #.[, lab := ifelse(ii == max(ii)-10, lab, "")]%>%.[]%>%
+      #.[, lab := ifelse(ii == which.max(x), lab, ""),col]%>%.[]%>%
+      .[, .SD[, .(
+        ii, 
+        date, 
+        lab=ifelse(.I == which.max(x), lab, ""), 
+        
+        x = x - ifelse(tslidex == 0, 0, x[ii==tslidex]),
+        xset
+        )], 
+        by=col]%>%
+        .[,
+          .SD[,.(
+            ii,
+            date,
+            lab,
+            x,
+            xpoint=ifelse(.I == which.max(x), x, NA), 
+            xset,
+            xmin=ifelse(ii==max(ii),x-xset[tslidex+2],NA),
+            xmax=ifelse(ii==max(ii),x+xset[tslidex+2],NA)
+            )],
+          by=col]
+    ggplot(x2, aes(date, x, color = col, label = lab, ymin=xmin, ymax=xmax)) +
       geom_line() +
-      geom_text_repel() +
+      geom_point(data=x2[!is.na(xpoint)],aes(date, xpoint, color = col))+
+      geom_text_repel(size=5) +
+      geom_errorbar()+
       xlab("") +
       ylab("index") +
       scale_color_manual(values = setNames(c(x1[, col], "black"), c(x1[, as.character(lab)], "custom"))) +
@@ -72,99 +93,56 @@ D112x <-
       theme(legend.position = "none")
   }
 
-# D112x <- #was C112d
-#   function(
-#     rc6tx = rc6tG,
-#     x0 = C111e(), # res
-#     x1 = C112a( # nx(rc6tx)
-#       res = x0,
-#       rc6tx = rc6tx
-#     )[, .(nx)],
-#     x2 = C112c(res = x0, nx = x1) # hexcodes(nx)
-#     ) {
-#   x3 <- 
-#     x0$rsi %>%
-#     .[x1, on = c(nx = "nx")] %>%
-#     C112b(rsi = .) %>% # denorm for plot
-#     .[, .(nx, date, x)] %>%
-#     .[, col := as.factor(nx)]
-#   x4 <-
-#     x2[, .(col = as.factor(nx), nx, hexcode)] %>%
-#     .[col == 0, hexcode := "steelblue"]
-#   x5 <-
-#     x4[x3, on = c(col = "col")] %>%
-#     x0$lab[., on = c(nx = "nx")] %>%
-#     .[, lab := ifelse(x == max(x), lab, ""), nx]
-#   ggplot(x5, aes(date, x, color = col, label = lab)) +
-#     geom_line() +
-#     geom_point() +
-#     ggrepel::geom_label_repel() +
-#     scale_color_manual(
-#       values = unique(x4[,.(hexcode,nx)])[,setNames(hexcode,nx)]  
-#     ) +
-#     theme_minimal() +
-#     theme(legend.position = "none")
-# }
-# D112x <- # x(t) ----
-#   function(
-#       rc6tx = rc6tG,
-#       tslidex = tslideG,
-#       x0 = f250509ed,
-#       x1 = estdtccG # cus
-#       ) {
-#     x2 <- C112d( #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<args don't match - C112d is doing the plot, should be here
-#       x1 = x1,
-#       rc6tx = rc6tx, # rc6t
-#       #x0 = x0, # kfx
-#       x2 = C112c(rc6tx = rc6tx)
-#     ) %>%
-#     .[, .SD[, .(ii, date, lab, x = x - ifelse(tslidex == 0, 0, x[tslidex]))], .(legendlab, dark)] # rebase
-#     last_points <- x2[, .SD[.N], by = legendlab]
-#     ggplot(x2, aes(ii, x, color = dark)) +
-#       geom_line() +
-#       scale_color_identity() +
-#       geom_text_repel(
-#         data = last_points,
-#         aes(label = legendlab),
-#         nudge_x = 0.1,
-#         segment.color = "grey50"
-#       ) +
-#       geom_point(size = .3) +
-#       xlab("") +
-#       ylab(bquote(Delta ~ P ~ log ~ price ~ change)) +
-#       theme_bw() +
-#       theme(
-#         axis.line = element_line(colour = "black"),
-#         panel.grid.major = element_line(linewidth = .2, linetype = "dotted", color = pgmc),
-#         panel.grid.minor = element_blank(),
-#         panel.border = element_blank(),
-#         panel.background = element_blank(),
-#         text = element_text(size = 16, face = "plain"),
-#         axis.line.y.left = element_line(linewidth = .1),
-#         axis.line.x.bottom = element_line(linewidth = .1),
-#         legend.position = "none"
+# D121x <- # winding ----
+#   function(rc6t = rc6tG,
+#            x1 = C111d()$rsi %>%
+#              aestdt1(.) %>%
+#              C121c(x4 = .),
+#            typex = c(A = "All", L = "Local", N = "National", C = "Custom")["C"],
+#            tbinx = c(L = "Low Frequency", H = "High Frequency", A = "Annual")["H"]) {
+#     for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
+#     x2 <- gt::gt(x1) %>%
+#       gt::tab_footnote(
+#         footnote = typex
+#       ) %>%
+#       gt::tab_footnote(
+#         footnote = tbinx
 #       )
+#     x2
 #   }
-
 D121x <- # winding ----
-  function(rc6t = rc6tG,
-           x1 = C121c(
-             rc6tx = rc6tG,
-             x0 = f250509ed,
-             x1 = C121a(x0 = f250509ed$estdt)
-           ),
-           typex = c(A = "All", L = "Local", N = "National", C = "Custom")["C"],
-           tbinx = c(L = "Low Frequency", H = "High Frequency", A = "Annual")["H"]) {
-    for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
-    x2 <- gt::gt(x1) %>%
+  function(
+    rc6t = rc6tG, #fed reactive
+    cus = G111dx #fed reactive
+           ){
+    typex = c('Custom','Local')
+    tbinx = rep("High Frequency",2)
+    x1 <- list(
+    CUS=cus$rsi %>%
+      aestdt1(.) %>%
+      C121c(x4 = .)
+    ,
+    LOC=res$rsi %>%
+      .[res$f250618b[rc6t == rc6, .(nx)], on = c(nx = "nx")] %>%
+      aestdt1(.) %>%
+      C121c(x4 = .)
+    )
+    j <- 1
+    x3 <- as.list(1:2)
+    for(j in 1:2) {
+      x2 <- x1[[j]]
+      for (i in 2:length(x2)) x2[[i]] <- ifelse(is.na(x2[[i]]), "", as.character(round(x2[[i]], 3)))
+    x3[[j]] <- gt::gt(x2) %>%
       gt::tab_footnote(
-        footnote = typex
+        footnote = typex[j]
       ) %>%
       gt::tab_footnote(
-        footnote = tbinx
+        footnote = tbinx[j]
       )
-    x2
+    }
+   x3
   }
+
 if (F) { #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<working here
   # custom computed using standard
   # use accessor akss for

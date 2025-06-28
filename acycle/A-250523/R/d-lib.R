@@ -126,6 +126,7 @@ D121 <- function( #-------------121 winding----
     dcast(., decade ~ yr, value.var = "xdot") %>%
     .[, decade := c(1990, 2000, 2010, 2020)]
   #for (i in 2:length(x1)) x1[[i]] <- as.character(x1[[i]])
+  #browser()
   for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
   x2 <- gt::gt(x1) %>%
     gt::tab_footnote(
