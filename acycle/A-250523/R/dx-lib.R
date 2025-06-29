@@ -1,24 +1,19 @@
 
 D111x <- # leaflet ----
-  function(
-    nn='res',
-    rc6x = rc6tG, # target
-           rc6ccx = rc6ccG, # custom
-           x1 = pxosrdo2dd, # dataG$pxosrdo2dd
-           x2 = z110, # dataG$z110
-           #x3 = f250519ad,
-           #x3=C111c(),
+  function(nn = "res",
+           rc6x = rc6tG, # target               C
+           rc6ccx = rc6ccG, # custom            C
+           x1 = pxosrdo2dd, # dataG$pxosrdo2dd  G
+           x2 = z110, # dataG$z110              G
            rc6all = c(rc6x, rc6ccx),
            rc3x = substr(rc6x, 1, 3), # target area
            minzoom = 9,
            maxzoom = 12) {
-    
     x4 <-
       f240810b( #->leaflet, colours for areas-to-shade in column 'col'
         res$f250618c[grep(rc3x, rc6), .(col, rc6)],
-        #x3[grep(rc3x, rc6), .(col, rc6)],
         x2 = x1, # map polygons
-        pva = res$pva[,.(rcx=rc6,ppm2=pv/m2)], # for tooltip
+        pva = res$pva[, .(rcx = rc6, ppm2 = pv / m2)], # for tooltip
         minzoom = minzoom,
         maxzoom = maxzoom
       ) %>%
