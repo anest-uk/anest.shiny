@@ -3,7 +3,7 @@ D111x <- # leaflet ----
   function(nn = "res",
            rc6x = rc6tG, # target               C
            rc6ccx = rc6ccG, # custom            C
-           x1 = pxosrdo2dd, # dataG$pxosrdo2dd  G
+           x1 = resS$pol, # dataG$resS$pol  G
            x2 = z110, # dataG$z110              G
            rc6all = c(rc6x, rc6ccx),
            rc3x = substr(rc6x, 1, 3), # target area
@@ -11,9 +11,9 @@ D111x <- # leaflet ----
            maxzoom = 12) {
     x4 <-
       f240810b( #->leaflet, colours for areas-to-shade in column 'col'
-        res$f250618c[grep(rc3x, rc6), .(col, rc6)],
+        resS$f250618c[grep(rc3x, rc6), .(col, rc6)],
         x2 = x1, # map polygons
-        pva = res$pva[, .(rcx = rc6, ppm2 = pv / m2)], # for tooltip
+        pva = resS$pva[, .(rcx = rc6, ppm2 = pv / m2)], # for tooltip
         minzoom = minzoom,
         maxzoom = maxzoom
       ) %>%
@@ -38,7 +38,8 @@ D112x <-
       rc6tx = rc6tG,
       x0 = C111d(cus=rsiccG),
       tslidex=tslideG,
-      r = res) {
+      r = resS
+      ) {
     x1 <- # extremal indices  -> {nx,col,lab}(rc3)
       r$f250618c %>%
       .[grep(substr(rc6tG, 1, 3), rc6)] %>%
@@ -49,8 +50,8 @@ D112x <-
       .[, .(Pnx, col, nx, lab = as.factor(lab))]
     x2 <- # static + custom
       rbind(
-        aestdt1(x0$rsi)[, lab := "custom"][],
-        aestdt1(r$rsi[x1[, .(nx)], on = c(nx = "nx")])[r$lab, on = c(nx = "nx"), nomatch = NULL]
+        aestdt1(x0)[, lab := "custom"][],
+        aestdt1(list(rsi=r$rsi[x1[, .(nx)], on = c(nx = "nx")]))[r$lab, on = c(nx = "nx"), nomatch = NULL]
       ) %>%
       .[, col := as.factor(lab)] %>%
       #.[, lab := ifelse(ii == max(ii)-10, lab, "")]%>%.[]%>%
@@ -113,12 +114,13 @@ D121x <- # winding ----
     typex = c('Custom','Local')
     tbinx = rep("High Frequency",2)
     x1 <- list(
-    CUS=cus$rsi %>%
+    CUS=cus %>%
       aestdt1(.) %>%
       C121c(x4 = .)
     ,
-    LOC=res$rsi %>%
-      .[res$f250618b[rc6t == rc6, .(nx)], on = c(nx = "nx")] %>%
+    LOC=resS$rsi %>%
+      .[resS$f250618b[rc6t == rc6, .(nx)], on = c(nx = "nx")] %>%
+      list(rsi=.)%>%
       aestdt1(.) %>%
       C121c(x4 = .)
     )

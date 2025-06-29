@@ -258,7 +258,7 @@ server_common <-
         x <-
           C111d(
             cus = rsiccR(),
-            pva = res$pva
+            pva = resS$pva
           )
         G111dx <<- x
         x

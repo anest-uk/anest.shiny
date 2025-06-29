@@ -3,10 +3,10 @@
 #geo
 ageo <- #geo accessor ----
   function(
-    x=f250509ed$geo
+    x=resS
   ){
-    copy(x)%>%
-      .[,.(rc9,nx,lab)]%>%
+    copy(x$geo)%>%
+      .[,.(rc9=rc6,nx,lab=labxnnn(nx,len=4))]%>%
       sco(.,F)
   }
 #ageo()
@@ -14,13 +14,13 @@ ageo <- #geo accessor ----
 #estdt
 aestdt1 <- #estdt accessor ----
   function(
-    x=res$rsi,
+    x=resS,
     adddatum=T,
     keepj=T
   ){
     x0 <- as.Date('1994-12-31')
     x1 <- 
-      x[date!=x0]%>%
+      x$rsi[date!=x0]%>%
       .[order(nx,date),.(xdotd,date,nx)]%>%
       .[,.(
       xdotd,date,
@@ -33,8 +33,8 @@ aestdt1 <- #estdt accessor ----
       .[,x:=cumsum(xdot),by=nx]%>%
       .[]
     if(keepj) {#retain additional columns
-      j1 <- setdiff(names(x),names(x1))
-      x2 <- x[,c(j1,'nx','date'),with=F]
+      j1 <- setdiff(names(x$rsi),names(x1))
+      x2 <- x$rsi[,c(j1,'nx','date'),with=F]
       x3 <- x1[x2,on=c(nx='nx',date='date')]
     } else {
       x3 <- x1
@@ -55,76 +55,115 @@ aestdt1 <- #estdt accessor ----
 
 aestdt2 <- #date accessor: list of 2 vectors ----
   function(
-    x=res$lab[res$rsi,on=c(nx='nx')],
+    x=resS,
     adddatum=T
   ){
-    x0 <- as.Date('1994-12-31')
-    x1 <- 
-      x[date!=x0]%>%
-      .[substr(lab,8,9)=='AN',sort(unique(date))]
+    x0 <- x$lab[resS$rsi,on=c(nx='nx')]
+    x1 <- as.Date('1994-12-31')
     x2 <- 
-      x[date!=x0]%>%
+      x0[date!=x1]%>%
+      .[substr(lab,8,9)=='AN',sort(unique(date))]
+    x3 <- 
+      x0[date!=x1]%>%
       .[substr(lab,8,9)!='AN',sort(unique(date))]
     if(adddatum==T) {
-      x1 <- c(x0,x1)
-      x2 <- c(x0,x2)
+      x2 <- c(x1,x2)
+      x3 <- c(x1,x3)
     }
-    x3 <- 
+    x4 <- 
       list(
-        AN=x1, #yearends
-        BA=x2  #DRC
+        AN=x2, #yearends
+        BA=x3  #DRC
         )
-    x3
+    x4
   }
 #aestdt2()
 
 akss <- # kfoldsse accessor ----
   function(
-      x = f250509ed$kfoldsse,
+      x = resS,
       agg = T) {
+    x0 <- x$kss
     x1 <-
-      copy(x) %>%
-      .[, rsqraw := 1 - sser / sstr] %>%
+      copy(x0) %>%
+      .[, rsqraw := 1 - ssra / ssta] %>%
       .[order(nx)]
     x2 <-
       copy(x1) %>%
       .[, .(
-        ssei = sum(ssei),
-        toti = sum(toti),
-        ssek = sum(ssek),
-        sser = sum(sser),
-        sstr = sum(sstr),
+        ssri = sum(ssri), #ssri      
+        ssti = sum(ssti), #ssti      
+        ssrk = sum(ssrk), #ssrk      
+        ssra = sum(ssra), #ssta     
+        ssta = sum(ssta), #ssra      
         n = sum(n)
       ),
       by = nx
       ] %>%
-      .[, rsqraw := 1 - sser / sstr] %>%
+      .[, rsqraw := 1 - ssra / ssta] %>%
       .[order(nx)]
     x3 <-
       list(
-        sco(x1, F),
-        sco(x2, F)
+        rc6=sco(x1, F),
+        nx=sco(x2, F)
       )
     x3
   }
 #akss()
+# akss <- # kfoldsse accessor ----
+#   function(
+#       x = f250509ed$kfoldsse,
+#       agg = T) {
+#     x1 <-
+#       copy(x) %>%
+#       .[, rsqraw := 1 - sser / sstr] %>%
+#       .[order(nx)]
+#     x2 <-
+#       copy(x1) %>%
+#       .[, .(
+#         ssei = sum(ssei),
+#         toti = sum(toti),
+#         ssek = sum(ssek),
+#         sser = sum(sser),
+#         sstr = sum(sstr),
+#         n = sum(n)
+#       ),
+#       by = nx
+#       ] %>%
+#       .[, rsqraw := 1 - sser / sstr] %>%
+#       .[order(nx)]
+#     x3 <-
+#       list(
+#         sco(x1, F),
+#         sco(x2, F)
+#       )
+#     x3
+#   }
 
 apva <- #pva accessor ----
   function(
-      x = z110) {
-    copy(x)[
+      x = resS
+      ) {
+    copy(x$pva)[
       ,
       .(
         nid,
         m2,
         pv,
-        pt,
-        ppm2,
-        rcx
+        ppm2=pv/m2,
+        rcx=rc6
       )
     ]%>%
       sco(.,F)
   }
 #apva()
+
+##################################################
+# ageo()
+# aestdt1()
+# aestdt2()
+# akss()
+# apva()
+
 
 

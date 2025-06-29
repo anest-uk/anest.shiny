@@ -3,7 +3,7 @@
 C111d <- # RES for custom from rsiccG - this can go upstream into rsiccR and f241119a when switch to gen2
   function(
       cus = rsiccG,
-      pva = res$pva) {
+      pva = resS$pva) {
     list(
       lab = data.table(nx = 0, lab = "CU00"),
       geo = cus$geo[, .(nx, lab, rc6 = rc9)],
@@ -58,8 +58,8 @@ C111d <- # RES for custom from rsiccG - this can go upstream into rsiccR and f24
 #   aestdt1(.) %>%
 #   C121c(x4 = .)
 # 
-# res$rsi%>%
-#   .[res$f250618b[rc6tx == rc6, .(nx)], on = c(nx = "nx")] %>%
+# resS$rsi%>%
+#   .[resS$f250618b[rc6tx == rc6, .(nx)], on = c(nx = "nx")] %>%
 #   aestdt1(.) %>%
 #   C121c(x4 = .)
 
@@ -69,7 +69,7 @@ C121c <- #----
       rc6tx = rc6tG,
       # x0 = f250509ed,
       x1 = data.table(BA = aestdt2()$BA)[, ii := .I - 1][],
-      x4=aestdt1(res$rsi[res$f250618b[rc6tx == rc6, .(nx)], on = c(nx = "nx")])
+      x4=aestdt1(resS$rsi[resS$f250618b[rc6tx == rc6, .(nx)], on = c(nx = "nx")])
       # x1 = C121a()
       ) {
     x2 <- # daily

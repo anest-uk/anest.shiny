@@ -33,25 +33,24 @@ library(shiny)
       source("R/c-cleanlib.R")
       source("R/rctree.R")
       # source("R/CDFlib.R")
-      source("R/d-lib.R")
+      source("R/d-lib.R")  # 
       source("R/dx-lib.R") # gen2
       source("R/c-lib.R")
-      source("R/v-lib.R") # vgeo(); vkss(); vestdt(); vpva()
+      source("R/v-lib.R")  # vgeo(); vkss(); vestdt(); vpva()
       #---------------------app code
-      source("ui_main.R")
-      source("R/ui_accuracy.R")
-      source("R/ui_action.R")
-      source("R/ui_constituents.R")
-      source("R/ui_header.R")
-      source("R/ui_listing.R")
-      source("R/ui_notes.R")
-      source("R/ui_sidebar.R")
-      source("R/ui_timeseries.R")
-      source("R/ui_tim1.R")
+      source("ui_main.R")          #0
+      source("R/ui_accuracy.R")    #4-acc
+      source("R/ui_action.R")      #0-act
+      source("R/ui_constituents.R")#3-con
+      source("R/ui_header.R")      #0-hea
+      source("R/ui_listing.R")     #2-lis
+      source("R/ui_notes.R")       #0-not
+      source("R/ui_sidebar.R")     #0-sid
+      source("R/ui_timeseries.R")  #1-tim
+      source("R/ui_tim1.R")        #5-tim
       if (T) { # revisit this
-        testsingleassign <- 1
         #---------valid global data--2.1----
-        vres(res)
+        vres(resS)
 
         #--------------------------=parameters--3----
         gridheight <<- "630px"
@@ -114,12 +113,12 @@ server <- function(
     output,
     session) {
   #--------------------------------server
-  source("R/server_common.R")
-  source("R/server_listing.R")
-  source("R/server_timeseries.R")
-  source("R/server_constituents.R")
-  source("R/server_accuracy.R")
-  source("R/server_tim1.R")
+  source("R/server_common.R") #0-com
+  source("R/server_listing.R")#2-lis
+  source("R/server_timeseries.R")#1-tim
+  source("R/server_constituents.R")#3-con
+  source("R/server_accuracy.R")#4-acc
+  source("R/server_tim1.R")#5-tim
 
   common <- server_common(input, output, session)
 
