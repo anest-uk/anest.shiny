@@ -249,7 +249,7 @@ server_common <-
         }
       )
     
-  R111dx <- # this may be wrongly named - returns: custom result object
+  res2R <- # this may be wrongly named - returns: custom result object
     eventReactive(
       list(
         rescR()
@@ -260,7 +260,7 @@ server_common <-
             rescx = rescR(),
             pva = resS$pva
           )
-        G111dx <<- x
+        res2G <<- x
         x
       }
     )
@@ -332,7 +332,7 @@ server_common <-
       labxR = labxR,
       nxaR = nxaR,
       nxqR = nxqR,
-      R111dx = R111dx,
+      res2R = res2R,
       rc6cR = rc6cR,
       rc6tR = rc6tR,
       rescR = rescR,

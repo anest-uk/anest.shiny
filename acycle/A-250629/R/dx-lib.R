@@ -35,23 +35,25 @@ D111x <- # leaflet ----
   }
 D112x <-
   function(
-      rc6tx = rc6tG,# target           C
-      x0 = Ccus(rescx=rescG),
-      tslidex=tslideG,
-      r = resS
+      statics = c("res", "dat"),# declare static dependencies
+      resx = resS, #                      S static
+      rescx = rescG,   # custom           R reactive
+      rc6tx = rc6tG,   # target           C control
+      tslidex=tslideG,  # basedate        C control
+      x0 = Ccus(rescx=rescx) # Cres exposed calc
       ) {
     x1 <- # extremal indices  -> {nx,col,lab}(rc3)
-      r$f250618c %>%
+      resx$f250618c %>%
       .[grep(substr(rc6tG, 1, 3), rc6)] %>%
       .[order(Pnx)] %>%
       .[c(1, .N), ] %>%
-      .[r$f250618b, on = c(rc6 = "rc6"), nomatch = NULL] %>%
-      .[r$lab, on = c(nx = "nx"), nomatch = NULL] %>%
+      .[resx$f250618b, on = c(rc6 = "rc6"), nomatch = NULL] %>%
+      .[resx$lab, on = c(nx = "nx"), nomatch = NULL] %>%
       .[, .(Pnx, col, nx, lab = as.factor(lab))]
     x2 <- # static + custom
       rbind(
         aestdt1(x0)[, lab := "custom"][],
-        aestdt1(list(rsi=r$rsi[x1[, .(nx)], on = c(nx = "nx")]))[r$lab, on = c(nx = "nx"), nomatch = NULL]
+        aestdt1(list(rsi=resx$rsi[x1[, .(nx)], on = c(nx = "nx")]))[resx$lab, on = c(nx = "nx"), nomatch = NULL]
       ) %>%
       .[, col := as.factor(lab)] %>%
       .[, .SD[, .(
@@ -105,8 +107,8 @@ D112x <-
 #   }
 D121x <- # winding ----
   function(
-    rc6t = rc6tG, #fed reactive
-    cus = G111dx #fed reactive
+    rc6tx = rc6tG, #fed reactive
+    cus = res2G #fed reactive
            ){
     typex = c('Custom','Local')
     tbinx = rep("High Frequency",2)
@@ -116,7 +118,7 @@ D121x <- # winding ----
       C121c(x4 = .)
     ,
     LOC=resS$rsi %>%
-      .[resS$f250618b[rc6t == rc6, .(nx)], on = c(nx = "nx")] %>%
+      .[resS$f250618b[rc6==rc6tx, .(nx)], on = c(nx = "nx")] %>%
       list(rsi=.)%>%
       aestdt1(.) %>%
       C121c(x4 = .)
