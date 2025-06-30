@@ -1,13 +1,3 @@
-      # statics = c("res", "dat"),#          declare static dependencies
-      # rc6x = rc6tG, # target               C control
-      # rc6ccx = rc6ccG, # custom            C
-      # x1 = apol(datS), # polygon           S static
-      # x2 = apva(resS), # pva               S
-      # rc6all = c(rc6x, rc6ccx),#custom+target
-      # rc3x = substr(rc6x, 1, 3), # target rc3
-      # minzoom = 9,
-      # maxzoom = 12) {
-
 D111x <- # leaflet ----
   function(
       statics = c("res", "dat"),# declare static dependencies
@@ -46,7 +36,7 @@ D111x <- # leaflet ----
 D112x <-
   function(
       rc6tx = rc6tG,
-      x0 = C111d(cus=rsiccG),
+      x0 = C111d(cus=rsicG),
       tslidex=tslideG,
       r = resS
       ) {
@@ -158,7 +148,7 @@ if (F) { #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   rssccxG # newstyle
 
   # common::rssccR is just the kss part
-  # it consumes common::rsiccR or rsiccG which is raw output from f241119a
+  # it consumes common::rsicR or rsicG which is raw output from f241119a
   # gen2 reformatter of f241119a output is akss(x = f250509ed$kfoldsse)
   # this needs
   # a) nx selected for the three local indices

@@ -1,8 +1,8 @@
 # gen2 accessors
 
-C111d <- # RES for custom from rsiccG - this can go upstream into rsiccR and f241119a when switch to gen2
+C111d <- # RES for custom from rsicG - this can go upstream into rsicR and f241119a when switch to gen2
   function(
-      cus = rsiccG,
+      cus = rsicG,
       pva = resS$pva) {
     list(
       lab = data.table(nx = 0, lab = "CU00"),

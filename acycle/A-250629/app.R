@@ -143,8 +143,8 @@ server <- function(
     x
   })
   computedrc6R <- reactive({ # ---rc6 computed----
-    rsiccX <- common$rsiccR()
-    x1 <- rsiccX$kfoldsse[, rc6] %>% .[nchar(.) == 6]
+    rsicX <- common$rsicR()
+    x1 <- rsicX$kfoldsse[, rc6] %>% .[nchar(.) == 6]
     x <- paste0(paste0(sort(unique(x1)), collapse = ","))
     print(paste0("computedrc6R: ", x))
     computedrc6G <<- copy(x)

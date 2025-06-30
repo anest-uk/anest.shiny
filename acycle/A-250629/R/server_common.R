@@ -45,11 +45,11 @@ server_common <-
     estdtccR <- #---------custom estdt select ----
       eventReactive(
         list(
-          rsiccR()
+          rsicR()
         ),
         {
           if (verbose) print("enter estdtccR")
-          x <- rsiccR()$estdt
+          x <- rsicR()$estdt
           estdtccG <<- copy(x)
           x
         }
@@ -208,13 +208,13 @@ server_common <-
         }
       )
 
-    rsiccR <- #-------------custom rsi compute----
+    rsicR <- #-------------custom rsi compute----
       eventReactive(
         list(
           input$docusabC
         ),
         {
-          if (verbose) print("enter rsiccR")
+          if (verbose) print("enter rsicR")
           geox <- isolate(geoccR())
           dfnx <- isolate(dfnyR()) # source of truth
           rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
@@ -224,7 +224,7 @@ server_common <-
               (nchar(regpcode(rc6tx)) == 6) &
               (regpcode(rc6tx) %in% rc6valid)
           ) {
-            print("recalc accepted in rsiccR")
+            print("recalc accepted in rsicR")
             x <-
               f241119a( # returns estdt, kfoldsse, all
                 nxx = 0,
@@ -239,10 +239,10 @@ server_common <-
                 houseflat = c(".")
               )
             #browser()
-            rsiccG <<- copy(x)
+            rsicG <<- copy(x)
           } else {
-            print("recalc rejected in rsiccR")
-            x <- copy(rsiccG)
+            print("recalc rejected in rsicR")
+            x <- copy(rsicG)
           }
           
           x
@@ -252,12 +252,12 @@ server_common <-
   R111dx <- # this may be wrongly named - returns: custom result object
     eventReactive(
       list(
-        rsiccR()
+        rsicR()
       ),
       {
         x <-
           C111d(
-            cus = rsiccR(),
+            cus = rsicR(),
             pva = resS$pva
           )
         G111dx <<- x
@@ -282,11 +282,11 @@ server_common <-
     rssccR <- # ------------custom rss select----
       eventReactive(
         list(
-          rsiccR()
+          rsicR()
         ),
         {
           if (verbose) print("enter rssccR")
-          x <- cbind(rsiccR()$kfoldsse, rsiccR()$all)
+          x <- cbind(rsicR()$kfoldsse, rsicR()$all)
           rssccG <<- copy(x)
           x
         }
@@ -335,7 +335,7 @@ server_common <-
       R111dx = R111dx,
       rc6cR = rc6cR,
       rc6tR = rc6tR,
-      rsiccR = rsiccR,
+      rsicR = rsicR,
       rssaR = rssaR,
       rssccR = rssccR,
       rssR = rssR,
