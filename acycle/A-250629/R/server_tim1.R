@@ -23,7 +23,7 @@ server_tim1 <- function(input, output, session, common) {
     list(
       common$rc6tR(),   #C
       common$tslideR(), #C
-      common$estdtccR() #U switch this to resccR
+      common$estdtcR() #U switch this to rescR
     ),
     {
       #browser()
@@ -42,7 +42,7 @@ server_tim1 <- function(input, output, session, common) {
   R121x <- eventReactive( # 121 winding ----
     list(
       common$rc6tR(),
-      common$estdtccR()
+      common$estdtcR()
     ),
     {
       x <- D121x(
@@ -57,14 +57,14 @@ server_tim1 <- function(input, output, session, common) {
     list(
       common$rc6tR(),
       common$rssaR(),
-      common$rssccR()
+      common$rsscR()
     ),
     {
       #browser()
       x <- D122x(
         rc6t=common$rc6tR(),
         rssax=common$rssaR(),
-        rssccx=common$rssccR(),
+        rsscx=common$rsscR(),
         z110=z110
         )
       x

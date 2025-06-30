@@ -36,7 +36,7 @@ server_timeseries <- function(input, output, session, common) {
           tslidex = common$tslideR(),
           estdty = common$estdtxR(),
           ylimx = common$ylimR(),
-          geoccx = common$geoccR()
+          geocx = common$geocR()
         )
       G112 <<- copy(x)
       x
@@ -45,7 +45,7 @@ server_timeseries <- function(input, output, session, common) {
 
 
   R121 <- eventReactive( #--------121 winding----
-    list(common$estdtlR(), common$estdtccR(), common$dfnyR()),
+    list(common$estdtlR(), common$estdtcR(), common$dfnyR()),
     {
       if (verbose) print("enter R121")
       x2 <- D121(
@@ -53,7 +53,7 @@ server_timeseries <- function(input, output, session, common) {
         dfny = common$dfnxR()
       )
       x4 <- D121(
-        estdt = common$estdtccR(),
+        estdt = common$estdtcR(),
         dfny = common$dfnxR(),
         typex = "C"
       )
@@ -65,13 +65,13 @@ server_timeseries <- function(input, output, session, common) {
 
 
   R122 <- eventReactive( #------------------.#----
-    list(common$rc6tR(), common$rssaR(), common$rssccR()), #, common$z110R()
+    list(common$rc6tR(), common$rssaR(), common$rsscR()), #, common$z110R()
     {
       if (verbose) print("enter R122")
       x <- D122(
         rc6tx = common$rc6tR(),
         rssax = common$rssaR(),
-        rssccx = common$rssccR(),
+        rsscx = common$rsscR(),
         z110x = z110#common$z110R()
       )
       G122 <<- copy(x)
@@ -102,7 +102,7 @@ server_timeseries <- function(input, output, session, common) {
       x <- D132(
         tslidex = common$tslideR(),
         geoqx = common$geoqR(),
-        geoccx = common$geoccR(),
+        geocx = common$geocR(),
         estdtlx = common$estdtlR()
       )
       G132 <<- copy(x)

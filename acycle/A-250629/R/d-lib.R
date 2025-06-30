@@ -44,7 +44,7 @@ D112 <- function( #-----------------------.#----
                   tslidex = tslideG,              #integer: zero index
                   estdty = estdtxG,              #estdt: nx date xdotd days xdot x lab  ii qtile rc3 qq
                   ylimx = ylimG,                  #vector: ylim
-                  geoccx = geoccG)                #geo {rc9 nx lab}: custom 
+                  geocx = geocG)                #geo {rc9 nx lab}: custom 
   {
   x2c <- estdty %>%
     copy(.)%>%
@@ -67,7 +67,7 @@ D112 <- function( #-----------------------.#----
     geom_point(size = .3) +
     geom_text_repel() +
     # ylim(ylimx - x3) +
-    labs(caption = geoccx[, paste0("Custom districts: ", paste0(sort(irregpcode(rc9)), collapse = ", "))]) +
+    labs(caption = geocx[, paste0("Custom districts: ", paste0(sort(irregpcode(rc9)), collapse = ", "))]) +
     xlab("") +
     ylab(bquote(Delta ~ P ~ log ~ price ~ change)) +
     theme_bw() +
@@ -146,9 +146,9 @@ D121 <- function( #-------------121 winding----
 D122 <- function( # ----122 characteristics----
                   rc6tx = rc6tG,                  #scalar: target
                   rssax = rssaG,                  #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for area
-                  rssccx = rssccG,                #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for custom geo
+                  rsscx = rsscG,                #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for custom geo
                   z110x = z110) {
-  rsscux <- copy(rssccx)[, lab := "CU000"] # R()
+  rsscux <- copy(rsscx)[, lab := "CU000"] # R()
   x0 <- C122(rssx = rsscux, z110x = z110x)
   x1 <- C122(rssx = rssax, z110x = z110x)
   x2 <-
@@ -207,7 +207,7 @@ D131 <- function( #-------------131 summary----
 D132 <- function( # ---132 trade summary(2)----
                   tslidex = tslideG,
                   geoqx = geoqG,
-                  geoccx = geoccG,
+                  geocx = geocG,
                   estdtlx = estdtlG,
                   steprip = stepripG) {
   tminx <- tslidex
@@ -218,7 +218,7 @@ D132 <- function( # ---132 trade summary(2)----
     tmin = tminx # tmin=input$tslider
   )
   x2 <- C132a(
-    geox = geoccx[, .(rc6 = rc9)], # geoqR()
+    geox = geocx[, .(rc6 = rc9)], # geoqR()
     steprip = steprip,
     estdtlx = estdtlx, # estdtlR()
     tmin = tminx # tmin=input$tslider
@@ -437,14 +437,14 @@ D411 <- function( #-------411 accuracy tbin----
 }
 
 D412 <- function( #--------412 accuracy tbin----
-                  geoccx = geoccG,
+                  geocx = geocG,
                   rc6tx = rc6tG,
-                  rssccx = rssccG) {
+                  rsscx = rsscG) {
   x1 <-
     data.table(tbin = 1:3, freq = c("lo", "hi", "an"))
   x2 <-
-    rssccx %>% # use global no filters
-    .[geoccx, on = c(rc6 = "rc9")] %>%
+    rsscx %>% # use global no filters
+    .[geocx, on = c(rc6 = "rc9")] %>%
     .[, .(n, ssek, tbin = tbinC, rc6)]
   x3 <-
     rbind(
@@ -495,14 +495,14 @@ D421 <- function( #--------421 accuracy trim----
 }
 
 D422 <- function( # #--------422 accuracy trim----
-                  geoccx = geoccG,
+                  geocx = geocG,
                   rc6tx = rc6tG,
-                  rssccx = rssccG) {
+                  rsscx = rsscG) {
   x1 <-
     data.table(itrim = 1:3, threshold = c("0.0", "0.1", "0.5"))
   x2 <-
-    rssccx %>%
-    .[geoccx, on = c(rc6 = "rc9")] %>%
+    rsscx %>%
+    .[geocx, on = c(rc6 = "rc9")] %>%
     .[, .(n, ssek, itrim = itriC, rc6)]
   x3 <- rbind(
     x2[, .(span = "index.average", mse = round(sqrt(sum(ssek) / sum(n)), 4)), itrim],
@@ -553,12 +553,12 @@ D431 <- function( #------431 accuracy in/out----
 }
 
 D432 <- function( #------432 accuracy in/out----
-                  geoccx = geoccG,
+                  geocx = geocG,
                   rc6tx = rc6tG,
-                  rssccx = rssccG) {
+                  rsscx = rsscG) {
   x1 <-
-    rssccx %>%
-    .[geoccx, on = c(rc6 = "rc9")] %>%
+    rsscx %>%
+    .[geocx, on = c(rc6 = "rc9")] %>%
     .[, .(n, ssek, ssei, itrim = itriC, rc6)]
   x2 <-
     rbind(

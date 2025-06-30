@@ -144,10 +144,10 @@ if (F) { #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   # custom computed using standard
   # use accessor akss for
   akss(f250509ed$kfoldsse) # this is fine for result, want the same for custom
-  rssccG # oldstyle
-  rssccxG # newstyle
+  rsscG # oldstyle
+  rsscxG # newstyle
 
-  # common::rssccR is just the kss part
+  # common::rsscR is just the kss part
   # it consumes common::rescR or rescG which is raw output from f241119a
   # gen2 reformatter of f241119a output is akss(x = f250509ed$kfoldsse)
   # this needs
@@ -171,9 +171,9 @@ if (F) { #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 D122x <- #----122 characteristics----
   function(rc6tx = rc6tG, # scalar: target
            rssax = rssaG, # rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for area
-           rssccx = rssccG, # rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for custom geo
+           rsscx = rsscG, # rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for custom geo
            z110x = z110) {
-    rsscux <- copy(rssccx)[, lab := "CU000"] # R()
+    rsscux <- copy(rsscx)[, lab := "CU000"] # R()
     x0 <- C122(rssx = rsscux, z110x = z110x)
     x1 <- C122(rssx = rssax, z110x = z110x)
     # browser()

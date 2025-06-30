@@ -10,10 +10,10 @@ server_accuracy <- function(input, output, session, common) {
   )
 
   R412 <- eventReactive( #-----------------412----
-    list(common$geoccR(), common$rc6tR(), common$rssccR()),
+    list(common$geocR(), common$rc6tR(), common$rsscR()),
     {
       if (verbose) print("enter R412")
-      x <- D412(geoccx = common$geoccR(), rc6tx = common$rc6tR(), rssccx = common$rssccR())
+      x <- D412(geocx = common$geocR(), rc6tx = common$rc6tR(), rsscx = common$rsscR())
       G412 <<- copy(x)
       x
     }
@@ -30,10 +30,10 @@ server_accuracy <- function(input, output, session, common) {
   )
 
   R422 <- eventReactive( #-----------------422----
-    list(common$geoccR(), common$rc6tR(), common$rssccR()),
+    list(common$geocR(), common$rc6tR(), common$rsscR()),
     {
       if (verbose) print("enter R422")
-      x <- D422(geoccx = common$geoccR(), rc6tx = common$rc6tR(), rssccx = common$rssccR())
+      x <- D422(geocx = common$geocR(), rc6tx = common$rc6tR(), rsscx = common$rsscR())
       G422 <<- copy(x)
       x
     }
@@ -50,10 +50,10 @@ server_accuracy <- function(input, output, session, common) {
   )
 
   R432 <- eventReactive( #-----------------432----
-    list(common$geoccR(), common$rc6tR(), common$rssccR()),
+    list(common$geocR(), common$rc6tR(), common$rsscR()),
     {
       if (verbose) print("enter R432")
-      x <- D432(geoccx = common$geoccR(), rc6tx = common$rc6tR(), rssccx = common$rssccR())
+      x <- D432(geocx = common$geocR(), rc6tx = common$rc6tR(), rsscx = common$rsscR())
       G432 <<- copy(x)
       x
     }
