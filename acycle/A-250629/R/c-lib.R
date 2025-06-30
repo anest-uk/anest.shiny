@@ -1,13 +1,13 @@
 # gen2 accessors
 
-C111d <- # RES for custom from rsicG - this can go upstream into rsicR and f241119a when switch to gen2
+Ccus <- # RES for custom from rescG - this can go upstream into rescR and f241119a when switch to gen2
   function(
-      cus = rsicG,
+      rescx = rescG,
       pva = resS$pva) {
     list(
       lab = data.table(nx = 0, lab = "CU00"),
-      geo = cus$geo[, .(nx, lab, rc6 = rc9)],
-      rsi = cus$estdt[, .(
+      geo = rescx$geo[, .(nx, lab, rc6 = rc9)],
+      rsi = rescx$estdt[, .(
         nx, 
         date, 
         xdotd,
@@ -15,7 +15,7 @@ C111d <- # RES for custom from rsicG - this can go upstream into rsicR and f2411
         xset1
         )],
       da0 = as.Date("1994-12-31"),
-      kss = cus$kfoldsse[, .(
+      kss = rescx$kfoldsse[, .(
         nx,
         ssrk = ssek, # r k residual kfold
         ssri = ssei, # r i residual inlier
@@ -25,10 +25,10 @@ C111d <- # RES for custom from rsicG - this can go upstream into rsicR and f2411
         n,
         rc6
       )],
-      pva = pva[cus$geo[, .(rc6 = rc9)], on = c(rc6 = "rc6")]
+      pva = pva[rescx$geo[, .(rc6 = rc9)], on = c(rc6 = "rc6")]
     )
   }
-# C111d()
+# Ccus()
 
 # C121a <- # {ii AN BA} dates ----
 #   function(x0 = f250509ed$estdt) {
@@ -54,7 +54,7 @@ C111d <- # RES for custom from rsicG - this can go upstream into rsicR and f2411
 #       .[, .(rc6, ssek, nx, lab)]
 #   }
 
-# C111d()$rsi %>%
+# Ccus()$rsi %>%
 #   aestdt1(.) %>%
 #   C121c(x4 = .)
 # 

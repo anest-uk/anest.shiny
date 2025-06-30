@@ -35,8 +35,8 @@ D111x <- # leaflet ----
   }
 D112x <-
   function(
-      rc6tx = rc6tG,
-      x0 = C111d(cus=rsicG),
+      rc6tx = rc6tG,# target           C
+      x0 = Ccus(rescx=rescG),
       tslidex=tslideG,
       r = resS
       ) {
@@ -54,13 +54,10 @@ D112x <-
         aestdt1(list(rsi=r$rsi[x1[, .(nx)], on = c(nx = "nx")]))[r$lab, on = c(nx = "nx"), nomatch = NULL]
       ) %>%
       .[, col := as.factor(lab)] %>%
-      #.[, lab := ifelse(ii == max(ii)-10, lab, "")]%>%.[]%>%
-      #.[, lab := ifelse(ii == which.max(x), lab, ""),col]%>%.[]%>%
       .[, .SD[, .(
         ii, 
         date, 
         lab=ifelse(.I == which.max(x), lab, ""), 
-        
         x = x - ifelse(tslidex == 0, 0, x[ii==tslidex]),
         xset
         )], 
@@ -91,7 +88,7 @@ D112x <-
 
 # D121x <- # winding ----
 #   function(rc6t = rc6tG,
-#            x1 = C111d()$rsi %>%
+#            x1 = Ccus()$rsi %>%
 #              aestdt1(.) %>%
 #              C121c(x4 = .),
 #            typex = c(A = "All", L = "Local", N = "National", C = "Custom")["C"],
@@ -148,7 +145,7 @@ if (F) { #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   rssccxG # newstyle
 
   # common::rssccR is just the kss part
-  # it consumes common::rsicR or rsicG which is raw output from f241119a
+  # it consumes common::rescR or rescG which is raw output from f241119a
   # gen2 reformatter of f241119a output is akss(x = f250509ed$kfoldsse)
   # this needs
   # a) nx selected for the three local indices
