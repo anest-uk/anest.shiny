@@ -3,7 +3,7 @@
 Ccus <- # RES for custom from rescG - this can go upstream into rescR and f241119a when switch to gen2
   function(
       rescx = rescG,
-      pva = resS$pva) {
+      pvax = apva(resS)) {
     list(
       lab = data.table(nx = 0, lab = "CU00"),
       geo = rescx$geo[, .(nx, lab, rc6 = rc9)],
@@ -25,7 +25,7 @@ Ccus <- # RES for custom from rescG - this can go upstream into rescR and f24111
         n,
         rc6
       )],
-      pva = pva[rescx$geo[, .(rc6 = rc9)], on = c(rc6 = "rc6")]
+      pva = rescx$geo[, .(rc6 = rc9)][pvax, on = c(rc6 = "rcx")]
     )
   }
 # Ccus()

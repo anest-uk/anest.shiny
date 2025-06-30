@@ -254,11 +254,12 @@ server_common <-
       list(
         rescR()
       ),
-      {
+      { 
+        if (verbose) print("enter res2R")
         x <-
           Ccus(
             rescx = rescR(),
-            pva = resS$pva
+            pvax = apva(resS)
           )
         res2G <<- x
         x

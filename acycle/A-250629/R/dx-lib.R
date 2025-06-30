@@ -35,12 +35,12 @@ D111x <- # leaflet ----
   }
 D112x <-
   function(
-      statics = c("res", "dat"),# declare static dependencies
+      statics = c("res"),# declare static dependencies
       resx = resS, #                      S static
       rescx = rescG,   # custom           R reactive
       rc6tx = rc6tG,   # target           C control
       tslidex=tslideG,  # basedate        C control
-      x0 = Ccus(rescx=rescx) # Cres exposed calc
+      x0 = Ccus(rescx=rescx) # resC exposed calc
       ) {
     x1 <- # extremal indices  -> {nx,col,lab}(rc3)
       resx$f250618c %>%
@@ -107,17 +107,18 @@ D112x <-
 #   }
 D121x <- # winding ----
   function(
-    rc6tx = rc6tG, #fed reactive
-    cus = res2G #fed reactive
+    statics = c("res"),# declare static dependencies
+    rc6tx = rc6tG,   #                C control
+    res2x = res2G    # res2           R reactive
            ){
     typex = c('Custom','Local')
     tbinx = rep("High Frequency",2)
     x1 <- list(
-    CUS=cus %>%
+    res2x=res2x %>%
       aestdt1(.) %>%
       C121c(x4 = .)
     ,
-    LOC=resS$rsi %>%
+    ress=resS$rsi %>%
       .[resS$f250618b[rc6==rc6tx, .(nx)], on = c(nx = "nx")] %>%
       list(rsi=.)%>%
       aestdt1(.) %>%

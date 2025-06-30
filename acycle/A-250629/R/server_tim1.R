@@ -46,8 +46,8 @@ server_tim1 <- function(input, output, session, common) {
     ),
     {
       x <- D121x(
-        rc6t=common$rc6tR(),
-        cus=common$res2R()
+        rc6tx=common$rc6tR(),
+        res2x=common$res2R()
         )
       x
     }
