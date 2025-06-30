@@ -2,7 +2,7 @@ server_timeseries <- function(input, output, session, common) {
   R111 <- eventReactive( # -------111 leaflet----
     list(
       common$rc6tR(),
-      common$rc6ccR(),
+      common$rc6cR(),
       common$geoaR()
     ),
     {
@@ -11,7 +11,7 @@ server_timeseries <- function(input, output, session, common) {
       }
       x <- D111(
         rc6tx = common$rc6tR(),
-        rc6ccx = common$rc6ccR(),
+        rc6cx = common$rc6cR(),
         geoax = common$geoaR(),
         pxosrdo2ddx = pxosrdo2dd, 
         z110x = z110,

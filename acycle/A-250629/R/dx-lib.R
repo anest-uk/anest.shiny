@@ -1,31 +1,41 @@
+      # statics = c("res", "dat"),#          declare static dependencies
+      # rc6x = rc6tG, # target               C control
+      # rc6ccx = rc6ccG, # custom            C
+      # x1 = apol(datS), # polygon           S static
+      # x2 = apva(resS), # pva               S
+      # rc6all = c(rc6x, rc6ccx),#custom+target
+      # rc3x = substr(rc6x, 1, 3), # target rc3
+      # minzoom = 9,
+      # maxzoom = 12) {
 
 D111x <- # leaflet ----
-  function(nn = "res",
-           rc6x = rc6tG, # target               C
-           rc6ccx = rc6ccG, # custom            C
-           x1 = resS$pol, # dataG$resS$pol  G
-           x2 = z110, # dataG$z110              G
-           rc6all = c(rc6x, rc6ccx),
-           rc3x = substr(rc6x, 1, 3), # target area
-           minzoom = 9,
-           maxzoom = 12) {
+  function(
+      statics = c("res", "dat"),# declare static dependencies
+      rc6tx = rc6tG,   # target           C control
+      rc6cx = rc6cG,   # custom           C
+      x1 = apol(datS), # polygon          S static
+      x2 = apva(resS), # pva              S
+      rc6xx = c(rc6tx, rc6cx),# custom+target
+      rc3tx = substr(rc6tx, 1, 3), # target rc3
+      minzoom = 9,
+      maxzoom = 12) {
     x4 <-
       f240810b( #->leaflet, colours for areas-to-shade in column 'col'
-        resS$f250618c[grep(rc3x, rc6), .(col, rc6)],
+        resS$f250618c[grep(rc3tx, rc6), .(col, rc6)],
         x2 = x1, # map polygons
         pva = resS$pva[, .(rcx = rc6, ppm2 = pv / m2)], # for tooltip
         minzoom = minzoom,
         maxzoom = maxzoom
       ) %>%
       addPolygons( # outline custom districts
-        data = x1[which(x1@data$name %in% irregpcode(rc6all)), ],
+        data = x1[which(x1@data$name %in% irregpcode(rc6xx)), ],
         fill = F,
         color = "black",
         weight = 1,
         opacity = 1
       ) %>%
-      addPolygons( # outline custom districts
-        data = x1[which(x1@data$name %in% irregpcode(rc6x)), ],
+      addPolygons( # outline target district
+        data = x1[which(x1@data$name %in% irregpcode(rc6tx)), ],
         fill = F,
         color = "black",
         weight = 1,

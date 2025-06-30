@@ -15,8 +15,8 @@ z110 <- readRDS(file = file.path(app_dirG, "data", "z110.rds"))
 #gen1.5 <<<<<<<<<<<get rid
 #f250509ed <- readRDS(file = file.path(app_dirG, "data", "f250509ed.rds")) #res
 
-res <- readRDS(file = file.path(app_dirG, "data", "f250618ad.rds")) #res
-dat <- list(pva=res$pva,pol=pxosrdo2dd)
+# res <- readRDS(file = file.path(app_dirG, "data", "f250618ad.rds")) #res
+# dat <- list(pva=res$pva,pol=pxosrdo2dd)
 
 resS <- readRDS(file = file.path(app_dirG, "data", "f250618ad.rds")) #res
-datS <- list(pva=res$pva,pol=pxosrdo2dd)
+datS <- list(pva=resS$pva,pol=pxosrdo2dd)

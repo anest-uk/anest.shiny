@@ -1,7 +1,7 @@
 
 D111 <- function( #-----------------------.#----
                   rc6tx = rc6tG,                  #scalar: target rc6 that implicitly defines rc3
-                  rc6ccx = rc6ccG,                #vector: to outline
+                  rc6cx = rc6cG,                #vector: to outline
                   geoax = geoaG,                  #geo {nx    gx    lab    rc3    rc6 qtile} : shade by qtile this-rc3-geo
                   pxosrdo2ddx = pxosrdo2dd,      #global
                   z110x = z110,                  #global {rcx ppm2} : pva
@@ -30,7 +30,7 @@ D111 <- function( #-----------------------.#----
       maxzoom = 12
     ) %>%
     addPolygons( # outline custom districts
-      data = pxosrdo2ddx[which(pxosrdo2ddx@data$name %in% irregpcode(rc6ccx)), ],
+      data = pxosrdo2ddx[which(pxosrdo2ddx@data$name %in% irregpcode(rc6cx)), ],
       fill = F,
       color = "orange",
       weight = 1,

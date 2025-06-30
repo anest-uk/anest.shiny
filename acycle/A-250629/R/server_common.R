@@ -15,9 +15,9 @@ server_common <-
     }
     
     fgeoccx <- #------------custom geo compute----
-    function(rc6ccx = rc6ccG) {
+    function(rc6cx = rc6cG) {
       x <-
-        data.table(rc9 = rc6ccx, nx = 0, lab = "CU00")
+        data.table(rc9 = rc6cx, nx = 0, lab = "CU00")
       x
     }
     
@@ -114,11 +114,11 @@ server_common <-
 
     geoccR <- #-------------custom geo compute----
       eventReactive(
-        rc6ccR(),
+        rc6cR(),
         {
           if (verbose) print("enter geoccR")
           x <-
-            fgeoccx(rc6ccx = rc6ccR())
+            fgeoccx(rc6cx = rc6cR())
           geoccG <<- copy(x)
           x
         }
@@ -185,13 +185,13 @@ server_common <-
         }
       )
 
-    rc6ccR <- #-------------custom rc6 control----
+    rc6cR <- #-------------custom rc6 control----
       eventReactive(
         list(rc6tR(), input$rctreeC), #+control
         {
-          if (verbose) print("enter rc6ccR")
+          if (verbose) print("enter rc6cR")
           x <- sort(unique(c(rc6tR(), input$rctreeC))) %>% .[nchar(.) == 6]
-          rc6ccG <<- copy(x)
+          rc6cG <<- copy(x)
           x
         }
       )
@@ -333,7 +333,7 @@ server_common <-
       nxaR = nxaR,
       nxqR = nxqR,
       R111dx = R111dx,
-      rc6ccR = rc6ccR,
+      rc6cR = rc6cR,
       rc6tR = rc6tR,
       rsiccR = rsiccR,
       rssaR = rssaR,

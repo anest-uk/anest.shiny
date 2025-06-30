@@ -158,6 +158,15 @@ apva <- #pva accessor ----
   }
 #apva()
 
+apol <- #pol accessor ----
+  function(
+      x = datS
+      ) {
+    x$pol
+  }
+
+
+
 ##################################################
 # ageo()
 # aestdt1()

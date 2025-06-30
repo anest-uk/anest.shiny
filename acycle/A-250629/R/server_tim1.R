@@ -2,15 +2,15 @@ server_tim1 <- function(input, output, session, common) {
   R111x <- eventReactive( # 111 leaflet----
     list(
       common$rc6tR(), #C
-      common$rc6ccR() #C
+      common$rc6cR() #C
     ),
     {
       print('enter server_tim1')
       x <- D111x(
-        rc6x = common$rc6tR(),
-        rc6ccx=common$rc6ccR(),
-        x1 = pxosrdo2dd, 
-        x2 = z110
+        rc6tx = common$rc6tR(),
+        rc6cx=common$rc6cR(),
+        x1 = apol(datS), 
+        x2 = apva(resS)
         )
       x
     }
