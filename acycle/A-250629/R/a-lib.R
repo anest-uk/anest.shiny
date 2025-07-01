@@ -1,12 +1,13 @@
 #accessors
-
+print('a-lib.R execution')
 #geo
 ageo <- #geo accessor ----
   function(
     x=resS
   ){
-    copy(x$geo)%>%
-      .[,.(rc9=rc6,nx,lab=labxnnn(nx,len=4))]%>%
+    x$geo%>%
+      .[x$lab,on=c(nx='nx')]%>%
+      .[,.(rc6,nx,lab)]%>%
       sco(.,F)
   }
 #ageo()
@@ -151,7 +152,7 @@ apva <- #pva accessor ----
         m2,
         pv,
         ppm2=pv/m2,
-        rcx=rc6
+        rc6
       )
     ]%>%
       sco(.,F)

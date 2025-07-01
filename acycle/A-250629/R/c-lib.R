@@ -67,10 +67,8 @@ Ccus <- # RES for custom from rescG - this can go upstream into rescR and f24111
 C121c <- #----
   function(
       rc6tx = rc6tG,
-      # x0 = f250509ed,
       x1 = data.table(BA = aestdt2()$BA)[, ii := .I - 1][],
       x4=aestdt1(resS$rsi[resS$f250618b[rc6tx == rc6, .(nx)], on = c(nx = "nx")])
-      # x1 = C121a()
       ) {
     x2 <- # daily
       seq.Date(from = x1[1, BA], to = x1[.N, BA], by = "d")
@@ -101,13 +99,13 @@ C121c <- #----
 
 C122 <- # combine rss and P characteristics ----
   function(rssx,
-           z110x = z110 #
+           pvax = z110 #
   ) {
     x0 <-
-      z110x[rssx, on = c(rcx = "rc6")] %>%
+      pvax[rssx, on = c(rcx = "rc6")] %>%
       .[
         , .(
-          frac = round(sum(nid) / z110x[nchar(rcx) == 6, sum(nid)], nfig3),
+          frac = round(sum(nid) / pvax[nchar(rcx) == 6, sum(nid)], nfig3),
           nid = sum(nid),
           ppm2max = round(max(ppm2), nfig2),
           ppm2min = round(min(ppm2), nfig2),

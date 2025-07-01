@@ -1,4 +1,4 @@
-app_dirG <- normalizePath("c:/users/giles/anest.repo/anest.shiny/acycle/A-250523") #normalizePath(".")  is better, but does not work for interactive debug (2 dir up)
+app_dirG <- normalizePath("c:/users/giles/anest.repo/anest.shiny/acycle/A-250629") #normalizePath(".")  is better, but does not work for interactive debug (2 dir up)
 setwd(app_dirG)#does nothing in the app, is here for interactive/debug
 data_dirG <- file.path(app_dirG, "data")
 print(paste0('app_dirG : ',app_dirG))
@@ -20,3 +20,4 @@ z110 <- readRDS(file = file.path(app_dirG, "data", "z110.rds"))
 
 resS <- readRDS(file = file.path(app_dirG, "data", "f250618ad.rds")) #res
 datS <- list(pva=resS$pva,pol=pxosrdo2dd)
+
