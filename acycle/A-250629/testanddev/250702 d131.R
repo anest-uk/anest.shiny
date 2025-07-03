@@ -1,33 +1,42 @@
-#x0=resS
+# x0=resS
 
-D131x <- 
-  function(
-    x3=copy(resS),
-    x1=copy(rescG)
-  ){
-    names(x1)[which(names(x1)=='estdt')] <- 'rsi'
-    #from d122x
-    x2 <-  #nx for this rc3
-      x3$f250618b%>%
-      .[grep(substr(rc6tx,1,3),rc6),unique(nx)]
-    x3$rsi <- 
-      x3$rsi[nx%in%x2]
-    x4 <- 
-      aestdt1(x3)%>%
-      x3$lab[.,on=c(nx='nx')]
-    x5 <- 
-      copy(rescG)
-    names(x5)[which(names(x5)=='estdt')] <- 
-      'rsi'
-    x6 <- 
-      aestdt1(x1)[,-c('col')]
-    x7 <- 
-      rbind(x4,x6)
-    x7
-  }
-estdty <- D131x()
+# C131x <- #characteristics and summary
+#   function(
+#       static='resS',
+#       rc6tx = rc6tG,
+#       rescx = copy(rescG)
+#       ) {
+#     names(rescx)[which(names(rescx) == "estdt")] <- "rsi"
+#     x2 <- # nx for this rc3
+#       resS$f250618b %>%
+#       .[grep(substr(rc6tx, 1, 3), rc6), unique(nx)]
+#     resS$rsi <-
+#       resS$rsi[nx %in% x2]
+#     x4 <-
+#       aestdt1(resS) %>%
+#       resS$lab[., on = c(nx = "nx")]
+#     x6 <-
+#       aestdt1(rescx)[, -c("col")]
+#     x7 <-
+#       rbind(x4, x6)
+#     x7 %>%
+#       .[ii >= tslidex] %>%
+#       dcast(., ii ~ lab, value.var = "xdot") %>%
+#       .[, -"ii"] %>%
+#       as.matrix(.) %>%
+#       zoo(., estdty[, sort(unique(date))]) %>%
+#       table.Stats(., digits = 3) %>%
+#       t(.) %>%
+#       .[, c(3, 6, 9, 16 , 14, 15, 16)] %>%
+#       as.data.table(., keep.rownames = T) %>%
+#       setnames(., c("rn", "min", "mean","tot", "max", "stdev", "skew", "kurtosis")) %>% 
+#       .[unique(x7[,.(nx,lab)]),on=c(rn='lab')]%>%
+#       C122a()[., on = c(nx = "nx")]
+#   }
+# C131x()
+# 
 
-
+x7 <- D131x()
 
 # x6[,plot(x)]
 # x6[,summary(xdot)]
@@ -44,8 +53,13 @@ estdty <- D131x()
     zoo(., estdty[, sort(unique(date))]) %>%
     table.Stats(., digits = 3) 
   
-  x8 #transpose and apply rename/reorder used for 122
-  t(x8)
+   #transpose and apply rename/reorder used for 122
+  t(x8)%>%
+  .[,c(3,6,9,14,15,16)]%>%
+  as.data.table(.,keep.rownames=T)%>%
+    setnames(.,c('rn','min','mean','max','stdev','skew','kurtosis'))%>%
+    C122a()[.,on=c(lab='rn')]
+  
   
   %>%
     data.table(., keep.rownames = T) %>%

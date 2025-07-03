@@ -95,7 +95,54 @@ C121c <- #----
   }
 #C121c(x4=aestdt1(x0$rsi))
 
+C122a <- #i.n q2 nrc6.est nrc6.fit lab nid.est minppm2 maxppm2 aggppm2 col
+  function(
+    rc6tx = rc6tG,
+    geocx = geocG, # is a georc9
+    pvax  = apva(resS),
+    geox  = ageo(resS)[grep("^L", lab)] # is a georc6
+    ) {
+  x1 <- resS$f250618b # not a geo
+  geo <- rbind( # is georc6
+    geox,
+    geocx[, .(rc6 = rc9, nx, lab = paste0("C", substr(rc6tG, 1, 3), "0.0CU"))]
+  )
+  geo1 <- # is georc6 : this rc3 geo
+    geo %>% # 1
+    .[grep(substr(rc6tx, 1, 3), lab)]
+  x2 <- #count per i.n : train
+    geo1 %>%
+    .[, .(nrc6.est = .N), .(i.n = substr(lab, 5, 7))]
+  x3 <- # {rc6 i.n nx} 
+    x1[grep(substr(rc6tx, 1, 3), rc6)] %>%
+    rbind(., geocx[, .(rc6 = rc6tx, i.n = "0.0", nx = 0)])
+  x4 <- # count per i.n : fit
+    x3 %>%
+    .[, .(nrc6.fit = .N), i.n] # %>%
+  x5 <- # 3,4,5,6,7
+    geo1 %>%
+    pvax[., on = c(rc6 = "rc6")] %>%
+    .[, .(nid.est = sum(nid), maxppm2 = max(ppm2), minppm2 = min(ppm2), aggppm2 = sum(pv) / sum(m2)), .(nx, lab)] %>%
+    .[order(aggppm2), .(nx,lab, nid.est, minppm2, maxppm2, aggppm2, col = color_price(log(aggppm2), log(min(.[, minppm2])), log(max(.[, maxppm2]))), i.n = substr(lab, 5, 7))]
+  x6 <-
+    x2%>%
+    .[x4, on = c(i.n = "i.n")]%>%
+    .[x5, on = c(i.n = "i.n")]%>%
+    C122b()[.,on=c(i.n='i.n')]
+  x6[order(aggppm2),.(nx,lab,i.n,q2,nrc6.est,nrc6.fit,nid.est,minppm2,maxppm2,aggppm2,col)]
+}
+C122b <- #labelling
+  function() {
+  data.table(
+    i = as.character(c(1, 1, 1, 2, 2, 3, 0)), 
+    n = as.character(c(3, 2, 1, 3, 2, 3, 0)), 
+    q2 = c("bottom tertile", "lower half", "all", "middle tertile", "upper half", "top tertile", "custom")
+    )%>%
+    .[, .(i, n, q2, i.n = paste0(i, ".", n))]
+  }
 
+# C122b()
+# C122a()
 
 C122 <- # combine rss and P characteristics ----
   function(rssx,
@@ -126,6 +173,45 @@ C122 <- # combine rss and P characteristics ----
     x0
   }
 
+C131x <- #characteristics and summary
+  function(
+      static='resS',
+      tslidex = tslideG,
+      rc6tx = rc6tG,
+      rescx = copy(rescG)
+      ) {
+    names(rescx)[which(names(rescx) == "estdt")] <- "rsi"
+    x2 <- # nx for this rc3
+      resS$f250618b %>%
+      .[grep(substr(rc6tx, 1, 3), rc6), unique(nx)]
+    resS$rsi <-
+      resS$rsi[nx %in% x2]
+    x4 <-
+      aestdt1(resS) %>%
+      resS$lab[., on = c(nx = "nx")]
+    x6 <-
+      aestdt1(rescx)[, -c("col")]
+    x7 <-
+      rbind(x4, x6)
+    #browser()
+    x7 %>%
+      .[ii > tslidex] %>%
+      dcast(., ii ~ lab, value.var = "xdot") %>%
+      .[, -"ii"] %>%
+      as.matrix(.) %>%
+      zoo(., x4[, sort(unique(date))]) %>%
+      table.Stats(., digits = 3) %>%
+      t(.) %>%
+      .[, c(3, 6, 9, 14, 15, 16)] %>%
+      as.data.table(., keep.rownames = T) %>%
+      setnames(., c("rn", "min", "mean", "max", "stdev", "skew", "kurtosis")) %>% 
+      .[unique(x7[,.(nx,lab)]),on=c(rn='lab')]%>%
+      C122a()[., on = c(nx = "nx")]%>%
+      .[,tot:=mean*x7[nx==min(nx)][ii > tslidex,.N]]%>%.[]%>%
+      .[,pa:=round(tot/x7[ii > tslidex][nx==min(nx)][,sum(days)/365.25],3)]%>%
+      .[]
+  }
+#C131x()
 
 C132a <- #-----132 trade summary(2)----
   function(geox = geoqG,

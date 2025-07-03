@@ -127,44 +127,39 @@ D121x <- # winding ----
 #D121x()
 
 
+
+#  geo[grep(substr(rc6tx, 1, 3), lab)]
+
 D122x <- function(
     rc6tx = rc6tG,
     geocx = geocG, # is a georc9
-    pvax  = apva(resS),
-    geox  = ageo(resS)[grep("^L", lab)] # is a georc6
+    pvax = apva(resS),
+    geox = ageo(resS)[grep("^L", lab)] # is a georc6
     ) {
-  x1 <- resS$f250618b # not a geo
-  geo <- rbind( # is georc6
+  geo1 <- rbind( # is georc6
     geox,
     geocx[, .(rc6 = rc9, nx, lab = paste0("C", substr(rc6tG, 1, 3), "0.0CU"))]
-  )
-  geo1 <- # is georc6 : this rc3 geo
-    geo %>% # 1
+  )%>% # 1
     .[grep(substr(rc6tx, 1, 3), lab)]
-  x2 <- #count per i.n : train
-    geo1 %>%
-    .[, .(nrc6.est = .N), .(i.n = substr(lab, 5, 7))]
-  x3 <- # {rc6 i.n nx} 
-    x1[grep(substr(rc6tx, 1, 3), rc6)] %>%
-    rbind(., geocx[, .(rc6 = rc6tx, i.n = "0.0", nx = 0)])
-  x4 <- # count per i.n : fit
-    x3 %>%
-    .[, .(nrc6.fit = .N), i.n] # %>%
-  x5 <- # 3,4,5,6,7
-    geo1 %>%
-    pvax[., on = c(rc6 = "rc6")] %>%
-    .[, .(nid.est = sum(nid), maxppm2 = max(ppm2), minppm2 = min(ppm2), aggppm2 = sum(pv) / sum(m2)), .(nx, lab)] %>%
-    .[order(aggppm2), .(lab, nid.est, minppm2, maxppm2, aggppm2, col = color_price(log(aggppm2), log(min(.[, minppm2])), log(max(.[, maxppm2]))), i.n = substr(lab, 5, 7))]
+
+  x6a <- #
+    C122a(
+      rc6tx = rc6tx,
+      geocx = geocx, # is a georc9
+      pvax  = pvax,
+      geox  = geox # is a georc6
+    )
   x6 <-
-    x2[x4, on = c(i.n = "i.n")][x5, on = c(i.n = "i.n")] %>%
+    x6a %>%
     .[, .(i.n, col, nrc6.est, nrc6.fit)]
+  x6 <- x6a
   x7 <- # 5,6,7
     pvax %>%
     .[geo1, on = c(rc6 = "rc6")] %>%
     .[, .(agg = sum(pv) / sum(m2), max = max(pv / m2), min = min(pv / m2), nid = sum(nid)), .(nx, i.n = substr(lab, 5, 7))] %>%
     .[order(agg)]
   x8 <-
-    x6[x7, on = c(i.n = "i.n")][, .(i.n, col, nrc6.est, nrc6.fit, nid, min, max, agg)]
+    x6[x7, on = c(i.n = "i.n")]#[, .(i.n, col, nrc6.est, nrc6.fit, nid, min, max, agg)]
   x9 <-
     x8[, .(
       i = substr(i.n, 1, 1),
@@ -176,16 +171,16 @@ D122x <- function(
       pmin = prettyNum(round(min), big.mark = ","),
       pmax = prettyNum(round(max), big.mark = ","),
       agg = prettyNum(round(agg), big.mark = ","),
+      q2,
       key = "\u2589" # square symbol for color key
     )]
-
   x10 <-
-    x9[, .(i=as.character(c(1,1,1,2,2,3,0)), n=as.character(c(3,2,1,3,2,3,0)), q2 = c("bottom tertile", "lower half", "all", "middle tertile", "upper half", "top tertile", "custom"))][x9, on = c(i = "i", n = "n")] %>%
+    x9%>%
     .[, .(q1 = paste0(i, " of ", n), q2, col, nrc6.est, nrc6.fit, nid, pmin, pmax, agg, key)] %>%
-    .[order(-as.numeric(gsub(',','',agg)))]%>%
-    .[q2%in%c('custom','all'), q1 := ""]
+    .[order(-as.numeric(gsub(",", "", agg)))] %>%
+    .[q2 %in% c("custom", "all"), q1 := ""]
 
-   x10%>%
+  x10 %>%
     gt::gt(.) %>%
     cols_label(
       q1 = gt::html("rank"),
@@ -211,50 +206,97 @@ D122x <- function(
       label = gt::html("districts"),
       columns = c(nrc6.est, nrc6.fit)
     ) %>%
-     
-     text_transform(
-  locations = cells_body(columns = key),
-  fn = function(codes) {
-    purrr::imap_chr(codes, function(code, i) {
-      colval <- x10[i, col]
-      is_target <- (x10[i,q2=='custom'])  # <- change this condition as needed
-      outline <- if (is_target) "border:4px solid black;" else ""
-      paste0(
-        "<div style='display:inline-block; width:1em; height:1em; background-color:", colval, "; ",
-        outline, "'></div>"
-      )
-    }) %>%
-      purrr::map(htmltools::HTML)
-  }
-)%>%
-# 
-#      
-#      text_transform(
-#   locations = cells_body(columns = key),
-#   fn = function(codes) {
-#     purrr::imap_chr(codes, function(code, i) {
-#       colval <- x10[i, col]
-#       extra_style <- if (i == 3) "border:1px solid black; padding:1px; display:inline-block;" else ""
-#       paste0(
-#         "<span style='color:", colval, "; font-weight:bold;", extra_style, "'>", code, "</span>"
-#       )
-#     }) %>%
-#       purrr::map(htmltools::HTML)
-#   }
-#)%>%
-    # text_transform(
-    #   locations = cells_body(columns = key),
-    #   fn = function(codes) {
-    #     purrr::map2_chr(codes, x10[, col], ~ paste0(
-    #       "<span style='color:", .y, "; font-weight:bold;'>", .x, "</span>"
-    #     )) %>%
-    #       purrr::map(htmltools::HTML)
-    #   }
-    # ) %>%
+    text_transform(
+      locations = cells_body(columns = key),
+      fn = function(codes) {
+        purrr::imap_chr(codes, function(code, i) {
+          colval <- x10[i, col]
+          is_target <- (x10[i, q2 == "custom"]) # <- change this condition as needed
+          outline <- if (is_target) "border:4px solid black;" else ""
+          paste0(
+            "<div style='display:inline-block; width:1em; height:1em; background-color:", colval, "; ",
+            outline, "'></div>"
+          )
+        }) %>%
+          purrr::map(htmltools::HTML)
+      }
+    ) %>%
     cols_hide(columns = col) %>%
     cols_label(key = "") %>%
     cols_move_to_start(
-      columns = c('key')
+      columns = c("key")
     )
-}#D122x()
-D122x()
+}
+#D122x()
+
+D131x <- function(
+    static = "resS",
+    tslidex=tslideG,
+    rc6tx = rc6tG,
+    rescx = copy(rescG)) {
+  x1 <-
+    C131x(
+      static = "resS",
+      tslidex = tslidex,
+      rc6tx = rc6tx,
+      rescx = rescx
+    ) %>%
+    .[order(-aggppm2), .(q1 = gsub("\\.", " of ", i.n), q2, col, agg = round(aggppm2, -2), min, mean, tot, pa, max, stdev, skew, kurtosis, key = "\u2589")] %>%
+    .[q2 == "custom", q1 := ""]
+  x1 %>%
+    gt::gt(.) %>%
+    cols_label(
+      q1 = gt::html("rank"),
+      q2 = gt::html("segment"),
+      col = gt::html(""),
+      min = gt::html("min"),
+      mean = gt::html("mean"),
+      tot = gt::html("total"),
+      pa = gt::html("p.a."),
+      max = gt::html("max"),
+      stdev = gt::html("volatility"),
+      skew = gt::html("skew"),
+      kurtosis = gt::html("kurtosis"),
+      agg = gt::html("£/m<sup>2</sup>"),
+      key = gt::html(""),
+    ) %>%
+    fmt_number(
+      columns = agg,
+      decimals = 0,
+      sep_mark = "," # Thousands separator
+    ) %>%
+    fmt_number(
+      columns = c("skew", "kurtosis"),
+      decimals = 2,
+      sep_mark = "," # Thousands separator
+    ) %>%
+    tab_spanner(
+      label = gt::html(aestdt2(resS)$BA %>% .[c(tslidex+1, length(.))] %>% paste0(., collapse = " - ") %>% paste0("log returns : ", .)),
+      columns = c(min, mean, tot, pa, max, stdev, skew, kurtosis)
+    ) %>%
+    tab_spanner(
+      label = gt::html("quantiles"),
+      columns = c(q1, q2)
+    ) %>%
+    text_transform(
+      locations = cells_body(columns = key),
+      fn = function(codes) {
+        purrr::imap_chr(codes, function(code, i) {
+          colval <- x1[i, col]
+          is_target <- (x1[i, q2 == "custom"]) # <- change this condition as needed
+          outline <- if (is_target) "border:4px solid black;" else ""
+          paste0(
+            "<div style='display:inline-block; width:1em; height:1em; background-color:", colval, "; ",
+            outline, "'></div>"
+          )
+        }) %>%
+          purrr::map(htmltools::HTML)
+      }
+    ) %>%
+    cols_hide(columns = col) %>%
+    cols_label(key = "") %>%
+    cols_move_to_start(
+      columns = c("key")
+    )
+}
+#D131x()

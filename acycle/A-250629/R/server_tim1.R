@@ -56,7 +56,8 @@ server_tim1 <- function(input, output, session, common) {
    R122x <- eventReactive( # 121 winding ----
     list(
       common$rc6tR(),
-      common$geocR()
+      common$geocR(),
+      common$estdtcR()
     ),
     {
       #browser()
@@ -81,11 +82,16 @@ server_tim1 <- function(input, output, session, common) {
 
   R131x <- eventReactive( # 131 summary ----
     list(
-      common$rc6tR()
+      common$rc6tR(),
+      common$rescR(),
+      common$tslideR()
     ),
     {
-      x <- ggplot(mtcars, aes(drat, wt)) +
-        geom_point()
+      x <- D131x(
+    tslidex = common$tslideR(),
+    rc6tx = common$rc6tR(),
+    rescx = common$rescR()
+        )
       x
     }
   )

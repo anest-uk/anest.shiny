@@ -3,8 +3,8 @@ ui_navpanel_tim1 <- function(id = NULL) {
     title = "tim1", #---------.----
     grid_container(
       layout = c(
-        "O111x    O122x ",
-        "O121x    O112x ",
+        "O111x    O112x ",
+        "O121x    O122x ",
         "O131x    O132x "
       ),
       row_sizes = c(
@@ -72,7 +72,10 @@ ui_navpanel_tim1 <- function(id = NULL) {
         card_header(
           "O131x"
         ),
-        card_body()
+        card_body(
+          gt::gt_output("O131x"),
+          height = gridheight
+        )
       ) # gridcard
       ,
       grid_card(
