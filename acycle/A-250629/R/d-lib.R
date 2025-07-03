@@ -149,8 +149,8 @@ D122 <- function( # ----122 characteristics----
                   rsscx = rsscG,                #rss { itrim lab n nx qtile rc3 rc6 ssei ssek sser sstr tbin type } : for custom geo
                   z110x = z110) {
   rsscux <- copy(rsscx)[, lab := "CU000"] # R()
-  x0 <- C122(rssx = rsscux, z110x = z110x)
-  x1 <- C122(rssx = rssax, z110x = z110x)
+  x0 <- C122(rssx = rsscux, pvax = z110x)
+  x1 <- C122(rssx = rssax, pvax = z110x)
   x2 <-
     rbind(x1, x0)[order(-pnum)][, -"pnum"]
   x <-

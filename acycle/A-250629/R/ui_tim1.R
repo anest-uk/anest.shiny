@@ -3,8 +3,8 @@ ui_navpanel_tim1 <- function(id = NULL) {
     title = "tim1", #---------.----
     grid_container(
       layout = c(
-        "O111x    O112x ",
-        "O121x    O122x ",
+        "O111x    O122x ",
+        "O121x    O112x ",
         "O131x    O132x "
       ),
       row_sizes = c(
@@ -20,9 +20,9 @@ ui_navpanel_tim1 <- function(id = NULL) {
       grid_card(
         area = "O111x",
         full_screen = TRUE,
-        card_header(
-          "O111x"
-        ),
+        # card_header(
+        #   "."
+        # ),
         card_body(
           leafletOutput("O111x"),
           height = gridheight
@@ -32,9 +32,9 @@ ui_navpanel_tim1 <- function(id = NULL) {
       grid_card(
         area = "O112x",
         full_screen = TRUE,
-        card_header(
-          "O112x"
-        ),
+        # card_header(
+        #   "."
+        # ),
         card_body(
           plotOutput("O112x"),
           height = gridheight
@@ -44,9 +44,9 @@ ui_navpanel_tim1 <- function(id = NULL) {
       grid_card(
         area = "O121x",
         full_screen = TRUE,
-        card_header(
-          "O121xa"
-        ),
+        # card_header(
+        #   "."
+        # ),
         card_body(
           gt::gt_output("O121xa"),
           gt::gt_output("O121xb"),
@@ -57,9 +57,9 @@ ui_navpanel_tim1 <- function(id = NULL) {
       grid_card(
         area = "O122x",
         full_screen = TRUE,
-        card_header(
-          "O122x"
-        ),
+        # card_header(
+        #   "."
+        # ),
         card_body(
           gt::gt_output("O122x"),
           height = gridheight

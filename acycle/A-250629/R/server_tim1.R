@@ -52,20 +52,17 @@ server_tim1 <- function(input, output, session, common) {
       x
     }
   )
-  
+      
    R122x <- eventReactive( # 121 winding ----
     list(
       common$rc6tR(),
-      common$rssaR(),
-      common$rsscR()
+      common$geocR()
     ),
     {
       #browser()
       x <- D122x(
-        rc6t=common$rc6tR(),
-        rssax=common$rssaR(),
-        rsscx=common$rsscR(),
-        z110=z110
+        rc6tx=common$rc6tR(),
+        geocx=common$geocR()
         )
       x
     }
