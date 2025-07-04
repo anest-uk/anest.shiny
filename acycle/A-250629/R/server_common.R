@@ -297,19 +297,19 @@ server_common <-
       # )
 
     
-  res2R <- # this may be wrongly named - returns: custom result object
+  rescxR <- # this may be wrongly named - returns: custom result object
     eventReactive(
       list(
         rescR()
       ),
       { 
-        if (verbose) print("enter res2R")
+        if (verbose) print("enter rescxR")
         x <-
           Ccus(
             rescx = rescR(),
             pvax = resS$pva
           )
-        res2G <<- x
+        rescxG <<- x
         x
       }
     )
@@ -381,7 +381,7 @@ server_common <-
       labxR = labxR,
       nxaR = nxaR,
       nxqR = nxqR,
-      res2R = res2R,
+      rescxR = rescxR,
       rc6cR = rc6cR,
       rc6tR = rc6tR,
       rescR = rescR,

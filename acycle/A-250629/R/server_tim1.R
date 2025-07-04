@@ -48,7 +48,7 @@ server_tim1 <- function(input, output, session, common) {
       #browser()
       x <- D121x(
         rc6tx=common$rc6tR(),
-        res2x=common$res2R()
+        rescx=common$rescxR()
         )
       x
     }

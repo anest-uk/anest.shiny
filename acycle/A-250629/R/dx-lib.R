@@ -95,12 +95,12 @@ D121x <- # winding ----
   function(
     statics = c("res"),# declare static dependencies
     rc6tx = rc6tG,   #                C control
-    res2x = res2G    # res2           R reactive
+    rescx = rescxG    # rescx           R reactive
            ){
     typex = c('Custom','Local')
     tbinx = rep("High Frequency",2)
     x1 <- list(
-    res2x=res2x %>%
+    rescx=rescx %>%
       aestdt1(.) %>%
       C121c(rcx=rc6tx) #table constructor type=1
     ,
