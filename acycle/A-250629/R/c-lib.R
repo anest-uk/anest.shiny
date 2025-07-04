@@ -3,13 +3,15 @@
 Ccus <- # RES for custom from rescG - this can go upstream into rescR and f241119a when switch to gen2
   function(
       rescx = rescG,
-      pvax = apva(resS)) {
-    list(
-      lab = data.table(nx = 0, lab = "CU00"),
-      geo = rescx$geo[, .(nx, lab, rc6 = rc9)],
+      pvax = apva(resS)[,-'ppm2']
+      ) {
+    x1 <- 
+      list(
+      lab = data.table(lab = "CU00", nx = 0),
+      geo = rescx$geo[, .(nx, rc6 = rc9)],
       rsi = rescx$estdt[, .(
-        nx, 
         date, 
+        nx, 
         xdotd,
         xset,
         xset1
@@ -24,9 +26,11 @@ Ccus <- # RES for custom from rescG - this can go upstream into rescR and f24111
         ssta = sstr, # t a total    all
         n,
         rc6
-      )],
-      pva = rescx$geo[, .(rc6 = rc9)][pvax, on = c(rc6 = "rc6")]
+      )]%>%sco(.,F),
+      pva = rescx$geo[, .(rc6 = rc9)][pvax, on = c(rc6 = "rc6")]%>%sco(.,F)
     )
+    vres(x1)
+    x1
   }
 # Ccus()
 
@@ -66,17 +70,20 @@ Ccus <- # RES for custom from rescG - this can go upstream into rescR and f24111
 
 C121c <- #----
   function(
-      rc6tx = rc6tG,
-      x1 = data.table(BA = aestdt2()$BA)[, ii := .I - 1][],
-      x4=aestdt1(resS$rsi[resS$f250618b[rc6tx == rc6, .(nx)], on = c(nx = "nx")])
+      rcx = rc6tG,
+      x1 = data.table(BA = aestdt2()$BA)[, ii := .I - 1][,.(date=BA,ii)]
+      #x4=aestdt1(resS$rsi[resS$f250618b[rc6tx == rc6, .(nx)], on = c(nx = "nx")])
       ) {
     x2 <- # daily
-      seq.Date(from = x1[1, BA], to = x1[.N, BA], by = "d")
+      seq.Date(from = x1[1, date], to = x1[.N, date], by = "d")
     x3 <- # annual
-      seq.Date(from = x1[1, BA], to = x1[.N, BA], by = "y") %>%
+      seq.Date(from = x1[1, date], to = x1[.N, date], by = "y") %>%
       .[-1] %>% # remove d0
-      c(., x1[.N, BA]) %>% # add dmax
+      c(., x1[.N, date]) %>% # add dmax
       unique(.)
+    x4 <- 
+      areso(rcx=rcx)%>% #optimum local for target
+      aestdt1(.)
     x5 <-
       x4 %>%
       .[.(date = x2), on = c(date = "date"), roll = -Inf, j = .(date, xdotd)] %>%
@@ -93,7 +100,7 @@ C121c <- #----
       .[]
     x5
   }
-#C121c(x4=aestdt1(x0$rsi))
+#C121c('NG-7--')
 
 C122a <- #i.n q2 nrc6.est nrc6.fit lab nid.est minppm2 maxppm2 aggppm2 col
   function(

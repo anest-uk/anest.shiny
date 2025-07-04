@@ -33,7 +33,8 @@ vgeo <-
   ) {
     x %>%
       is.data.table(.) &
-      vgen(x, xclass)
+      vgen(x, xclass) &
+      all.equal(names(x),c('nx','rc6'))
   }
 # vgeo()
 
@@ -51,8 +52,10 @@ vpva <-
            xclass = c(nid = "numeric", m2 = "numeric", rc6 = "non-numeric", pv = "numeric")) {
     x %>%
       is.data.table(.) &
-      vgen(x, xclass)
+      vgen(x, xclass) & 
+      isTRUE(all.equal(names(x),c('m2','nid','pv','rc6')))
   }
+#vpva()
 
 vgen <-
   function(x = resS$geo,

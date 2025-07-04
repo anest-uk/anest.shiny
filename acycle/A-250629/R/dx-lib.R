@@ -102,13 +102,13 @@ D121x <- # winding ----
     x1 <- list(
     res2x=res2x %>%
       aestdt1(.) %>%
-      C121c(x4 = .) #table constructor type=1
+      C121c(rcx=rc6tx) #table constructor type=1
     ,
     ress=resS$rsi %>%
       .[resS$f250618b[rc6==rc6tx, .(nx)], on = c(nx = "nx")] %>%
       list(rsi=.)%>%
       aestdt1(.) %>%
-      C121c(x4 = .) #table constructor type=2
+      C121c(rcx=rc6tx) #table constructor type=2
     )
     x3 <- as.list(1:2)
     for(j in 1:2) { #custom, local
@@ -302,7 +302,7 @@ D131x <- function(
 }
 #D131x()
 
-D132b <- function(
+D132x <- function(
   static='resS',
   tslidex = tslideG,
   geocx = geocG

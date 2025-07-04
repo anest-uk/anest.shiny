@@ -251,50 +251,50 @@ server_common <-
         }
       )
     
-      rescxR <- #-------------custom rsi compute GEN2 res output----
-      eventReactive(
-        list(
-          input$docusabC
-        ),
-        {
-          if (verbose) print("enter rescxR")
-          geox <- isolate(geocR())
-          dfnx <- isolate(dfnyR()) # source of truth
-          rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
-          rc6valid <- f241021ad$geoplus[,unique(rc9)]
-          if (
-            (irregpcode(regpcode(rc6tx)) == rc6tx) &
-              (nchar(regpcode(rc6tx)) == 6) &
-              (regpcode(rc6tx) %in% rc6valid)
-          ) {
-            print("recalc accepted in rescxR")
-            x1 <-
-              f241119a( # returns estdt, kfoldsse, all
-                nxx = 0,
-                steprip2 = stepripG, # smaller format
-                dfn = dfnx, # R
-                geo = geox[,.(nx,lab,rc9=rc6)], # R
-                outthresh = .1,
-                kfold = 5,
-                sectorwise = T,
-                usepra = F,
-                newused = c("."),
-                houseflat = c(".")
-              )
-            x <- copy(x1)
-            x$geo <- #fix rc6
-               x1$geo[,.(nx,rc6=rc9)]
-            x$lab <- #add lab
-               x1$geo[,.(nx,lab)]
-            rescxG <<- copy(x)
-          } else {
-            print("recalc rejected in rescR")
-            x <- copy(rescxG)
-          }
-          
-          x
-        }
-      )
+      # rescxR <- #-------------custom rsi compute GEN2 res output----
+      # eventReactive(
+      #   list(
+      #     input$docusabC
+      #   ),
+      #   {
+      #     if (verbose) print("enter rescxR")
+      #     geox <- isolate(geocR())
+      #     dfnx <- isolate(dfnyR()) # source of truth
+      #     rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
+      #     rc6valid <- f241021ad$geoplus[,unique(rc9)]
+      #     if (
+      #       (irregpcode(regpcode(rc6tx)) == rc6tx) &
+      #         (nchar(regpcode(rc6tx)) == 6) &
+      #         (regpcode(rc6tx) %in% rc6valid)
+      #     ) {
+      #       print("recalc accepted in rescxR")
+      #       x1 <-
+      #         f241119a( # returns estdt, kfoldsse, all
+      #           nxx = 0,
+      #           steprip2 = stepripG, # smaller format
+      #           dfn = dfnx, # R
+      #           geo = geox[,.(nx,lab,rc9=rc6)], # R
+      #           outthresh = .1,
+      #           kfold = 5,
+      #           sectorwise = T,
+      #           usepra = F,
+      #           newused = c("."),
+      #           houseflat = c(".")
+      #         )
+      #       x <- copy(x1)
+      #       x$geo <- #fix rc6
+      #          x1$geo[,.(nx,rc6=rc9)]
+      #       x$lab <- #add lab
+      #          x1$geo[,.(nx,lab)]
+      #       rescxG <<- copy(x)
+      #     } else {
+      #       print("recalc rejected in rescxR")
+      #       x <- copy(rescxG)
+      #     }
+      #     
+      #     x
+      #   }
+      # )
 
     
   res2R <- # this may be wrongly named - returns: custom result object
@@ -307,7 +307,7 @@ server_common <-
         x <-
           Ccus(
             rescx = rescR(),
-            pvax = apva(resS)
+            pvax = resS$pva
           )
         res2G <<- x
         x

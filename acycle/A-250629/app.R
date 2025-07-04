@@ -48,9 +48,17 @@ library(shiny)
       source("R/ui_timeseries.R")  #1-tim
       source("R/ui_tim1.R")        #5-tim
       if (T) { # revisit this
-        #---------valid global data--2.1----
+         #--frig static data until moved upstream----
+        resS$geo <- resS$geo[,.(nx,rc6)]%>%sco(.,F)
+        resS$pva <- resS$pva[,.(m2,nid,pv,rc6)]%>%sco(.,F)
+        resS$lab <- resS$lab%>%sco(.,F)
+        resS$rsi <- resS$rsi%>%sco(.,F)
+        resS$kss <- resS$kss%>%sco(.,F)
+        resS$f250618b <- resS$f250618b%>%sco(.,F)
+        resS$f250618c <- resS$f250618c%>%sco(.,F)
+       #---------valid global data--2.1----
         vres(resS)
-
+        
         #--------------------------=parameters--3----
         gridheight <<- "630px"
         gridheight2 <<- "830px"

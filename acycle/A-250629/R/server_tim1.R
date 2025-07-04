@@ -45,6 +45,7 @@ server_tim1 <- function(input, output, session, common) {
       common$estdtcR()
     ),
     {
+      #browser()
       x <- D121x(
         rc6tx=common$rc6tR(),
         res2x=common$res2R()
@@ -103,7 +104,7 @@ server_tim1 <- function(input, output, session, common) {
       common$tslideR()
     ),
     {
-      x <- D132b(
+      x <- D132x(
         geocx=ageo(common$rescR()),
         tslidex=common$tslideR()
       )

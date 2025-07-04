@@ -14,7 +14,7 @@ ageo <- #geo accessor ----
         x$geo%>%
         .[x$lab,on=c(nx='nx')]
     }
-  x1
+  sco(x1,F)
   }
 #ageo()
 
@@ -56,7 +56,7 @@ aestdt1 <- #estdt accessor ----
     } else {
       x4 <- x3
     }
-    x4[]
+    sco(x4,F)
   }
 #aestdt1()
 
@@ -172,6 +172,31 @@ apol <- #pol accessor ----
     x$pol
   }
 
+aresn <- function( #access (nx)
+    resx=resS,
+    nxx=ageo(resx)[grep('^L',lab)][1,nx]
+) {
+  x1 <- copy(resx)
+  x1$geo <- resx$geo[nx%in%nxx]
+  x1$lab <- resx$lab[nx%in%nxx]
+  x1$rsi <- resx$rsi[nx%in%nxx]
+  x1$kss <- resx$kss[nx%in%nxx]
+  if('f250618b'%in%names(x1)) {
+    x1$f250618b <- resx$f250618b[nx%in%nxx]
+  }
+  x1
+}
+#aresn()
+
+areso <- function( #access optimum local(rcx) where x can be 3 or 6
+    rcxtx=ageo(resS)[,sort(unique(rc6))[1:5]],
+    resx=resS
+) {
+  resx$f250618b[grep(grepstring(rcxtx),rc6),nx]%>%
+    aresn(resx=resx,nxx=.)
+}
+#areso()
+#areso('AL-')
 
 
 ##################################################
