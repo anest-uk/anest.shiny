@@ -53,7 +53,7 @@ server_tim1 <- function(input, output, session, common) {
     }
   )
       
-   R122x <- eventReactive( # 121 winding ----
+   R122x <- eventReactive( # 122 ----
     list(
       common$rc6tR(),
       common$geocR(),
@@ -98,11 +98,15 @@ server_tim1 <- function(input, output, session, common) {
 
   R132x <- eventReactive( # 132 trade ----
     list(
-      common$rc6tR()
+      common$rc6tR(),
+      common$geocR(),
+      common$tslideR()
     ),
     {
-      x <- ggplot(mtcars, aes(drat, wt)) +
-        geom_point()
+      x <- D132b(
+        geocx=ageo(common$rescR()),
+        tslidex=common$tslideR()
+      )
       x
     }
   )
@@ -116,7 +120,12 @@ server_tim1 <- function(input, output, session, common) {
   output$O122x <- gt::render_gt(R122x()) #char gt
   
   output$O131x <- gt::render_gt(R131x()) #summ gt
-  output$O132x <- gt::render_gt(R132x()) #trede gt
+  
+  output$O132xa <- gt::render_gt(R132x()[["local"]][[1]]) # render----
+  output$O132xb <- gt::render_gt(R132x()[["local"]][[2]]) # render----
+  output$O132xc <- gt::render_gt(R132x()[["custom"]][[1]]) # render----
+  output$O132xd <- gt::render_gt(R132x()[["custom"]][[2]]) # render----
+  
   print("Leaving server_R1()...")
 }
 

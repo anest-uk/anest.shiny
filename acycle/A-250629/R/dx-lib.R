@@ -233,7 +233,8 @@ D131x <- function(
     static = "resS",
     tslidex=tslideG,
     rc6tx = rc6tG,
-    rescx = copy(rescG)) {
+    rescx = copy(rescG)
+    ) {
   x1 <-
     C131x(
       static = "resS",
@@ -300,3 +301,69 @@ D131x <- function(
     )
 }
 #D131x()
+
+D132b <- function(
+  static='resS',
+  tslidex = tslideG,
+  geocx = geocG
+  ) {
+  x1 <- setNames(as.list(1:2), c("local", "custom"))
+  x1[[1]] <-
+    ageo(resS) %>%
+    .[resS$f250618b[rc6 == rc6tG], on = c(nx = "nx")] %>%
+    C132a(
+      geo = .,
+      tmin = tslidex
+      ) %>%
+    setNames(., c("return", "count"))
+  x1[[2]] <-
+    geocx %>%
+    .[resS$f250618b[rc6 == rc6tG], on = c(nx = "nx")] %>%
+    C132a(
+      geo = .,
+      tmin = tslidex
+      ) %>%
+    setNames(., c("return", "count"))
+  x2 <- copy(x1)
+  x2[["local"]][[1]] <-
+    x1[["local"]][[1]] %>%
+    gt::gt(.) %>%
+    tab_header(., title = "Local - Return") %>%
+    opt_align_table_header(., align = "left") %>%
+    tab_options(heading.title.font.size = 14) %>%
+    tab_spanner(
+      label = gt::html("sell"),
+      columns = 2:ncol(x1[["local"]][[1]])
+    )
+  x2[["local"]][[2]] <-
+    x1[["local"]][[2]] %>%
+    gt::gt(.) %>%
+    tab_header(., title = "Local - Number") %>%
+    opt_align_table_header(., align = "left") %>%
+    tab_options(heading.title.font.size = 14) %>%
+    tab_spanner(
+      label = gt::html("sell"),
+      columns = 2:ncol(x1[["local"]][[2]])
+    )
+  x2[["custom"]][[1]] <-
+    x1[["custom"]][[1]] %>%
+    gt::gt(.) %>%
+    tab_header(., title = "Custom - Return") %>%
+    opt_align_table_header(., align = "left") %>%
+    tab_options(heading.title.font.size = 14) %>%
+    tab_spanner(
+      label = gt::html("sell"),
+      columns = 2:ncol(x1[["custom"]][[1]])
+    )
+  x2[["custom"]][[2]] <-
+    x1[["custom"]][[2]] %>%
+    gt::gt(.) %>%
+    tab_header(., title = "Custom - Number") %>%
+    opt_align_table_header(., align = "left") %>%
+    tab_options(heading.title.font.size = 14) %>%
+    tab_spanner(
+      label = gt::html("sell"),
+      columns = 2:ncol(x1[["custom"]][[2]])
+    )
+  x2
+}

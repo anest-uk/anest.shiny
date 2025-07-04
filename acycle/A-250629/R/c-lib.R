@@ -214,11 +214,12 @@ C131x <- #characteristics and summary
 #C131x()
 
 C132a <- #-----132 trade summary(2)----
-  function(geox = geoqG,
-           steprip = stepripG,
-           estdtlx = estdtlG, # only used for its date(ii) relation
-           tmin = 20 # tmin=input$tslider
-  ) {
+  function(
+      geox = geoqG,
+      steprip = stepripG,
+      estdtlx = estdtlG, # only used for its date(ii) relation
+      tmin = 20 # tmin=input$tslider
+      ) {
     x0 <-
       geox[, grepstring(rc6)] %>%
       coread2(., steprip) %>% # or rc6tc
@@ -243,22 +244,19 @@ C132a <- #-----132 trade summary(2)----
   }
 
 
-if (F) {
-  C112c()
-  C112d()
-  C121a()
-}
+  if (F) {
+    C112c()
+    C112d()
+    C121a()
+  }
 
 
-# geog2 <- f250619a('geo')
-# rsig2 <- f250619a('rsi')
-# dddg2 <- f250619a('ddd')
-# ksrg2 <- f250619a('ksr')
-# ksng2 <- f250619a('ksn')
-# pvag2 <- f250619a('pva')
-
-
-
+  # geog2 <- f250619a('geo')
+  # rsig2 <- f250619a('rsi')
+  # dddg2 <- f250619a('ddd')
+  # ksrg2 <- f250619a('ksr')
+  # ksng2 <- f250619a('ksn')
+  # pvag2 <- f250619a('pva')
 #
 # C112a <- # local optimum kss for all rc6 ----
 #   function(x0 = f250509ed,

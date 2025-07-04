@@ -84,7 +84,13 @@ ui_navpanel_tim1 <- function(id = NULL) {
         card_header(
           "O132x"
         ),
-        card_body()
+        card_body(
+          gt::gt_output("O132xa"),
+          gt::gt_output("O132xb"),
+          gt::gt_output("O132xc"),
+          gt::gt_output("O132xd"),
+          height = gridheight2
+        )
       ) # gridcard
     ) # gridcontainer
   ) # navpanel

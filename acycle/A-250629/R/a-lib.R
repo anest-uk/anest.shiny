@@ -5,10 +5,16 @@ ageo <- #geo accessor ----
   function(
     x=resS
   ){
-    x$geo%>%
-      .[x$lab,on=c(nx='nx')]%>%
-      .[,.(rc6,nx,lab)]%>%
-      sco(.,F)
+    #geo <- copy(x1$geo)
+    if(isTRUE(all.equal(sort(unique(names(x$geo))),sort(c('lab','nx','rc9'))))) {
+      x1 <- 
+        x$geo
+    } else {
+      x1 <- 
+        x$geo%>%
+        .[x$lab,on=c(nx='nx')]
+    }
+  x1
   }
 #ageo()
 
