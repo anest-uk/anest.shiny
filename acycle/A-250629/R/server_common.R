@@ -2,25 +2,24 @@ server_common <-
   function(input,
            output,
            session) {
-    
     # ----lib functions called in common only----
     festdty <- #------------rbind estdtc,estdta----
-    function(estdtcx = estdtcG, estdtax = estdtaG, geocx = geocG) {
-      x <-
-        rbind(
-          estdtcx[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
-          estdtax[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile, rc3)]
-        )#[, qq := as.factor(qtile)]
-      x
-    }
-    
+      function(estdtcx = estdtcG, estdtax = estdtaG, geocx = geocG) {
+        x <-
+          rbind(
+            estdtcx[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile = 0, rc3 = lab)],
+            estdtax[, .(nx, date, xdotd, days, xdot, x, lab, ii, qtile, rc3)]
+          ) # [, qq := as.factor(qtile)]
+        x
+      }
+
     fgeocx <- #------------custom geo compute----
-    function(rc6cx = rc6cG) {
-      x <-
-        data.table(rc9 = rc6cx, nx = 0, lab = "CU00")
-      x
-    }
-    
+      function(rc6cx = rc6cG) {
+        x <-
+          data.table(rc9 = rc6cx, nx = 0, lab = "CU00")
+        x
+      }
+
     #----reactive----
     dfnxR <- # -----------4-col table with NA----
       reactive({
@@ -61,9 +60,9 @@ server_common <-
         {
           if (verbose) print("enter estdtlR")
           x <-
-            copy(f241021ad$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)]%>%
+            copy(f241021ad$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)] %>%
             .[nxqR(), on = c(nx = "nx")] %>%
-             .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
+            .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
           estdtlG <<- copy(x)
           x
         }
@@ -71,15 +70,15 @@ server_common <-
 
     estdtxR <- #---------------------112 x(t)----
       eventReactive(
-         list(estdtcR(), nxaR(), geocR()),
+        list(estdtcR(), nxaR(), geocR()),
         {
           print("enter estdtxR")
           x <-
             festdty(
-              estdtcx = estdtcR(), 
-              estdtax = f241021ad$estdt[nxaR(), on = c(nx = "nx"), .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)], #was estdtaR() 
+              estdtcx = estdtcR(),
+              estdtax = f241021ad$estdt[nxaR(), on = c(nx = "nx"), .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)], # was estdtaR()
               geocx = geocR()
-              )
+            )
           estdtxG <<- copy(x)
           print("exit estdtxR")
           x
@@ -92,20 +91,20 @@ server_common <-
         {
           if (verbose) print("enter geoaR")
           x <-
-          copy(f241021ad$geoplus)%>%
-          .[type == "L"] %>%
-          .[itrim == itriC] %>%
-          .[tbin == tbinC] %>%
-          .[, .(
-            nx,
-            gx,
-            lab,
-            rc6 = rc9,
-            rc3 = substr(rc9, 1, 3),
-            qtile = as.numeric(substr(des, 4, 4))
-          )] %>%
-          z110[., on = c(rcx = "rc6")] %>%
-          .[, .(nx, gx, lab, rc3, rc6 = rcx, qtile)]%>%
+            copy(f241021ad$geoplus) %>%
+            .[type == "L"] %>%
+            .[itrim == itriC] %>%
+            .[tbin == tbinC] %>%
+            .[, .(
+              nx,
+              gx,
+              lab,
+              rc6 = rc9,
+              rc3 = substr(rc9, 1, 3),
+              qtile = as.numeric(substr(des, 4, 4))
+            )] %>%
+            z110[., on = c(rcx = "rc6")] %>%
+            .[, .(nx, gx, lab, rc3, rc6 = rcx, qtile)] %>%
             .[rc3 == substr(rc6tR(), 1, 3)]
           geoaG <<- copy(x)
           x
@@ -132,7 +131,7 @@ server_common <-
         {
           if (verbose) print("enter geoqR")
           x <- geoaR() %>%
-            #.[geotR()[, .(qtile)],
+            # .[geotR()[, .(qtile)],
             .[geoaR()[rc6 == rc6tR()][, .(qtile)],
               on = c(qtile = "qtile")
             ]
@@ -218,7 +217,7 @@ server_common <-
           geox <- isolate(geocR())
           dfnx <- isolate(dfnyR()) # source of truth
           rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
-          rc6valid <- f241021ad$geoplus[,unique(rc9)]
+          rc6valid <- f241021ad$geoplus[, unique(rc9)]
           if (
             (irregpcode(regpcode(rc6tx)) == rc6tx) &
               (nchar(regpcode(rc6tx)) == 6) &
@@ -239,82 +238,32 @@ server_common <-
                 houseflat = c(".")
               )
             x <- copy(x1)
-            # x$geo <- #fix rc6
-            #   x1$geo[,.(nx,lab,rc6=rc9)]
             rescG <<- copy(x)
           } else {
             print("recalc rejected in rescR")
             x <- copy(rescG)
           }
-          
+
           x
         }
       )
-    
-      # rescxR <- #-------------custom rsi compute GEN2 res output----
-      # eventReactive(
-      #   list(
-      #     input$docusabC
-      #   ),
-      #   {
-      #     if (verbose) print("enter rescxR")
-      #     geox <- isolate(geocR())
-      #     dfnx <- isolate(dfnyR()) # source of truth
-      #     rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
-      #     rc6valid <- f241021ad$geoplus[,unique(rc9)]
-      #     if (
-      #       (irregpcode(regpcode(rc6tx)) == rc6tx) &
-      #         (nchar(regpcode(rc6tx)) == 6) &
-      #         (regpcode(rc6tx) %in% rc6valid)
-      #     ) {
-      #       print("recalc accepted in rescxR")
-      #       x1 <-
-      #         f241119a( # returns estdt, kfoldsse, all
-      #           nxx = 0,
-      #           steprip2 = stepripG, # smaller format
-      #           dfn = dfnx, # R
-      #           geo = geox[,.(nx,lab,rc9=rc6)], # R
-      #           outthresh = .1,
-      #           kfold = 5,
-      #           sectorwise = T,
-      #           usepra = F,
-      #           newused = c("."),
-      #           houseflat = c(".")
-      #         )
-      #       x <- copy(x1)
-      #       x$geo <- #fix rc6
-      #          x1$geo[,.(nx,rc6=rc9)]
-      #       x$lab <- #add lab
-      #          x1$geo[,.(nx,lab)]
-      #       rescxG <<- copy(x)
-      #     } else {
-      #       print("recalc rejected in rescxR")
-      #       x <- copy(rescxG)
-      #     }
-      #     
-      #     x
-      #   }
-      # )
 
-    
-  rescxR <- # this may be wrongly named - returns: custom result object
-    eventReactive(
-      list(
-        rescR()
-      ),
-      { 
-        if (verbose) print("enter rescxR")
-        x <-
-          Ccus(
-            rescx = rescR(),
-            pvax = resS$pva
-          )
-        rescxG <<- x
-        x
-      }
-    )
-
-
+    rescxR <- # custom result gen2
+      eventReactive(
+        list(
+          rescR()
+        ),
+        {
+          if (verbose) print("enter rescxR")
+          x <-
+            Ccus(
+              rescx = rescR(),
+              pvax = resS$pva
+            )
+          rescxG <<- x
+          x
+        }
+      )
 
     rssaR <- #---------------area rss compute----
       eventReactive(
@@ -370,25 +319,25 @@ server_common <-
     #---- gen2 accessors ----
     
     list( # ---------------------common list #----
-      dfnxR = dfnxR,
-      dfnyR = dfnyR,
-      estdtcR = estdtcR,
-      estdtlR = estdtlR,
-      estdtxR = estdtxR,
-      geoaR = geoaR,
-      geocR = geocR,
-      geoqR = geoqR,
-      labxR = labxR,
-      nxaR = nxaR,
-      nxqR = nxqR,
-      rescxR = rescxR,
-      rc6cR = rc6cR,
-      rc6tR = rc6tR,
-      rescR = rescR,
-      rssaR = rssaR,
-      rsscR = rsscR,
-      rssR = rssR,
-      tslideR = tslideR,
-      ylimR = ylimR
-    )
+     dfnxR = dfnxR,
+     dfnyR = dfnyR,
+     estdtcR = estdtcR,
+     estdtlR = estdtlR,
+     estdtxR = estdtxR,
+     geoaR = geoaR,
+     geocR = geocR,
+     geoqR = geoqR,
+     labxR = labxR,
+     nxaR = nxaR,
+     nxqR = nxqR,
+     rescxR = rescxR,
+     rc6cR = rc6cR,
+     rc6tR = rc6tR,
+     rescR = rescR,
+     rssaR = rssaR,
+     rsscR = rsscR,
+     rssR = rssR,
+     tslideR = tslideR,
+     ylimR = ylimR
+   )
   }

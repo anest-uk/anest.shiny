@@ -1,6 +1,6 @@
 # gen2 accessors
 
-Ccus <- # RES for custom from rescG - this can go upstream into rescR and f241119a when switch to gen2
+Ccus <- # RES for custom from rescG/R ----
   function(
       rescx = rescG,
       pvax = apva(resS)[,-'ppm2']
@@ -34,44 +34,12 @@ Ccus <- # RES for custom from rescG - this can go upstream into rescR and f24111
   }
 # Ccus()
 
-# C121a <- # {ii AN BA} dates ----
-#   function(x0 = f250509ed$estdt) {
-#     x1 <- f250509ed$estdt %>%
-#       .[, .(ii = sort(unique(ii)), date = sort(unique(date))), .(tbin = substr(lab, 8, 9))] %>%
-#       .[tbin %in% c("BA")] %>%
-#       dcast(., ii ~ tbin, value.var = "date") %>%
-#       rbind(., data.table(ii = 0, BA = as.Date("1994-12-31"))) %>%
-#       .[order(BA)]
-#     x1
-#   }
-#aestdt2() replaces this
 
-# C121b <- # {rc6 ssek nx lab} 3 rows i.n ssek-ordered ----
-#   function(x0 = f250509ed,
-#            rc6tx = rc6tG) {
-#     x0$geo %>%
-#       .[grep("^L", lab)] %>%
-#       .[rc9 == rc6tx, .(nx, lab)] %>%
-#       x0$kfoldsse[., on = c(nx = "nx")] %>%
-#       .[rc6 == rc6tx] %>%
-#       .[order(ssek)] %>%
-#       .[, .(rc6, ssek, nx, lab)]
-#   }
-
-# Ccus()$rsi %>%
-#   aestdt1(.) %>%
-#   C121c(x4 = .)
-# 
-# resS$rsi%>%
-#   .[resS$f250618b[rc6tx == rc6, .(nx)], on = c(nx = "nx")] %>%
-#   aestdt1(.) %>%
-#   C121c(x4 = .)
-
-
-C121c <- #----
+C121c <- # winding ----
   function(
       rcx = rc6tG,
-      x1 = data.table(BA = aestdt2()$BA)[, ii := .I - 1][,.(date=BA,ii)]
+      x1 = data.table(BA = aestdt2()$BA)[, ii := .I - 1][,.(date=BA,ii)],
+      x4 = aestdt1(areso(rcx=rcx))
       #x4=aestdt1(resS$rsi[resS$f250618b[rc6tx == rc6, .(nx)], on = c(nx = "nx")])
       ) {
     x2 <- # daily
@@ -81,9 +49,9 @@ C121c <- #----
       .[-1] %>% # remove d0
       c(., x1[.N, date]) %>% # add dmax
       unique(.)
-    x4 <- 
-      areso(rcx=rcx)%>% #optimum local for target
-      aestdt1(.)
+    # x4 <- 
+    #   areso(rcx=rcx)%>% #optimum local for target
+    #   aestdt1(.)
     x5 <-
       x4 %>%
       .[.(date = x2), on = c(date = "date"), roll = -Inf, j = .(date, xdotd)] %>%
@@ -102,17 +70,17 @@ C121c <- #----
   }
 #C121c('NG-7--')
 
-C122a <- #i.n q2 nrc6.est nrc6.fit lab nid.est minppm2 maxppm2 aggppm2 col
+C122a <- #i.n q2 nrc6.est nrc6.fit lab nid.est minppm2 maxppm2 aggppm2 col 
   function(
     rc6tx = rc6tG,
-    geocx = geocG, # is a georc9
+    geocx = ageo(rescxG), 
     pvax  = apva(resS),
     geox  = ageo(resS)[grep("^L", lab)] # is a georc6
     ) {
   x1 <- resS$f250618b # not a geo
   geo <- rbind( # is georc6
     geox,
-    geocx[, .(rc6 = rc9, nx, lab = paste0("C", substr(rc6tG, 1, 3), "0.0CU"))]
+    geocx[, .(rc6, nx, lab = paste0("C", substr(rc6tG, 1, 3), "0.0CU"))]
   )
   geo1 <- # is georc6 : this rc3 geo
     geo %>% # 1
@@ -185,9 +153,10 @@ C131x <- #characteristics and summary
       static='resS',
       tslidex = tslideG,
       rc6tx = rc6tG,
-      rescx = copy(rescG)
+      rescxx = rescxG
       ) {
-    names(rescx)[which(names(rescx) == "estdt")] <- "rsi"
+    #names(rescx)[which(names(rescx) == "estdt")] <- "rsi"
+    #browser()
     x2 <- # nx for this rc3
       resS$f250618b %>%
       .[grep(substr(rc6tx, 1, 3), rc6), unique(nx)]
@@ -197,7 +166,8 @@ C131x <- #characteristics and summary
       aestdt1(resS) %>%
       resS$lab[., on = c(nx = "nx")]
     x6 <-
-      aestdt1(rescx)[, -c("col")]
+      aestdt1(rescxx)%>%#[, -c("col")]
+      rescxx$lab[., on = c(nx = "nx")]
     x7 <-
       rbind(x4, x6)
     #browser()
@@ -213,11 +183,54 @@ C131x <- #characteristics and summary
       as.data.table(., keep.rownames = T) %>%
       setnames(., c("rn", "min", "mean", "max", "stdev", "skew", "kurtosis")) %>% 
       .[unique(x7[,.(nx,lab)]),on=c(rn='lab')]%>%
-      C122a()[., on = c(nx = "nx")]%>%
+      C122a(
+            rc6tx = rc6tx,
+            geocx = ageo(rescxx)
+      )[., on = c(nx = "nx")]%>%
       .[,tot:=mean*x7[nx==min(nx)][ii > tslidex,.N]]%>%.[]%>%
       .[,pa:=round(tot/x7[ii > tslidex][nx==min(nx)][,sum(days)/365.25],3)]%>%
       .[]
   }
+#C131x()
+# C131x <- #characteristics and summary
+#   function(
+#       static='resS',
+#       tslidex = tslideG,
+#       rc6tx = rc6tG,
+#       rescx = copy(rescG)
+#       ) {
+#     names(rescx)[which(names(rescx) == "estdt")] <- "rsi"
+#     #browser()
+#     x2 <- # nx for this rc3
+#       resS$f250618b %>%
+#       .[grep(substr(rc6tx, 1, 3), rc6), unique(nx)]
+#     resS$rsi <-
+#       resS$rsi[nx %in% x2]
+#     x4 <-
+#       aestdt1(resS) %>%
+#       resS$lab[., on = c(nx = "nx")]
+#     x6 <-
+#       aestdt1(rescx)[, -c("col")]
+#     x7 <-
+#       rbind(x4, x6)
+#     #browser()
+#     x7 %>%
+#       .[ii > tslidex] %>%
+#       dcast(., ii ~ lab, value.var = "xdot") %>%
+#       .[, -"ii"] %>%
+#       as.matrix(.) %>%
+#       zoo(., x4[, sort(unique(date))]) %>%
+#       table.Stats(., digits = 3) %>%
+#       t(.) %>%
+#       .[, c(3, 6, 9, 14, 15, 16)] %>%
+#       as.data.table(., keep.rownames = T) %>%
+#       setnames(., c("rn", "min", "mean", "max", "stdev", "skew", "kurtosis")) %>% 
+#       .[unique(x7[,.(nx,lab)]),on=c(rn='lab')]%>%
+#       C122a()[., on = c(nx = "nx")]%>%
+#       .[,tot:=mean*x7[nx==min(nx)][ii > tslidex,.N]]%>%.[]%>%
+#       .[,pa:=round(tot/x7[ii > tslidex][nx==min(nx)][,sum(days)/365.25],3)]%>%
+#       .[]
+#   }
 #C131x()
 
 C132a <- #-----132 trade summary(2)----
