@@ -20,7 +20,9 @@ z110 <- readRDS(file = file.path(app_dirG, "data", "z110.rds"))
 
 resS <- readRDS(file = file.path(app_dirG, "data", "f250618ad.rds")) # res
 
-datS <- list(pva = resS$pva, pol = pxosrdo2dd)
+datS <- list(pva = resS$pva, pol = pxosrdo2dd) #poly
+
+salS <- readRDS(file = file.path(app_dirG, "data", "f250706bd.rds")) #trans counts for D211 'listing'
 
 
 #fix colorder

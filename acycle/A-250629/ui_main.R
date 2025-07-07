@@ -18,8 +18,12 @@ ui_area2 <- function(id=NULL) {
         ,
         ui_navpanel_notes()#-----------------Notes
         ,
-        ui_navpanel_tim1()#-test page addition----
-      )
+        ui_navpanel_tim1()#-timeseries gen2-------
+         ,
+        ui_navpanel_lis1()#-listing gen2----------
+         ,
+        ui_navpanel_con1()#-constituents gen2-----
+     )
     )
   )
 }

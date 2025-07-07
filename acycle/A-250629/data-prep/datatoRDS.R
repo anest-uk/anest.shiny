@@ -17,3 +17,4 @@ saveRDS(x101,file=file.path(base_dir, "data", "x101.rds"))
 
 #gen2
 saveRDS(f250618ad,file=file.path(base_dir, "data", "f250618ad.rds"))
+saveRDS(f250706bd,file=file.path(base_dir, "data", "f250706bd.rds"))
