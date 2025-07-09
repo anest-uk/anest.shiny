@@ -101,23 +101,27 @@ D411b <- function(
       )
     }, character(1))
   }
-)%>%
+    )%>%
     # Highlight selected row by rc6 value
     gt::tab_style(
-      style = gt::cell_fill(color = shadecolblock),
+      style = gt::cell_fill(color = shadecol1),
       locations = gt::cells_body(
-        rows = x[, rc6 %in% ageo(areso(rc6tx))[, rc6]]
+        rows = x[, rc6 %in% ageo(areso(rc6tx))[, rc6]],
+        columns = areso(rc6tx)$lab[, substr(lab, 7, 7)]
       )
     ) %>%
     gt::tab_style(
       style = gt::cell_fill(color = shadecol1),
-      locations = gt::cells_body(rows = rc6 == rc6tx)
+      locations = gt::cells_body(
+        rows = rc6 == rc6tx
+      )
     )
-    # Highlight other related cells based on areso logic
+  # Highlight other related cells based on areso logic
 }
 D411b(rc6=rc6tx,symbolsize='1em')
 
 
+        columns = areso(rc6tx)$lab[, substr(lab, 7, 7)]
 
 
 
