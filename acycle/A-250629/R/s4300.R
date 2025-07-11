@@ -1,8 +1,10 @@
-s4300 <- function(input, output, session, common) {
+#-------------------------------------------------4300 constituents
+s4300 <- 
+  function(input, output, session, common) {
   R4311x <- eventReactive( #-------'-311 custom----
     list(common$geoaR(), rc6tx = common$rc6tR()), #, common$z110R()
     {
-      if (verbose) print("enter 311")
+      if (verbose) print("enter R4311")
       x <- D311(
         geo0x = common$geoaR(),
         z110x = z110,#common$z110R(),

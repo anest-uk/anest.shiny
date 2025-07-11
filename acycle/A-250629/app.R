@@ -25,30 +25,6 @@ library(sp)
 library(zoo)
 library(plotly)
 library(gridlayout)
-#-------------------------------source--2----
-stepripG <<- "data/smallrip/"
-source("R/c-cleanlib.R")
-source("R/rctree.R")
-# source("R/CDFlib.R")
-source("R/d-lib.R") #
-source("R/dx-lib.R") # gen2
-source("R/c-lib.R")
-source("R/v-lib.R") # vgeo(); vkss(); vestdt(); vpva()
-#---------------------app code
-source("R/ui4000.R") # 0
-#gen1
-source("R/ui_accuracy.R") # 4-acc
-source("R/ui_action.R") # 0-act
-source("R/ui_constituents.R") # 3-con
-source("R/ui_header.R") # 0-hea
-source("R/ui_listing.R") # 2-lis
-source("R/ui_notes.R") # 0-not
-source("R/ui_timeseries.R") # 1-tim
-#gen2
-source("R/ui3000.R") # grid 3 : sidebar
-source("R/ui4100.R") # grid 4 : tabset
-source("R/ui4200.R") # 6-lis
-source("R/ui4300.R") # 7-con
 
 if (T) { # revisit this
   #--frig static data until moved upstream----
@@ -63,6 +39,7 @@ if (T) { # revisit this
   vres(resS)
 
   #--------------------------=parameters--3----
+  stepripG <<- "data/smallrip/"
   gridheight <<- "630px"
   gridheight2 <<- "830px"
   gridheight3 <<- "1020px"
@@ -91,12 +68,11 @@ if (T) { # revisit this
   showtradetriangle <- F
 }
 
-#---ui---------------------------------------5----
-
+#---ui-grid of 4-----------------------------5----
 ui <- grid_page(
   layout = c(
-    "action  header",
-    "sidebar  area2 "
+    "a1000  a2000", # actionbutton    text-heading
+    "a3000  a4000 " # sidebar-control nav_panel 
   ),
   row_sizes = c(
     "200px",
@@ -107,10 +83,10 @@ ui <- grid_page(
     "1fr"
   ),
   gap_size = ".1rem",
-  ui_card_action(),
+  ui1000(),
   ui3000(),
-  ui_card_header(),
-  ui_4000()
+  ui2000(),
+  ui4000()
 )
 
 #---server-----------------------------------6----
@@ -141,7 +117,7 @@ server <- function(
   server_accuracy(input, output, session, common)
   
   #gen2 servers named s[gpij] g=grid p=page i=row j=col
-  s3000(input, output, session, common)
+  s3000(input, output, session, common) #sidepanel
   s4100(input, output, session, common) #timeseries
   s4200(input, output, session, common) #listing
   s4300(input, output, session, common) #constituent

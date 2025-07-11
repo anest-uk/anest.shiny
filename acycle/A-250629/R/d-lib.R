@@ -1,5 +1,5 @@
 
-D111 <- function( #-----------------------.#----
+D111 <- function( #-------------------------------gen1 lib----
                   rc6tx = rc6tG,                  #scalar: target rc6 that implicitly defines rc3
                   rc6cx = rc6cG,                #vector: to outline
                   geoax = geoaG,                  #geo {nx    gx    lab    rc3    rc6 qtile} : shade by qtile this-rc3-geo

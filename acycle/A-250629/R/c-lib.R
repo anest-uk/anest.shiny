@@ -1,5 +1,4 @@
-# gen2 accessors
-
+#-------------------------------------------------gen2 calc lib
 Ccus <- # RES for custom from rescG/R ----
   function(
       rescx = rescG,

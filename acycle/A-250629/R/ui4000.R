@@ -1,6 +1,6 @@
-ui_4000 <- function(id=NULL) {
+ui4000 <- function(id=NULL) {
   grid_card(
-    area = "area2", #-----------area2: page_navbar
+    area = "a4000", #-----------------------------page_navbar 4000
     card_body(
       page_navbar(
         fillable=F,
@@ -17,9 +17,9 @@ ui_4000 <- function(id=NULL) {
         ui_navpanel_notes()#-----------------Notes
         ,
         ui4100()#-timeseries gen2-------
-         ,
+        ,
         ui4200()#-listing gen2----------
-         ,
+        ,
         ui4300()#-constituents gen2-----
      )
     )

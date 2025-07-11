@@ -1,6 +1,8 @@
-ui4300 <- function(id = NULL) {
+#-------------------------------------------------4300 constituents
+ui4300 <- 
+  function(id = NULL) {
   nav_panel(
-    title = "con1", #--------------------------------Constituents
+    title = "gp4300", #--------------------------------Constituents
     card(
       full_screen = TRUE,
       card_header(

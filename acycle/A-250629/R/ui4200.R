@@ -1,10 +1,12 @@
-ui4200 <- function(
+#-------------------------------------------------4200 listing
+ui4200 <- 
+  function(
     id = NULL) {
   nav_panel(
-    title = "lis1",
+    title = "gp4200",
     grid_container(
       layout = c(
-        "timebins  locallist1  customlist1"
+        "a4211a  a4211b  a4211c"
       ),
       row_sizes = c(
         "1fr"
@@ -15,7 +17,7 @@ ui4200 <- function(
         "1fr"
       ),
       grid_card(
-        area = "timebins",
+        area = "a4211a",
         full_screen = TRUE,
         card_header(
           "Time bins"
@@ -25,7 +27,7 @@ ui4200 <- function(
         )
       ),
       grid_card(
-        area = "locallist1",
+        area = "a4211b",
         full_screen = TRUE,
         card_header(
           "Local index"
@@ -35,7 +37,7 @@ ui4200 <- function(
         )
       ),
       grid_card(
-        area = "customlist1",
+        area = "a4211c",
         full_screen = TRUE,
         card_header(
           "Custom index"

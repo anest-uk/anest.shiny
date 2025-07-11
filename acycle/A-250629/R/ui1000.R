@@ -1,6 +1,6 @@
-ui_card_action <- function(id = NULL) {
+ui1000 <- function(id = NULL) {
   grid_card(
-    area = "action", #--------------------------------------------action button
+    area = "a1000", #-----------------------------action button 1000
     card_header("Custom"),
     card_body(
       div(

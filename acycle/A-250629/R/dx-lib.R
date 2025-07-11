@@ -1,3 +1,6 @@
+#-------------------------------------------------dx-lib disp gen2
+
+#-------------------------------------------------41xx page=1 timeseries----
 D4111x <- #  leaflet ----
   function(
       statics = c("resS", "datS"), #              S static
@@ -372,103 +375,103 @@ D4132x <- # trade
   }
 # D4132x()
 
-D4211x <- #---summary called in both listings ----
-   function(
-    statics=c('resS','salS'),
-    estdtlx = estdtlG, #l=aestdt1(areso(rc6tx)) c=aestdt1(rescxG)
-    geoqx = geoqG, #l=ageo(areso(rc6tx)) c=ageo(rescxG)
-    dfnyx = dfnyG, #l=aestdt2(resS)%>%Reduce(c,.)%>%sort(.)%>%unique(.) c= same = aestdt2(resS)%>%Reduce(c,.)%>%sort(.)%>%unique(.)
-    typex = typeC, #l='L' c='C' for footnote
-    rc6tx = rc6tG,
-    salx = salS
-   ) {
-    if (verbose) print("enter R211")
-    x1 <- 
-      salx %>%
-      .[geoqx[, .(rc6, lab, nx)], on = c(rc6 = "rc6")] %>%
-      .[,rbind(data.table(date=resS$da0,cum=0),.SD),.(nh,rc6,lab,nx)]%>%
-      .[, .(cum = sum(cum)), .(nx, lab, nh, date)] %>%
-      dcast(., date + nx + lab ~ nh, value.var = "cum") %>% #
-      .[order(lab,date), .(date, NF, NH, UF, UH),.(lab,nx)]
-    if(F) {x1[,.(tot=sum(NF+UF+UH+NH)),date][,.(days=as.integer(diff(date)),N=diff(tot),rate=diff(tot)/as.integer(diff(date)))]%>%.[,barplot(rate)]}
-    x2 <-
-      estdtlx %>%
-      x1[., on = c(date = "date",nx='nx')] %>%
-      .[, .(ii,
-        date, days, xdot, x,
-        NF = c(0, diff(NF)),
-        NH = c(0, diff(NH)),
-        UF = c(0, diff(UF)),
-        UH = c(0, diff(UH)),
-        tot = c(0, diff(NF + NH + UF + UH))
-      ),nx] %>%
-      .[-1, .(
-        nx,
-        ii,
-        date,
-        days,
-        yrs=round(days/365.25,1),
-        return = round(xdot, sf),
-        cumreturn = round(x, sf),
-        newhouse = round(NH / tot, sf),
-        usedhouse = round(UH / tot, sf),
-        newflat = round(NF / tot, sf),
-        usedflat = round(UF / tot, sf),
-        total = round(tot),
-        perday = round(tot / days, 1)
-      )
-      ]
-    x3 <- # districts footnote
-      geoqx[
-        , paste0("Districts: ", paste0(sort(irregpcode(rc6)), collapse = ", "))
-      ]
-    x <-
-      gt::gt(x2) %>%
-      gt::tab_footnote(
-        footnote = f241108a(typex, tbinC)[[1]]
-      ) %>%
-      gt::tab_header(
-        title = x3
-      ) %>%
-      cols_label(
-        date = gt::html("end date"),
-        cumreturn = gt::html("cumulative"),
-        newhouse = gt::html("new house"),
-        usedhouse = gt::html("used house"),
-        newflat = gt::html("new flat"),
-        usedflat = gt::html("used flat"),
-        perday = gt::html("per day"),
-        total = gt::html("total")
-      ) %>%
-      tab_spanner(
-        label = gt::html("Period"),
-        columns = c(date, days)
-      ) %>%
-      tab_spanner(
-        label = gt::html("Log price"),
-        columns = c(return, cumreturn)
-      ) %>%
-      tab_spanner(
-        label = gt::html("Fraction"),
-        columns = c(newhouse, usedhouse, newflat, usedflat)
-      ) %>%
-      tab_spanner(
-        label = gt::html("Count"),
-        columns = c(total, perday)
-      ) %>%
-      tab_spanner(
-        label = gt::html("Sales Breakdown"),
-        columns = c(newhouse, usedhouse, newflat, usedflat, total, perday)
-      ) %>%
-      tab_options(
-        heading.align = "left",
-        heading.title.font.size = 12
-      )
-    x
-   }
+# D4211x <- #---summary called in both listings ----
+#    function(
+#     statics=c('resS','salS'),
+#     estdtlx = estdtlG, #l=aestdt1(areso(rc6tx)) c=aestdt1(rescxG)
+#     geoqx = geoqG, #l=ageo(areso(rc6tx)) c=ageo(rescxG)
+#     dfnyx = dfnyG, #l=aestdt2(resS)%>%Reduce(c,.)%>%sort(.)%>%unique(.) c= same = aestdt2(resS)%>%Reduce(c,.)%>%sort(.)%>%unique(.)
+#     typex = typeC, #l='L' c='C' for footnote
+#     rc6tx = rc6tG,
+#     salx = salS
+#    ) {
+#     if (verbose) print("enter R211")
+#     x1 <- 
+#       salx %>%
+#       .[geoqx[, .(rc6, lab, nx)], on = c(rc6 = "rc6")] %>%
+#       .[,rbind(data.table(date=resS$da0,cum=0),.SD),.(nh,rc6,lab,nx)]%>%
+#       .[, .(cum = sum(cum)), .(nx, lab, nh, date)] %>%
+#       dcast(., date + nx + lab ~ nh, value.var = "cum") %>% #
+#       .[order(lab,date), .(date, NF, NH, UF, UH),.(lab,nx)]
+#     if(F) {x1[,.(tot=sum(NF+UF+UH+NH)),date][,.(days=as.integer(diff(date)),N=diff(tot),rate=diff(tot)/as.integer(diff(date)))]%>%.[,barplot(rate)]}
+#     x2 <-
+#       estdtlx %>%
+#       x1[., on = c(date = "date",nx='nx')] %>%
+#       .[, .(ii,
+#         date, days, xdot, x,
+#         NF = c(0, diff(NF)),
+#         NH = c(0, diff(NH)),
+#         UF = c(0, diff(UF)),
+#         UH = c(0, diff(UH)),
+#         tot = c(0, diff(NF + NH + UF + UH))
+#       ),nx] %>%
+#       .[-1, .(
+#         nx,
+#         ii,
+#         date,
+#         days,
+#         yrs=round(days/365.25,1),
+#         return = round(xdot, sf),
+#         cumreturn = round(x, sf),
+#         newhouse = round(NH / tot, sf),
+#         usedhouse = round(UH / tot, sf),
+#         newflat = round(NF / tot, sf),
+#         usedflat = round(UF / tot, sf),
+#         total = round(tot),
+#         perday = round(tot / days, 1)
+#       )
+#       ]
+#     x3 <- # districts footnote
+#       geoqx[
+#         , paste0("Districts: ", paste0(sort(irregpcode(rc6)), collapse = ", "))
+#       ]
+#     x <-
+#       gt::gt(x2) %>%
+#       gt::tab_footnote(
+#         footnote = f241108a(typex, tbinC)[[1]]
+#       ) %>%
+#       gt::tab_header(
+#         title = x3
+#       ) %>%
+#       cols_label(
+#         date = gt::html("end date"),
+#         cumreturn = gt::html("cumulative"),
+#         newhouse = gt::html("new house"),
+#         usedhouse = gt::html("used house"),
+#         newflat = gt::html("new flat"),
+#         usedflat = gt::html("used flat"),
+#         perday = gt::html("per day"),
+#         total = gt::html("total")
+#       ) %>%
+#       tab_spanner(
+#         label = gt::html("Period"),
+#         columns = c(date, days)
+#       ) %>%
+#       tab_spanner(
+#         label = gt::html("Log price"),
+#         columns = c(return, cumreturn)
+#       ) %>%
+#       tab_spanner(
+#         label = gt::html("Fraction"),
+#         columns = c(newhouse, usedhouse, newflat, usedflat)
+#       ) %>%
+#       tab_spanner(
+#         label = gt::html("Count"),
+#         columns = c(total, perday)
+#       ) %>%
+#       tab_spanner(
+#         label = gt::html("Sales Breakdown"),
+#         columns = c(newhouse, usedhouse, newflat, usedflat, total, perday)
+#       ) %>%
+#       tab_options(
+#         heading.align = "left",
+#         heading.title.font.size = 12
+#       )
+#     x
+#    }
 
-
-D4211a <- #---summary called in both listings ----
+#-------------------------------------------------42xx page=2 listing----
+D4211a <- #---summary utility called in all 3 listings ----
 function(
     statics=c('resS','salS'),
     resx=aresn(resS,nx=resS$lab[grep(rc6tx,lab),nx]),
@@ -570,14 +573,15 @@ function(
 }
 
 
-D4211b <- function(
+D4211b <- #3 listings
+  function(
     statics='resS',
     rescx=rescxG,
     rc6tx=rc6tG,
     tslidex=0
     ) {
   list(
-    date=
+    date= #shared data
       D4211a(
         res = areso(rc6tx),
         jlist = list(
@@ -592,9 +596,11 @@ D4211b <- function(
         addt0=T,
         tslidex=tslidex
       ),
-    local=D4211a(res=areso(rc6tx),
+    local= #local index
+      D4211a(res=areso(rc6tx),
         tslidex=tslidex),
-    custom=D4211a(res=rescx,typex='C',
+    custom= #custom index
+      D4211a(res=rescx,typex='C',
         tslidex=tslidex)
   )
 }

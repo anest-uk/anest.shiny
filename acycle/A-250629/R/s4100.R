@@ -1,11 +1,13 @@
-s4100 <- function(input, output, session, common) {
+#-------------------------------------------------4100 timeseries
+s4100 <- 
+  function(input, output, session, common) {
   R4111x <- eventReactive( # 111 leaflet---- 
     list(
       common$rc6tR(), # C
       common$rc6cR() # C
     ),
     {
-      print("enter s4100")
+      print("enter R4111x")
       x <- D4111x(
         rc6tx = common$rc6tR(), # target
         rc6cx = common$rc6cR() #    #custom
