@@ -9,12 +9,12 @@ s4200 <- function(input, output, session, common) {
       {
         if (verbose) print("enter R211a")
         x <- 
-          D211b(
+          D4211b(
             rescx = common$rescxR(),
             rc6tx = common$rc6tR(),
             tslidex = common$tslideR()
             )
-        G211a <<- copy(x)
+        G4211a <<- copy(x)
         x
       }
     )
@@ -28,7 +28,7 @@ s4200 <- function(input, output, session, common) {
       ),
       {
         if (verbose) print("enter R211x")
-        x <- D211x(
+        x <- D4211x(
           estdtlx = common$estdtlR(),
           geoqx = common$geoqR(),
           dfnyx = common$dfnyR()
@@ -49,7 +49,7 @@ s4200 <- function(input, output, session, common) {
         if (verbose) print("enter R211x<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
         print(common$geocR())
         geox <- copy(common$geocR())[, let(rc6, rc9)] # used for aggregation and label
-        x <- D211x(
+        x <- D4211x(
           estdtlx = common$estdtcR(),
           geoqx = common$geocR()[, .(nx, lab, rc6 = rc9)], # non-standard geo
           dfnyx = common$dfnyR(),
@@ -69,7 +69,7 @@ s4200 <- function(input, output, session, common) {
       {
         if (verbose) print("enter R211x")
         geox <- copy(common$geocR())[, let(rc6, rc9)] # used for aggregation and label
-        x <- D211x(
+        x <- D4211x(
           estdtlx = common$estdtcR(),
           geoqx = common$geocR()[, .(nx, lab, rc6 = rc9)], # non-standard geo
           dfnyx = common$dfnyR(),

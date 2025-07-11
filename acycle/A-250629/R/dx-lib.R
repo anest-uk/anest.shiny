@@ -1,4 +1,4 @@
-D111x <- #  leaflet ----
+D4111x <- #  leaflet ----
   function(
       statics = c("resS", "datS"), #              S static
       rc6tx = rc6tG, # target                     C control 
@@ -34,9 +34,9 @@ D111x <- #  leaflet ----
       )
     x4
   }
-# D111x()
+# D4111x()
 
-D112x <- # timeseries
+D4112x <- # timeseries
   function(
       statics = c("resS"), # statics              S static
       rc6tx = rc6tG, #   target                   C control 
@@ -92,9 +92,9 @@ D112x <- # timeseries
       theme_minimal() +
       theme(legend.position = "none")
   }
-# D112x()
+# D4112x()
 
-D121x <- # winding
+D4121x <- # winding
   function(
       statics = c("resS"), # statics              S static
       rc6tx = rc6tG, #                            C control r
@@ -127,9 +127,9 @@ D121x <- # winding
     }
     x3
   }
-# D121x()
+# D4121x()
 
-D122x <- # char
+D4122x <- # char
   function(
       pvax = apva(resS), #                        S static
       rc6tx = rc6tG, #                            C control 
@@ -228,9 +228,9 @@ D122x <- # char
         columns = c("key")
       )
   }
-# D122x()
+# D4122x()
 
-D131x <- # summ
+D4131x <- # summ
   function(
       static = "resS", # statics                  S static
       rescxx = rescxG, #                          R reactive gen2
@@ -302,9 +302,9 @@ D131x <- # summ
         columns = c("key")
       )
   }
-# D131x()
+# D4131x()
 
-D132x <- # trade
+D4132x <- # trade
   function(
       static = "resS", # statics                  S static
       rc6tx = rc6tG, #                            C control rc6tG rc6cG tslideG
@@ -370,9 +370,9 @@ D132x <- # trade
       )
     x2
   }
-# D132x()
+# D4132x()
 
-D211x <- #---summary called in both listings ----
+D4211x <- #---summary called in both listings ----
    function(
     statics=c('resS','salS'),
     estdtlx = estdtlG, #l=aestdt1(areso(rc6tx)) c=aestdt1(rescxG)
@@ -468,7 +468,7 @@ D211x <- #---summary called in both listings ----
    }
 
 
-D211a <- #---summary called in both listings ----
+D4211a <- #---summary called in both listings ----
 function(
     statics=c('resS','salS'),
     resx=aresn(resS,nx=resS$lab[grep(rc6tx,lab),nx]),
@@ -570,7 +570,7 @@ function(
 }
 
 
-D211b <- function(
+D4211b <- function(
     statics='resS',
     rescx=rescxG,
     rc6tx=rc6tG,
@@ -578,7 +578,7 @@ D211b <- function(
     ) {
   list(
     date=
-      D211a(
+      D4211a(
         res = areso(rc6tx),
         jlist = list(
           date = "end date",
@@ -592,9 +592,9 @@ D211b <- function(
         addt0=T,
         tslidex=tslidex
       ),
-    local=D211a(res=areso(rc6tx),
+    local=D4211a(res=areso(rc6tx),
         tslidex=tslidex),
-    custom=D211a(res=rescx,typex='C',
+    custom=D4211a(res=rescx,typex='C',
         tslidex=tslidex)
   )
 }
