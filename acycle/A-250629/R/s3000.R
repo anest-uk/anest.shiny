@@ -1,5 +1,5 @@
-server_sidebar <- function(input, output, session, common) {
-   output$datet0 <- # this does not really belong here but a separate file seems excessive
+s3000 <- function(input, output, session, common) {
+   output$datet0 <- 
       renderText({
         common$dfnyR()[input$tslider+1]%>%
           as.Date()%>%

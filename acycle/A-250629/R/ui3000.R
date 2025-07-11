@@ -1,4 +1,4 @@
-ui_card_sidebar <- function(id = NULL) {
+ui3000 <- function(id = NULL) {
   grid_card(
     area = "sidebar", #--------------------------------------------------sidebar
     card_header("Selection"),

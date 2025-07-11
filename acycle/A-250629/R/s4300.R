@@ -1,5 +1,5 @@
-server_con1 <- function(input, output, session, common) {
-  R311x <- eventReactive( #-------'-311 custom----
+s4300 <- function(input, output, session, common) {
+  R4311x <- eventReactive( #-------'-311 custom----
     list(common$geoaR(), rc6tx = common$rc6tR()), #, common$z110R()
     {
       if (verbose) print("enter 311")
@@ -12,6 +12,6 @@ server_con1 <- function(input, output, session, common) {
       x
     }
   )
-  output$O311x <- DT::renderDT(R311x()) # output----
+  output$O4311x <- DT::renderDT(R4311x()) # output----
 }
-print("exit ss")
+print("exit s4300")

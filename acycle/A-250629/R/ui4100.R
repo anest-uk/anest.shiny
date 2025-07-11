@@ -1,11 +1,11 @@
-ui_navpanel_tim1 <- function(id = NULL) {
+ui4100 <- function(id = NULL) {
   nav_panel(
     title = "tim1", #---------.----
     grid_container(
       layout = c(
-        "O111x    O112x ",
-        "O121x    O122x ",
-        "O131x    O132x "
+        "O4111x    O4112x ",
+        "O4121x    O4122x ",
+        "O4131x    O4132x "
       ),
       row_sizes = c(
         "1fr",
@@ -18,77 +18,77 @@ ui_navpanel_tim1 <- function(id = NULL) {
       ),
       gap_size = "10px",
       grid_card(
-        area = "O111x",
+        area = "O4111x",
         full_screen = TRUE,
         # card_header(
         #   "."
         # ),
         card_body(
-          leafletOutput("O111x"),
+          leafletOutput("O4111x"),
           height = gridheight
         )
       ) # gridcard
       ,
       grid_card(
-        area = "O112x",
+        area = "O4112x",
         full_screen = TRUE,
         # card_header(
         #   "."
         # ),
         card_body(
-          plotOutput("O112x"),
+          plotOutput("O4112x"),
           height = gridheight
         )
       ) # gridcard
       ,
       grid_card(
-        area = "O121x",
+        area = "O4121x",
         full_screen = TRUE,
         # card_header(
         #   "."
         # ),
         card_body(
-          gt::gt_output("O121xa"),
-          gt::gt_output("O121xb"),
+          gt::gt_output("O4121xa"),
+          gt::gt_output("O4121xb"),
           height = gridheight
         )
       ) # gridcard
       ,
       grid_card(
-        area = "O122x",
+        area = "O4122x",
         full_screen = TRUE,
         # card_header(
         #   "."
         # ),
         card_body(
-          gt::gt_output("O122x"),
+          gt::gt_output("O4122x"),
           height = gridheight
         )
       ) # gridcard
       ,
       grid_card(
-        area = "O131x",
+        area = "O4131x",
         full_screen = TRUE,
         card_header(
-          "O131x"
+          "O4131x"
         ),
         card_body(
-          gt::gt_output("O131x"),
+          gt::gt_output("O4131x"),
           height = gridheight
         )
       ) # gridcard
       ,
       grid_card(
-        area = "O132x",
+        area = "O4132x",
         full_screen = TRUE,
         card_header(
-          "O132x"
+          "O4132x"
         ),
         card_body(
-          gt::gt_output("O132xa"),
-          gt::gt_output("O132xb"),
-          gt::gt_output("O132xc"),
-          gt::gt_output("O132xd"),
+          gt::gt_output("O4132xa"),
+          gt::gt_output("O4132xb"),
+          gt::gt_output("O4132xc"),
+          gt::gt_output("O4132xd"),
           height = gridheight2
         )
       ) # gridcard

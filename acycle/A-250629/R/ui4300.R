@@ -1,4 +1,4 @@
-ui_navpanel_con1 <- function(id = NULL) {
+ui4300 <- function(id = NULL) {
   nav_panel(
     title = "con1", #--------------------------------Constituents
     card(
@@ -7,7 +7,7 @@ ui_navpanel_con1 <- function(id = NULL) {
         "Constituent districts"
       ),
       card_body( #-------------- constituent table 311
-        DT::DTOutput("O311x"),
+        DT::DTOutput("O4311x"),
         height = gridheight3
       ),
       height = gridheight3

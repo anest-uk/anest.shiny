@@ -372,8 +372,6 @@ D132x <- # trade
   }
 # D132x()
 
-
-
 D211x <- #---summary called in both listings ----
    function(
     statics=c('resS','salS'),
@@ -429,11 +427,6 @@ D211x <- #---summary called in both listings ----
       gt::tab_footnote(
         footnote = f241108a(typex, tbinC)[[1]]
       ) %>%
-      # gt::tab_footnote(
-      #   footnote = f241108a(typex, tbinC)[[2]],
-      #   locations = NULL,
-      #   placement = c("auto", "right", "left")
-      # ) %>%
       gt::tab_header(
         title = x3
       ) %>%
@@ -475,8 +468,6 @@ D211x <- #---summary called in both listings ----
    }
 
 
-
-
 D211a <- #---summary called in both listings ----
 function(
     statics=c('resS','salS'),
@@ -512,7 +503,6 @@ function(
   x2 <- c211x[date>aestdt2(resS)[[2]][tslidex+1]]
   x3 <- x2[,names(jlist),with=F]
   if(addt0) {
-    #x2 <- rbind(x2[1,.(date=resS$da0,return=NA,cumreturn=NA,newhouse=NA,usedhouse=NA,newflat=NA,usedflat=NA,perday=NA,total=NA)],x2)
     x3 <- rbind(x3[1,.(ii=0,date=resS$da0)],x3,fill=T)
   }
   jlist2 <- jlist[which(names(jlist)%in%names(x3))]
@@ -547,7 +537,6 @@ function(
       columns = c(newhouse, usedhouse, newflat, usedflat, total, perday)
     )
   }
-  #print(jlist)
   if(all(c('date','days','yrs','ii')%in%names(jlist))) {
     print('end date, days spanner')
     x <-
@@ -564,12 +553,6 @@ function(
       )
 
   }
-  #   if(all(c('ii', 'date', 'days', 'yrs')%in%names(jlist))){
-  #   x <- x%>%tab_spanner(
-  #     label = gt::html("."),
-  #     columns = c(ii, date, days, yrs)
-  #   )
-  # }
 
   if(footadd){
     x <- x%>%

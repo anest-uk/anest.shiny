@@ -1,149 +1,150 @@
 library(shiny)
 
-{ #----
-  { #----
-    { #----
-      #-----------------------------packages--1----
-      library(broom)
-      library(bslib)
-      library(car) # linear hypothesis test
-      library(colorspace)
-      library(data.table)
-      library(devtools)
-      library(DT)
-      library(ggplot2)
-      library(ggrepel)
-      library(grid)
-      library(gt)
-      library(gtExtras)
-      library(htmltools)
-      library(leaflet)
-      library(lubridate)
-      library(magrittr)
-      library(PerformanceAnalytics)
-      library(scales)
-      library(shinyvalidate)
-      library(shinyWidgets)
-      library(sp)
-      library(zoo)
-      library(plotly)
-      library(gridlayout)
-      #-------------------------------source--2----
-      stepripG <<- "data/smallrip/"
-      source("R/c-cleanlib.R")
-      source("R/rctree.R")
-      # source("R/CDFlib.R")
-      source("R/d-lib.R")  # 
-      source("R/dx-lib.R") # gen2
-      source("R/c-lib.R")
-      source("R/v-lib.R")  # vgeo(); vkss(); vestdt(); vpva()
-      #---------------------app code
-      source("ui_main.R")          #0
-      source("R/ui_accuracy.R")    #4-acc
-      source("R/ui_action.R")      #0-act
-      source("R/ui_constituents.R")#3-con
-      source("R/ui_header.R")      #0-hea
-      source("R/ui_listing.R")     #2-lis
-      source("R/ui_notes.R")       #0-not
-      source("R/ui_sidebar.R")     #0-sid
-      source("R/ui_timeseries.R")  #1-tim
-      source("R/ui100.R")        #5-tim
-      source("R/ui200.R")        #6-lis
-      source("R/ui300.R")        #7-con
-      if (T) { # revisit this
-         #--frig static data until moved upstream----
-        resS$geo <- resS$geo[,.(nx,rc6)]%>%sco(.,F)
-        resS$pva <- resS$pva[,.(m2,nid,pv,rc6)]%>%sco(.,F)
-        resS$lab <- resS$lab%>%sco(.,F)
-        resS$rsi <- resS$rsi%>%sco(.,F)
-        resS$kss <- resS$kss%>%sco(.,F)
-        resS$f250618b <- resS$f250618b%>%sco(.,F)
-        resS$f250618c <- resS$f250618c%>%sco(.,F)
-       #---------valid global data--2.1----
-        vres(resS)
-        
-        #--------------------------=parameters--3----
-        gridheight <<- "630px"
-        gridheight2 <<- "830px"
-        gridheight3 <<- "1020px"
-        coltab <<- # uses data.table so cannot go in global.R
-          rbind(
-            data.table(light = cobalt(light = T)[c(4, 3, 2, 2, 1, 5)], dark = cobalt(light = F)[c(4, 3, 2, 2, 1, 5)], code = c("1.3", "1.2", "1.1", "2.3", "2.2", "3.3")),
-            data.table(light = "grey50", dark = "grey10", code = "0.0")
-          )
-        colx <<- cobalt()[c(4, 2, 1)]
-        sf <<- 3
-        pgmc <<- "grey50"
-        #-------------------Pseudo=Control for dev purposes
-        hoflC <<- c("house", "flat", "all")[3] # ,
-        itriC <<- c(".0" = 1, ".1" = 2, ".5" = 3)[2] # , #Trim ---
-        neusC <<- c("new", "used", "all")[3] # ,
-        rc3coC <<- c("B--", "E--", "AL-") # ,  #comp
-        rc6cuC <<- c("W--8--") # , #custom
-        tbinC <<- c(lo = 1, hi = 2, an = 3)[2] # ,  #lo hi an ---
-        typeC <<- c("A", "L", "N", "C")[2] # , #All Local National ---
-        typerC <<- typeC
-        zerorefC <- F # , #set reference asset NULL
-        #---------------#dubious globals needing tidyup
-        nfig2 <<- -1 # for ppm2
-        nfig3 <<- 4 # for frac
-        verbose <<- T
-        showtradetriangle <- F
-      }
-    }
-  }
-}
-#---ui---------------------------------------5----
-{ #---
-  { #---
-    ui <- grid_page(
-      layout = c(
-        "action  header",
-        "sidebar  area2 "
-      ),
-      row_sizes = c(
-        "200px",
-        "1fr"
-      ),
-      col_sizes = c(
-        "250px",
-        "1fr"
-      ),
-      gap_size = ".1rem",
-      ui_card_action(),
-      ui_card_sidebar(),
-      ui_card_header(),
-      ui_area2()
+#-----------------------------packages--1----
+library(broom)
+library(bslib)
+library(car) # linear hypothesis test
+library(colorspace)
+library(data.table)
+library(devtools)
+library(DT)
+library(ggplot2)
+library(ggrepel)
+library(grid)
+library(gt)
+library(gtExtras)
+library(htmltools)
+library(leaflet)
+library(lubridate)
+library(magrittr)
+library(PerformanceAnalytics)
+library(scales)
+library(shinyvalidate)
+library(shinyWidgets)
+library(sp)
+library(zoo)
+library(plotly)
+library(gridlayout)
+#-------------------------------source--2----
+stepripG <<- "data/smallrip/"
+source("R/c-cleanlib.R")
+source("R/rctree.R")
+# source("R/CDFlib.R")
+source("R/d-lib.R") #
+source("R/dx-lib.R") # gen2
+source("R/c-lib.R")
+source("R/v-lib.R") # vgeo(); vkss(); vestdt(); vpva()
+#---------------------app code
+source("R/ui4000.R") # 0
+#gen1
+source("R/ui_accuracy.R") # 4-acc
+source("R/ui_action.R") # 0-act
+source("R/ui_constituents.R") # 3-con
+source("R/ui_header.R") # 0-hea
+source("R/ui_listing.R") # 2-lis
+source("R/ui_notes.R") # 0-not
+source("R/ui_timeseries.R") # 1-tim
+#gen2
+source("R/ui3000.R") # grid 3 : sidebar
+source("R/ui4100.R") # grid 4 : tabset
+source("R/ui4200.R") # 6-lis
+source("R/ui4300.R") # 7-con
+
+if (T) { # revisit this
+  #--frig static data until moved upstream----
+  resS$geo <- resS$geo[, .(nx, rc6)] %>% sco(., F)
+  resS$pva <- resS$pva[, .(m2, nid, pv, rc6)] %>% sco(., F)
+  resS$lab <- resS$lab %>% sco(., F)
+  resS$rsi <- resS$rsi %>% sco(., F)
+  resS$kss <- resS$kss %>% sco(., F)
+  resS$f250618b <- resS$f250618b %>% sco(., F)
+  resS$f250618c <- resS$f250618c %>% sco(., F)
+  #---------valid global data--2.1----
+  vres(resS)
+
+  #--------------------------=parameters--3----
+  gridheight <<- "630px"
+  gridheight2 <<- "830px"
+  gridheight3 <<- "1020px"
+  coltab <<- # uses data.table so cannot go in global.R
+    rbind(
+      data.table(light = cobalt(light = T)[c(4, 3, 2, 2, 1, 5)], dark = cobalt(light = F)[c(4, 3, 2, 2, 1, 5)], code = c("1.3", "1.2", "1.1", "2.3", "2.2", "3.3")),
+      data.table(light = "grey50", dark = "grey10", code = "0.0")
     )
-  }
+  colx <<- cobalt()[c(4, 2, 1)]
+  sf <<- 3
+  pgmc <<- "grey50"
+  #-------------------Pseudo=Control for dev purposes
+  hoflC <<- c("house", "flat", "all")[3] # ,
+  itriC <<- c(".0" = 1, ".1" = 2, ".5" = 3)[2] # , #Trim ---
+  neusC <<- c("new", "used", "all")[3] # ,
+  rc3coC <<- c("B--", "E--", "AL-") # ,  #comp
+  rc6cuC <<- c("W--8--") # , #custom
+  tbinC <<- c(lo = 1, hi = 2, an = 3)[2] # ,  #lo hi an ---
+  typeC <<- c("A", "L", "N", "C")[2] # , #All Local National ---
+  typerC <<- typeC
+  zerorefC <- F # , #set reference asset NULL
+  #---------------#dubious globals needing tidyup
+  nfig2 <<- -1 # for ppm2
+  nfig3 <<- 4 # for frac
+  verbose <<- T
+  showtradetriangle <- F
 }
+
+#---ui---------------------------------------5----
+
+ui <- grid_page(
+  layout = c(
+    "action  header",
+    "sidebar  area2 "
+  ),
+  row_sizes = c(
+    "200px",
+    "1fr"
+  ),
+  col_sizes = c(
+    "250px",
+    "1fr"
+  ),
+  gap_size = ".1rem",
+  ui_card_action(),
+  ui3000(),
+  ui_card_header(),
+  ui_4000()
+)
+
 #---server-----------------------------------6----
 server <- function(
     input,
     output,
     session) {
   #--------------------------------server
-  source("R/server_common.R") #0-com
-  source("R/server_listing.R")#2-lis
-  source("R/server_timeseries.R")#1-tim
-  source("R/server_constituents.R")#3-con
-  source("R/server_accuracy.R")#4-acc
-  source("R/s3000.R")#0-sidebar
-  source("R/s4100.R")#5-tim1
-  source("R/s4200.R")#6-lis1
-  source("R/s4300.R")#7-con1
+  source("R/server_common.R") # leave with full name
+  source("R/s3000.R") # 0-sidebar
+  
+  #gen1 pages
+  source("R/server_listing.R") # 2-lis
+  source("R/server_timeseries.R") # 1-tim
+  source("R/server_constituents.R") # 3-con
+  source("R/server_accuracy.R") # 4-acc
+  #gen2 pages
+  source("R/s4100.R") # 5-tim1
+  source("R/s4200.R") # 6-lis1
+  source("R/s4300.R") # 7-con1
 
   common <- server_common(input, output, session)
-  
-  server_sidebar(input, output, session, common)
-  
+
+
   server_timeseries(input, output, session, common)
   server_listing(input, output, session, common)
   server_constituents(input, output, session, common)
   server_accuracy(input, output, session, common)
-  server_tim1(input, output, session, common)
-  server_lis1(input, output, session, common)
-  server_con1(input, output, session, common)
+  
+  #gen2 servers named s[gpij] g=grid p=page i=row j=col
+  s3000(input, output, session, common)
+  s4100(input, output, session, common) #timeseries
+  s4200(input, output, session, common) #listing
+  s4300(input, output, session, common) #constituent
 
   # ===-output: controls select/compute/suggest----
   selectedrc6R <- reactive({ # --rc6 selected----
@@ -246,17 +247,6 @@ server <- function(
     }
   )
 
-  nxccR <- eventReactive( #--custom nx compute----
-    common$geoccR(),
-    {
-      if (verbose) print("enter nxccR")
-      x <-
-        common$geoccR()[, .(nx, rc3, qtile, lab)] %>%
-        unique(.)
-      nxccG <<- copy(x)
-      x
-    }
-  )
-} #end server
+} # end server
 
 shinyApp(ui, server)

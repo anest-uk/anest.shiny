@@ -1,4 +1,4 @@
-ui_navpanel_lis1 <- function(
+ui4200 <- function(
     id = NULL) {
   nav_panel(
     title = "lis1",
@@ -21,7 +21,7 @@ ui_navpanel_lis1 <- function(
           "Time bins"
         ),
         card_body( #-------------- timebin table
-          gt::gt_output("O211a")
+          gt::gt_output("O4211a")
         )
       ),
       grid_card(
@@ -31,7 +31,7 @@ ui_navpanel_lis1 <- function(
           "Local index"
         ),
         card_body( #-------------- local index table
-          gt::gt_output("O211b")
+          gt::gt_output("O4211b")
         )
       ),
       grid_card(
@@ -41,7 +41,7 @@ ui_navpanel_lis1 <- function(
           "Custom index"
         ),
         card_body( #-------------- custom index table
-          gt::gt_output("O211c")
+          gt::gt_output("O4211c")
         )
       )
     )
