@@ -17,11 +17,12 @@ ui_card_sidebar <- function(id = NULL) {
       ),
       sliderInput(
         inputId = "tslider",
-        label = "Datum period",
+        label = "Datum t",
         min = 0,
         max = 45,
         value = 34
       ),
+      textOutput("datet0"),
       treeInput( # district---custom
         inputId = "rctreeC",
         label = "Custom selection",

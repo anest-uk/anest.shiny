@@ -271,6 +271,53 @@ C132a <- #-----132 trade summary(2)----
   }
 
 
+C211a <- #---summary called in all listings ----
+function(
+    statics=c('resS','salS'),
+    estdtlx = estdtlG, #l=aestdt1(areso(rc6tx)) c=aestdt1(rescxG)
+    geoqx = geoqG, #l=ageo(areso(rc6tx)) c=ageo(rescxG)
+    salx = salS
+) {
+  if (verbose) print("enter R211")
+  x1 <-
+    salx %>%
+    .[geoqx[, .(rc6, lab, nx)], on = c(rc6 = "rc6")] %>%
+    .[,rbind(data.table(date=resS$da0,cum=0),.SD),.(nh,rc6,lab,nx)]%>%
+    .[, .(cum = sum(cum)), .(nx, lab, nh, date)] %>%
+    dcast(., date + nx + lab ~ nh, value.var = "cum") %>% #
+    .[order(lab,date), .(date, NF, NH, UF, UH),.(lab,nx)]
+  if(F) {x1[,.(tot=sum(NF+UF+UH+NH)),date][,.(days=as.integer(diff(date)),N=diff(tot),rate=diff(tot)/as.integer(diff(date)))]%>%.[,barplot(rate)]}
+  x2 <-
+    estdtlx %>%
+    x1[., on = c(date = "date",nx='nx')] %>%
+    .[, .(ii,
+          date, days, xdot, x,
+          NF = c(0, diff(NF)),
+          NH = c(0, diff(NH)),
+          UF = c(0, diff(UF)),
+          UH = c(0, diff(UH)),
+          tot = c(0, diff(NF + NH + UF + UH))
+    ),nx] %>%
+    .[-1, .(
+      nx,
+      ii,
+      date,
+      days,
+      yrs=round(days/365.25,1),
+      return = round(xdot, sf),
+      cumreturn = round(x, sf),
+      newhouse = round(NH / tot, sf),
+      usedhouse = round(UH / tot, sf),
+      newflat = round(NF / tot, sf),
+      usedflat = round(UF / tot, sf),
+      total = round(tot),
+      perday = round(tot / days, 1)
+    )
+    ]
+  x2
+}
+
+
   # geog2 <- f250619a('geo')
   # rsig2 <- f250619a('rsi')
   # dddg2 <- f250619a('ddd')

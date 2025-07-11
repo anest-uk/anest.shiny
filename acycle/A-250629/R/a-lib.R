@@ -173,8 +173,8 @@ apol <- #pol accessor ----
   }
 
 aresn <- function( #access (nx)
-    resx=resS,
-    nxx=ageo(resx)[grep('^L',lab)][1,nx]
+    nxx=ageo(resx)[grep('^L',lab)][1,nx],
+    resx=resS
 ) {
   x1 <- copy(resx)
   x1$geo <- resx$geo[nx%in%nxx]
@@ -189,7 +189,7 @@ aresn <- function( #access (nx)
 #aresn()
 
 areso <- function( #access optimum local(rcx) where x can be 3 or 6
-    rcxtx=ageo(resS)[,sort(unique(rc6))[1:5]],
+    rcxtx=resS$geo[,unique(rc6)[1:3]],
     resx=resS
 ) {
   resx$f250618b[grep(grepstring(rcxtx),rc6),nx]%>%

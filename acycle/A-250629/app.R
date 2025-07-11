@@ -47,9 +47,9 @@ library(shiny)
       source("R/ui_notes.R")       #0-not
       source("R/ui_sidebar.R")     #0-sid
       source("R/ui_timeseries.R")  #1-tim
-      source("R/ui_tim1.R")        #5-tim
-      source("R/ui_lis1.R")        #6-lis
-      source("R/ui_con1.R")        #7-lis
+      source("R/ui100.R")        #5-tim
+      source("R/ui200.R")        #6-lis
+      source("R/ui300.R")        #7-con
       if (T) { # revisit this
          #--frig static data until moved upstream----
         resS$geo <- resS$geo[,.(nx,rc6)]%>%sco(.,F)
@@ -128,12 +128,15 @@ server <- function(
   source("R/server_timeseries.R")#1-tim
   source("R/server_constituents.R")#3-con
   source("R/server_accuracy.R")#4-acc
-  source("R/server_tim1.R")#5-tim1
-  source("R/server_lis1.R")#6-lis1
-  source("R/server_con1.R")#7-con1
+  source("R/s000.R")#0-sidebar
+  source("R/s100.R")#5-tim1
+  source("R/s200.R")#6-lis1
+  source("R/s300.R")#7-con1
 
   common <- server_common(input, output, session)
-
+  
+  server_sidebar(input, output, session, common)
+  
   server_timeseries(input, output, session, common)
   server_listing(input, output, session, common)
   server_constituents(input, output, session, common)

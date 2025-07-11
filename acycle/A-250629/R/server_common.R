@@ -304,6 +304,13 @@ server_common <-
         x
       })
 
+    tdateR <- # --------------slider as date ----
+      reactive({
+        x <- dfnyR()[input$tslider]
+        tdateG <<- copy(x)
+        x
+      })
+
     ylimR <- #--------------------------ylim ----
       eventReactive(
         estdtxR(),
@@ -316,28 +323,30 @@ server_common <-
       )
 
 
+
     #---- gen2 accessors ----
-    
+
     list( # ---------------------common list #----
-     dfnxR = dfnxR,
-     dfnyR = dfnyR,
-     estdtcR = estdtcR,
-     estdtlR = estdtlR,
-     estdtxR = estdtxR,
-     geoaR = geoaR,
-     geocR = geocR,
-     geoqR = geoqR,
-     labxR = labxR,
-     nxaR = nxaR,
-     nxqR = nxqR,
-     rescxR = rescxR,
-     rc6cR = rc6cR,
-     rc6tR = rc6tR,
-     rescR = rescR,
-     rssaR = rssaR,
-     rsscR = rsscR,
-     rssR = rssR,
-     tslideR = tslideR,
-     ylimR = ylimR
-   )
+      dfnxR = dfnxR,
+      dfnyR = dfnyR,
+      estdtcR = estdtcR,
+      estdtlR = estdtlR,
+      estdtxR = estdtxR,
+      geoaR = geoaR,
+      geocR = geocR,
+      geoqR = geoqR,
+      labxR = labxR,
+      nxaR = nxaR,
+      nxqR = nxqR,
+      rescxR = rescxR,
+      rc6cR = rc6cR,
+      rc6tR = rc6tR,
+      rescR = rescR,
+      rssaR = rssaR,
+      rsscR = rsscR,
+      rssR = rssR,
+      tslideR = tslideR,
+      ylimR = ylimR
+    )
   }
+

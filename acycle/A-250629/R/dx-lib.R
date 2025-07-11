@@ -473,3 +473,145 @@ D211x <- #---summary called in both listings ----
       )
     x
    }
+
+
+
+
+D211a <- #---summary called in both listings ----
+function(
+    statics=c('resS','salS'),
+    resx=aresn(resS,nx=resS$lab[grep(rc6tx,lab),nx]),
+    estdtlx = aestdt1(resx), #l=aestdt1(areso(rc6tx)) c=aestdt1(rescxG)
+    geoqx = ageo(resx),#geoqG, #l=ageo(areso(rc6tx)) c=ageo(rescxG)
+    dfnyx = aestdt2(resx)$BA,#dfnyG, #l=aestdt2(resS)%>%Reduce(c,.)%>%sort(.)%>%unique(.) c= same = aestdt2(resS)%>%Reduce(c,.)%>%sort(.)%>%unique(.)
+    typex = typeC, #l='L' c='C' for footnote
+    rc6tx = rc6tG,
+    salx = salS,
+    jlist=list(
+      date = "end date",
+      return = "return",
+      cumreturn = "cumulative",
+      newhouse = "new house",
+      usedhouse = "used house",
+      newflat = "new flat",
+      usedflat = "used flat",
+      perday = "per day",
+      total = "total"),
+    c211x=C211a(
+      statics=statics,
+      estdtlx = estdtlx, #l=aestdt1(areso(rc6tx)) c=aestdt1(rescxG)
+      geoqx = ageo(resx),#geoqx, #l=ageo(areso(rc6tx)) c=ageo(rescxG)
+      salx = salx
+    ),
+    titlex=geoqx[, paste0("Districts: ", paste0(sort(irregpcode(rc6)), collapse = ", "))], #title
+    footadd=T,
+    headadd=T,
+    addt0=F,
+    tslidex=0
+) {
+  x2 <- c211x[date>aestdt2(resS)[[2]][tslidex+1]]
+  x3 <- x2[,names(jlist),with=F]
+  if(addt0) {
+    #x2 <- rbind(x2[1,.(date=resS$da0,return=NA,cumreturn=NA,newhouse=NA,usedhouse=NA,newflat=NA,usedflat=NA,perday=NA,total=NA)],x2)
+    x3 <- rbind(x3[1,.(ii=0,date=resS$da0)],x3,fill=T)
+  }
+  jlist2 <- jlist[which(names(jlist)%in%names(x3))]
+  x <-
+    gt::gt(x3) %>%
+    cols_label(
+      .list=jlist2,
+      .fn=gt::html
+    )
+  if(all(c('return','cumreturn')%in%names(jlist))){
+    x <- x%>%tab_spanner(
+      label = gt::html("Log price"),
+      columns = c(return, cumreturn)
+    )
+  }
+  if(all(c('newhouse', 'usedhouse', 'newflat', 'usedflat')%in%names(jlist))){
+    x <- x%>%
+      tab_spanner(
+        label = gt::html("Fraction"),
+        columns = c(newhouse, usedhouse, newflat, usedflat)
+      )
+  }
+  if(all(c('total', 'perday')%in%names(jlist))){
+    x <- x%>%tab_spanner(
+      label = gt::html("Count"),
+      columns = c(total, perday)
+    )
+  }
+  if(all(c('newhouse', 'usedhouse', 'newflat', 'usedflat', 'total', 'perday')%in%names(jlist))){
+    x <- x%>%tab_spanner(
+      label = gt::html("Sales Breakdown"),
+      columns = c(newhouse, usedhouse, newflat, usedflat, total, perday)
+    )
+  }
+  #print(jlist)
+  if(all(c('date','days','yrs','ii')%in%names(jlist))) {
+    print('end date, days spanner')
+    x <-
+      x%>%
+      tab_spanner(
+        label = gt::html("Period"),
+        columns = c(ii, date, days, yrs)
+      )%>%
+      text_transform(
+        locations = cells_body(columns = c(days, yrs), rows = (ii == 0)),
+        fn = function(x) {
+          rep("", length(x))
+        }
+      )
+
+  }
+  #   if(all(c('ii', 'date', 'days', 'yrs')%in%names(jlist))){
+  #   x <- x%>%tab_spanner(
+  #     label = gt::html("."),
+  #     columns = c(ii, date, days, yrs)
+  #   )
+  # }
+
+  if(footadd){
+    x <- x%>%
+      gt::tab_footnote(
+      footnote = f241108a(typex, tbinC)[[1]]
+    )
+  }
+  if(headadd){
+    x <- x%>%
+    gt::tab_header(
+      title = titlex
+    )
+  }
+  x
+}
+
+
+D211b <- function(
+    statics='resS',
+    rescx=rescxG,
+    rc6tx=rc6tG,
+    tslidex=0
+    ) {
+  list(
+    date=
+      D211a(
+        res = areso(rc6tx),
+        jlist = list(
+          date = "end date",
+          ii = "t",
+          days = "days",
+          yrs = "years"
+        ),
+        footadd=F,
+        headadd=T,
+        titlex=gt::html("&nbsp;"),
+        addt0=T,
+        tslidex=tslidex
+      ),
+    local=D211a(res=areso(rc6tx),
+        tslidex=tslidex),
+    custom=D211a(res=rescx,typex='C',
+        tslidex=tslidex)
+  )
+}
