@@ -1,6 +1,6 @@
 ui3000 <- function(id = NULL) {
   grid_card(
-    area = "a3000", #-----------------------------sidebar 3000
+    area = "A3000", #-----------------------------sidebar 3000
     card_header("Selection"),
     card_body(
       treeInput( # district---target

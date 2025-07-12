@@ -108,13 +108,13 @@ D4121x <- # winding
       list(
         rescx %>% # cus
           aestdt1(.) %>%
-          C4121c( # wind table
+          C121c( # wind table
             rcx = rc6tx,
             x4 = .
           ),
         areso(rc6tx, resS) %>% # loc opt
           aestdt1(.) %>%
-          C4121c( # wind table
+          C121c( # wind table
             rcx = rc6tx,
             x4 = .
           )
@@ -147,7 +147,7 @@ D4122x <- # char
       .[grep(substr(rc6tx, 1, 3), lab)]
 
     x6a <- #
-      C4122a(
+      C122a(
         rc6tx = rc6tx,
         geocx = geocx, # is a georc6
         pvax  = pvax,
@@ -241,7 +241,7 @@ D4131x <- # summ
       tslidex = tslideG #                         C
       ) {
     x1 <-
-      C4131x(
+      C131x(
         static = "resS",
         tslidex = tslidex,
         rc6tx = rc6tx,
@@ -318,14 +318,14 @@ D4132x <- # trade
     x1[[1]] <-
       areso(rc6tx) %>% # opt loc
       ageo(.) %>% # geo
-      C4132a(
+      C132a(
         geo = .,
         tmin = tslidex
       ) %>%
       setNames(., c("return", "count"))
     x1[[2]] <-
       ageo(rescxx) %>%
-      C4132a(
+      C132a(
         geo = .,
         tmin = tslidex
       ) %>%
@@ -396,7 +396,7 @@ function(
       usedflat = "used flat",
       perday = "per day",
       total = "total"),
-    c211x=C4211a(
+    c211x=C211a(
       statics=statics,
       estdtlx = estdtlx, #l=aestdt1(areso(rc6tx)) c=aestdt1(rescxG)
       geoqx = ageo(resx),#geoqx, #l=ageo(areso(rc6tx)) c=ageo(rescxG)

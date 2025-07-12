@@ -71,8 +71,8 @@ if (T) { # revisit this
 #---ui-grid of 4-----------------------------5----
 ui <- grid_page(
   layout = c(
-    "a1000  a2000", # actionbutton    text-heading
-    "a3000  a4000 " # sidebar-control nav_panel 
+    "A1000  A2000", # actionbutton    text-heading
+    "A3000  A4000 " # sidebar-control nav_panel 
   ),
   row_sizes = c(
     "200px",

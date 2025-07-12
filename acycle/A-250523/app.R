@@ -30,7 +30,7 @@ library(shiny)
       library(gridlayout)
       #-------------------------------source--2----
       stepripG <<- "data/smallrip/"
-      source("R/c-cleanlib.R")
+      #source("R/c-cleanlib.R")
       source("R/rctree.R")
       # source("R/CDFlib.R")
       source("R/d-lib.R")

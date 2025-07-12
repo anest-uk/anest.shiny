@@ -34,7 +34,7 @@ Ccus <- # RES for custom from rescG/R ----
 # Ccus()
 
 
-C4121c <- # winding ----
+C121c <- # winding ----
   function(
       rcx = rc6tG,
       x1 = data.table(BA = aestdt2()$BA)[, ii := .I - 1][,.(date=BA,ii)],
@@ -64,9 +64,9 @@ C4121c <- # winding ----
       .[]
     x5
   }
-#C4121c('NG-7--')
+#C121c('NG-7--')
 
-C4122a <- #i.n q2 nrc6.est nrc6.fit lab nid.est minppm2 maxppm2 aggppm2 col 
+C122a <- #i.n q2 nrc6.est nrc6.fit lab nid.est minppm2 maxppm2 aggppm2 col 
   function(
     rc6tx = rc6tG,
     geocx = ageo(rescxG), 
@@ -99,10 +99,10 @@ C4122a <- #i.n q2 nrc6.est nrc6.fit lab nid.est minppm2 maxppm2 aggppm2 col
     x2%>%
     .[x4, on = c(i.n = "i.n")]%>%
     .[x5, on = c(i.n = "i.n")]%>%
-    C4122b()[.,on=c(i.n='i.n')]
+    C122b()[.,on=c(i.n='i.n')]
   x6[order(aggppm2),.(nx,lab,i.n,q2,nrc6.est,nrc6.fit,nid.est,minppm2,maxppm2,aggppm2,col)]
 }
-C4122b <- #labelling
+C122b <- #labelling
   function() {
   data.table(
     i = as.character(c(1, 1, 1, 2, 2, 3, 0)), 
@@ -112,10 +112,10 @@ C4122b <- #labelling
     .[, .(i, n, q2, i.n = paste0(i, ".", n))]
   }
 
-# C4122b()
-# C4122a()
+# C122b()
+# C122a()
 
-C4122 <- # combine rss and P characteristics ----
+C122 <- # combine rss and P characteristics ----
   function(rssx,
            pvax = z110 #
   ) {
@@ -144,7 +144,7 @@ C4122 <- # combine rss and P characteristics ----
     x0
   }
 
-C4131x <- #characteristics and summary
+C131x <- #characteristics and summary
   function(
       static='resS',
       tslidex = tslideG,
@@ -176,7 +176,7 @@ C4131x <- #characteristics and summary
       as.data.table(., keep.rownames = T) %>%
       setnames(., c("rn", "min", "mean", "max", "stdev", "skew", "kurtosis")) %>% 
       .[unique(x7[,.(nx,lab)]),on=c(rn='lab')]%>%
-      C4122a(
+      C122a(
             rc6tx = rc6tx,
             geocx = ageo(rescxx)
       )[., on = c(nx = "nx")]%>%
@@ -186,7 +186,7 @@ C4131x <- #characteristics and summary
   }
 
 
-C4132a <- #-----132 trade summary(2)----
+C132a <- #-----132 trade summary(2)----
   function(
       geox = geoqG,
       steprip = stepripG,
@@ -218,13 +218,13 @@ C4132a <- #-----132 trade summary(2)----
 
 
   if (F) {
-    C4112c()
-    C4112d()
-    C4121a()
+    C112c()
+    C112d()
+    C121a()
   }
 
 
-C4211a <- #---summary called in all listings ----
+C211a <- #---summary called in all listings ----
 function(
     statics=c('resS','salS'),
     estdtlx = estdtlG, #l=aestdt1(areso(rc6tx)) c=aestdt1(rescxG)

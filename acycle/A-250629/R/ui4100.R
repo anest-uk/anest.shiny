@@ -4,9 +4,9 @@ ui4100 <- function(id = NULL) {
     title = "gp4100", #---------.----
     grid_container(
       layout = c(
-        "O4111x    O4112x ",
-        "O4121x    O4122x ",
-        "O4131x    O4132x "
+        "A4111x    A4112x ",
+        "A4121x    A4122x ",
+        "A4131x    A4132x "
       ),
       row_sizes = c(
         "1fr",
@@ -19,7 +19,7 @@ ui4100 <- function(id = NULL) {
       ),
       gap_size = "10px",
       grid_card(
-        area = "O4111x",
+        area = "A4111x",
         full_screen = TRUE,
         # card_header(
         #   "."
@@ -31,7 +31,7 @@ ui4100 <- function(id = NULL) {
       ) # gridcard
       ,
       grid_card(
-        area = "O4112x",
+        area = "A4112x",
         full_screen = TRUE,
         # card_header(
         #   "."
@@ -43,7 +43,7 @@ ui4100 <- function(id = NULL) {
       ) # gridcard
       ,
       grid_card(
-        area = "O4121x",
+        area = "A4121x",
         full_screen = TRUE,
         # card_header(
         #   "."
@@ -56,7 +56,7 @@ ui4100 <- function(id = NULL) {
       ) # gridcard
       ,
       grid_card(
-        area = "O4122x",
+        area = "A4122x",
         full_screen = TRUE,
         # card_header(
         #   "."
@@ -68,10 +68,10 @@ ui4100 <- function(id = NULL) {
       ) # gridcard
       ,
       grid_card(
-        area = "O4131x",
+        area = "A4131x",
         full_screen = TRUE,
         card_header(
-          "O4131x"
+          "A4131x"
         ),
         card_body(
           gt::gt_output("O4131x"),
@@ -80,10 +80,10 @@ ui4100 <- function(id = NULL) {
       ) # gridcard
       ,
       grid_card(
-        area = "O4132x",
+        area = "A4132x",
         full_screen = TRUE,
         card_header(
-          "O4132x"
+          "A4132x"
         ),
         card_body(
           gt::gt_output("O4132xa"),
