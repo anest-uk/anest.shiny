@@ -211,13 +211,13 @@ D132 <- function( # ---132 trade summary(2)----
                   estdtlx = estdtlG,
                   steprip = stepripG) {
   tminx <- tslidex
-  x1 <- C132a(
+  x1 <- C4132a(
     geox = geoqx, # geoqR()
     steprip = steprip,
     estdtlx = estdtlx, # estdtlR()
     tmin = tminx # tmin=input$tslider
   )
-  x2 <- C132a(
+  x2 <- C4132a(
     geox = geocx[, .(rc6 = rc9)], # geoqR()
     steprip = steprip,
     estdtlx = estdtlx, # estdtlR()

@@ -115,7 +115,9 @@ C4122b <- #labelling
 # C4122b()
 # C4122a()
 
-C4122 <- # combine rss and P characteristics ----
+
+#gen1 
+C122 <- # combine rss and P characteristics ----  
   function(rssx,
            pvax = z110 #
   ) {
@@ -185,7 +187,7 @@ C4131x <- #characteristics and summary
       .[]
   }
 
-
+#gen1
 C4132a <- #-----132 trade summary(2)----
   function(
       geox = geoqG,
