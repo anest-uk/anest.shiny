@@ -45,22 +45,15 @@ ui4100 <- function(id = NULL) {
       grid_card(
         area = "A4121x",
         full_screen = TRUE,
+        # card_header(
+        #   "."
+        # ),
         card_body(
-          id = "table_tabs",
-            bslib::navset_tab(#navset_tab within grid_card
-              nav_panel(
-                title="custom",
-                gt::gt_output("O4121xa")
-              ),
-              nav_panel(
-                title="local",
-                gt::gt_output("O4121xb")
-              )
-            )#navs_tab
-          #)#nav_panel
-        ),#card_body
-        height = gridheight
-      )#gridcard
+          gt::gt_output("O4121xa"),
+          gt::gt_output("O4121xb"),
+          height = gridheight
+        )
+      ) # gridcard
       ,
       grid_card(
         area = "A4122x",
