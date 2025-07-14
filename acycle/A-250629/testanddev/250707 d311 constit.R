@@ -34,91 +34,91 @@ D311x <- function( #--'----311 constituents----
   x
 }
 D311x()
-C311a <-
-  function(
-      statics = "resS",
-      rc6tx=rc6tG
-      ) {
-    x1 <-
-      resS$geo %>%
-      .[resS$lab[grep("^L", lab)][grep(substr(rc6tx, 1, 3), lab)], on = c(nx = "nx")] %>%
-      .[apva(resS)[, .(rc6, rc6P = log(pv / m2), pv, m2, rc6ppm2=round(pv/m2),rc6nid=nid)], on = c(rc6 = "rc6"), nomatch = NULL]%>%
-      .[,rc6col:=color_price(rc6P,min(rc6P),max(rc6P))]
-    x1[]
-    x2 <- 
-      x1%>%
-      .[,.(grpppm2=sum(pv)/sum(m2)),.(lab,nx)]%>%
-      .[,.(grpppm2,lab,nx,grpP=log(grpppm2))]%>%
-      .[,.(grpppm2,lab,nx,grpP,grpcol=color_price(grpP,x1[,min(rc6P)],x1[,max(rc6P)]))]%>%
-      .[,.(grpppm2,lab=paste0(substr(lab,1,4),'xx',substr(lab,7,9)),nx,grpP,grpcol)]
-    x2[,]
-    
-    x3 <- 
-      x2[,.(nx,lab,grpcol,grpppm2)]%>%
-      .[x1[,.(nx,rc6,rc6nid,rc6ppm2,rc6col)],on=c(nx='nx'),mult='first']%>%
-      .[order(nx,rc6ppm2)]
-    x3[]
-    x4 <- 
-      x3 %>%
-      dcast(., rc6+rc6ppm2+rc6nid+rc6col ~ lab, value.var = "grpcol")%>%
-      .[order(-rc6ppm2)]#%>%
-      #.[,c('rc6','rc6ppm2','rc6nid','rc6col',x2[order(grpppm2),lab]),with=F]
-    x4[]
-    
-    
-    #x5 <- data.table(old=names(x4),new=letters[1:ncol(x4)])
-    #setnames(x4,x5[,old],x5[,new])
-    setnames(x4,c('rc6','ppm2','nid','none','1','2','3'))
-    x4
-  }
-rc6tx <- 'NG-7--'
-x <- C311a(rc6=rc6tx)
+
+
+# C4311a <-
+#   function(
+#       statics = "resS",
+#       rc6tx=rc6tG
+#       ) {
+#     x1 <-
+#       resS$geo %>%
+#       .[resS$lab[grep("^L", lab)][grep(substr(rc6tx, 1, 3), lab)], on = c(nx = "nx")] %>%
+#       .[apva(resS)[, .(rc6, rc6P = log(pv / m2), pv, m2, rc6ppm2=round(pv/m2),rc6nid=nid)], on = c(rc6 = "rc6"), nomatch = NULL]%>%
+#       .[,rc6col:=color_price(rc6P,min(rc6P),max(rc6P))]
+#     x1[]
+#     x2 <- 
+#       x1%>%
+#       .[,.(grpppm2=sum(pv)/sum(m2)),.(lab,nx)]%>%
+#       .[,.(grpppm2,lab,nx,grpP=log(grpppm2))]%>%
+#       .[,.(grpppm2,lab,nx,grpP,grpcol=color_price(grpP,x1[,min(rc6P)],x1[,max(rc6P)]))]%>%
+#       .[,.(grpppm2,lab=paste0(substr(lab,1,4),'xx',substr(lab,7,9)),nx,grpP,grpcol)]
+#     x2[,]
+#     
+#     x3 <- 
+#       x2[,.(nx,lab,grpcol,grpppm2)]%>%
+#       .[x1[,.(nx,rc6,rc6nid,rc6ppm2,rc6col)],on=c(nx='nx'),mult='first']%>%
+#       .[order(nx,rc6ppm2)]%>%
+#       resS$f250713a[.,on=c(rc6='rc6')]
+#     x3[]
+#     x4 <- 
+#       x3 %>%
+#       dcast(., rc6+rc6ppm2+rc6nid+rc6col+locality ~ lab, value.var = "grpcol")%>%
+#       .[order(-rc6ppm2)]
+#     x4[]
+#     setnames(x4,c('rc6','ppm2','nid','none','locality','1','2','3'))
+#     x4
+#   }
+rc6tx <- rc6tG#'NG-7--'
+x <- C4311a(rc6=rc6tx)
 x
+resS$f250713a 
 #x <- as.data.frame(D311y())
 #dump('x',file='')
 
 
-D411b <- function(
-    rc6tx = rc6tG,
-    x1 = C311a(rc6=rc6tx),
-    cols_to_paint = names(x1)[4:7],
-    shadecol1 = "#DDDDFF",
-    shadecolblock = "#EEEEFF",
-    symbolsize = ".8em"
-) {
-  x1 %>%
-    gt::gt() %>%
-    # Show colored disks in specified columns
-    gt::text_transform(
-  locations = gt::cells_body(columns = all_of(cols_to_paint)),
-  fn = function(hexvec) {
-    vapply(hexvec, function(val) {
-      paste0(
-        "<div style='display:inline-block; width:", symbolsize, 
-        "; height:", symbolsize, 
-        "; background-color:", val, 
-        "; border-radius:50%;'></div>"
-      )
-    }, character(1))
-  }
-    )%>%
-    # Highlight selected row by rc6 value
-    gt::tab_style(
-      style = gt::cell_fill(color = shadecol1),
-      locations = gt::cells_body(
-        rows = x[, rc6 %in% ageo(areso(rc6tx))[, rc6]],
-        columns = areso(rc6tx)$lab[, substr(lab, 7, 7)]
-      )
-    ) %>%
-    gt::tab_style(
-      style = gt::cell_fill(color = shadecol1),
-      locations = gt::cells_body(
-        rows = rc6 == rc6tx
-      )
-    )
-  # Highlight other related cells based on areso logic
-}
-D411b(rc6=rc6tx,symbolsize='1em')
+# D411b <- function(
+#     rc6tx = rc6tG,
+#     x1 = C4311a(rc6=rc6tx),
+#     cols_to_paint = names(x1)[6:8],
+#     shadecol1 = "#DDDDFF",
+#     shadecolblock = "#EEEEFF",
+#     symbolsize = ".8em"
+# ) {
+#   x1 %>%
+#     gt::gt() %>%
+#     # Show colored disks in specified columns
+#     gt::text_transform(
+#   locations = gt::cells_body(columns = all_of(cols_to_paint)),
+#   fn = function(hexvec) {
+#     vapply(hexvec, function(val) {
+#       paste0(
+#         "<div style='display:inline-block; width:", symbolsize, 
+#         "; height:", symbolsize, 
+#         "; background-color:", val, 
+#         "; border-radius:50%;'></div>"
+#       )
+#     }, character(1))
+#   }
+#     )%>%
+#     # Highlight selected row by rc6 value
+#     gt::tab_style(
+#       style = gt::cell_fill(color = shadecol1),
+#       locations = gt::cells_body(
+#         rows = x1[, rc6 %in% ageo(areso(rc6tx))[, rc6]],
+#         columns = areso(rc6tx)$lab[, substr(lab, 7, 7)]
+#       )
+#     ) %>%
+#     gt::tab_style(
+#       style = gt::cell_fill(color = shadecol1),
+#       locations = gt::cells_body(
+#         rows = rc6 == rc6tx
+#       )
+#     )
+#   # Highlight other related cells based on areso logic
+# }
+D4111b(rc6=rc6tx,symbolsize='1em')
+D4111b(rc6='NG-7--',symbolsize='1em')
 
 
         columns = areso(rc6tx)$lab[, substr(lab, 7, 7)]

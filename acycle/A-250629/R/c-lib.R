@@ -273,3 +273,36 @@ function(
 }
 
 
+C4311a <-
+  function(
+      statics = "resS",
+      rc6tx=rc6tG
+      ) {
+    x1 <-
+      resS$geo %>%
+      .[resS$lab[grep("^L", lab)][grep(substr(rc6tx, 1, 3), lab)], on = c(nx = "nx")] %>%
+      .[apva(resS)[, .(rc6, rc6P = log(pv / m2), pv, m2, rc6ppm2=round(pv/m2),rc6nid=nid)], on = c(rc6 = "rc6"), nomatch = NULL]%>%
+      .[,rc6col:=color_price(rc6P,min(rc6P),max(rc6P))]
+    x1[]
+    x2 <- 
+      x1%>%
+      .[,.(grpppm2=sum(pv)/sum(m2)),.(lab,nx)]%>%
+      .[,.(grpppm2,lab,nx,grpP=log(grpppm2))]%>%
+      .[,.(grpppm2,lab,nx,grpP,grpcol=color_price(grpP,x1[,min(rc6P)],x1[,max(rc6P)]))]%>%
+      .[,.(grpppm2,lab=paste0(substr(lab,1,4),'xx',substr(lab,7,9)),nx,grpP,grpcol)]
+    x2[,]
+    
+    x3 <- 
+      x2[,.(nx,lab,grpcol,grpppm2)]%>%
+      .[x1[,.(nx,rc6,rc6nid,rc6ppm2,rc6col)],on=c(nx='nx'),mult='first']%>%
+      .[order(nx,rc6ppm2)]%>%
+      resS$f250713a[.,on=c(rc6='rc6')]
+    x3[]
+    x4 <- 
+      x3 %>%
+      dcast(., rc6+rc6ppm2+rc6nid+rc6col+locality ~ lab, value.var = "grpcol")%>%
+      .[order(-rc6ppm2)]
+    x4[]
+    setnames(x4,c('rc6','ppm2','nid','none','locality','1','2','3'))
+    x4
+  }

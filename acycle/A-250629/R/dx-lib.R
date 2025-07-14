@@ -509,3 +509,45 @@ D4211b <- #3 listings
         tslidex=tslidex)
   )
 }
+
+
+D4311a <- function(
+    rc6tx = rc6tG,
+    x1 = C4311a(rc6=rc6tx),
+    cols_to_paint = names(x1)[6:8],
+    shadecol1 = "#DDDDFF",
+    shadecolblock = "#EEEEFF",
+    symbolsize = ".8em"
+) {
+  x1 %>%
+    gt::gt() %>%
+    # Show colored disks in specified columns
+    gt::text_transform(
+  locations = gt::cells_body(columns = all_of(cols_to_paint)),
+  fn = function(hexvec) {
+    vapply(hexvec, function(val) {
+      paste0(
+        "<div style='display:inline-block; width:", symbolsize, 
+        "; height:", symbolsize, 
+        "; background-color:", val, 
+        "; border-radius:50%;'></div>"
+      )
+    }, character(1))
+  }
+    )%>%
+    # Highlight selected row by rc6 value
+    gt::tab_style(
+      style = gt::cell_fill(color = shadecol1),
+      locations = gt::cells_body(
+        rows = x1[, rc6 %in% ageo(areso(rc6tx))[, rc6]],
+        columns = areso(rc6tx)$lab[, substr(lab, 7, 7)]
+      )
+    ) %>%
+    gt::tab_style(
+      style = gt::cell_fill(color = shadecol1),
+      locations = gt::cells_body(
+        rows = rc6 == rc6tx
+      )
+    )
+  # Highlight other related cells based on areso logic
+}
