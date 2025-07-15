@@ -231,6 +231,7 @@ D4122x <- # char
         columns = c("key")
       )
   }
+# debugonce(D4122x)
 # D4122x()
 
 D4131x <- # summ
@@ -510,44 +511,167 @@ D4211b <- #3 listings
   )
 }
 
-
-D4311a <- function(
+D4311a <- #accepts rc3/rc6 
+  function(
     rc6tx = rc6tG,
-    x1 = C4311a(rc6=rc6tx),
-    cols_to_paint = names(x1)[6:8],
-    shadecol1 = "#DDDDFF",
-    shadecolblock = "#EEEEFF",
+    rc6cx = rc6cG,
+    x1 = C4311a(rc6=rc6tx), #it returns entire rc3
+    cols_to_paint = names(x1)[5:8],
+    shadecol1 = "#D3D3D3", #matches grid
+    shadecolblock = "#D3D3D3", ##EEEEFF nice pale blue
     symbolsize = ".8em"
 ) {
-  x1 %>%
-    gt::gt() %>%
-    # Show colored disks in specified columns
-    gt::text_transform(
-  locations = gt::cells_body(columns = all_of(cols_to_paint)),
-  fn = function(hexvec) {
-    vapply(hexvec, function(val) {
-      paste0(
-        "<div style='display:inline-block; width:", symbolsize, 
-        "; height:", symbolsize, 
-        "; background-color:", val, 
-        "; border-radius:50%;'></div>"
-      )
-    }, character(1))
-  }
-    )%>%
-    # Highlight selected row by rc6 value
-    gt::tab_style(
-      style = gt::cell_fill(color = shadecol1),
-      locations = gt::cells_body(
-        rows = x1[, rc6 %in% ageo(areso(rc6tx))[, rc6]],
-        columns = areso(rc6tx)$lab[, substr(lab, 7, 7)]
-      )
-    ) %>%
-    gt::tab_style(
-      style = gt::cell_fill(color = shadecol1),
-      locations = gt::cells_body(
-        rows = rc6 == rc6tx
-      )
+x1 %>%
+ gt::gt() %>%
+  
+  # ---- q0 with conditional outline ----
+  gt::text_transform(
+    locations = gt::cells_body(columns = "q0"),
+    fn = function(hexvec) {
+      vapply(seq_along(hexvec), function(i) {
+        val <- hexvec[i]
+        row_rc6 <- x1$rc6[i]
+        outline <- if (row_rc6 %in% rc6cx) "border:4px solid black;" else ""
+        paste0(
+          "<div style='display:inline-block; width:", symbolsize, 
+          "; height:", symbolsize, 
+          "; background-color:", val, 
+          "; border-radius:50%; ", outline, "'></div>"
+        )
+      }, character(1))
+    }
+  ) %>%
+  cols_label(
+        rc6 = gt::html("postcode"),
+        locality = gt::html("name"),
+        ppm2 = gt::html("£/m<sup>2</sup>"),
+        nid = gt::html("properties"),
+        q0 = gt::html(""),
+        q3 = gt::html("3"),
+        q2 = gt::html("2"),
+        q1 = gt::html("1")
+      ) %>%
+      tab_spanner(
+        label = gt::html("district"),
+        columns = c(rc6,locality,ppm2,nid)
+      ) %>%
+      tab_spanner(
+        label = gt::html("number of £/m<sup>2</sup> bins"),
+        columns = c(q3,q2,q1)
+      ) %>%
+            cols_move_to_start(
+        columns = c("q0")
+      )%>%
+      fmt_number(
+        columns = c(ppm2,nid),
+        decimals = 0,
+        sep_mark = "," # Thousands separator
+      )%>%
+
+  # ---- Other painted columns without outline ----
+  gt::text_transform(
+    locations = gt::cells_body(columns = setdiff(cols_to_paint, "q0")),
+    fn = function(hexvec) {
+      vapply(hexvec, function(val) {
+        paste0(
+          "<div style='display:inline-block; width:", symbolsize, 
+          "; height:", symbolsize, 
+          "; background-color:", val, 
+          "; border-radius:50%;'></div>"
+        )
+      }, character(1))
+    }
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(columns = c(q1, q2, q3))
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_column_labels(columns = c(q1, q2, q3))
+  )%>%
+  # ---- Optional row highlighting (unchanged) ----
+  gt::tab_style(
+    style = gt::cell_fill(color = shadecol1),
+    locations = gt::cells_body(
+      rows = x1[, rc6 %in% ageo(areso(rc6tx))[, rc6]],
+      columns = paste0('q',areso(rc6tx)$lab[, substr(lab, 7, 7)])
     )
+  ) %>%
+  gt::tab_style(
+    style = gt::cell_fill(color = shadecol1),
+    locations = gt::cells_body(rows = rc6 == rc6tx)
+  )
+
   # Highlight other related cells based on areso logic
+  }
+#D4311a()
+
+D4321x <- function(
+    statics = "resS",
+    rc6tx = rc6tG) {
+  x1 <-
+    data.table(
+      i.n = c("1.1", "2.2", "1.2", "3.3", "2.3", "1.3"), 
+      meaning = c("all", "upper half", "lower half", "top tertile", "middle tertile", "bottom tertile"))
+  x2 <- areso(rcxtx = rc6tx)$f250618b[1, .(i.n)]
+  paste0(
+    "target district ", 
+    rc6tx, 
+    " identifies as **", 
+    x1[x2, on = c(i.n = "i.n")][, meaning], 
+    " price bin** (", 
+    substr(x2[, i.n], 1, 1), 
+    " out of ", 
+    substr(x2[, i.n], 3, 3), 
+    ") based on minimisation of out of sample error"
+    )
 }
+#D4321x()
+
+
+
+
+# D4311a <- #accepts rc3/rc6 
+#   function(
+#     rc6tx = rc6tG,
+#     x1 = C4311a(rc6=rc6tx), #it returns entire rc3
+#     cols_to_paint = names(x1)[5:8],
+#     shadecol1 = "#DDDDFF",
+#     shadecolblock = "#EEEEFF",
+#     symbolsize = ".8em"
+# ) {
+#   x1 %>%
+#     gt::gt() %>%
+#     # Show colored disks in specified columns
+#     gt::text_transform(
+#   locations = gt::cells_body(columns = all_of(cols_to_paint)),
+#   fn = function(hexvec) {
+#     vapply(hexvec, function(val) {
+#       paste0(
+#         "<div style='display:inline-block; width:", symbolsize, 
+#         "; height:", symbolsize, 
+#         "; background-color:", val, 
+#         "; border-radius:50%;'></div>"
+#       )
+#     }, character(1))
+#   }
+#     )%>%
+#     # Highlight selected row by rc6 value
+#     gt::tab_style(
+#       style = gt::cell_fill(color = shadecol1),
+#       locations = gt::cells_body(
+#         rows = x1[, rc6 %in% ageo(areso(rc6tx))[, rc6]],
+#         columns = paste0('q',areso(rc6tx)$lab[, substr(lab, 7, 7)])
+#       )
+#     ) %>%
+#     gt::tab_style(
+#       style = gt::cell_fill(color = shadecol1),
+#       locations = gt::cells_body(
+#         rows = rc6 == rc6tx
+#       )
+#     )
+#   # Highlight other related cells based on areso logic
+#   }
+#debugonce(D4311a)
+#D4311a()

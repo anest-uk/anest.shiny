@@ -43,6 +43,7 @@ if (T) { # revisit this
   gridheight <<- "630px"
   gridheight2 <<- "830px"
   gridheight3 <<- "1020px"
+  gridheight4 <<- "1200px"
   coltab <<- # uses data.table so cannot go in global.R
     rbind(
       data.table(light = cobalt(light = T)[c(4, 3, 2, 2, 1, 5)], dark = cobalt(light = F)[c(4, 3, 2, 2, 1, 5)], code = c("1.3", "1.2", "1.1", "2.3", "2.2", "3.3")),
@@ -72,7 +73,7 @@ if (T) { # revisit this
 ui <- grid_page(
   layout = c(
     "A1000  A2000", # actionbutton    text-heading
-    "A3000  A4000 " # sidebar-control nav_panel 
+    "A3000  A4000 " # sidebar-control nav_panel
   ),
   row_sizes = c(
     "200px",
@@ -97,17 +98,40 @@ server <- function(
   #--------------------------------server
   source("R/server_common.R") # leave with full name
   source("R/s3000.R") # 0-sidebar
-  
-  #gen1 pages
+
+  # gen1 pages
   source("R/server_listing.R") # 2-lis
   source("R/server_timeseries.R") # 1-tim
   source("R/server_constituents.R") # 3-con
   source("R/server_accuracy.R") # 4-acc
-  #gen2 pages
+  # gen2 pages
   source("R/s4100.R") # 5-tim1
   source("R/s4200.R") # 6-lis1
   source("R/s4300.R") # 7-con1
 
+  # make_price_colormap <- function(light = FALSE) {
+  #   base_palette <- c( #from cobalt() which is sampled from the Rstudio theme
+  #     "#FF628C", # punk
+  #     "#ED9304", # onch
+  #     "#B5C800", # best-shot yellow-green (new)
+  #     "#35CA05", # green
+  #     "#0082F4", # blue
+  #     "#7B2FF7", # midnight  
+  #     "#9434F8"  # 250715 add
+  #   )
+  #   light_palette <- c(
+  #     "#FF9FB5", # punk
+  #     "#F7B84F", # onch
+  #     "#84E26A", # green
+  #     "#66B2F7", # blue
+  #     "#BBA3F9"  # midnight
+  #   )
+  #   
+  #   colors <- if (light) light_palette else base_palette
+  #   grDevices::colorRampPalette(colors, space = "Lab")
+  # }
+  # 
+  
   common <- server_common(input, output, session)
 
 
@@ -115,12 +139,12 @@ server <- function(
   server_listing(input, output, session, common)
   server_constituents(input, output, session, common)
   server_accuracy(input, output, session, common)
-  
-  #gen2 servers named s[gpij] g=grid p=page i=row j=col
-  s3000(input, output, session, common) #sidepanel
-  s4100(input, output, session, common) #timeseries
-  s4200(input, output, session, common) #listing
-  s4300(input, output, session, common) #constituent
+
+  # gen2 servers named s[gpij] g=grid p=page i=row j=col
+  s3000(input, output, session, common) # sidepanel
+  s4100(input, output, session, common) # timeseries
+  s4200(input, output, session, common) # listing
+  s4300(input, output, session, common) # constituent
 
   # ===-output: controls select/compute/suggest----
   selectedrc6R <- reactive({ # --rc6 selected----
@@ -222,7 +246,6 @@ server <- function(
       }
     }
   )
-
 } # end server
 
 shinyApp(ui, server)

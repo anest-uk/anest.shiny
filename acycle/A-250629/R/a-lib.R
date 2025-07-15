@@ -2,124 +2,124 @@
 print('a-lib.R execution')
 #geo
 ageo <- #geo accessor ----
-  function(
+function(
     x=resS
-  ){
-    #geo <- copy(x1$geo)
-    if(isTRUE(all.equal(sort(unique(names(x$geo))),sort(c('lab','nx','rc9'))))) {
-      x1 <- 
-        x$geo
-    } else {
-      x1 <- 
-        x$geo%>%
-        .[x$lab,on=c(nx='nx')]
-    }
-  sco(x1,F)
+){
+  #geo <- copy(x1$geo)
+  if(isTRUE(all.equal(sort(unique(names(x$geo))),sort(c('lab','nx','rc9'))))) {
+    x1 <- 
+      x$geo
+  } else {
+    x1 <- 
+      x$geo%>%
+      .[x$lab,on=c(nx='nx')]
   }
+  sco(x1,F)
+}
 #ageo()
 
 #estdt
 aestdt1 <- #estdt accessor ----
-  function(
+function(
     x=resS,
     adddatum=T,
     keepj=T
-  ){
-    x0 <- as.Date('1994-12-31')
-    x1 <- 
-      x$rsi[date!=x0]%>%
-      .[order(nx,date),.(xdotd,date,nx)]%>%
-      .[,.(
+){
+  x0 <- as.Date('1994-12-31')
+  x1 <- 
+    x$rsi[date!=x0]%>%
+    .[order(nx,date),.(xdotd,date,nx)]%>%
+    .[,.(
       xdotd,date,
       days=as.integer(diff(c(x0,date))),
       ii=1:.N
-      ),
-      by=nx
-      ]%>%
-      .[,xdot:=days*xdotd,by=nx]%>%
-      .[,x:=cumsum(xdot),by=nx]%>%
-      .[]
-    if(keepj) {#retain additional columns
-      j1 <- setdiff(names(x$rsi),names(x1))
-      x2 <- x$rsi[,c(j1,'nx','date'),with=F]
-      x3 <- x1[x2,on=c(nx='nx',date='date')]
-    } else {
-      x3 <- x1
-    }
-    if(adddatum) {#add initial datum row
-      x4 <- 
-        x3[,.SD[1,],nx]%>%
-        .[,date:=x0]%>%
-        .[,c('xdotd','days','xdot','x','ii'):=0]%>%
-        rbind(.,x3)%>%
-        .[order(nx,date)]
-    } else {
-      x4 <- x3
-    }
-    sco(x4,F)
+    ),
+    by=nx
+    ]%>%
+    .[,xdot:=days*xdotd,by=nx]%>%
+    .[,x:=cumsum(xdot),by=nx]%>%
+    .[]
+  if(keepj) {#retain additional columns
+    j1 <- setdiff(names(x$rsi),names(x1))
+    x2 <- x$rsi[,c(j1,'nx','date'),with=F]
+    x3 <- x1[x2,on=c(nx='nx',date='date')]
+  } else {
+    x3 <- x1
   }
+  if(adddatum) {#add initial datum row
+    x4 <- 
+      x3[,.SD[1,],nx]%>%
+      .[,date:=x0]%>%
+      .[,c('xdotd','days','xdot','x','ii'):=0]%>%
+      rbind(.,x3)%>%
+      .[order(nx,date)]
+  } else {
+    x4 <- x3
+  }
+  sco(x4,F)
+}
 #aestdt1()
 
 aestdt2 <- #date accessor: list of 2 vectors ----
-  function(
+function(
     x=resS,
     adddatum=T
-  ){
-    x0 <- x$lab[resS$rsi,on=c(nx='nx')]
-    x1 <- as.Date('1994-12-31')
-    x2 <- 
-      x0[date!=x1]%>%
-      .[substr(lab,8,9)=='AN',sort(unique(date))]
-    x3 <- 
-      x0[date!=x1]%>%
-      .[substr(lab,8,9)!='AN',sort(unique(date))]
-    if(adddatum==T) {
-      x2 <- c(x1,x2)
-      x3 <- c(x1,x3)
-    }
-    x4 <- 
-      list(
-        AN=x2, #yearends
-        BA=x3  #DRC
-        )
-    x4
+){
+  x0 <- x$lab[resS$rsi,on=c(nx='nx')]
+  x1 <- as.Date('1994-12-31')
+  x2 <- 
+    x0[date!=x1]%>%
+    .[substr(lab,8,9)=='AN',sort(unique(date))]
+  x3 <- 
+    x0[date!=x1]%>%
+    .[substr(lab,8,9)!='AN',sort(unique(date))]
+  if(adddatum==T) {
+    x2 <- c(x1,x2)
+    x3 <- c(x1,x3)
   }
+  x4 <- 
+    list(
+      AN=x2, #yearends
+      BA=x3  #DRC
+    )
+  x4
+}
 #aestdt2()
 
 akss <- # kfoldsse accessor ----
-  function(
-      x = resS,
-      agg = T) {
-    x0 <- x$kss
-    x1 <-
-      copy(x0) %>%
-      .[, rsqraw := 1 - ssra / ssta] %>%
-      .[order(nx)]
-    x2 <-
-      copy(x1) %>%
-      .[, .(
-        ssri = sum(ssri), #ssri      
-        ssti = sum(ssti), #ssti      
-        ssrk = sum(ssrk), #ssrk      
-        ssra = sum(ssra), #ssta     
-        ssta = sum(ssta), #ssra      
-        n = sum(n)
-      ),
-      by = nx
-      ] %>%
-      .[, rsqraw := 1 - ssra / ssta] %>%
-      .[order(nx)]
-    x3 <-
-      list(
-        rc6=sco(x1, F),
-        nx=sco(x2, F)
-      )
-    x3
-  }
+function(
+    x = resS,
+    agg = T) {
+  x0 <- x$kss
+  x1 <-
+    copy(x0) %>%
+    .[, rsqraw := 1 - ssra / ssta] %>%
+    .[order(nx)]
+  x2 <-
+    copy(x1) %>%
+    .[, .(
+      ssri = sum(ssri), #ssri      
+      ssti = sum(ssti), #ssti      
+      ssrk = sum(ssrk), #ssrk      
+      ssra = sum(ssra), #ssta     
+      ssta = sum(ssta), #ssra      
+      n = sum(n)
+    ),
+    by = nx
+    ] %>%
+    .[, rsqraw := 1 - ssra / ssta] %>%
+    .[order(nx)]
+  x3 <-
+    list(
+      rc6=sco(x1, F),
+      nx=sco(x2, F)
+    )
+  x3
+}
 #akss()
 # akss <- # kfoldsse accessor ----
 #   function(
-#       x = f250509ed$kfoldsse,
+    #       x = f250509ed$kfoldsse,
 #       agg = T) {
 #     x1 <-
 #       copy(x) %>%
@@ -148,33 +148,33 @@ akss <- # kfoldsse accessor ----
 #   }
 
 apva <- #pva accessor ----
-  function(
-      x = resS
-      ) {
-    copy(x$pva)[
-      ,
-      .(
-        nid,
-        m2,
-        pv,
-        ppm2=pv/m2,
-        rc6
-      )
-    ]%>%
-      sco(.,F)
-  }
+function(
+    x = resS
+) {
+  copy(x$pva)[
+    ,
+    .(
+      nid,
+      m2,
+      pv,
+      ppm2=pv/m2,
+      rc6
+    )
+  ]%>%
+    sco(.,F)
+}
 #apva()
 
 apol <- #pol accessor ----
-  function(
-      x = datS
-      ) {
-    x$pol
-  }
+function(
+    x = datS
+) {
+  x$pol
+}
 
 aresn <- function( #access (nx)
-    nxx=ageo(resx)[grep('^L',lab)][1,nx],
-    resx=resS
+  nxx=ageo(resx)[grep('^L',lab)][1,nx],
+  resx=resS
 ) {
   x1 <- copy(resx)
   x1$geo <- resx$geo[nx%in%nxx]
@@ -189,8 +189,8 @@ aresn <- function( #access (nx)
 #aresn()
 
 areso <- function( #access optimum local(rcx) where x can be 3 or 6
-    rcxtx=resS$geo[,unique(rc6)[1:3]],
-    resx=resS
+  rcxtx=resS$geo[,unique(rc6)[1:3]],
+  resx=resS
 ) {
   resx$f250618b[grep(grepstring(rcxtx),rc6),nx]%>%
     aresn(resx=resx,nxx=.)

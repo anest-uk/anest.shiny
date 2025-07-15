@@ -303,6 +303,6 @@ C4311a <-
       dcast(., rc6+rc6ppm2+rc6nid+rc6col+locality ~ lab, value.var = "grpcol")%>%
       .[order(-rc6ppm2)]
     x4[]
-    setnames(x4,c('rc6','ppm2','nid','none','locality','1','2','3'))
-    x4
+    setnames(x4,c('rc6','ppm2','nid','q0','locality','q1','q2','q3'))
+    x4[,.(rc6,locality,ppm2,nid,q0,q3,q2,q1),with=T]
   }

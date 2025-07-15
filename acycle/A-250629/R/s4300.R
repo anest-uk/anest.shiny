@@ -1,19 +1,40 @@
 #-------------------------------------------------4300 constituents
 s4300 <- 
   function(input, output, session, common) {
-  R4311x <- eventReactive( #-------'-311 custom----
-    list(common$geoaR(), rc6tx = common$rc6tR()), #, common$z110R()
+  R4311x <- eventReactive( #-------4311 blobs----
+    list(
+      common$geoaR(), 
+      rc6tx = common$rc6tR(),
+      rc6cx = common$rc6cR()
+      ),
     {
-      if (verbose) print("enter R4311")
-      x <- D311(
-        geo0x = common$geoaR(),
-        z110x = z110,#common$z110R(),
-        rc6tx = substr(common$rc6tR(), 1, 3) # arbitrarily initialise it to the area
+      if (verbose) print("enter R4311a")
+      x <- D4311a(
+        rc6tx = common$rc6tR(), # returns area
+        rc6cx = common$rc6cR()
       )
       G4311 <<- copy(x)
       x
     }
   )
-  output$O4311x <- DT::renderDT(R4311x()) # output----
+  R4321x <- eventReactive( #4321 'identifies as' message----
+    list(
+      common$geoaR(), 
+      rc6tx = common$rc6tR(),
+      rc6cx = common$rc6cR()
+      ),
+    {
+      if (verbose) print("enter R4321x")
+      x <- D4321x(
+        rc6tx = common$rc6tR()
+      )
+      G4321 <<- copy(x)
+      x
+    }
+  )
+     
+
+  output$O4311x <-gt::render_gt(R4311x()) # output----
+  output$O4321x <- renderUI({ HTML(markdown::renderMarkdown(text = R4321x())) })
 }
 print("exit s4300")
