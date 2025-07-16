@@ -10,8 +10,8 @@ s4300 <-
     {
       if (verbose) print("enter R4311a")
       x <- D4311a(
-        rc6tx = common$rc6tR(), # returns area
-        rc6cx = common$rc6cR()
+        rc6tx = common$rc6tR(), #control: target
+        rc6cx = common$rc6cR()  #control: custom
       )
       G4311 <<- copy(x)
       x
@@ -34,7 +34,7 @@ s4300 <-
   )
      
 
-  output$O4311x <-gt::render_gt(R4311x()) # output----
+  output$O4311x <-gt::render_gt(R4311x()) #constuents #----
   output$O4321x <- renderUI({ HTML(markdown::renderMarkdown(text = R4321x())) })
 }
 print("exit s4300")

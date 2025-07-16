@@ -6,7 +6,7 @@ ui4200 <-
     title = "gp4200",
     grid_container(
       layout = c(
-        "a4211a  a4211b  a4211c"
+        "a4211  a4212  a4213"
       ),
       row_sizes = c(
         "1fr"
@@ -17,33 +17,33 @@ ui4200 <-
         "1fr"
       ),
       grid_card(
-        area = "a4211a",
+        area = "a4211",
         full_screen = TRUE,
         card_header(
           "Time bins"
         ),
         card_body( #-------------- timebin table
-          gt::gt_output("O4211a")
+          gt::gt_output("O4211")
         )
       ),
       grid_card(
-        area = "a4211b",
+        area = "a4212",
         full_screen = TRUE,
         card_header(
           "Local index"
         ),
         card_body( #-------------- local index table
-          gt::gt_output("O4211b")
+          gt::gt_output("O4212")
         )
       ),
       grid_card(
-        area = "a4211c",
+        area = "a4213",
         full_screen = TRUE,
         card_header(
           "Custom index"
         ),
         card_body( #-------------- custom index table
-          gt::gt_output("O4211c")
+          gt::gt_output("O4213")
         )
       )
     )

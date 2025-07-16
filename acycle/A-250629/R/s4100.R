@@ -1,19 +1,8 @@
-#-------------------------------------------------4100 timeseries
-s4100 <-
+
+s4100 <-#-------------------- 4100 timeseries ----
   function(input, output, session, common) {
-    #----------------------------------------start dummy section
-
-    for (j in 1:10) {
-      output[[paste0("dum", j)]] <- render_gt({
-        mtcars[1:2, 1:2] %>%
-          gt() %>%
-          tab_header(title = paste("dum", j))
-      })
-    }
-    #----------------------------------------end dummy section
-
-
-    R4111x <- eventReactive( # 111 leaflet----
+    
+    R4111x <- eventReactive( # -- 4111 leaflet----
       list(
         common$rc6tR(), # C
         common$rc6cR() # C
@@ -29,7 +18,7 @@ s4100 <-
       }
     )
 
-    R4112x <- eventReactive( # 112 x(t) ----
+    R4112x <- eventReactive( #--- 4112 ggplot ----
       list(
         common$rc6tR(), # C
         common$rescxR(), # U
@@ -47,7 +36,7 @@ s4100 <-
       }
     )
 
-    R4121x <- eventReactive( # 121 winding ----
+    R4121x <- eventReactive( #-- 4121 winding ----
       list(
         common$rc6tR(),
         common$rescxR()
@@ -62,7 +51,7 @@ s4100 <-
       }
     )
 
-    R4122x <- eventReactive( # 122 trade ----
+    R4122x <- eventReactive( #---- 4122 trade ----
       list(
         common$rc6tR(),
         rescxx = common$rescxR()
@@ -77,14 +66,14 @@ s4100 <-
       }
     )
 
-    R4131x <- eventReactive( # 131 summary ----
+    R4131x <- eventReactive( #-- 4131 summary ----
       list(
         common$rescxR(),
         common$rc6tR(),
         common$tslideR()
       ),
       {
-        x <- D4131x(
+        x <- D4131a(
           rescx = common$rescxR(),
           rc6tx = common$rc6tR(),
           tslidex = common$tslideR()
@@ -94,14 +83,15 @@ s4100 <-
       }
     )
 
-    R4132x <- eventReactive( # 132 trade ----
+    R4132x <- eventReactive( #----- 132 trade ----
       list(
         common$rescxR(),
         common$rc6tR(),
         common$tslideR()
       ),
       {
-        x <- D4132x(
+        x <- #list local/custom return/number
+          D4132x(
           rescxx = common$rescxR(),
           rc6tx = common$rc6tR(),
           tslidex = common$tslideR()
@@ -111,18 +101,16 @@ s4100 <-
       }
     )
 
-    output$O4111x <- renderLeaflet(R4111x()) # render----
-    output$O4112x <- renderPlot(R4112x()) # x(t)
-    output$O4121xa <- gt::render_gt(R4121x()[[1]]) # wind gt - custom
-    output$O4121xb <- gt::render_gt(R4121x()[[2]]) # wind gt - local
-    output$O4122x <- gt::render_gt(R4122x()) # char gt
-
-    output$O4131x <- gt::render_gt(R4131x()) # summ gt
-
-    output$O4132xa <- gt::render_gt(R4132x()[["local"]][[1]]) # render----
-    output$O4132xb <- gt::render_gt(R4132x()[["local"]][[2]]) # render----
-    output$O4132xc <- gt::render_gt(R4132x()[["custom"]][[1]]) # render----
-    output$O4132xd <- gt::render_gt(R4132x()[["custom"]][[2]]) # render----
+    output$O4111x <- renderLeaflet(R4111x()) # leaflet ----
+    output$O4112x <- renderPlot(R4112x()) # ggplot ----
+    output$O4121xa <- gt::render_gt(R4121x()[[1]]) # wind gt - custom ----
+    output$O4121xb <- gt::render_gt(R4121x()[[2]]) # wind gt - local ----
+    output$O4122x <- gt::render_gt(R4122x()) # char gt ----
+    output$O4131x <- gt::render_gt(R4131x()) # summ gt ----
+    output$O4132xa <- gt::render_gt(R4132x()[["local"]][[1]]) # local-return ----
+    output$O4132xb <- gt::render_gt(R4132x()[["local"]][[2]]) # local-number ----
+    output$O4132xc <- gt::render_gt(R4132x()[["custom"]][[1]]) # custom-return ----
+    output$O4132xd <- gt::render_gt(R4132x()[["custom"]][[2]]) # custom-number-----
 
     print("Leaving s4100")
   }

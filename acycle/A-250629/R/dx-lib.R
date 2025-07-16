@@ -1,7 +1,7 @@
 #-------------------------------------------------dx-lib disp gen2
 
 #-------------------------------------------------41xx page=1 timeseries----
-D4111x <- #  leaflet ----
+D4111x <- #  leaflet : R4111x ----
   function(
       statics = c("resS", "datS"), #              S static
       rc6tx = rc6tG, # target                     C control 
@@ -39,7 +39,7 @@ D4111x <- #  leaflet ----
   }
 # D4111x()
 
-D4112x <- # timeseries
+D4112x <- #-------------- timeseries : R4112x ----
   function(
       statics = c("resS"), # statics              S static
       rc6tx = rc6tG, #   target                   C control 
@@ -97,7 +97,7 @@ D4112x <- # timeseries
   }
 # D4112x()
 
-D4121x <- # winding
+D4121x <- #----------------- winding : R4121x ----
   function(
       statics = c("resS"), # statics              S static
       rc6tx = rc6tG, #                            C control r
@@ -132,7 +132,7 @@ D4121x <- # winding
   }
 # D4121x()
 
-D4122x <- # char
+D4122x <- #-------------------- char : R4122x ----
   function(
       pvax = apva(resS), #                        S static
       rc6tx = rc6tG, #                            C control 
@@ -180,7 +180,7 @@ D4122x <- # char
       )]
     x10 <-
       x9 %>%
-      .[, .(q1 = paste0(i, " of ", n), q2, col, nrc6.est, nrc6.fit, nid, pmin, pmax, agg, key)] %>%
+      .[, .(q1 = paste0("(",i, " of ", n,")"), q2, col, nrc6.est, nrc6.fit, nid, pmin, pmax, agg, key)] %>%
       .[order(-as.numeric(gsub(",", "", agg)))] %>%
       .[q2 %in% c("custom", "all"), q1 := ""]
 
@@ -234,56 +234,135 @@ D4122x <- # char
 # debugonce(D4122x)
 # D4122x()
 
-D4131x <- # summ
+# D4131x <- # summ [not used] ----
+#   function(
+#       static = "resS", # statics                  S static
+#       rescxx = rescxG, #                          R reactive gen2
+#       rc6tx = rc6tG, #                            C control
+#       tslidex = tslideG #                         C
+#       ) {
+#     x1 <-
+#       C4131x(
+#         static = "resS",
+#         tslidex = tslidex,
+#         rc6tx = rc6tx,
+#         rescxx = rescxx
+#       ) %>%
+#       .[order(-aggppm2), .(q1 = gsub("\\.", " of ", i.n), q2, col, agg = round(aggppm2, -2), min, mean, tot, pa, max, stdev, skew, kurtosis, key = "\u2589")] %>%
+#       .[q2 == "custom", q1 := ""]
+#     x1 %>%
+#       gt::gt(.) %>%
+#       cols_label(
+#         q1 = gt::html("rank"),
+#         q2 = gt::html("segment"),
+#         col = gt::html(""),
+#         min = gt::html("min"),
+#         mean = gt::html("mean"),
+#         tot = gt::html("total"),
+#         pa = gt::html("p.a."),
+#         max = gt::html("max"),
+#         stdev = gt::html("volatility"),
+#         skew = gt::html("skew"),
+#         kurtosis = gt::html("kurtosis"),
+#         agg = gt::html("£/m<sup>2</sup>"),
+#         key = gt::html(""),
+#       ) %>%
+#       fmt_number(
+#         columns = agg,
+#         decimals = 0,
+#         sep_mark = "," # Thousands separator
+#       ) %>%
+#       fmt_number(
+#         columns = c("skew", "kurtosis"),
+#         decimals = 2,
+#         sep_mark = "," # Thousands separator
+#       ) %>%
+#       tab_spanner(
+#         label = gt::html(aestdt2(resS)$BA %>% .[c(tslidex + 1, length(.))] %>% paste0(., collapse = " - ") %>% paste0("log returns : ", .)),
+#         columns = c(min, mean, tot, pa, max, stdev, skew, kurtosis)
+#       ) %>%
+#       tab_spanner(
+#         label = gt::html("quantiles"),
+#         columns = c(q1, q2)
+#       ) %>%
+#       text_transform(
+#         locations = cells_body(columns = key),
+#         fn = function(codes) {
+#           purrr::imap_chr(codes, function(code, i) {
+#             colval <- x1[i, col]
+#             is_target <- (x1[i, q2 == "custom"]) # <- change this condition as needed
+#             outline <- if (is_target) "border:4px solid black;" else ""
+#             paste0(
+#               "<div style='display:inline-block; width:1em; height:1em; background-color:", colval, "; ",
+#               outline, "'></div>"
+#             )
+#           }) %>%
+#             purrr::map(htmltools::HTML)
+#         }
+#       ) %>%
+#       cols_hide(columns = col) %>%
+#       cols_label(key = "") %>%
+#       cols_move_to_start(
+#         columns = c("key")
+#       )
+#   }
+# D4131x()
+
+
+D4131a <- #-------------------- summ : R4131x ----
   function(
       static = "resS", # statics                  S static
       rescxx = rescxG, #                          R reactive gen2
       rc6tx = rc6tG, #                            C control
       tslidex = tslideG #                         C
       ) {
+    roundx=-2
     x1 <-
-      C4131x(
+      C4131a(
         static = "resS",
         tslidex = tslidex,
         rc6tx = rc6tx,
         rescxx = rescxx
       ) %>%
-      .[order(-aggppm2), .(q1 = gsub("\\.", " of ", i.n), q2, col, agg = round(aggppm2, -2), min, mean, tot, pa, max, stdev, skew, kurtosis, key = "\u2589")] %>%
+      .[order(-aggppm2), .(q2, q1 = paste0('(',gsub("\\.", " of ", i.n),')'), col, minppm2=round(minppm2,roundx), maxppm2=round(maxppm2,roundx), aggppm2=round(aggppm2,roundx), meanan,minan,maxan, key = "\u2589")] %>%
       .[q2 == "custom", q1 := ""]
+    x2 <- paste0('annual log returns : ',as.integer(substr(aestdt2(resS)$BA[c(tslidex + 1)],1,4))+1,' - ',as.integer(substr(max(aestdt2(resS)$BA),1,4))-1)
     x1 %>%
       gt::gt(.) %>%
       cols_label(
-        q1 = gt::html("rank"),
-        q2 = gt::html("segment"),
+        q2 = gt::html(""),
+        q1 = gt::html(""),
         col = gt::html(""),
-        min = gt::html("min"),
-        mean = gt::html("mean"),
-        tot = gt::html("total"),
-        pa = gt::html("p.a."),
-        max = gt::html("max"),
-        stdev = gt::html("volatility"),
-        skew = gt::html("skew"),
-        kurtosis = gt::html("kurtosis"),
-        agg = gt::html("£/m<sup>2</sup>"),
+        minppm2 = gt::html("min"),
+        maxppm2 = gt::html("max"),
+        aggppm2 = gt::html("aggregate"),
+        meanan = gt::html("mean"),
+        minan = gt::html("min"),
+        maxan = gt::html("max"),
         key = gt::html(""),
       ) %>%
       fmt_number(
-        columns = agg,
+        columns = c(aggppm2,minppm2,maxppm2),
         decimals = 0,
+        #n_sigfig=3,
         sep_mark = "," # Thousands separator
-      ) %>%
+      )%>%
       fmt_number(
-        columns = c("skew", "kurtosis"),
-        decimals = 2,
-        sep_mark = "," # Thousands separator
+        #scale_by=100,
+        columns = c(minan,meanan,maxan),
+        decimals = 3
       ) %>%
       tab_spanner(
-        label = gt::html(aestdt2(resS)$BA %>% .[c(tslidex + 1, length(.))] %>% paste0(., collapse = " - ") %>% paste0("log returns : ", .)),
-        columns = c(min, mean, tot, pa, max, stdev, skew, kurtosis)
+        label = gt::html(x2),
+        columns = c(minan, meanan, maxan, )
       ) %>%
       tab_spanner(
         label = gt::html("quantiles"),
         columns = c(q1, q2)
+      ) %>%
+      tab_spanner(
+        label = gt::html("district £/m<sup>2</sup>"),
+        columns = c(minppm2,aggppm2,maxppm2)
       ) %>%
       text_transform(
         locations = cells_body(columns = key),
@@ -302,13 +381,11 @@ D4131x <- # summ
       ) %>%
       cols_hide(columns = col) %>%
       cols_label(key = "") %>%
-      cols_move_to_start(
-        columns = c("key")
-      )
+      cols_move_to_start( columns = c("q2"))%>%
+      cols_move_to_start( columns = c("key"))
   }
-# D4131x()
 
-D4132x <- # trade
+D4132x <- #------------------- trade : R4132x ----
   function(
       static = "resS", # statics                  S static
       rc6tx = rc6tG, #                            C control rc6tG rc6cG tslideG
@@ -377,7 +454,7 @@ D4132x <- # trade
 # D4132x()
 
 #-------------------------------------------------42xx page=2 listing----
-D4211a <- #---summary utility called in all 3 listings ----
+D4211a <- #summary utility called in all 3 listings ----
 function(
     statics=c('resS','salS'),
     resx=aresn(resS,nx=resS$lab[grep(rc6tx,lab),nx]),
@@ -479,7 +556,7 @@ function(
 }
 
 
-D4211b <- #3 listings
+D4211b <- #----------------3 listings: R4211a ----
   function(
     statics='resS',
     rescx=rescxG,
@@ -511,7 +588,7 @@ D4211b <- #3 listings
   )
 }
 
-D4311a <- #accepts rc3/rc6 
+D4311a <- #--------blobs for rc3/rc6 : R4311x ----
   function(
     rc6tx = rc6tG,
     rc6cx = rc6cG,
@@ -568,7 +645,7 @@ x1 %>%
         sep_mark = "," # Thousands separator
       )%>%
 
-  # ---- Other painted columns without outline ----
+  # ---- Other painted columns without outline 
   gt::text_transform(
     locations = gt::cells_body(columns = setdiff(cols_to_paint, "q0")),
     fn = function(hexvec) {
@@ -590,7 +667,7 @@ x1 %>%
     style = cell_text(align = "center"),
     locations = cells_column_labels(columns = c(q1, q2, q3))
   )%>%
-  # ---- Optional row highlighting (unchanged) ----
+  # ---- Optional row highlighting (unchanged) 
   gt::tab_style(
     style = gt::cell_fill(color = shadecol1),
     locations = gt::cells_body(
@@ -607,7 +684,8 @@ x1 %>%
   }
 #D4311a()
 
-D4321x <- function(
+D4321x <-  #-'identifies as' message : R4321x ----
+  function(
     statics = "resS",
     rc6tx = rc6tG) {
   x1 <-

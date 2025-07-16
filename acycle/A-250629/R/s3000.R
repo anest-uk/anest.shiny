@@ -1,7 +1,8 @@
-#-------------------------------------------------3000 sidebar
-s3000 <-
+
+s3000 <-#-------------------------3000 sidebar----
   function(input, output, session, common) {
-    R3001x <- eventReactive(
+    R3001x <- #---------- slider date readback----
+      eventReactive(
       list(
         rc6tx = common$tslideR()
       ),
@@ -15,7 +16,8 @@ s3000 <-
         x
       }
     )
-    R3002x <- eventReactive(
+    R3002x <- #------ target locality readback----
+      eventReactive(
       list(
         rc6tx = common$rc6tR()
       ),
@@ -36,12 +38,3 @@ s3000 <-
     output$O3002x <- renderText(R3002x())
   }
 
-# s3000 <-
-#   function(input, output, session, common) {
-#    output$datet0 <-
-#       renderText({
-#         common$dfnyR()[input$tslider+1]%>%
-#           as.Date()%>%
-#           as.character(.)
-#       })
-# }

@@ -195,16 +195,20 @@ areso <- function( #access optimum local(rcx) where x can be 3 or 6
   resx$f250618b[grep(grepstring(rcxtx),rc6),nx]%>%
     aresn(resx=resx,nxx=.)
 }
-#areso()
-#areso('AL-')
 
-
-##################################################
-# ageo()
-# aestdt1()
-# aestdt2()
-# akss()
-# apva()
-
-
+aestdt3 <- #daily x
+  function(
+    nx=C4131x()[,unique(nx)],
+    resx=resS
+  ) {
+    x0 <- aresn(nx=nx,resx=resx)
+    x1 <- aestdt1(x=x0)
+    x2 <- # Step 1: generate full date sequences for each nx
+      x1[, .(date = seq(min(date), max(date), by = "day")), by = nx]
+    x3 <- # Step 2: rolling join, roll=-Inf, to bring in the most recent xdotd before or on date
+      x1[x2, on = .(nx, date), roll = -Inf]
+    x3%>% # Step 3: compute cumsum(xdotd) by nx
+      .[, x := cumsum(fifelse(is.na(xdotd), 0, xdotd)), by = nx]
+    x3[,.(date,ii,nx,xdotd,x)]
+  }
 
