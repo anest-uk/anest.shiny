@@ -3,10 +3,15 @@ ui4100 <- function(id = NULL) {
   nav_panel(
     title = "gp4100", #---------.----
     grid_container(
+      # layout = c(
+      #   "A4212    A4222 ",
+      #   "A4221    A4222x ",
+      #   "A4211    A4231 "
+      # ),
       layout = c(
-        "A4211x    A4212x ",
-        "A4221x    A4222x ",
-        "A4231x    A4232x "
+        "A4211    A4212 ",
+        "A4221    A4222 ",
+        "A4231    . "
       ),
       row_sizes = c(
         "1fr",
@@ -19,7 +24,7 @@ ui4100 <- function(id = NULL) {
       ),
       gap_size = "10px",
       grid_card(
-        area = "A4211x",
+        area = "A4212",
         full_screen = TRUE,
         # card_header(
         #   "."
@@ -31,7 +36,7 @@ ui4100 <- function(id = NULL) {
       ) # gridcard
       ,
       grid_card(
-        area = "A4212x",
+        area = "A4222",
         full_screen = TRUE,
         # card_header(
         #   "."
@@ -43,7 +48,7 @@ ui4100 <- function(id = NULL) {
       ) # gridcard
       ,
       grid_card(
-        area = "A4221x",
+        area = "A4221",
         full_screen = TRUE,
         card_body(
           id = "table_tabs",
@@ -62,23 +67,23 @@ ui4100 <- function(id = NULL) {
         height = gridheight
       )#gridcard
       ,
+      # grid_card(
+      #   area = "A4222x",
+      #   full_screen = TRUE,
+      #   # card_header(
+      #   #   "."
+      #   # ),
+      #   card_body(
+      #     gt::gt_output("O4222x"),
+      #     height = gridheight
+      #   )
+      # ) # gridcard
+      # ,
       grid_card(
-        area = "A4222x",
-        full_screen = TRUE,
-        # card_header(
-        #   "."
-        # ),
-        card_body(
-          gt::gt_output("O4222x"),
-          height = gridheight
-        )
-      ) # gridcard
-      ,
-      grid_card(
-        area = "A4231x",
+        area = "A4211",
         full_screen = TRUE,
         card_header(
-          "A4231x"
+          "A4211"
         ),
         card_body(
           gt::gt_output("O4231x"),
@@ -87,10 +92,10 @@ ui4100 <- function(id = NULL) {
       ) # gridcard
       ,
       grid_card(
-        area = "A4232x",
+        area = "A4231",
         full_screen = TRUE,
         card_header(
-          "A4232x"
+          "A4231"
         ),
         card_body(
           gt::gt_output("O4232xa"),
