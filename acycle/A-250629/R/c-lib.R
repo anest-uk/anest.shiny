@@ -336,3 +336,93 @@ C4311a <- #------------all rc6 blobs : D4311a ----
     setnames(x4,c('rc6','ppm2','nid','q0','locality','q1','q2','q3'))
     x4[,.(rc6,locality,ppm2,nid,q0,q3,q2,q1),with=T]
   }
+
+C4311b <- #C4311b: a second function that just returns rc6,locality,ppm2,nid for the exotic peers
+  function(
+    rc6tx=rc6tG,
+    x0=ageo()[grep(paste0('^C',rc6tx),lab)][,.(rc6=sort(unique(rc6)))], #dt of peers {rc6}
+    statics='resS'
+  ) {
+    #x0 <- ageo()[grep(paste0('^C',substr(rc6tx,1,3)),lab)][,.(rc6=sort(unique(rc6)))]
+    
+    resS$f250713a%>%
+      .[x0,on=c(rc6='rc6')]%>%
+      .[resS$pva,on=c(rc6='rc6'),nomatch=NULL]%>%
+      .[,.(rc6,locality,ppm2=pv/m2,nid),nomatch=NULL]
+  }
+
+C4311c <- #C4311c combines this with C4311a
+  function(
+    rc6tx=rc6tG,
+    rc6cx=rc6cG,
+    x0=data.table(rc6=rc6cx),
+    #x0=ageo()[grep(paste0('^C',rc6tx),lab)][,.(rc6=sort(unique(rc6)))], #custom peers {rc6}
+    x1=C4311a(rc6tx=rc6tx),
+    x2=C4311b(rc6tx=rc6tx,x0=x0)[!(rc6%in%x1[,rc6])] #out of area peers
+  ) {
+    x3 <- x1[,log(range(ppm2))]%>%setNames(.,c('minP','maxP'))
+    x2[,.(
+      rc6,
+      locality,
+      ppm2,
+      nid,
+      q0=color_price(log(ppm2),x3['minP'],x3['maxP']),
+      q3='',
+      q2='',
+      q1=''
+    )]%>%
+      rbind(x1,.)
+  }
+
+C4311d <- #C4311b: a second function that just returns rc6,locality,ppm2,nid for the exotic peers
+  function(
+    rc6cx=rc6cG,
+    rc6tx=rc6tG,
+    statics='resS'
+  ) {
+    # x0 <- ageo()[grep(paste0('^C',rc6tx),lab)][,.(rc6=sort(unique(rc6)))]
+    #x0 <- data.table(rc6=rc6cG)
+    #C4311c()[x0,on=c(rc6='rc6')]%>%
+    C4311c(rc6cx=rc6cx,rc6tx=rc6tx)%>%
+      .[,.(rc6,locality,ppm2,nid,q0)]
+    # resS$f250713a%>%
+    #   .[x0,on=c(rc6='rc6')]%>%
+    #   .[resS$pva,on=c(rc6='rc6'),nomatch=NULL]%>%
+    #   .[,.(rc6,locality,ppm2=pv/m2,nid),nomatch=NULL]
+  }
+
+#don't like this.... 250718
+# C4311d <- #C4311d: fourth function returns rc6,col for entire rc3 of {exotic peers, rc3t}
+#   function(
+#     rc6tx=rc6tG,
+#     statics='resS'
+#   ) {
+#     x0 <- #{rc6} : all rc6 which are peers of any rc6 in rc3t
+#       ageo()
+#     x1 <- #rc3 referenced in custom
+#       x0[grep(paste0('^C',substr(rc6tx,1,3)),lab)][,.(rc3=sort(unique(substr(rc6,1,3))))]
+#     x2 <- #all rc6 
+#       x0[,.(rc6,rc3=substr(rc6,1,3))]%>%
+#       unique(.)%>%
+#       .[x1,on=c(rc3='rc3')]%>%
+#       resS$pva[.,on=c(rc6='rc6')]%>%
+#       .[,.(rc6,rc3,P=log(pv/m2))]
+#     x3 <- #all rc6 this rc3
+#       x2[rc3==substr(rc6tx,1,3)]%>%
+#       .[,range(P)]
+#     x4 <- #rc6, col
+#       x2[,col:=color_price(P,x3[1],x3[2])]%>%
+#       .[,.(rc6,col)]
+#     x4
+#   }
+
+
+
+#C4311d()%>%
+# rc6tx <- 'NG-1--'
+#   C4311d(rc6tx)%>%
+#      f240810b( #->leaflet, colours for areas-to-shade in column 'col'
+#         x1=.[,.(col,rc6)],
+#         x2 = apol(datS), # map polygons
+#         pva = resS$pva[, .(rcx = rc6tx, ppm2 = pv / m2)] # for tooltip
+#      )

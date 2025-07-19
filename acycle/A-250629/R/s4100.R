@@ -11,7 +11,7 @@ s4100 <-#-------------------- 4100 timeseries ----
         print("enter R4111x")
         x <- D4111x(
           rc6tx = common$rc6tR(), # target
-          rc6cx = common$rc6cR() #    #custom
+          rc6cx = common$rc6cR()  # custom
         )
         G4111x <<- copy(x)
         x
@@ -101,7 +101,7 @@ s4100 <-#-------------------- 4100 timeseries ----
       }
     )
 
-    output$O4111x <- renderLeaflet(R4111x()) # leaflet ----
+    output$O4111x <- leaflet::renderLeaflet(R4111x()) # leaflet ----
     output$O4112x <- renderPlot(R4112x()) # ggplot ----
     output$O4121xa <- gt::render_gt(R4121x()[[1]]) # wind gt - custom ----
     output$O4121xb <- gt::render_gt(R4121x()[[2]]) # wind gt - local ----

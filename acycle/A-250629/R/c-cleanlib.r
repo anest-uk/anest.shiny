@@ -319,6 +319,44 @@ function( #wrapper for accrue2
       setnames(.,old='rn',new='idhash.selldate')
     x1
   }
+f230306a <-
+function() {
+  c(`St. Albans:AL` = "AL-", `Birmingham:B` = "B--", `Bath:BA` = "BA-", 
+    `Blackburn:BB` = "BB-", `Bradford:BD` = "BD-", `Bournemouth:BH` = "BH-", 
+    `Bolton:BL` = "BL-", `Brighton:BN` = "BN-", `Bromley:BR` = "BR-", 
+    `Bristol:BS` = "BS-", `Carlisle:CA` = "CA-", `Cambridge:CB` = "CB-", 
+    `Cardiff:CF` = "CF-", `Chester:CH` = "CH-", `Chelmsford:CM` = "CM-", 
+    `Colchester:CO` = "CO-", `Croydon:CR` = "CR-", `Canterbury:CT` = "CT-", 
+    `Coventry:CV` = "CV-", `Crewe:CW` = "CW-", `Dartford:DA` = "DA-", 
+    `Derby:DE` = "DE-", `Durham:DH` = "DH-", `Darlington:DL` = "DL-", 
+    `Doncaster:DN` = "DN-", `Dorchester:DT` = "DT-", `Dudley:DY` = "DY-", 
+    `London:E` = "E--", `London:EC` = "EC-", `Enfield:EN` = "EN-", 
+    `Exeter:EX` = "EX-", `Blackpool:FY` = "FY-", `Gloucester:GL` = "GL-", 
+    `Guildford:GU` = "GU-", `Harrow:HA` = "HA-", `Huddersfield:HD` = "HD-", 
+    `Harrogate:HG` = "HG-", `Hemel:HP` = "HP-", `Hereford:HR` = "HR-", 
+    `Hull:HU` = "HU-", `Halifax:HX` = "HX-", `Ilford:IG` = "IG-", 
+    `Ipswich:IP` = "IP-", `Kingston:KT` = "KT-", `Liverpool:L` = "L--", 
+    `Lancaster:LA` = "LA-", `Llandrindod:LD` = "LD-", `Leicester:LE` = "LE-", 
+    `Llandudno:LL` = "LL-", `Lincoln:LN` = "LN-", `Leeds:LS` = "LS-", 
+    `Luton:LU` = "LU-", `Manchester:M` = "M--", `Medway:ME` = "ME-", 
+    `Milton Keynes:MK` = "MK-", `London:N` = "N--", `Newcastle:NE` = "NE-", 
+    `Nottingham:NG` = "NG-", `Northampton:NN` = "NN-", `Newport:NP` = "NP-", 
+    `Norwich:NR` = "NR-", `London:NW` = "NW-", `Oldham:OL` = "OL-", 
+    `Oxford:OX` = "OX-", `Peterborough:PE` = "PE-", `Plymouth:PL` = "PL-", 
+    `Portsmouth:PO` = "PO-", `Preston:PR` = "PR-", `Reading:RG` = "RG-", 
+    `Redhill:RH` = "RH-", `Romford:RM` = "RM-", `Sheffield:S` = "S--", 
+    `Swansea:SA` = "SA-", `London:SE` = "SE-", `Stevenage:SG` = "SG-", 
+    `Stockport:SK` = "SK-", `Slough:SL` = "SL-", `Sutton:SM` = "SM-", 
+    `Swindon:SN` = "SN-", `Southampton:SO` = "SO-", `Salisbury:SP` = "SP-", 
+    `Sunderland:SR` = "SR-", `Southend:SS` = "SS-", `Stoke on Trent:ST` = "ST-", 
+    `London:SW` = "SW-", `Shrewsbury:SY` = "SY-", `Taunton:TA` = "TA-", 
+    `Telford:TF` = "TF-", `Tonbridge:TN` = "TN-", `Torquay:TQ` = "TQ-", 
+    `Truro:TR` = "TR-", `Cleveland:TS` = "TS-", `Twickenham:TW` = "TW-", 
+    `Southall:UB` = "UB-", `London:W` = "W--", `Warrington:WA` = "WA-", 
+    `London:WC` = "WC-", `Watford:WD` = "WD-", `Wakefield:WF` = "WF-", 
+    `Wigan:WN` = "WN-", `Worcester:WR` = "WR-", `Walsall:WS` = "WS-", 
+    `Wolverhampton:WV` = "WV-", `York:YO` = "YO-")
+}
 f230311a <-
 function( #RSI from pra x6
     nxx=1,
@@ -3136,175 +3174,183 @@ function(tc=typeC,tb=tbinC) {
     x1    
   }
 f241119a <-
-function(  #solve single nx -> estdt with no pra; replaces f240710a
-    nxx=1,
-    #steprip1=steprip, #old format
-    #steprip2='c:\\users\\giles\\anest.repo\\anest.shiny\\acycle\\app241119\\smallrip', #1/3 size format
-    steprip2='c:\\users\\giles\\anest.repo\\anest.shiny\\acycle\\A-250523\\data\\smallrip', #1/3 size format
-    stepprax=stepprav2,
-    dfn=dfnG[,date],    
-    geo=geoaG[,.(nx=nx-min(nx)+1,lab,rc9=rc6)],
-    outthresh=.1,
-    kfold=5,
-    randomise=F, #for testing
-    sectorwise=F, #flag to split folds on complete sectors<<<<<<<<<<<<< T
-    usepra=F, #optional<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< F
-    newused=c('.','N','U'),
-    setseed=T,#added 250507
-    houseflat=c('.','H','F') #typex field added to rip 240826, values UH/NH/UF/NF for new/house
-  ) {
-    stopifnot(nxx%in%geo[,nx])#add 241116
+function(
+      # solve single nx -> estdt with no pra; replaces f240710a
+      nxx = 1,
+      # steprip1=steprip, #old format
+      # steprip2='c:\\users\\giles\\anest.repo\\anest.shiny\\acycle\\app241119\\smallrip', #1/3 size format
+      steprip2 = "c:\\users\\giles\\anest.repo\\anest.shiny\\acycle\\A-250523\\data\\smallrip", # 1/3 size format
+      stepprax = stepprav2,
+      dfn = dfnG[, date],
+      geo = geoaG[, .(nx = nx - min(nx) + 1, lab, rc9 = rc6)],
+      outthresh = .1,
+      kfold = 5,
+      randomise = F, # for testing
+      sectorwise = F, # flag to split folds on complete sectors<<<<<<<<<<<<< T
+      usepra = F, # optional<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< F
+      newused = c(".", "N", "U"),
+      setseed = T, # added 250507
+      houseflat = c(".", "H", "F") # typex field added to rip 240826, values UH/NH/UF/NF for new/house
+      ) {
+    # browser()
+    stopifnot(nxx %in% geo[, nx]) # add 241116
     # stopifnot(geo[,.(N=length(unique(lab))),nx][,all(N==1)])
-    #if(!(geo[,.(N=length(unique(lab))),nx][,all(N==1)])) browser()
-    labx <- geo[,unique(lab)]
-    newused=match.arg(newused)
-    houseflat=match.arg(houseflat)
+    # if(!(geo[,.(N=length(unique(lab))),nx][,all(N==1)])) browser()
+    labx <- geo[, unique(lab)]
+    newused <- match.arg(newused)
+    houseflat <- match.arg(houseflat)
     # coread(
     #   #rcx='AL-1--',
     #   rcx=geo[nx==nxx][,rc9][2],
     #   step=stepprax,
     #   colClasses=list(numeric='retsa')
     # )
-    if(usepra) {
+    if (usepra) {
       x2 <- coread(
-        rcx=geo[nx==nxx][,rc9],
-        step=stepprax,
-        colClasses=list(numeric='retsa')
+        rcx = geo[nx == nxx][, rc9],
+        step = stepprax,
+        colClasses = list(numeric = "retsa")
       )
-      x2[,idhash.selldate:=as.character(1:.N)] #make order consistent with !usepra
+      x2[, idhash.selldate := as.character(1:.N)] # make order consistent with !usepra
     } else {
-      x1 <- #rip read coread2 steprip2
+      x1 <- # rip read coread2 steprip2
         coread2(
-          rcx=geo[nx==nxx][,rc9],
-          step=steprip2,
-          colClasses=list(numeric=c('retsa'),integer=c('buydate','selldate')) #c('retraw','retsa')
+          rcx = geo[nx == nxx][, rc9],
+          step = steprip2,
+          colClasses = list(numeric = c("retsa"), integer = c("buydate", "selldate")) # c('retraw','retsa')
         )
-      if(paste0(newused,houseflat)!='..'){
-        x1 <- x1[grep(paste0('^',newused,houseflat,'$'),type)] 
+      if (paste0(newused, houseflat) != "..") {
+        x1 <- x1[grep(paste0("^", newused, houseflat, "$"), type)]
       }
-      x1[,idhash.selldate:=as.character(1:.N)]
-      x2 <- #accrue
+      x1[, idhash.selldate := as.character(1:.N)]
+      x2 <- # accrue
         f221209a(
-          geo=geo[nx==nxx], 
-          fur=x1,
-          dfn=dfn,
-          applygeo=F
+          geo = geo[nx == nxx],
+          fur = x1,
+          dfn = dfn,
+          applygeo = F
         )
-      stopifnot(all.equal(x1[,idhash.selldate],x2[,idhash.selldate]))
+      stopifnot(all.equal(x1[, idhash.selldate], x2[, idhash.selldate]))
     }
     x4 <- lm(
-      retsa~.-1,
-      x2[,!c('idhash.selldate','rc9')] #all, no outlier reject
+      retsa ~ . - 1,
+      x2[, !c("idhash.selldate", "rc9")] # all, no outlier reject
     )
     x5 <- residuals(x4)
-    x6a <- x2[,.(idhash.selldate,rc6=substr(rc9,1,6),res=x5)] #per rc6
-    x6b <- x6a[,.(lo=quantile(res,outthresh/2),hi=quantile(res,(1-outthresh/2))),rc6] #apply thresholds *by rc6*
-    x6c <- x6b[x6a,on=c(rc6='rc6')][(lo<=res&res<=hi),.(rc6,idhash.selldate)] #select inlier
-    x6d <- x2[x6c[,.(idhash.selldate)],on=c(idhash.selldate='idhash.selldate')]%>%
-      .[order(rc9,idhash.selldate)]
-    if(setseed) {set.seed(999)} #will have no effect unless randomise==T
-    if(randomise) { #to test it's doing something
+    x6a <- x2[, .(idhash.selldate, rc6 = substr(rc9, 1, 6), res = x5)] # per rc6
+    x6b <- x6a[, .(lo = quantile(res, outthresh / 2), hi = quantile(res, (1 - outthresh / 2))), rc6] # apply thresholds *by rc6*
+    x6c <- x6b[x6a, on = c(rc6 = "rc6")][(lo <= res & res <= hi), .(rc6, idhash.selldate)] # select inlier
+    x6d <- x2[x6c[, .(idhash.selldate)], on = c(idhash.selldate = "idhash.selldate")] %>%
+      .[order(rc9, idhash.selldate)]
+    if (setseed) {
+      set.seed(999)
+    } # will have no effect unless randomise==T
+    if (randomise) { # to test it's doing something
       x6d <- x6d[sample(.N)]
-    } else if(
-      sectorwise & 
-      x6d[,length(unique(rc9))*(kfold-1)/kfold]>=1 #rc9 [these really are sectors!] in each training set>=1 
+    } else if (
+      sectorwise &
+        x6d[, length(unique(rc9)) * (kfold - 1) / kfold] >= 1 # rc9 [these really are sectors!] in each training set>=1
     ) {
-      x6d[,ktile:=(as.integer(as.factor(rc9))%%kfold)%%kfold+1]
+      x6d[, ktile := (as.integer(as.factor(rc9)) %% kfold) %% kfold + 1]
     } else {
-      x6d[,ktile:=((1:.N))%%kfold+1]
+      x6d[, ktile := ((1:.N)) %% kfold + 1]
     }
     x10 <- as.list(NULL)
-    for(i in 1:kfold) {
-      x7 <- x6d[ktile==i,] #target ktile inlier
-      x8 <- x6d[ktile!=i,] #train on other ktiles
+    for (i in 1:kfold) {
+      x7 <- x6d[ktile == i, ] # target ktile inlier
+      x8 <- x6d[ktile != i, ] # train on other ktiles
       x9 <- lm(
-        retsa~.-1,
-        x8[,!c('idhash.selldate','rc9','ktile')] #train
+        retsa ~ . - 1,
+        x8[, !c("idhash.selldate", "rc9", "ktile")] # train
       )
-      x10[[i]] <- x7[,.(sse=sum(  (
-        .SD[ktile==i,retsa]-
-          predict(x9,newdata=.SD[ktile==i])
-      )^2),n=.N,i),rc9]
+      x10[[i]] <- x7[, .(sse = sum((
+        .SD[ktile == i, retsa] -
+          predict(x9, newdata = .SD[ktile == i])
+      )^2), n = .N, i), rc9]
     }
-    x11 <-  #here sum by rc6
-      rbindlist(x10)%>%
-      .[,.(sse=sum(sse),n=sum(n)),.(rc6=substr(rc9,1,6))]
+    x11 <- # here sum by rc6
+      rbindlist(x10) %>%
+      .[, .(sse = sum(sse), n = sum(n)), .(rc6 = substr(rc9, 1, 6))]
     x12 <- lm(
-      retsa~.-1,
-      x6d[,!c('idhash.selldate','rc9','ktile')] #all inlier
+      retsa ~ . - 1,
+      x6d[, !c("idhash.selldate", "rc9", "ktile")] # all inlier
     )
-    x11a <- #Inlier
-      data.table(x6d[,.(rc6=substr(rc9,1,6))],res=residuals(x12),retsa=x6d[,retsa])%>%
-      .[,.(ssei=sum(res^2),toti=sum(retsa^2),n=.N),rc6] 
-    x11b <- #kfold 
-      x11[,.(rc6,ssek=sse,n)] 
-    x11c <- #Raw
-      data.table(x2[,.(rc6=substr(rc9,1,6))],res=residuals(x4))%>%
-      .[,.(sser=sum(res^2),n=.N),rc6]
-    x11d <- #tss called ssrt 'sum square total return'
-      x2[,.(rc6=substr(rc9,1,6),retsa)]%>%
-      .[,.(sstr=sum(retsa^2),n=.N),rc6]
+    x11a <- # Inlier
+      data.table(x6d[, .(rc6 = substr(rc9, 1, 6))], res = residuals(x12), retsa = x6d[, retsa]) %>%
+      .[, .(ssei = sum(res^2), toti = sum(retsa^2), n = .N), rc6]
+    x11b <- # kfold
+      x11[, .(rc6, ssek = sse, n)]
+    x11c <- # Raw
+      data.table(x2[, .(rc6 = substr(rc9, 1, 6))], res = residuals(x4)) %>%
+      .[, .(sser = sum(res^2), n = .N), rc6]
+    x11d <- # tss called ssrt 'sum square total return'
+      x2[, .(rc6 = substr(rc9, 1, 6), retsa)] %>%
+      .[, .(sstr = sum(retsa^2), n = .N), rc6]
     x11e <- summary(x12)
-    
-    x11f <- x11e$cov.unscaled*(x11e$sigma^2)*tcrossprod(as.numeric(diff(dfn))) #s.e.^2 of xdot
+    x11f <- x11e$cov.unscaled * (x11e$sigma^2) * tcrossprod(as.numeric(diff(dfn))) # s.e.^2 of xdot
     nn <- length(x12$coefficients)
-    nn1 <- nn-1
-    x11g <- sapply(1:nn, function(i) sum(x11f[i:nn, i:nn])) #s.e.^2 of sum from i to n
-    x11h <- sapply(1:nn1, function(i) sum(x11f[i:nn1, i:nn1]))%>% #s.e.^2 of sum from i to n
-      c(.,0)
-   #but it does not agree with s.e. of coeffs in summary, differs by a factor 2.77 - why?
-    #sqrt(diag(x11e$cov.unscaled*x11e$sigma^2))/x11e$coefficients[,2]
-    
-    x12a <- #combine 4 ss
-      x11a[x11b,on=c(rc6='rc6')][x11c,on=c(rc6='rc6')][x11d,on=c(rc6='rc6')]%>%
-      .[,
+    nn1 <- nn - 1
+    x11g <- sapply(1:nn, function(i) sum(x11f[i:nn, i:nn])) # s.e.^2 of sum from i to n
+    x11h <- sapply(1:nn1, function(i) sum(x11f[i:nn1, i:nn1])) %>% # s.e.^2 of sum from i to n
+      c(., 0)
+    # but it does not agree with s.e. of coeffs in summary, differs by a factor 2.77 - why?
+    # sqrt(diag(x11e$cov.unscaled*x11e$sigma^2))/x11e$coefficients[,2]
+
+    x12a <- # combine 4 ss
+      x11a[x11b, on = c(rc6 = "rc6")][x11c, on = c(rc6 = "rc6")][x11d, on = c(rc6 = "rc6")] %>%
+      .[
+        ,
         .(
           rc6,
-          ssei, #inlier           sum(res^2) on x12
-          toti, #inlier tot       sum(r^2) on x12 input
-          ssek, #inlier kfold 
-          sser, #in/out raw       sum(res^2) on x4
-          sstr, #in/out total     sum(retsa^2)
-          n,    #nsam
-          nx=nxx#,
-          #lab=labx
-          )]
-    x13 <- 
-      x12%>%
-      .[['coefficients']]%>%
+          ssei, # inlier           sum(res^2) on x12
+          toti, # inlier tot       sum(r^2) on x12 input
+          ssek, # inlier kfold
+          sser, # in/out raw       sum(res^2) on x4
+          sstr, # in/out total     sum(retsa^2)
+          n, # nsam
+          nx = nxx # ,
+          # lab=labx
+        )
+      ]
+    x13 <-
+      x12 %>%
+      .[["coefficients"]] %>%
       data.table(
-        xdotd=as.numeric(.),
-        date=as.Date(substr(names(.),2,11)))%>% 
-      .[,days:=as.numeric(diff(c(min(dfn),date)))]%>%
-      .[,xdot:=as.numeric(xdotd*days)]%>%
-      .[,x:=cumsum(xdot)]%>%
-      .[,.(
-        nx=nxx,
+        xdotd = as.numeric(.),
+        date = as.Date(substr(names(.), 2, 11))
+      ) %>%
+      .[, days := as.numeric(diff(c(min(dfn), date)))] %>%
+      .[, xdot := as.numeric(xdotd * days)] %>%
+      .[, x := cumsum(xdot)] %>%
+      .[, .(
+        nx = nxx,
         date,
         xdotd,
         days,
         xdot,
-        xset=sqrt(x11g),
-        xset1=sqrt(x11h),
+        xset = sqrt(x11g), #s.e.(x) to final date
+        xset1 = sqrt(x11h),#s.e.(x) to penultimate
         x,
-        lab=geo[nx==nxx][1,lab])]%>%
-      .[,ii:=1:.N,lab]%>%
-      .[,col:=as.factor(lab)]%>%.[]
-    x13a <-  #this lacks n, add it if needed
-      data.table( #these are totals
-        allsse.insam=sum(residuals(x12)^2), #rss all inlier, single lm
-        allsse.osam=x11[,sum(sse)],         #rss kxv out-sample
-        allsse.raw=sum(residuals(x4)^2),    #rss all in/outlier, single lm
-        allsse.tot=x2[,sum(retsa^2)],       #tss
-        rsqraw=summary(x4)$r.squared, #no outlier rejection, all obs
-        nx=nxx#, #add 250507
-        #lab=labx
+        lab = geo[nx == nxx][1, lab]
+      )] %>%
+      .[, ii := 1:.N, lab] %>%
+      .[, col := as.factor(lab)] %>%
+      .[]
+    x13a <- # this lacks n, add it if needed
+      data.table( # these are totals
+        allsse.insam = sum(residuals(x12)^2), # rss all inlier, single lm
+        allsse.osam = x11[, sum(sse)], # rss kxv out-sample
+        allsse.raw = sum(residuals(x4)^2), # rss all in/outlier, single lm
+        allsse.tot = x2[, sum(retsa^2)], # tss
+        rsqraw = summary(x4)$r.squared, # no outlier rejection, all obs
+        nx = nxx # , #add 250507
+        # lab=labx
       )
     x14 <- list(
-      geo=geo[nx==nxx],
-      estdt=x13, #all obsvns 
-      kfoldsse=x12a, #x11, #kfold sse(rc6)
-      all=x13a #rsq is literally all; alltilesse is single solution i/s sse on all inliers/tiles; sumtilesse is sum of o/s sse on all inliers/tiles
+      geo = geo[nx == nxx],
+      estdt = x13, # all obsvns
+      kfoldsse = x12a, # x11, #kfold sse(rc6)
+      all = x13a # rsq is literally all; alltilesse is single solution i/s sse on all inliers/tiles; sumtilesse is sum of o/s sse on all inliers/tiles
     )
     x14
   }
@@ -3409,7 +3455,7 @@ function(light = FALSE) {
     "#ED9304", # onch
     "#35CA05", # green
     "#0082F4", # blue
-    "#7B2FF7"  # midnight
+    "#7B2FF7"  # midnight  
   )
   light_palette <- c(
     "#FF9FB5", # punk

@@ -14,7 +14,7 @@ D4111x <- #  leaflet : R4111x ----
     x1 <- apol(datS) # polygon
     x2 <- apva(resS) # pva
     x4 <-
-      f240810b( #->leaflet, colours for areas-to-shade in column 'col'; depends global pxosrdo2dd
+      f240810b( #->leaflet, colours for areas-to-shade in column 'col'
         resS$f250618c[grep(rc3tx, rc6), .(col, rc6)],
         x2 = x1, # map polygons
         pva = resS$pva[, .(rcx = rc6, ppm2 = pv / m2)], # for tooltip
@@ -590,38 +590,35 @@ D4211b <- #----------------3 listings: R4211a ----
 
 D4311a <- #--------blobs for rc3/rc6 : R4311x ----
   function(
-      rc6tx = rc6tG,
-      rc6cx = rc6cG,
-      x1 = C4311a(rc6 = rc6tx), # it returns entire rc3  <<<<replace this with a call to generalised (C4311b) which exposes geo,and adapt the idiom:
-      # ageo()[grep(paste0('^C',substr(rc6tx,1,3)),lab)][,.(rc3tpeer=sort(unique(rc6)))]
-      # actually, have C4311b a second function that just returns rc6,locality,ppm2,nid for the exotic peers
-      # then C4311c combines this with C4311a, adding the colors in q0 using the range in C4311a, setting q1,2,3 blank and a logical column 'blobsuppress'
-      # the argument x1 above is defaulted to C4311c() instead of C4311a()
-      cols_to_paint = names(x1)[5:8],
-      shadecol1 = "#D3D3D3", # matches grid
-      shadecolblock = "#D3D3D3", ## EEEEFF nice pale blue
-      symbolsize = ".8em") {
-    x1[, blobsuppress := (substr(rc6, 1, 3) != substr(rc6tx, 1, 3))] # only show for this rc3
-    x1 %>%
-      gt::gt() %>%
-      # ---- q0 with conditional outline ----
-      gt::text_transform(
-        locations = gt::cells_body(columns = "q0"),
-        fn = function(hexvec) {
-          vapply(seq_along(hexvec), function(i) {
-            val <- hexvec[i]
-            row_rc6 <- x1$rc6[i]
-            outline <- if (row_rc6 %in% rc6cx) "border:4px solid black;" else ""
-            paste0(
-              "<div style='display:inline-block; width:", symbolsize,
-              "; height:", symbolsize,
-              "; background-color:", val,
-              "; border-radius:50%; ", outline, "'></div>"
-            )
-          }, character(1))
-        }
-      ) %>%
-      cols_label(
+    rc6tx = rc6tG,
+    rc6cx = rc6cG,
+    x1 = C4311a(rc6=rc6tx), #it returns entire rc3
+    cols_to_paint = names(x1)[5:8],
+    shadecol1 = "#D3D3D3", #matches grid
+    shadecolblock = "#D3D3D3", ##EEEEFF nice pale blue
+    symbolsize = ".8em"
+) {
+x1 %>%
+ gt::gt() %>%
+  
+  # ---- q0 with conditional outline ----
+  gt::text_transform(
+    locations = gt::cells_body(columns = "q0"),
+    fn = function(hexvec) {
+      vapply(seq_along(hexvec), function(i) {
+        val <- hexvec[i]
+        row_rc6 <- x1$rc6[i]
+        outline <- if (row_rc6 %in% rc6cx) "border:4px solid black;" else ""
+        paste0(
+          "<div style='display:inline-block; width:", symbolsize, 
+          "; height:", symbolsize, 
+          "; background-color:", val, 
+          "; border-radius:50%; ", outline, "'></div>"
+        )
+      }, character(1))
+    }
+  ) %>%
+  cols_label(
         rc6 = gt::html("postcode"),
         locality = gt::html("name"),
         ppm2 = gt::html("£/m<sup>2</sup>"),
@@ -633,204 +630,60 @@ D4311a <- #--------blobs for rc3/rc6 : R4311x ----
       ) %>%
       tab_spanner(
         label = gt::html("district"),
-        columns = c(rc6, locality, ppm2, nid)
+        columns = c(rc6,locality,ppm2,nid)
       ) %>%
       tab_spanner(
         label = gt::html("number of £/m<sup>2</sup> bins"),
-        columns = c(q3, q2, q1)
+        columns = c(q3,q2,q1)
       ) %>%
-      cols_move_to_start(
+            cols_move_to_start(
         columns = c("q0")
-      ) %>%
-      cols_move_to_start(
-        columns = c("locality")
-      ) %>%
-      cols_move_to_start(
-        columns = c("rc6")
-      ) %>%
-      cols_move_to_start(
-        columns = c("nid")
-      ) %>%
-      cols_move_to_start(
-        columns = c("ppm2")
-      ) %>%
+      )%>%
       fmt_number(
-        columns = c(ppm2, nid),
+        columns = c(ppm2,nid),
         decimals = 0,
         sep_mark = "," # Thousands separator
-      ) %>%
-      # ---- Other painted columns without outline
-      # #-------------------------------------------prior to adding 'blobsuppress'
-      # gt::text_transform(
-      #   locations = gt::cells_body(columns = setdiff(cols_to_paint, "q0")),
-      #   fn = function(hexvec) {
-      #     vapply(hexvec, function(val) {
-      #       paste0(
-      #         "<div style='display:inline-block; width:", symbolsize,
-      #         "; height:", symbolsize,
-      #         "; background-color:", val,
-      #         "; border-radius:50%;'></div>"
-      #       )
-      #     }, character(1))
-      #   }
-      # ) %>%
-      #------------------------------------------- with blobsuppress
+      )%>%
 
-      gt::text_transform(
-        locations = gt::cells_body(columns = setdiff(cols_to_paint, "q0")),
-        fn = function(hexvec) {
-          vapply(seq_along(hexvec), function(i) {
-            if (x1$blobsuppress[i] == T) {
-              "" # suppress blob
-            } else {
-              val <- hexvec[i]
-              paste0(
-                "<div style='display:inline-block; width:", symbolsize,
-                "; height:", symbolsize,
-                "; background-color:", val,
-                "; border-radius:50%;'></div>"
-              )
-            }
-          }, character(1))
-        }
-      ) %>%
-      cols_hide(columns = blobsuppress) %>%
-      #-------------------------------------------
-      tab_style(
-        style = cell_text(align = "center"),
-        locations = cells_body(columns = c(q1, q2, q3))
-      ) %>%
-      tab_style(
-        style = cell_text(align = "center"),
-        locations = cells_column_labels(columns = c(q1, q2, q3))
-      ) %>%
-      # ---- Optional row highlighting (unchanged)
-      gt::tab_style(
-        style = gt::cell_fill(color = shadecol1),
-        locations = gt::cells_body(
-          rows = x1[, rc6 %in% ageo(areso(rc6tx))[, rc6]],
-          columns = paste0("q", areso(rc6tx)$lab[, substr(lab, 7, 7)])
+  # ---- Other painted columns without outline 
+  gt::text_transform(
+    locations = gt::cells_body(columns = setdiff(cols_to_paint, "q0")),
+    fn = function(hexvec) {
+      vapply(hexvec, function(val) {
+        paste0(
+          "<div style='display:inline-block; width:", symbolsize, 
+          "; height:", symbolsize, 
+          "; background-color:", val, 
+          "; border-radius:50%;'></div>"
         )
-      ) %>%
-      gt::tab_style(
-        style = gt::cell_fill(color = shadecol1),
-        locations = gt::cells_body(rows = rc6 == rc6tx)
-      )
+      }, character(1))
+    }
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(columns = c(q1, q2, q3))
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_column_labels(columns = c(q1, q2, q3))
+  )%>%
+  # ---- Optional row highlighting (unchanged) 
+  gt::tab_style(
+    style = gt::cell_fill(color = shadecol1),
+    locations = gt::cells_body(
+      rows = x1[, rc6 %in% ageo(areso(rc6tx))[, rc6]],
+      columns = paste0('q',areso(rc6tx)$lab[, substr(lab, 7, 7)])
+    )
+  ) %>%
+  gt::tab_style(
+    style = gt::cell_fill(color = shadecol1),
+    locations = gt::cells_body(rows = rc6 == rc6tx)
+  )
 
-    # Highlight other related cells based on areso logic
+  # Highlight other related cells based on areso logic
   }
-# D4311a()
+#D4311a()
 
-
-D4331a <- #------------------blobs for custom ----
-  function(
-      rc6tx = rc6tG,
-      rc6cx = rc6cG,
-      x1 = C4311d(rc6 = rc6tx,rc6cx=rc6cx), # it returns entire rc3  <<<<replace this with a call to generalised (C4311b) which exposes geo,and adapt the idiom:
-      cols_to_paint = 'q0',
-       shadecol1 = "#D3D3D3", # matches grid
-      symbolsize = ".8em") {
-    #browser()
-    x1[, blobsuppress := F] # only show for this rc3
-    x1 %>%
-      .[order(-ppm2)]%>%
-      gt::gt() %>%
-      # ---- q0 with conditional outline ----
-      gt::text_transform(
-        locations = gt::cells_body(columns = "q0"),
-        fn = function(hexvec) {
-          vapply(seq_along(hexvec), function(i) {
-            val <- hexvec[i]
-            row_rc6 <- x1$rc6[i]
-            outline <- "" #if (row_rc6 %in% rc6cx) "border:4px solid black;" else ""
-            paste0(
-              "<div style='display:inline-block; width:", symbolsize,
-              "; height:", symbolsize,
-              "; background-color:", val,
-              "; border-radius:50%; ", outline, "'></div>"
-            )
-          }, character(1))
-        }
-      ) %>%
-      cols_label(
-        rc6 = gt::html("postcode"),
-        locality = gt::html("name"),
-        ppm2 = gt::html("£/m<sup>2</sup>"),
-        nid = gt::html("properties"),
-        q0 = gt::html("")
-      ) %>%
-      tab_spanner(
-        label = gt::html("custom"),
-        columns = c(rc6, locality, ppm2, nid)
-      ) %>%
-      cols_move_to_start(
-        columns = c("q0")
-      ) %>%
-      cols_move_to_start(
-        columns = c("locality")
-      ) %>%
-      cols_move_to_start(
-        columns = c("rc6")
-      ) %>%
-      cols_move_to_start(
-        columns = c("nid")
-      ) %>%
-      cols_move_to_start(
-        columns = c("ppm2")
-      ) %>%
-      fmt_number(
-        columns = c(ppm2, nid),
-        decimals = 0,
-        sep_mark = "," # Thousands separator
-      ) %>%
-      cols_hide(columns = blobsuppress) %>%
-      gt::tab_style(
-        style = gt::cell_fill(color = shadecol1),
-        locations = gt::cells_body(rows = rc6 == rc6tx)
-      )
-  }
-
-D4312a <-  #--------leaflet for rc3  : R4311x ----
-  function(
-    rc6tx=rc6tG,
-    rc6cx=rc6cG,
-    x1=apol(datS), # rc6 polygon
-    x2=apva(resS), # pva
-    x3=C4311c(rc6tx=rc6tx,rc6cx=rc6cx), #rc6 for this rc3, augmented with out of area peers for this rc6t
-    x4=pxosrdo1dd, # rc3 polygon
-    minzoom=9,
-    maxzoom=13
-  ){
-    x5 <- 
-      x4[which(x4@data$name == irregpcode(substr(rc6tx,1,3))),]
-    x6 <- 
-      x1[which(x1@data$name == irregpcode(rc6tx)),]
-    x7 <- 
-      f240810b( #->leaflet, colours for areas-to-shade in column 'col'
-        x3[,.(col=q0,rc6)],
-        x2 = x1, # map polygons
-        pva = resS$pva[, .(rcx = rc6, ppm2 = pv / m2)], # for tooltip
-        minzoom = minzoom,
-        maxzoom = maxzoom
-      )%>%
-      addPolygons( # outline custom districts
-        data = x5,
-        fill = F,
-        color='black',
-        dashArray = "5,5",
-        weight = 1,
-        opacity = 1
-      )%>%
-      addPolygons( # outline custom districts
-        data = x6,
-        fill = F,
-        color='#888888',
-        #dashArray = "5,5",
-        weight = 1,
-        opacity = 1
-      )
-    x7
-  }
 D4321x <-  #-'identifies as' message : R4321x ----
   function(
     statics = "resS",

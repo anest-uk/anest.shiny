@@ -7,6 +7,7 @@ print(paste0("data_dirG : ", data_dirG))
 # gen1
 f241021ad <- readRDS(file = file.path(app_dirG, "data", "f241021ad.rds"))
 f250519ad <- readRDS(file = file.path(app_dirG, "data", "f250519ad.rds"))
+pxosrdo1dd <- readRDS(file = file.path(app_dirG, "data", "pxosrdo1dd.rds"))
 pxosrdo2dd <- readRDS(file = file.path(app_dirG, "data", "pxosrdo2dd.rds"))
 f241229bd <- readRDS(file = file.path(app_dirG, "data", "f241229bd.rds"))
 x101 <- readRDS(file = file.path(app_dirG, "data", "x101.rds")) # date
