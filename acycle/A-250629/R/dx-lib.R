@@ -588,15 +588,15 @@ D4211b <- #----------------3 listings: R4211a ----
   )
 }
 
-D4311a <- #--------blobs for rc3/rc6 : R4311x ----
+DD4111 <- #--------blobs for rc3/rc6 : R4311x ----
   function(
       rc6tx = rc6tG,
       rc6cx = rc6cG,
-      x1 = C4311a(rc6 = rc6tx), # it returns entire rc3  <<<<replace this with a call to generalised (C4311b) which exposes geo,and adapt the idiom:
+      x1 = CC4111(rc6 = rc6tx), # it returns entire rc3  <<<<replace this with a call to generalised (C4311b) which exposes geo,and adapt the idiom:
       # ageo()[grep(paste0('^C',substr(rc6tx,1,3)),lab)][,.(rc3tpeer=sort(unique(rc6)))]
       # actually, have C4311b a second function that just returns rc6,locality,ppm2,nid for the exotic peers
-      # then C4311c combines this with C4311a, adding the colors in q0 using the range in C4311a, setting q1,2,3 blank and a logical column 'blobsuppress'
-      # the argument x1 above is defaulted to C4311c() instead of C4311a()
+      # then CC4112 combines this with CC4111, adding the colors in q0 using the range in CC4111, setting q1,2,3 blank and a logical column 'blobsuppress'
+      # the argument x1 above is defaulted to CC4112() instead of CC4111()
       cols_to_paint = names(x1)[5:8],
       shadecol1 = "#D3D3D3", # matches grid
       shadecolblock = "#D3D3D3", ## EEEEFF nice pale blue
@@ -719,14 +719,14 @@ D4311a <- #--------blobs for rc3/rc6 : R4311x ----
 
     # Highlight other related cells based on areso logic
   }
-# D4311a()
+# DD4111()
 
 
-D4331a <- #------------------blobs for custom ----
+DD4131 <- #------------------blobs for custom ----
   function(
       rc6tx = rc6tG,
       rc6cx = rc6cG,
-      x1 = C4311d(rc6 = rc6tx,rc6cx=rc6cx), # it returns entire rc3  <<<<replace this with a call to generalised (C4311b) which exposes geo,and adapt the idiom:
+      x1 = CC4131(rc6 = rc6tx,rc6cx=rc6cx), # it returns entire rc3  <<<<replace this with a call to generalised (C4311b) which exposes geo,and adapt the idiom:
       cols_to_paint = 'q0',
        shadecol1 = "#D3D3D3", # matches grid
       symbolsize = ".8em") {
@@ -790,13 +790,13 @@ D4331a <- #------------------blobs for custom ----
       )
   }
 
-D4312a <-  #--------leaflet for rc3  : R4311x ----
+DD4112 <-  #--------leaflet for rc3  : R4311x ----
   function(
     rc6tx=rc6tG,
     rc6cx=rc6cG,
     x1=apol(datS), # rc6 polygon
     x2=apva(resS), # pva
-    x3=C4311c(rc6tx=rc6tx,rc6cx=rc6cx), #rc6 for this rc3, augmented with out of area peers for this rc6t
+    x3=CC4112(rc6tx=rc6tx,rc6cx=rc6cx), #rc6 for this rc3, augmented with out of area peers for this rc6t
     x4=pxosrdo1dd, # rc3 polygon
     minzoom=9,
     maxzoom=13
@@ -831,7 +831,7 @@ D4312a <-  #--------leaflet for rc3  : R4311x ----
       )
     x7
   }
-D4321x <-  #-'identifies as' message : R4321x ----
+DD4121 <-  #-'identifies as' message : R4321x ----
   function(
     statics = "resS",
     rc6tx = rc6tG) {
@@ -852,15 +852,15 @@ D4321x <-  #-'identifies as' message : R4321x ----
     ") based on minimisation of out of sample error"
     )
 }
-#D4321x()
+#DD4121()
 
 
 
 
-# D4311a <- #accepts rc3/rc6 
+# DD4111 <- #accepts rc3/rc6 
 #   function(
 #     rc6tx = rc6tG,
-#     x1 = C4311a(rc6=rc6tx), #it returns entire rc3
+#     x1 = CC4111(rc6=rc6tx), #it returns entire rc3
 #     cols_to_paint = names(x1)[5:8],
 #     shadecol1 = "#DDDDFF",
 #     shadecolblock = "#EEEEFF",
@@ -898,5 +898,5 @@ D4321x <-  #-'identifies as' message : R4321x ----
 #     )
 #   # Highlight other related cells based on areso logic
 #   }
-#debugonce(D4311a)
-#D4311a()
+#debugonce(DD4111)
+#DD4111()

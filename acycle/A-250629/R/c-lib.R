@@ -303,7 +303,7 @@ function(
 }
 
 
-C4311a <- #------------all rc6 blobs : D4311a ----
+CC4111 <- #------------all rc6 blobs : D4311a ----
   function(
       statics = "resS",
       rc6tx=rc6tG
@@ -351,13 +351,13 @@ C4311b <- #C4311b: a second function that just returns rc6,locality,ppm2,nid for
       .[,.(rc6,locality,ppm2=pv/m2,nid),nomatch=NULL]
   }
 
-C4311c <- #C4311c combines this with C4311a
+CC4112 <- #CC4112 combines this with CC4111
   function(
     rc6tx=rc6tG,
     rc6cx=rc6cG,
     x0=data.table(rc6=rc6cx),
     #x0=ageo()[grep(paste0('^C',rc6tx),lab)][,.(rc6=sort(unique(rc6)))], #custom peers {rc6}
-    x1=C4311a(rc6tx=rc6tx),
+    x1=CC4111(rc6tx=rc6tx),
     x2=C4311b(rc6tx=rc6tx,x0=x0)[!(rc6%in%x1[,rc6])] #out of area peers
   ) {
     x3 <- x1[,log(range(ppm2))]%>%setNames(.,c('minP','maxP'))
@@ -374,7 +374,7 @@ C4311c <- #C4311c combines this with C4311a
       rbind(x1,.)
   }
 
-C4311d <- #C4311b: a second function that just returns rc6,locality,ppm2,nid for the exotic peers
+CC4131 <- #C4311b: a second function that just returns rc6,locality,ppm2,nid for the exotic peers
   function(
     rc6cx=rc6cG,
     rc6tx=rc6tG,
@@ -382,8 +382,8 @@ C4311d <- #C4311b: a second function that just returns rc6,locality,ppm2,nid for
   ) {
     # x0 <- ageo()[grep(paste0('^C',rc6tx),lab)][,.(rc6=sort(unique(rc6)))]
     #x0 <- data.table(rc6=rc6cG)
-    #C4311c()[x0,on=c(rc6='rc6')]%>%
-    C4311c(rc6cx=rc6cx,rc6tx=rc6tx)%>%
+    #CC4112()[x0,on=c(rc6='rc6')]%>%
+    CC4112(rc6cx=rc6cx,rc6tx=rc6tx)%>%
       .[,.(rc6,locality,ppm2,nid,q0)]
     # resS$f250713a%>%
     #   .[x0,on=c(rc6='rc6')]%>%
@@ -392,7 +392,7 @@ C4311d <- #C4311b: a second function that just returns rc6,locality,ppm2,nid for
   }
 
 #don't like this.... 250718
-# C4311d <- #C4311d: fourth function returns rc6,col for entire rc3 of {exotic peers, rc3t}
+# CC4131 <- #CC4131: fourth function returns rc6,col for entire rc3 of {exotic peers, rc3t}
 #   function(
 #     rc6tx=rc6tG,
 #     statics='resS'
@@ -418,9 +418,9 @@ C4311d <- #C4311b: a second function that just returns rc6,locality,ppm2,nid for
 
 
 
-#C4311d()%>%
+#CC4131()%>%
 # rc6tx <- 'NG-1--'
-#   C4311d(rc6tx)%>%
+#   CC4131(rc6tx)%>%
 #      f240810b( #->leaflet, colours for areas-to-shade in column 'col'
 #         x1=.[,.(col,rc6)],
 #         x2 = apol(datS), # map polygons

@@ -1,14 +1,14 @@
 #-------------------------------------------------4300 constituents
 s4300 <- 
   function(input, output, session, common) {
-  R4311x <- eventReactive( #-4311 local blobs----
+  RR4111 <- eventReactive( #-4311 local blobs----
     list(
       rc6tx = common$rc6tR(),
       rc6cx = common$rc6cR()
       ),
     {
       if (verbose) print("enter R4311a")
-      x <- D4311a(
+      x <- DD4111(
         rc6tx = common$rc6tR(), #control: target
         rc6cx = common$rc6cR()  #control: custom
       )
@@ -16,22 +16,22 @@ s4300 <-
       x
     }
   )
-  R4321x <- eventReactive( #4321 'identifies as' message----
+  RR4121 <- eventReactive( #4321 'identifies as' message----
     list(
       common$geoaR(), 
       rc6tx = common$rc6tR(),
       rc6cx = common$rc6cR()
       ),
     {
-      if (verbose) print("enter R4321x")
-      x <- D4321x(
+      if (verbose) print("enter RR4121")
+      x <- DD4121(
         rc6tx = common$rc6tR()
       )
       G4321 <<- copy(x)
       x
     }
   )
-  R4331x <- eventReactive( #-------4331 custom blobs----
+  RR4131 <- eventReactive( #-------4331 custom blobs----
   list(
     common$geoaR(),
     rc6tx = common$rc6tR(),
@@ -39,7 +39,7 @@ s4300 <-
   ),
   {
     if (verbose) print("enter R4331a")
-    x <- D4331a(
+    x <- DD4131(
       rc6tx = common$rc6tR(), # control: target
       rc6cx = common$rc6cR() # control: custom
     )
@@ -47,14 +47,14 @@ s4300 <-
     x
   }
 )
-  R4312x <- eventReactive( #-------4312 augmented leaflet----
+  RR4112 <- eventReactive( #-------4312 augmented leaflet----
     list(
       common$geoaR(), 
       rc6tx = common$rc6tR()
       ),
     {
-      if (verbose) print("enter R4312x")
-      x <- D4312a(
+      if (verbose) print("enter RR4112")
+      x <- DD4112(
         rc6tx = common$rc6tR() #control: target
       )
       G4312 <<- copy(x)
@@ -78,9 +78,9 @@ s4300 <-
     }
   )
   output$O4300x <-renderUI({ HTML(markdown::renderMarkdown(text = R4300x())) })
-  output$O4311x <-gt::render_gt(R4311x())
-  output$O4321x <- renderUI({ HTML(markdown::renderMarkdown(text = R4321x())) })
-  output$O4331x <-gt::render_gt(R4331x())
-  output$O4312x <-leaflet::renderLeaflet(R4312x()) #constuents #----
+  output$OO4111 <-gt::render_gt(RR4111())
+  output$OO4121 <- renderUI({ HTML(markdown::renderMarkdown(text = RR4121())) })
+  output$OO4131 <-gt::render_gt(RR4131())
+  output$OO4112 <-leaflet::renderLeaflet(RR4112()) #constuents #----
 }
 print("exit s4300")

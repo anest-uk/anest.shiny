@@ -25,43 +25,43 @@ ui4300 <- function(id = NULL) {
     title = "gp4300", #---------.----
     grid_container(
       layout = c(
-        "A4311x        A4312x",
-        "A4331x        ."
+        "AA4411        AA4112",
+        "AA4121        ."
       ),
       row_sizes = c("1fr"),
       col_sizes = c("1fr", "1fr"),
       gap_size = "10px",
       
       grid_card(
-        area = "A4311x",
+        area = "AA4411",
         card_header(
           "Constituent districts"
         ),
         card_body( #-------------- local table 311
-          gt::gt_output("O4311x"),
+          gt::gt_output("OO4111"),
           height = gridheight4,
-          uiOutput("O4321x"), #'identifies as' text
+          uiOutput("OO4121"), #'identifies as' text
           gt::gt_output("O4311b")
         ) # card_body
       ), # grid_card
       
       grid_card(
-        area = "A4331x",
+        area = "AA4121",
         card_header(
           "Custom districts"
         ),
         card_body( #-------------- custom table 
-          gt::gt_output("O4331x")
+          gt::gt_output("OO4131")
         ) # card_body
       ), # grid_card
       
       grid_card(
-        area = "A4312x",
+        area = "AA4112",
         card_header(
           uiOutput("O4300x")
         ),
         card_body( # leaflet
-          leafletOutput("O4312x"),
+          leafletOutput("OO4112"),
           height = gridheight
         ) # card_body
         
