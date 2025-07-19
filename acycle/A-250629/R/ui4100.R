@@ -24,13 +24,25 @@ ui4100 <- function(id = NULL) {
       ),
       gap_size = "10px",
       grid_card(
+        area = "A4211",
+        full_screen = TRUE,
+        card_header(
+          "A4211"
+        ),
+        card_body(
+          gt::gt_output("OO4211"),
+          height = gridheight
+        )
+      ) # gridcard
+      ,      
+      grid_card(
         area = "A4212",
         full_screen = TRUE,
         # card_header(
         #   "."
         # ),
         card_body(
-          leafletOutput("O4211x"),
+          leafletOutput("OO4212"),
           height = gridheight
         )
       ) # gridcard
@@ -42,7 +54,7 @@ ui4100 <- function(id = NULL) {
         #   "."
         # ),
         card_body(
-          plotOutput("O4212x"),
+          plotOutput("OO4222"),
           height = gridheight
         )
       ) # gridcard
@@ -55,11 +67,11 @@ ui4100 <- function(id = NULL) {
             bslib::navset_tab(#navset_tab within grid_card
               nav_panel(
                 title="custom",
-                gt::gt_output("O4221xa")
+                gt::gt_output("OO4221a")
               ),
               nav_panel(
                 title="local",
-                gt::gt_output("O4221xb")
+                gt::gt_output("OO4221b")
               )
             )#navs_tab
           #)#nav_panel
@@ -74,23 +86,12 @@ ui4100 <- function(id = NULL) {
       #   #   "."
       #   # ),
       #   card_body(
-      #     gt::gt_output("O4222x"),
+      #     gt::gt_output("OO4222x"),
       #     height = gridheight
       #   )
       # ) # gridcard
       # ,
-      grid_card(
-        area = "A4211",
-        full_screen = TRUE,
-        card_header(
-          "A4211"
-        ),
-        card_body(
-          gt::gt_output("O4231x"),
-          height = gridheight
-        )
-      ) # gridcard
-      ,
+
       grid_card(
         area = "A4231",
         full_screen = TRUE,
@@ -98,10 +99,10 @@ ui4100 <- function(id = NULL) {
           "A4231"
         ),
         card_body(
-          gt::gt_output("O4232xa"),
-          gt::gt_output("O4232xb"),
-          gt::gt_output("O4232xc"),
-          gt::gt_output("O4232xd"),
+          gt::gt_output("OO4231a"),
+          gt::gt_output("OO4231b"),
+          gt::gt_output("OO4231c"),
+          gt::gt_output("OO4231d"),
           height = gridheight2
         )
       ) # gridcard

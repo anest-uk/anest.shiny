@@ -73,6 +73,7 @@ s4100 <-#-------------------- 4100 timeseries ----
         common$tslideR()
       ),
       {
+        browser()
         x <- DD4231a(
           rescx = common$rescxR(),
           rc6tx = common$rc6tR(),
@@ -100,17 +101,16 @@ s4100 <-#-------------------- 4100 timeseries ----
         x
       }
     )
-
-    output$O4211x <- leaflet::renderLeaflet(RR4211x()) # leaflet ----
-    output$O4212x <- renderPlot(RR4212x()) # ggplot ----
-    output$O4221xa <- gt::render_gt(RR4221x()[[1]]) # wind gt - custom ----
-    output$O4221xb <- gt::render_gt(RR4221x()[[2]]) # wind gt - local ----
-    output$O4222x <- gt::render_gt(RR4222x()) # char gt ----
-    output$O4231x <- gt::render_gt(RR4231x()) # summ gt ----
-    output$O4232xa <- gt::render_gt(RR4232x()[["local"]][[1]]) # local-return ----
-    output$O4232xb <- gt::render_gt(RR4232x()[["local"]][[2]]) # local-number ----
-    output$O4232xc <- gt::render_gt(RR4232x()[["custom"]][[1]]) # custom-return ----
-    output$O4232xd <- gt::render_gt(RR4232x()[["custom"]][[2]]) # custom-number-----
+    output$OO4211 <- gt::render_gt(RR4231x()) # summ gt ----
+    output$OO4212 <- leaflet::renderLeaflet(RR4211x()) # leaflet ----
+    output$OO4221a <- gt::render_gt(RR4221x()[[1]]) # wind gt - custom ----
+    output$OO4221b <- gt::render_gt(RR4221x()[[2]]) # wind gt - local ----
+    output$OO4222 <- renderPlot(RR4212x()) # ggplot ----
+    output$OO4222x <- gt::render_gt(RR4222x()) # char gt ----
+    output$OO4231a <- gt::render_gt(RR4232x()[["local"]][[1]]) # local-return ----
+    output$OO4231b <- gt::render_gt(RR4232x()[["local"]][[2]]) # local-number ----
+    output$OO4231c <- gt::render_gt(RR4232x()[["custom"]][[1]]) # custom-return ----
+    output$OO4231d <- gt::render_gt(RR4232x()[["custom"]][[2]]) # custom-number-----
 
     print("Leaving s4100")
   }
