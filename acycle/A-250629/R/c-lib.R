@@ -34,7 +34,7 @@ Ccus <- #--------------RES for custom : rescxR----
 # Ccus()
 
   
-CC4221c <- # -----------------winding : D4121x ----
+CC4221 <- # -----------------winding : D4121x ----
   function(
       rcx = rc6tG,
       x1 = data.table(BA = aestdt2()$BA)[, ii := .I - 1][,.(date=BA,ii)],
@@ -64,7 +64,7 @@ CC4221c <- # -----------------winding : D4121x ----
       .[]
     x5
   }
-#CC4221c('NG-7--')
+#CC4221('NG-7--')
 
 CC4222a <- # -----------characteristics D4122x ----
   function(
@@ -187,7 +187,7 @@ CC4231x <- #-characteristics and summary : D4131x ----
       .[]
   }
 
-CC4231a <- #------------------summary : D4131a #----
+CC4211 <- #------------------summary : D4131a #----
   function(
     static='resS',
         tslidex = tslideG,
@@ -218,7 +218,7 @@ CC4231a <- #------------------summary : D4131a #----
   }
 
 #gen1
-CC4232a <- #-------- trade summary(2) : D4132x ----
+CC4212 <- #-------- trade summary(2) : D4132x ----
   function(
       geox = geoqG,
       steprip = stepripG,

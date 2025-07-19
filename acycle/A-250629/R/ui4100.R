@@ -1,7 +1,7 @@
 #-------------------------------------------------4100 timeseries
 ui4100 <- function(id = NULL) {
   nav_panel(
-    title = "gp4100", #---------.----
+    title = "gp4100->4200", #---------.----
     grid_container(
       # layout = c(
       #   "A4212    A4222 ",
