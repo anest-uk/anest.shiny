@@ -34,7 +34,7 @@ Ccus <- #--------------RES for custom : rescxR----
 # Ccus()
 
   
-C4121c <- # -----------------winding : D4121x ----
+CC4221c <- # -----------------winding : D4121x ----
   function(
       rcx = rc6tG,
       x1 = data.table(BA = aestdt2()$BA)[, ii := .I - 1][,.(date=BA,ii)],
@@ -64,9 +64,9 @@ C4121c <- # -----------------winding : D4121x ----
       .[]
     x5
   }
-#C4121c('NG-7--')
+#CC4221c('NG-7--')
 
-C4122a <- # -----------characteristics D4122x ----
+CC4222a <- # -----------characteristics D4122x ----
   function(
     rc6tx = rc6tG,
     geocx = ageo(rescxG), 
@@ -99,10 +99,10 @@ C4122a <- # -----------characteristics D4122x ----
     x2%>%
     .[x4, on = c(i.n = "i.n")]%>%
     .[x5, on = c(i.n = "i.n")]%>%
-    C4122b()[.,on=c(i.n='i.n')]
+    CC4222b()[.,on=c(i.n='i.n')]
   x6[order(aggppm2),.(nx,lab,i.n,q2,nrc6.est,nrc6.fit,nid.est,minppm2,maxppm2,aggppm2,col)]
 }
-C4122b <- #----------------labelling : C4122a ----
+CC4222b <- #----------------labelling : CC4222a ----
   function() {
   data.table(
     i = as.character(c(1, 1, 1, 2, 2, 3, 0)), 
@@ -112,8 +112,8 @@ C4122b <- #----------------labelling : C4122a ----
     .[, .(i, n, q2, i.n = paste0(i, ".", n))]
   }
 
-# C4122b()
-# C4122a()
+# CC4222b()
+# CC4222a()
 
 
 #gen1 
@@ -146,7 +146,7 @@ C122 <- # gen1 combine rss and P characteristics ----
     x0
   }
 
-C4131x <- #-characteristics and summary : D4131x ----
+CC4231x <- #-characteristics and summary : D4131x ----
   function(
       static='resS',
       tslidex = tslideG,
@@ -178,7 +178,7 @@ C4131x <- #-characteristics and summary : D4131x ----
       as.data.table(., keep.rownames = T) %>%
       setnames(., c("rn", "min", "mean", "max", "stdev", "skew", "kurtosis")) %>% 
       .[unique(x7[,.(nx,lab)]),on=c(rn='lab')]%>%
-      C4122a(
+      CC4222a(
             rc6tx = rc6tx,
             geocx = ageo(rescxx)
       )[., on = c(nx = "nx")]%>%
@@ -187,7 +187,7 @@ C4131x <- #-characteristics and summary : D4131x ----
       .[]
   }
 
-C4131a <- #------------------summary : D4131a #----
+CC4231a <- #------------------summary : D4131a #----
   function(
     static='resS',
         tslidex = tslideG,
@@ -195,7 +195,7 @@ C4131a <- #------------------summary : D4131a #----
         rescxx = rescxG
   ) {
     x1 <- 
-      C4131x(
+      CC4231x(
         tslidex = tslidex,
         rc6tx = rc6tx,
         rescxx = rescxx
@@ -208,7 +208,7 @@ C4131a <- #------------------summary : D4131a #----
         .[,.(year=substr(date,1,4),xdotd),nx]%>%
         .[,.(xdotan=sum(xdotd),ndays=.N),.(year,nx)]%>%
         .[ndays>=365,.(meanan=mean(xdotan),minan=min(xdotan),maxan=max(xdotan)),nx],#full calendar years
-      aestdt3(nx=C4131x()[,unique(nx)],res=resS)%>% #local
+      aestdt3(nx=CC4231x()[,unique(nx)],res=resS)%>% #local
         .[ii > tslidex] %>%
         .[,.(year=substr(date,1,4),xdotd),nx]%>%
         .[,.(xdotan=sum(xdotd),ndays=.N),.(year,nx)]%>%
@@ -218,7 +218,7 @@ C4131a <- #------------------summary : D4131a #----
   }
 
 #gen1
-C4132a <- #-------- trade summary(2) : D4132x ----
+CC4232a <- #-------- trade summary(2) : D4132x ----
   function(
       geox = geoqG,
       steprip = stepripG,
@@ -250,9 +250,9 @@ C4132a <- #-------- trade summary(2) : D4132x ----
 
 
   if (F) {
-    C4112c()
-    C4112d()
-    C4121a()
+    CC4212c()
+    CC4212d()
+    CC4221a()
   }
 
 

@@ -1,7 +1,7 @@
 #-------------------------------------------------dx-lib disp gen2
 
 #-------------------------------------------------41xx page=1 timeseries----
-D4111x <- #  leaflet : R4111x ----
+DD4211x <- #  leaflet : R4111x ----
   function(
       statics = c("resS", "datS"), #              S static
       rc6tx = rc6tG, # target                     C control 
@@ -37,9 +37,9 @@ D4111x <- #  leaflet : R4111x ----
       )
     x4
   }
-# D4111x()
+# DD4211x()
 
-D4112x <- #-------------- timeseries : R4112x ----
+DD4212x <- #-------------- timeseries : R4112x ----
   function(
       statics = c("resS"), # statics              S static
       rc6tx = rc6tG, #   target                   C control 
@@ -95,9 +95,9 @@ D4112x <- #-------------- timeseries : R4112x ----
       theme_minimal() +
       theme(legend.position = "none")
   }
-# D4112x()
+# DD4212x()
 
-D4121x <- #----------------- winding : R4121x ----
+DD4221x <- #----------------- winding : R4121x ----
   function(
       statics = c("resS"), # statics              S static
       rc6tx = rc6tG, #                            C control r
@@ -108,13 +108,13 @@ D4121x <- #----------------- winding : R4121x ----
       list(
         rescx %>% # cus
           aestdt1(.) %>%
-          C4121c( # wind table
+          CC4221c( # wind table
             rcx = rc6tx,
             x4 = .
           ),
         areso(rc6tx, resS) %>% # loc opt
           aestdt1(.) %>%
-          C4121c( # wind table
+          CC4221c( # wind table
             rcx = rc6tx,
             x4 = .
           )
@@ -130,9 +130,9 @@ D4121x <- #----------------- winding : R4121x ----
     }
     x3
   }
-# D4121x()
+# DD4221x()
 
-D4122x <- #-------------------- char : R4122x ----
+DD4222x <- #-------------------- char : R4122x ----
   function(
       pvax = apva(resS), #                        S static
       rc6tx = rc6tG, #                            C control 
@@ -147,7 +147,7 @@ D4122x <- #-------------------- char : R4122x ----
       .[grep(substr(rc6tx, 1, 3), lab)]
 
     x6a <- #
-      C4122a(
+      CC4222a(
         rc6tx = rc6tx,
         geocx = geocx, # is a georc6
         pvax  = pvax,
@@ -231,10 +231,10 @@ D4122x <- #-------------------- char : R4122x ----
         columns = c("key")
       )
   }
-# debugonce(D4122x)
-# D4122x()
+# debugonce(DD4222x)
+# DD4222x()
 
-# D4131x <- # summ [not used] ----
+# DD4231x <- # summ [not used] ----
 #   function(
 #       static = "resS", # statics                  S static
 #       rescxx = rescxG, #                          R reactive gen2
@@ -242,7 +242,7 @@ D4122x <- #-------------------- char : R4122x ----
 #       tslidex = tslideG #                         C
 #       ) {
 #     x1 <-
-#       C4131x(
+#       CC4231x(
 #         static = "resS",
 #         tslidex = tslidex,
 #         rc6tx = rc6tx,
@@ -306,10 +306,10 @@ D4122x <- #-------------------- char : R4122x ----
 #         columns = c("key")
 #       )
 #   }
-# D4131x()
+# DD4231x()
 
 
-D4131a <- #-------------------- summ : R4131x ----
+DD4231a <- #-------------------- summ : R4131x ----
   function(
       static = "resS", # statics                  S static
       rescxx = rescxG, #                          R reactive gen2
@@ -318,7 +318,7 @@ D4131a <- #-------------------- summ : R4131x ----
       ) {
     roundx=-2
     x1 <-
-      C4131a(
+      CC4231a(
         static = "resS",
         tslidex = tslidex,
         rc6tx = rc6tx,
@@ -385,7 +385,7 @@ D4131a <- #-------------------- summ : R4131x ----
       cols_move_to_start( columns = c("key"))
   }
 
-D4132x <- #------------------- trade : R4132x ----
+DD4232x <- #------------------- trade : R4132x ----
   function(
       static = "resS", # statics                  S static
       rc6tx = rc6tG, #                            C control rc6tG rc6cG tslideG
@@ -396,14 +396,14 @@ D4132x <- #------------------- trade : R4132x ----
     x1[[1]] <-
       areso(rc6tx) %>% # opt loc
       ageo(.) %>% # geo
-      C4132a(
+      CC4232a(
         geo = .,
         tmin = tslidex
       ) %>%
       setNames(., c("return", "count"))
     x1[[2]] <-
       ageo(rescxx) %>%
-      C4132a(
+      CC4232a(
         geo = .,
         tmin = tslidex
       ) %>%
@@ -451,7 +451,7 @@ D4132x <- #------------------- trade : R4132x ----
       )
     x2
   }
-# D4132x()
+# DD4232x()
 
 #-------------------------------------------------42xx page=2 listing----
 D4211a <- #summary utility called in all 3 listings ----

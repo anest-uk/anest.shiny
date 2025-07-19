@@ -2,14 +2,14 @@
 s4100 <-#-------------------- 4100 timeseries ----
   function(input, output, session, common) {
     
-    R4111x <- eventReactive( # -- 4111 leaflet----
+    RR4211x <- eventReactive( # -- 4111 leaflet----
       list(
         common$rc6tR(), # C
         common$rc6cR() # C
       ),
       {
-        print("enter R4111x")
-        x <- D4111x(
+        print("enter RR4211x")
+        x <- DD4211x(
           rc6tx = common$rc6tR(), # target
           rc6cx = common$rc6cR()  # custom
         )
@@ -18,7 +18,7 @@ s4100 <-#-------------------- 4100 timeseries ----
       }
     )
 
-    R4112x <- eventReactive( #--- 4112 ggplot ----
+    RR4212x <- eventReactive( #--- 4112 ggplot ----
       list(
         common$rc6tR(), # C
         common$rescxR(), # U
@@ -26,7 +26,7 @@ s4100 <-#-------------------- 4100 timeseries ----
       ),
       {
         x <-
-          D4112x(
+          DD4212x(
             rc6tx = common$rc6tR(),
             rescxx = common$rescxR(),
             tslidex = common$tslideR()
@@ -36,13 +36,13 @@ s4100 <-#-------------------- 4100 timeseries ----
       }
     )
 
-    R4121x <- eventReactive( #-- 4121 winding ----
+    RR4221x <- eventReactive( #-- 4121 winding ----
       list(
         common$rc6tR(),
         common$rescxR()
       ),
       {
-        x <- D4121x(
+        x <- DD4221x(
           rc6tx = common$rc6tR(),
           rescx = common$rescxR()
         )
@@ -51,13 +51,13 @@ s4100 <-#-------------------- 4100 timeseries ----
       }
     )
 
-    R4122x <- eventReactive( #---- 4122 trade ----
+    RR4222x <- eventReactive( #---- 4122 trade ----
       list(
         common$rc6tR(),
         rescxx = common$rescxR()
       ),
       {
-        x <- D4122x(
+        x <- DD4222x(
           rc6tx = common$rc6tR(),
           rescxx = common$rescxR()
         )
@@ -66,14 +66,14 @@ s4100 <-#-------------------- 4100 timeseries ----
       }
     )
 
-    R4131x <- eventReactive( #-- 4131 summary ----
+    RR4231x <- eventReactive( #-- 4131 summary ----
       list(
         common$rescxR(),
         common$rc6tR(),
         common$tslideR()
       ),
       {
-        x <- D4131a(
+        x <- DD4231a(
           rescx = common$rescxR(),
           rc6tx = common$rc6tR(),
           tslidex = common$tslideR()
@@ -83,7 +83,7 @@ s4100 <-#-------------------- 4100 timeseries ----
       }
     )
 
-    R4132x <- eventReactive( #----- 132 trade ----
+    RR4232x <- eventReactive( #----- 132 trade ----
       list(
         common$rescxR(),
         common$rc6tR(),
@@ -91,7 +91,7 @@ s4100 <-#-------------------- 4100 timeseries ----
       ),
       {
         x <- #list local/custom return/number
-          D4132x(
+          DD4232x(
           rescxx = common$rescxR(),
           rc6tx = common$rc6tR(),
           tslidex = common$tslideR()
@@ -101,16 +101,16 @@ s4100 <-#-------------------- 4100 timeseries ----
       }
     )
 
-    output$O4111x <- leaflet::renderLeaflet(R4111x()) # leaflet ----
-    output$O4112x <- renderPlot(R4112x()) # ggplot ----
-    output$O4121xa <- gt::render_gt(R4121x()[[1]]) # wind gt - custom ----
-    output$O4121xb <- gt::render_gt(R4121x()[[2]]) # wind gt - local ----
-    output$O4122x <- gt::render_gt(R4122x()) # char gt ----
-    output$O4131x <- gt::render_gt(R4131x()) # summ gt ----
-    output$O4132xa <- gt::render_gt(R4132x()[["local"]][[1]]) # local-return ----
-    output$O4132xb <- gt::render_gt(R4132x()[["local"]][[2]]) # local-number ----
-    output$O4132xc <- gt::render_gt(R4132x()[["custom"]][[1]]) # custom-return ----
-    output$O4132xd <- gt::render_gt(R4132x()[["custom"]][[2]]) # custom-number-----
+    output$O4211x <- leaflet::renderLeaflet(RR4211x()) # leaflet ----
+    output$O4212x <- renderPlot(RR4212x()) # ggplot ----
+    output$O4221xa <- gt::render_gt(RR4221x()[[1]]) # wind gt - custom ----
+    output$O4221xb <- gt::render_gt(RR4221x()[[2]]) # wind gt - local ----
+    output$O4222x <- gt::render_gt(RR4222x()) # char gt ----
+    output$O4231x <- gt::render_gt(RR4231x()) # summ gt ----
+    output$O4232xa <- gt::render_gt(RR4232x()[["local"]][[1]]) # local-return ----
+    output$O4232xb <- gt::render_gt(RR4232x()[["local"]][[2]]) # local-number ----
+    output$O4232xc <- gt::render_gt(RR4232x()[["custom"]][[1]]) # custom-return ----
+    output$O4232xd <- gt::render_gt(RR4232x()[["custom"]][[2]]) # custom-number-----
 
     print("Leaving s4100")
   }
