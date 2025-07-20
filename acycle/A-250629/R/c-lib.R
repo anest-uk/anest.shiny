@@ -31,7 +31,6 @@ Ccus <- #--------------RES for custom : rescxR----
     vres(x1)
     x1
   }
-# Ccus()
 
   
 CC4221 <- # -----------------winding : D4121x ----
@@ -39,7 +38,6 @@ CC4221 <- # -----------------winding : D4121x ----
       rcx = rc6tG,
       x1 = data.table(BA = aestdt2()$BA)[, ii := .I - 1][,.(date=BA,ii)],
       x4 = aestdt1(areso(rcx=rcx))
-      #x4=aestdt1(resS$rsi[resS$f250618b[rc6tx == rc6, .(nx)], on = c(nx = "nx")])
       ) {
     x2 <- # daily
       seq.Date(from = x1[1, date], to = x1[.N, date], by = "d")
@@ -64,7 +62,6 @@ CC4221 <- # -----------------winding : D4121x ----
       .[]
     x5
   }
-#CC4221('NG-7--')
 
 CC4222a <- # -----------characteristics D4122x ----
   function(
@@ -111,10 +108,6 @@ CC4222b <- #----------------labelling : CC4222a ----
     )%>%
     .[, .(i, n, q2, i.n = paste0(i, ".", n))]
   }
-
-# CC4222b()
-# CC4222a()
-
 
 #gen1 
 C122 <- # gen1 combine rss and P characteristics ----  
@@ -217,7 +210,6 @@ CC4211 <- #------------------summary : D4131a #----
     x1[x2,on=c(nx='nx')][order(-aggppm2)]
   }
 
-#gen1
 CC4212 <- #-------- trade summary(2) : D4132x ----
   function(
       geox = geoqG,
@@ -247,14 +239,6 @@ CC4212 <- #-------- trade summary(2) : D4132x ----
     x3 <- list(x1, x2)
     x3
   }
-
-
-  if (F) {
-    CC4212c()
-    CC4212d()
-    CC4221a()
-  }
-
 
 C4211a <- #-----summary all listings : D4211a ----
 function(
@@ -302,7 +286,6 @@ function(
   x2
 }
 
-
 CC4111 <- #------------all rc6 blobs : D4311a ----
   function(
       statics = "resS",
@@ -337,14 +320,12 @@ CC4111 <- #------------all rc6 blobs : D4311a ----
     x4[,.(rc6,locality,ppm2,nid,q0,q3,q2,q1),with=T]
   }
 
-C4311b <- #C4311b: a second function that just returns rc6,locality,ppm2,nid for the exotic peers
+C4311b <- #C4311b: returns rc6,locality,ppm2,nid for the exotic peers----
   function(
     rc6tx=rc6tG,
     x0=ageo()[grep(paste0('^C',rc6tx),lab)][,.(rc6=sort(unique(rc6)))], #dt of peers {rc6}
     statics='resS'
   ) {
-    #x0 <- ageo()[grep(paste0('^C',substr(rc6tx,1,3)),lab)][,.(rc6=sort(unique(rc6)))]
-    
     resS$f250713a%>%
       .[x0,on=c(rc6='rc6')]%>%
       .[resS$pva,on=c(rc6='rc6'),nomatch=NULL]%>%
@@ -356,7 +337,6 @@ CC4112 <- #CC4112 combines this with CC4111
     rc6tx=rc6tG,
     rc6cx=rc6cG,
     x0=data.table(rc6=rc6cx),
-    #x0=ageo()[grep(paste0('^C',rc6tx),lab)][,.(rc6=sort(unique(rc6)))], #custom peers {rc6}
     x1=CC4111(rc6tx=rc6tx),
     x2=C4311b(rc6tx=rc6tx,x0=x0)[!(rc6%in%x1[,rc6])] #out of area peers
   ) {
@@ -380,49 +360,7 @@ CC4131 <- #C4311b: a second function that just returns rc6,locality,ppm2,nid for
     rc6tx=rc6tG,
     statics='resS'
   ) {
-    # x0 <- ageo()[grep(paste0('^C',rc6tx),lab)][,.(rc6=sort(unique(rc6)))]
-    #x0 <- data.table(rc6=rc6cG)
-    #CC4112()[x0,on=c(rc6='rc6')]%>%
     CC4112(rc6cx=rc6cx,rc6tx=rc6tx)%>%
       .[,.(rc6,locality,ppm2,nid,q0)]
-    # resS$f250713a%>%
-    #   .[x0,on=c(rc6='rc6')]%>%
-    #   .[resS$pva,on=c(rc6='rc6'),nomatch=NULL]%>%
-    #   .[,.(rc6,locality,ppm2=pv/m2,nid),nomatch=NULL]
   }
 
-#don't like this.... 250718
-# CC4131 <- #CC4131: fourth function returns rc6,col for entire rc3 of {exotic peers, rc3t}
-#   function(
-#     rc6tx=rc6tG,
-#     statics='resS'
-#   ) {
-#     x0 <- #{rc6} : all rc6 which are peers of any rc6 in rc3t
-#       ageo()
-#     x1 <- #rc3 referenced in custom
-#       x0[grep(paste0('^C',substr(rc6tx,1,3)),lab)][,.(rc3=sort(unique(substr(rc6,1,3))))]
-#     x2 <- #all rc6 
-#       x0[,.(rc6,rc3=substr(rc6,1,3))]%>%
-#       unique(.)%>%
-#       .[x1,on=c(rc3='rc3')]%>%
-#       resS$pva[.,on=c(rc6='rc6')]%>%
-#       .[,.(rc6,rc3,P=log(pv/m2))]
-#     x3 <- #all rc6 this rc3
-#       x2[rc3==substr(rc6tx,1,3)]%>%
-#       .[,range(P)]
-#     x4 <- #rc6, col
-#       x2[,col:=color_price(P,x3[1],x3[2])]%>%
-#       .[,.(rc6,col)]
-#     x4
-#   }
-
-
-
-#CC4131()%>%
-# rc6tx <- 'NG-1--'
-#   CC4131(rc6tx)%>%
-#      f240810b( #->leaflet, colours for areas-to-shade in column 'col'
-#         x1=.[,.(col,rc6)],
-#         x2 = apol(datS), # map polygons
-#         pva = resS$pva[, .(rcx = rc6tx, ppm2 = pv / m2)] # for tooltip
-#      )

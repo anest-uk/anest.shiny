@@ -37,7 +37,6 @@ DD4212 <- #  leaflet : R4111x ----
       )
     x4
   }
-# DD4212()
 
 DD4222 <- #-------------- timeseries : R4112x ----
   function(
@@ -95,7 +94,6 @@ DD4222 <- #-------------- timeseries : R4112x ----
       theme_minimal() +
       theme(legend.position = "none")
   }
-# DD4222()
 
 DD4221 <- #----------------- winding : R4121x ----
   function(
@@ -130,7 +128,6 @@ DD4221 <- #----------------- winding : R4121x ----
     }
     x3
   }
-# DD4221()
 
 DD4222x <- #-------------------- char : R4122x ----
   function(
@@ -231,82 +228,6 @@ DD4222x <- #-------------------- char : R4122x ----
         columns = c("key")
       )
   }
-# debugonce(DD4222x)
-# DD4222x()
-
-# DD4231x <- # summ [not used] ----
-#   function(
-#       static = "resS", # statics                  S static
-#       rescxx = rescxG, #                          R reactive gen2
-#       rc6tx = rc6tG, #                            C control
-#       tslidex = tslideG #                         C
-#       ) {
-#     x1 <-
-#       CC4231x(
-#         static = "resS",
-#         tslidex = tslidex,
-#         rc6tx = rc6tx,
-#         rescxx = rescxx
-#       ) %>%
-#       .[order(-aggppm2), .(q1 = gsub("\\.", " of ", i.n), q2, col, agg = round(aggppm2, -2), min, mean, tot, pa, max, stdev, skew, kurtosis, key = "\u2589")] %>%
-#       .[q2 == "custom", q1 := ""]
-#     x1 %>%
-#       gt::gt(.) %>%
-#       cols_label(
-#         q1 = gt::html("rank"),
-#         q2 = gt::html("segment"),
-#         col = gt::html(""),
-#         min = gt::html("min"),
-#         mean = gt::html("mean"),
-#         tot = gt::html("total"),
-#         pa = gt::html("p.a."),
-#         max = gt::html("max"),
-#         stdev = gt::html("volatility"),
-#         skew = gt::html("skew"),
-#         kurtosis = gt::html("kurtosis"),
-#         agg = gt::html("£/m<sup>2</sup>"),
-#         key = gt::html(""),
-#       ) %>%
-#       fmt_number(
-#         columns = agg,
-#         decimals = 0,
-#         sep_mark = "," # Thousands separator
-#       ) %>%
-#       fmt_number(
-#         columns = c("skew", "kurtosis"),
-#         decimals = 2,
-#         sep_mark = "," # Thousands separator
-#       ) %>%
-#       tab_spanner(
-#         label = gt::html(aestdt2(resS)$BA %>% .[c(tslidex + 1, length(.))] %>% paste0(., collapse = " - ") %>% paste0("log returns : ", .)),
-#         columns = c(min, mean, tot, pa, max, stdev, skew, kurtosis)
-#       ) %>%
-#       tab_spanner(
-#         label = gt::html("quantiles"),
-#         columns = c(q1, q2)
-#       ) %>%
-#       text_transform(
-#         locations = cells_body(columns = key),
-#         fn = function(codes) {
-#           purrr::imap_chr(codes, function(code, i) {
-#             colval <- x1[i, col]
-#             is_target <- (x1[i, q2 == "custom"]) # <- change this condition as needed
-#             outline <- if (is_target) "border:4px solid black;" else ""
-#             paste0(
-#               "<div style='display:inline-block; width:1em; height:1em; background-color:", colval, "; ",
-#               outline, "'></div>"
-#             )
-#           }) %>%
-#             purrr::map(htmltools::HTML)
-#         }
-#       ) %>%
-#       cols_hide(columns = col) %>%
-#       cols_label(key = "") %>%
-#       cols_move_to_start(
-#         columns = c("key")
-#       )
-#   }
-# DD4231x()
 
 
 DD4211 <- #-------------------- summ : R4131x ----
@@ -344,11 +265,9 @@ DD4211 <- #-------------------- summ : R4131x ----
       fmt_number(
         columns = c(aggppm2,minppm2,maxppm2),
         decimals = 0,
-        #n_sigfig=3,
         sep_mark = "," # Thousands separator
       )%>%
       fmt_number(
-        #scale_by=100,
         columns = c(minan,meanan,maxan),
         decimals = 3
       ) %>%
@@ -451,7 +370,6 @@ DD4231 <- #------------------- trade : R4132x ----
       )
     x2
   }
-# DD4231()
 
 #-------------------------------------------------42xx page=2 listing----
 D4211a <- #summary utility called in all 3 listings ----
@@ -593,10 +511,6 @@ DD4111 <- #--------blobs for rc3/rc6 : R4311x ----
       rc6tx = rc6tG,
       rc6cx = rc6cG,
       x1 = CC4111(rc6 = rc6tx), # it returns entire rc3  <<<<replace this with a call to generalised (C4311b) which exposes geo,and adapt the idiom:
-      # ageo()[grep(paste0('^C',substr(rc6tx,1,3)),lab)][,.(rc3tpeer=sort(unique(rc6)))]
-      # actually, have C4311b a second function that just returns rc6,locality,ppm2,nid for the exotic peers
-      # then CC4112 combines this with CC4111, adding the colors in q0 using the range in CC4111, setting q1,2,3 blank and a logical column 'blobsuppress'
-      # the argument x1 above is defaulted to CC4112() instead of CC4111()
       cols_to_paint = names(x1)[5:8],
       shadecol1 = "#D3D3D3", # matches grid
       shadecolblock = "#D3D3D3", ## EEEEFF nice pale blue
@@ -604,7 +518,6 @@ DD4111 <- #--------blobs for rc3/rc6 : R4311x ----
     x1[, blobsuppress := (substr(rc6, 1, 3) != substr(rc6tx, 1, 3))] # only show for this rc3
     x1 %>%
       gt::gt() %>%
-      # ---- q0 with conditional outline ----
       gt::text_transform(
         locations = gt::cells_body(columns = "q0"),
         fn = function(hexvec) {
@@ -659,23 +572,6 @@ DD4111 <- #--------blobs for rc3/rc6 : R4311x ----
         decimals = 0,
         sep_mark = "," # Thousands separator
       ) %>%
-      # ---- Other painted columns without outline
-      # #-------------------------------------------prior to adding 'blobsuppress'
-      # gt::text_transform(
-      #   locations = gt::cells_body(columns = setdiff(cols_to_paint, "q0")),
-      #   fn = function(hexvec) {
-      #     vapply(hexvec, function(val) {
-      #       paste0(
-      #         "<div style='display:inline-block; width:", symbolsize,
-      #         "; height:", symbolsize,
-      #         "; background-color:", val,
-      #         "; border-radius:50%;'></div>"
-      #       )
-      #     }, character(1))
-      #   }
-      # ) %>%
-      #------------------------------------------- with blobsuppress
-
       gt::text_transform(
         locations = gt::cells_body(columns = setdiff(cols_to_paint, "q0")),
         fn = function(hexvec) {
@@ -716,10 +612,7 @@ DD4111 <- #--------blobs for rc3/rc6 : R4311x ----
         style = gt::cell_fill(color = shadecol1),
         locations = gt::cells_body(rows = rc6 == rc6tx)
       )
-
-    # Highlight other related cells based on areso logic
   }
-# DD4111()
 
 
 DD4131 <- #------------------blobs for custom ----
@@ -730,7 +623,6 @@ DD4131 <- #------------------blobs for custom ----
       cols_to_paint = 'q0',
        shadecol1 = "#D3D3D3", # matches grid
       symbolsize = ".8em") {
-    #browser()
     x1[, blobsuppress := F] # only show for this rc3
     x1 %>%
       .[order(-ppm2)]%>%
@@ -825,12 +717,12 @@ DD4112 <-  #--------leaflet for rc3  : R4311x ----
         data = x6,
         fill = F,
         color='#888888',
-        #dashArray = "5,5",
         weight = 1,
         opacity = 1
       )
     x7
   }
+
 DD4121 <-  #-'identifies as' message : R4321x ----
   function(
     statics = "resS",
@@ -852,51 +744,3 @@ DD4121 <-  #-'identifies as' message : R4321x ----
     ") based on minimisation of out of sample error"
     )
 }
-#DD4121()
-
-
-
-
-# DD4111 <- #accepts rc3/rc6 
-#   function(
-#     rc6tx = rc6tG,
-#     x1 = CC4111(rc6=rc6tx), #it returns entire rc3
-#     cols_to_paint = names(x1)[5:8],
-#     shadecol1 = "#DDDDFF",
-#     shadecolblock = "#EEEEFF",
-#     symbolsize = ".8em"
-# ) {
-#   x1 %>%
-#     gt::gt() %>%
-#     # Show colored disks in specified columns
-#     gt::text_transform(
-#   locations = gt::cells_body(columns = all_of(cols_to_paint)),
-#   fn = function(hexvec) {
-#     vapply(hexvec, function(val) {
-#       paste0(
-#         "<div style='display:inline-block; width:", symbolsize, 
-#         "; height:", symbolsize, 
-#         "; background-color:", val, 
-#         "; border-radius:50%;'></div>"
-#       )
-#     }, character(1))
-#   }
-#     )%>%
-#     # Highlight selected row by rc6 value
-#     gt::tab_style(
-#       style = gt::cell_fill(color = shadecol1),
-#       locations = gt::cells_body(
-#         rows = x1[, rc6 %in% ageo(areso(rc6tx))[, rc6]],
-#         columns = paste0('q',areso(rc6tx)$lab[, substr(lab, 7, 7)])
-#       )
-#     ) %>%
-#     gt::tab_style(
-#       style = gt::cell_fill(color = shadecol1),
-#       locations = gt::cells_body(
-#         rows = rc6 == rc6tx
-#       )
-#     )
-#   # Highlight other related cells based on areso logic
-#   }
-#debugonce(DD4111)
-#DD4111()

@@ -1,7 +1,5 @@
-
-s4200 <-#-------------------- 4100 timeseries ----
+s4200 <- #-------------------- 4100 timeseries ----
   function(input, output, session, common) {
-    
     RR4212 <- eventReactive( # -- 4111 leaflet----
       list(
         common$rc6tR(), # C
@@ -11,7 +9,7 @@ s4200 <-#-------------------- 4100 timeseries ----
         print("enter RR4212")
         x <- DD4212(
           rc6tx = common$rc6tR(), # target
-          rc6cx = common$rc6cR()  # custom
+          rc6cx = common$rc6cR() # custom
         )
         G4111x <<- copy(x)
         x
@@ -90,12 +88,12 @@ s4200 <-#-------------------- 4100 timeseries ----
         common$tslideR()
       ),
       {
-        x <- #list local/custom return/number
+        x <- # list local/custom return/number
           DD4231(
-          rescxx = common$rescxR(),
-          rc6tx = common$rc6tR(),
-          tslidex = common$tslideR()
-        )
+            rescxx = common$rescxR(),
+            rc6tx = common$rc6tR(),
+            tslidex = common$tslideR()
+          )
         G4132x <<- copy(x)
         x
       }
@@ -110,6 +108,5 @@ s4200 <-#-------------------- 4100 timeseries ----
     output$OO4231b <- gt::render_gt(RR4231()[["local"]][[2]]) # local-number ----
     output$OO4231c <- gt::render_gt(RR4231()[["custom"]][[1]]) # custom-return ----
     output$OO4231d <- gt::render_gt(RR4231()[["custom"]][[2]]) # custom-number-----
-
-    print("Leaving s4100")
+    print("Leaving s4200")
   }
