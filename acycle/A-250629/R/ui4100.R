@@ -1,111 +1,72 @@
-#-------------------------------------------------4100 timeseries
-ui4100 <- function(id = NULL) {
-  nav_panel(
-    title = "gp4100->4200", #---------.----
-    grid_container(
-      # layout = c(
-      #   "A4212    A4222 ",
-      #   "A4221    A4222x ",
-      #   "A4211    A4231 "
-      # ),
-      layout = c(
-        "A4211    A4212 ",
-        "A4221    A4222 ",
-        "A4231    . "
-      ),
-      row_sizes = c(
-        "1fr",
-        "1fr",
-        "1fr"
-      ),
-      col_sizes = c(
-        "1fr",
-        "1fr"
-      ),
-      gap_size = "10px",
-      grid_card(
-        area = "A4211",
-        full_screen = TRUE,
-        card_header(
-          "A4211"
-        ),
-        card_body(
-          gt::gt_output("OO4211"),
-          height = gridheight
-        )
-      ) # gridcard
-      ,      
-      grid_card(
-        area = "A4212",
-        full_screen = TRUE,
-        # card_header(
-        #   "."
-        # ),
-        card_body(
-          leafletOutput("OO4212"),
-          height = gridheight
-        )
-      ) # gridcard
-      ,
-      grid_card(
-        area = "A4222",
-        full_screen = TRUE,
-        # card_header(
-        #   "."
-        # ),
-        card_body(
-          plotOutput("OO4222"),
-          height = gridheight
-        )
-      ) # gridcard
-      ,
-      grid_card(
-        area = "A4221",
-        full_screen = TRUE,
-        card_body(
-          id = "table_tabs",
-            bslib::navset_tab(#navset_tab within grid_card
-              nav_panel(
-                title="custom",
-                gt::gt_output("OO4221a")
-              ),
-              nav_panel(
-                title="local",
-                gt::gt_output("OO4221b")
-              )
-            )#navs_tab
-          #)#nav_panel
-        ),#card_body
-        height = gridheight
-      )#gridcard
-      ,
-      # grid_card(
-      #   area = "A4222x",
-      #   full_screen = TRUE,
-      #   # card_header(
-      #   #   "."
-      #   # ),
-      #   card_body(
-      #     gt::gt_output("OO4222x"),
-      #     height = gridheight
-      #   )
-      # ) # gridcard
-      # ,
+# ui4300 <- function(id = NULL) {
+#   nav_panel(
+#      title = "gp4300",
+#     grid_container(
+#       layout = c("A ."),
+#       col_sizes = c("1fr", "1fr"),
+#       row_sizes = c("1fr"),
+#       gap_size = "10px",
+#       grid_card(
+#         area = "A",
+#         card_header("Test"),
+#         card_body(
+#           p("Hi")  # ✅ wrap the string
+#         )
+#       )
+#     )
+#   )
+# }
 
+# helloworld
+
+ui4100 <- function(id = NULL) {
+  print('enter ui4300')
+  nav_panel(
+    title = "4100", #---------.----
+    grid_container(
+      layout = c(
+        "AA4411        AA4112",
+        "AA4121        ."
+      ),
+      row_sizes = c("1fr"),
+      col_sizes = c("1fr", "1fr"),
+      gap_size = "10px",
+      
       grid_card(
-        area = "A4231",
-        full_screen = TRUE,
+        area = "AA4411",
         card_header(
-          "A4231"
+          "Constituent districts"
         ),
-        card_body(
-          gt::gt_output("OO4231a"),
-          gt::gt_output("OO4231b"),
-          gt::gt_output("OO4231c"),
-          gt::gt_output("OO4231d"),
-          height = gridheight2
-        )
-      ) # gridcard
+        card_body( #-------------- local table 311
+          gt::gt_output("OO4111"),
+          height = gridheight4,
+          uiOutput("OO4121"), #'identifies as' text
+          gt::gt_output("O4311b")
+        ) # card_body
+      ), # grid_card
+      
+      grid_card(
+        area = "AA4121",
+        card_header(
+          "Custom districts"
+        ),
+        card_body( #-------------- custom table 
+          gt::gt_output("OO4131")
+        ) # card_body
+      ), # grid_card
+      
+      grid_card(
+        area = "AA4112",
+        card_header(
+          uiOutput("O4300x")
+        ),
+        card_body( # leaflet
+          leafletOutput("OO4112"),
+          height = gridheight
+        ) # card_body
+        
+      ) # card
+      
     ) # gridcontainer
   ) # navpanel
 }

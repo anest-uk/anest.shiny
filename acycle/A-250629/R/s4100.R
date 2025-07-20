@@ -1,115 +1,86 @@
-
-s4100 <-#-------------------- 4100 timeseries ----
+#-------------------------------------------------4300 constituents
+s4100 <- 
   function(input, output, session, common) {
-    
-    RR4212 <- eventReactive( # -- 4111 leaflet----
-      list(
-        common$rc6tR(), # C
-        common$rc6cR() # C
+  RR4111 <- eventReactive( #-4311 local blobs----
+    list(
+      rc6tx = common$rc6tR(),
+      rc6cx = common$rc6cR()
       ),
-      {
-        print("enter RR4212")
-        x <- DD4212(
-          rc6tx = common$rc6tR(), # target
-          rc6cx = common$rc6cR()  # custom
-        )
-        G4111x <<- copy(x)
-        x
-      }
-    )
-
-    RR4222 <- eventReactive( #--- 4112 ggplot ----
-      list(
-        common$rc6tR(), # C
-        common$rescxR(), # U
-        common$tslideR() # C
+    {
+      if (verbose) print("enter R4311a")
+      x <- DD4111(
+        rc6tx = common$rc6tR(), #control: target
+        rc6cx = common$rc6cR()  #control: custom
+      )
+      G4311 <<- copy(x)
+      x
+    }
+  )
+  RR4121 <- eventReactive( #4321 'identifies as' message----
+    list(
+      common$geoaR(), 
+      rc6tx = common$rc6tR(),
+      rc6cx = common$rc6cR()
       ),
-      {
-        x <-
-          DD4222(
-            rc6tx = common$rc6tR(),
-            rescxx = common$rescxR(),
-            tslidex = common$tslideR()
-          )
-        G4112x <<- copy(x)
-        x
-      }
+    {
+      if (verbose) print("enter RR4121")
+      x <- DD4121(
+        rc6tx = common$rc6tR()
+      )
+      G4321 <<- copy(x)
+      x
+    }
+  )
+  RR4131 <- eventReactive( #-------4331 custom blobs----
+  list(
+    common$geoaR(),
+    rc6tx = common$rc6tR(),
+    rc6cx = common$rc6cR()
+  ),
+  {
+    if (verbose) print("enter R4331a")
+    x <- DD4131(
+      rc6tx = common$rc6tR(), # control: target
+      rc6cx = common$rc6cR() # control: custom
     )
-
-    RR4221 <- eventReactive( #-- 4121 winding ----
-      list(
-        common$rc6tR(),
-        common$rescxR()
-      ),
-      {
-        x <- DD4221(
-          rc6tx = common$rc6tR(),
-          rescx = common$rescxR()
-        )
-        G4121x <<- copy(x)
-        x
-      }
-    )
-
-    RR4222x <- eventReactive( #---- 4122 trade ----
-      list(
-        common$rc6tR(),
-        rescxx = common$rescxR()
-      ),
-      {
-        x <- DD4222x(
-          rc6tx = common$rc6tR(),
-          rescxx = common$rescxR()
-        )
-        G4122x <<- copy(x)
-        x
-      }
-    )
-
-    RR4211 <- eventReactive( #-- 4131 summary ----
-      list(
-        common$rescxR(),
-        common$rc6tR(),
-        common$tslideR()
-      ),
-      {
-        x <- DD4211(
-          rescx = common$rescxR(),
-          rc6tx = common$rc6tR(),
-          tslidex = common$tslideR()
-        )
-        G4131x <<- copy(x)
-        x
-      }
-    )
-
-    RR4231 <- eventReactive( #----- 132 trade ----
-      list(
-        common$rescxR(),
-        common$rc6tR(),
-        common$tslideR()
-      ),
-      {
-        x <- #list local/custom return/number
-          DD4231(
-          rescxx = common$rescxR(),
-          rc6tx = common$rc6tR(),
-          tslidex = common$tslideR()
-        )
-        G4132x <<- copy(x)
-        x
-      }
-    )
-    output$OO4211 <- gt::render_gt(RR4211()) # summ gt ----
-    output$OO4212 <- leaflet::renderLeaflet(RR4212()) # leaflet ----
-    output$OO4221a <- gt::render_gt(RR4221()[[1]]) # wind gt - custom ----
-    output$OO4221b <- gt::render_gt(RR4221()[[2]]) # wind gt - local ----
-    output$OO4222 <- renderPlot(RR4222()) # ggplot ----
-    output$OO4222x <- gt::render_gt(RR4222x()) # char gt ----
-    output$OO4231a <- gt::render_gt(RR4231()[["local"]][[1]]) # local-return ----
-    output$OO4231b <- gt::render_gt(RR4231()[["local"]][[2]]) # local-number ----
-    output$OO4231c <- gt::render_gt(RR4231()[["custom"]][[1]]) # custom-return ----
-    output$OO4231d <- gt::render_gt(RR4231()[["custom"]][[2]]) # custom-number-----
-
-    print("Leaving s4100")
+    G4331 <<- copy(x)
+    x
   }
+)
+  RR4112 <- eventReactive( #-------4312 augmented leaflet----
+    list(
+      common$geoaR(), 
+      rc6tx = common$rc6tR()
+      ),
+    {
+      if (verbose) print("enter RR4112")
+      x <- DD4112(
+        rc6tx = common$rc6tR() #control: target
+      )
+      G4312 <<- copy(x)
+      x
+    }
+  )
+  R4300x <- eventReactive( #-------4300 title for table----
+    list(
+      common$geoaR(), 
+      rc6tx = common$rc6tR()
+      ),
+    {
+      if (verbose) print("enter R4300x")
+      x <- 
+        which(f230306a()==substr(common$rc6tR(),1,3))%>%
+        names(.)%>% #string
+        gsub(':',': ',.)#%>%
+        #paste0(.,'  plus peers')
+      G4300 <<- copy(x)
+      x
+    }
+  )
+  output$O4300x <-renderUI({ HTML(markdown::renderMarkdown(text = R4300x())) })
+  output$OO4111 <-gt::render_gt(RR4111())
+  output$OO4121 <- renderUI({ HTML(markdown::renderMarkdown(text = RR4121())) })
+  output$OO4131 <-gt::render_gt(RR4131())
+  output$OO4112 <-leaflet::renderLeaflet(RR4112()) #constuents #----
+}
+print("exit s4300")

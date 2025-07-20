@@ -1,72 +1,51 @@
-# ui4300 <- function(id = NULL) {
-#   nav_panel(
-#      title = "gp4300",
-#     grid_container(
-#       layout = c("A ."),
-#       col_sizes = c("1fr", "1fr"),
-#       row_sizes = c("1fr"),
-#       gap_size = "10px",
-#       grid_card(
-#         area = "A",
-#         card_header("Test"),
-#         card_body(
-#           p("Hi")  # ✅ wrap the string
-#         )
-#       )
-#     )
-#   )
-# }
-
-# helloworld
-
-ui4300 <- function(id = NULL) {
-  print('enter ui4300')
+#-------------------------------------------------4200 listing
+ui4300 <- 
+  function(
+    id = NULL) {
   nav_panel(
-    title = "gp4300", #---------.----
+    title = "4300",
     grid_container(
       layout = c(
-        "AA4411        AA4112",
-        "AA4121        ."
+        "a4211  a4212  a4213"
       ),
-      row_sizes = c("1fr"),
-      col_sizes = c("1fr", "1fr"),
-      gap_size = "10px",
-      
+      row_sizes = c(
+        "1fr"
+      ),
+      col_sizes = c(
+        ".3fr",
+        "1fr",
+        "1fr"
+      ),
       grid_card(
-        area = "AA4411",
+        area = "a4211",
+        full_screen = TRUE,
         card_header(
-          "Constituent districts"
+          "Time bins"
         ),
-        card_body( #-------------- local table 311
-          gt::gt_output("OO4111"),
-          height = gridheight4,
-          uiOutput("OO4121"), #'identifies as' text
-          gt::gt_output("O4311b")
-        ) # card_body
-      ), # grid_card
-      
+        card_body( #-------------- timebin table
+          gt::gt_output("O4211")
+        )
+      ),
       grid_card(
-        area = "AA4121",
+        area = "a4212",
+        full_screen = TRUE,
         card_header(
-          "Custom districts"
+          "Local index"
         ),
-        card_body( #-------------- custom table 
-          gt::gt_output("OO4131")
-        ) # card_body
-      ), # grid_card
-      
+        card_body( #-------------- local index table
+          gt::gt_output("O4212")
+        )
+      ),
       grid_card(
-        area = "AA4112",
+        area = "a4213",
+        full_screen = TRUE,
         card_header(
-          uiOutput("O4300x")
+          "Custom index"
         ),
-        card_body( # leaflet
-          leafletOutput("OO4112"),
-          height = gridheight
-        ) # card_body
-        
-      ) # card
-      
-    ) # gridcontainer
-  ) # navpanel
+        card_body( #-------------- custom index table
+          gt::gt_output("O4213")
+        )
+      )
+    )
+  )
 }
