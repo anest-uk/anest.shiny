@@ -686,20 +686,60 @@ DD4131 <- #------------------blobs for custom ----
         locations = gt::cells_body(rows = rc6 == rc6tx)
       )
   }
-
+# DD4112 <- #--------leaflet for rc3  : R4311x ----
+#   function(
+#       rc6tx = rc6tG,
+#       rc6cx = rc6cG,
+#       x1 = apol(datS), # rc6 polygon
+#       x2 = apva(resS), # pva
+#       x3 = CC4112(rc6tx = rc6tx, rc6cx = rc6cx), # rc6 for this rc3, augmented with out of area peers for this rc6t
+#       x4 = pxosrdo1dd, # rc3 polygon
+#       minzoom = 9,
+#       maxzoom = 13) {
+#     x5 <-
+#       x4[which(x4@data$name == irregpcode(substr(rc6tx, 1, 3))), ]
+#     x6 <-
+#       x1[which(x1@data$name == irregpcode(rc6tx)), ]
+#     x7 <-
+#       f240810b( #->leaflet, colours for areas-to-shade in column 'col'
+#         x3[, .(col = q0, rc6)],
+#         x2 = x1, # map polygons
+#         pva = resS$pva[, .(rcx = rc6, ppm2 = pv / m2)], # for tooltip
+#         minzoom = minzoom,
+#         maxzoom = maxzoom
+#       ) %>%
+#       addPolygons( # outline custom districts
+#         data = x5,
+#         fill = F,
+#         color = "black",
+#         dashArray = "5,5",
+#         weight = 1,
+#         opacity = 1
+#       ) %>%
+#       addPolygons( # outline custom districts
+#         data = x6,
+#         fill = F,
+#         color = "#888888",
+#         weight = 1,
+#         opacity = 1
+#       )
+#     x7
+#   }
 DD4112 <- #--------leaflet for rc3  : R4311x ----
   function(
+      statics=c('resS','datS'),
       rc6tx = rc6tG,
       rc6cx = rc6cG,
       x1 = apol(datS), # rc6 polygon
       x2 = apva(resS), # pva
-      x3 = CC4112(rc6tx = rc6tx, rc6cx = rc6cx), # rc6 for this rc3, augmented with out of area peers for this rc6t
-      x4 = pxosrdo1dd, # rc3 polygon
+      #x3 = CC4112(rc6tx = rc6tx, rc6cx = rc6cx)#, # rc6 for this rc3, augmented with out of area peers for this rc6t
+      x3 = CC4111(rc6tx=rc6tx)[,.(rc6,q0)],    #all rc6: local + custom
+      x4 = datS$polrc3, # rc3 polygon
       minzoom = 9,
       maxzoom = 13) {
-    x5 <-
+    x5 <- #rc3 poly for dotted outline
       x4[which(x4@data$name == irregpcode(substr(rc6tx, 1, 3))), ]
-    x6 <-
+    x6 <- #target poly for gray outline
       x1[which(x1@data$name == irregpcode(rc6tx)), ]
     x7 <-
       f240810b( #->leaflet, colours for areas-to-shade in column 'col'
@@ -726,6 +766,8 @@ DD4112 <- #--------leaflet for rc3  : R4311x ----
       )
     x7
   }
+#DD4112()
+
 
 DD4121 <- #-'identifies as' message : R4321x ----
   function(

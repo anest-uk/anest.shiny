@@ -50,12 +50,14 @@ s4100 <-
     RR4112 <- eventReactive( #-------4312 augmented leaflet----
       list(
         common$geoaR(),
-        rc6tx = common$rc6tR()
+        rc6tx = common$rc6tR(),
+        rc6cx = common$rc6cR()
       ),
       {
         if (verbose) print("enter RR4112")
         x <- DD4112(
-          rc6tx = common$rc6tR() # control: target
+          rc6tx = common$rc6tR(), # control: target
+          rc6cx = common$rc6cR()
         )
         G4312 <<- copy(x)
         x

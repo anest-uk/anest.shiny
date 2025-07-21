@@ -65,6 +65,50 @@ CC4111 <- #-------------rc3t{} blobs : D4311a ----
     x4[, .(rc6, locality, ppm2, nid, q0, q3, q2, q1), with = T]
   }
 
+# CC4131 <-  #-------------custom blobs : D4131 ----
+#   function(
+#     statics='resS',
+#     rc6tx=rc6tG,
+#     rc6cx=rc6cG,
+#     x0=CC4111(rc6 = rc6tx)[,range(log(ppm2))] #P-range for color
+# ) {
+#   x1 <- 
+#     apva(resS)%>%
+#     .[data.table(rc6=rc6cx),on=c(rc6='rc6')]%>% #select custom
+#     .[,.(nid,ppm2,rc6,P=log(ppm2),q0=color_price(log(ppm2),x0[1],x0[2]))]%>%
+#     resS$f250713a[.,on=c(rc6='rc6')]%>% #add localiity
+#     .[,
+#       .(rc6,
+#         locality,
+#         ppm2,
+#         nid,
+#         q0
+#         )]
+#   x1
+# }
+
+
+CC4131 <-   #-------------custom blobs : D4131 ----
+  function(
+    statics='resS',
+    rc6tx=rc6tG,
+    rc6cx=rc6cG,
+    x0=CC4111(rc6 = rc6tx)[,range(log(ppm2))] #P-range for color
+) {
+  x1 <- 
+    apva(resS)%>%
+    .[data.table(rc6=rc6cx),on=c(rc6='rc6')]%>% #select custom
+    .[,.(nid,ppm2,rc6,P=log(ppm2),q0=color_price(log(ppm2),x0[1],x0[2]))]%>%
+    resS$f250713a[.,on=c(rc6='rc6')]%>% #add localiity
+    .[,
+      .(rc6,
+        locality,
+        ppm2,
+        nid,
+        q0
+        )]
+  x1
+}
 CC4211 <- #------------------summary : D4131a #----
   function(
       static = "resS",
@@ -298,33 +342,33 @@ C4311b <- # {rc6,locality,ppm2,nid} peer*----
       .[, .(rc6, locality, ppm2 = pv / m2, nid), nomatch = NULL]
   }
 
-CC4112 <- # CC4112 combines this with CC4111
-  function(
-      rc6tx = rc6tG,
-      rc6cx = rc6cG,
-      x0 = data.table(rc6 = rc6cx),
-      x1 = CC4111(rc6tx = rc6tx),
-      x2 = C4311b(rc6tx = rc6tx, x0 = x0)[!(rc6 %in% x1[, rc6])] # out of area peers
-      ) {
-    x3 <- x1[, log(range(ppm2))] %>% setNames(., c("minP", "maxP"))
-    x2[, .(
-      rc6,
-      locality,
-      ppm2,
-      nid,
-      q0 = color_price(log(ppm2), x3["minP"], x3["maxP"]),
-      q3 = "",
-      q2 = "",
-      q1 = ""
-    )] %>%
-      rbind(x1, .)
-  }
+# CC4112 <- # CC4112 combines this with CC4111
+#   function(
+#       rc6tx = rc6tG,
+#       rc6cx = rc6cG,
+#       x0 = data.table(rc6 = rc6cx),
+#       x1 = CC4111(rc6tx = rc6tx),
+#       x2 = C4311b(rc6tx = rc6tx, x0 = x0)[!(rc6 %in% x1[, rc6])] # out of area peers
+#       ) {
+#     x3 <- x1[, log(range(ppm2))] %>% setNames(., c("minP", "maxP"))
+#     x2[, .(
+#       rc6,
+#       locality,
+#       ppm2,
+#       nid,
+#       q0 = color_price(log(ppm2), x3["minP"], x3["maxP"]),
+#       q3 = "",
+#       q2 = "",
+#       q1 = ""
+#     )] %>%
+#       rbind(x1, .)
+#   }
 
-CC4131 <- # C4311b: a second function that just returns rc6,locality,ppm2,nid for the exotic peers
-  function(
-      rc6cx = rc6cG,
-      rc6tx = rc6tG,
-      statics = "resS") {
-    CC4112(rc6cx = rc6cx, rc6tx = rc6tx) %>%
-      .[, .(rc6, locality, ppm2, nid, q0)]
-  }
+# CC4131 <- # C4311b: a second function that just returns rc6,locality,ppm2,nid for the exotic peers
+#   function(
+#       rc6cx = rc6cG,
+#       rc6tx = rc6tG,
+#       statics = "resS") {
+#     CC4112(rc6cx = rc6cx, rc6tx = rc6tx) %>%
+#       .[, .(rc6, locality, ppm2, nid, q0)]
+#   }
