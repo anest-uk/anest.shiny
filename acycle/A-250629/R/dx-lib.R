@@ -385,7 +385,9 @@ DD4311a <- # summary utility called in all 3 listings ----
       rc6tx = rc6tG,
       salx = salS,
       jlist = list(
+        ii="t",
         date = "end date",
+        days = "days",
         return = "return",
         cumreturn = "cumulative",
         newhouse = "new house",
@@ -408,12 +410,23 @@ DD4311a <- # summary utility called in all 3 listings ----
       tslidex = 0) {
     x2 <- c211x[date > aestdt2(resS)[[2]][tslidex + 1]]
     x3 <- x2[, names(jlist), with = F]
-    if (addt0) {
+    if (addt0) { # add data for the row for 1994-12-31 t=0
       x3 <- rbind(x3[1, .(ii = 0, date = resS$da0)], x3, fill = T)
     }
     jlist2 <- jlist[which(names(jlist) %in% names(x3))]
     x <-
-      gt::gt(x3) %>%
+      gt::gt(x3)
+    if (addt0) { # format the row t=0
+      x <- x%>%
+        text_transform( #for t=0 convert NA to blank
+          locations = cells_body(columns = names(x3)[is.na(x3[ii==0,])], rows = (ii == 0)),
+          fn = function(x) {
+            rep("", length(x))
+          }
+        )
+    }
+    x <-  
+      x %>%
       cols_label(
         .list = jlist2,
         .fn = gt::html
@@ -482,30 +495,32 @@ DD4311 <- #----------------3 listings: R4211a ----
       rc6tx = rc6tG,
       tslidex = 0) {
     list(
-      date = # shared data
-        DD4311a(
-          res = areso(rc6tx),
-          jlist = list(
-            date = "end date",
-            ii = "t",
-            days = "days",
-            yrs = "years"
-          ),
-          footadd = F,
-          headadd = T,
-          titlex = gt::html("&nbsp;"),
-          addt0 = T,
-          tslidex = tslidex
-        ),
+      # date = # shared data
+      #   DD4311a(
+      #     res = areso(rc6tx),
+      #     jlist = list(
+      #       date = "end date",
+      #       ii = "t",
+      #       days = "days",
+      #       yrs = "years"
+      #     ),
+      #     footadd = F,
+      #     headadd = T,
+      #     titlex = gt::html("&nbsp;"),
+      #     addt0 = T,
+      #     tslidex = tslidex
+      #   ),
       local = # local index
         DD4311a(
           res = areso(rc6tx),
-          tslidex = tslidex
+          tslidex = tslidex,
+          addt0=T
         ),
       custom = # custom index
         DD4311a(
           res = rescx, typex = "C",
-          tslidex = tslidex
+          tslidex = tslidex,
+          addt0=T
         )
     )
   }

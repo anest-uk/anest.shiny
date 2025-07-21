@@ -17,12 +17,12 @@ s4300 <-
               rc6tx = common$rc6tR(),
               tslidex = common$tslideR()
             )
-          G4211a <<- copy(x)
+          G4311 <<- copy(x)
           x
         }
       )
 
-    output$OO4311 <- gt::render_gt(RR4311()[[1]]) # timebins #----
-    output$OO4312 <- gt::render_gt(RR4311()[[2]]) # local    #----
-    output$OO4313 <- gt::render_gt(RR4311()[[3]]) # custom   #----
+    #output$OO4311 <- gt::render_gt(RR4311()[[1]]) # timebins #----
+    output$OO4311 <- gt::render_gt(RR4311()[[1]]) # local    #----
+    output$OO4312 <- gt::render_gt(RR4311()[[2]]) # custom   #----
   }
