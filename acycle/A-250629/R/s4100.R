@@ -47,17 +47,17 @@ s4100 <-
         x
       }
     )
-    RR4112 <- eventReactive( #-------4312 augmented leaflet----
+    RR4112 <- eventReactive( #-------4112 local leaflet----
       list(
         common$geoaR(),
-        rc6tx = common$rc6tR(),
-        rc6cx = common$rc6cR()
+        rc6tx = common$rc6tR()#,
+        #rc6cx = common$rc6cR()
       ),
       {
         if (verbose) print("enter RR4112")
         x <- DD4112(
-          rc6tx = common$rc6tR(), # control: target
-          rc6cx = common$rc6cR()
+          rc6tx = common$rc6tR()#, # control: target
+          #rc6cx = common$rc6cR()
         )
         G4312 <<- copy(x)
         x
@@ -79,6 +79,36 @@ s4100 <-
         x
       }
     )
+    
+    # DD4112(x3 = CC4131(rc6tx=rc6tx,rc6cx=rc6cx)[,.(rc6,q0)])
+    # DD4112(x3 = CC4131(rc6tx=common$rc6tR(),rc6cx=common$rc6cR())[,.(rc6,q0)])
+    
+    RR4122 <- eventReactive( #-------4122 custom leaflet----
+      list(
+        common$geoaR(),
+        rc6tx = common$rc6tR(),
+        rc6cx = common$rc6cR()
+      ),
+      {
+        if (verbose) print("enter RR4122")
+        #browser()
+        x <- 
+          DD4112(
+          x3 = 
+            CC4131(
+              rc6tx=common$rc6tR(),
+              rc6cx=common$rc6cR()
+              )[,.(rc6,q0)]
+          )
+        # x <- DD4112(
+        #   rc6tx = common$rc6tR(), # control: target
+        #   rc6cx = common$rc6cR()
+        # )
+        G4122 <<- copy(x)
+        x
+      }
+    )
+
     output$OO4113 <- renderUI({
       HTML(markdown::renderMarkdown(text = RR4113()))
     })
@@ -87,6 +117,7 @@ s4100 <-
       HTML(markdown::renderMarkdown(text = RR4121()))
     })
     output$OO4131 <- gt::render_gt(RR4131())
-    output$OO4112 <- leaflet::renderLeaflet(RR4112()) # constuents #----
+    output$OO4112 <- leaflet::renderLeaflet(RR4112()) # local #----
+    output$OO4122 <- leaflet::renderLeaflet(RR4122()) # cuxtom #----
   }
 print("exit s4100")

@@ -24,14 +24,14 @@ DD4212 <- #  leaflet : R4111x ----
       addPolygons( # outline custom districts
         data = x1[which(x1@data$name %in% irregpcode(rc6xx)), ],
         fill = F,
-        color = "black",
+        color = "#777777",
         weight = 1,
         opacity = 1
       ) %>%
       addPolygons( # outline target district
         data = x1[which(x1@data$name %in% irregpcode(rc6tx)), ],
         fill = F,
-        color = "black",
+        color = "#777777",
         weight = 1,
         opacity = 1
       )
@@ -529,7 +529,8 @@ DD4111 <- #--------blobs for rc3/rc6 : R4311x ----
           vapply(seq_along(hexvec), function(i) {
             val <- hexvec[i]
             row_rc6 <- x1$rc6[i]
-            outline <- if (row_rc6 %in% rc6cx) "border:4px solid black;" else ""
+            #outline <- if (row_rc6 %in% rc6cx) "border:4px solid black;" else ""
+            outline <- ""
             paste0(
               "<div style='display:inline-block; width:", symbolsize,
               "; height:", symbolsize,
@@ -729,13 +730,13 @@ DD4112 <- #--------leaflet for rc3  : R4311x ----
   function(
       statics=c('resS','datS'),
       rc6tx = rc6tG,
-      rc6cx = rc6cG,
-      x1 = apol(datS), # rc6 polygon
-      x2 = apva(resS), # pva
+      #rc6cx = rc6cG,
+      x1 = apol(datS), # rc6 polygon data
+      x4 = datS$polrc3, # rc3 polygon data
+      x2 = apva(resS), # pva data
       #x3 = CC4112(rc6tx = rc6tx, rc6cx = rc6cx)#, # rc6 for this rc3, augmented with out of area peers for this rc6t
-      x3 = CC4111(rc6tx=rc6tx)[,.(rc6,q0)],    #all rc6: local + custom
-      x4 = datS$polrc3, # rc3 polygon
-      minzoom = 9,
+      x3 = CC4111(rc6tx=rc6tx)[,.(rc6,q0)], #fill these
+      minzoom = 10,
       maxzoom = 13) {
     x5 <- #rc3 poly for dotted outline
       x4[which(x4@data$name == irregpcode(substr(rc6tx, 1, 3))), ]
@@ -749,7 +750,7 @@ DD4112 <- #--------leaflet for rc3  : R4311x ----
         minzoom = minzoom,
         maxzoom = maxzoom
       ) %>%
-      addPolygons( # outline custom districts
+      addPolygons( # outline dashed
         data = x5,
         fill = F,
         color = "black",
@@ -757,10 +758,10 @@ DD4112 <- #--------leaflet for rc3  : R4311x ----
         weight = 1,
         opacity = 1
       ) %>%
-      addPolygons( # outline custom districts
+      addPolygons( # outline solid
         data = x6,
         fill = F,
-        color = "#888888",
+        color = "#555555",
         weight = 1,
         opacity = 1
       )

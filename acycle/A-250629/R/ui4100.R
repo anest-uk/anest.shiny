@@ -5,7 +5,7 @@ ui4100 <- function(id = NULL) {
     grid_container(
       layout = c(
         "AA4411        AA4112",
-        "AA4121        ."
+        "AA4121        AA4122"
       ),
       row_sizes = c("1fr"),
       col_sizes = c("1fr", "1fr"),
@@ -36,13 +36,24 @@ ui4100 <- function(id = NULL) {
       grid_card(
         area = "AA4112",
         card_header(
-          uiOutput("OO4113")
+          uiOutput("OO4113") #needs rename in several places
         ),
         card_body( # leaflet
           leafletOutput("OO4112"),
           height = gridheight
         ) # card_body
+      ), # card
+      grid_card(
+        area = "AA4122",
+        # card_header(
+        #   uiOutput("OO4122")
+        # ),
+        card_body( # leaflet
+          leafletOutput("OO4122"),
+          height = gridheight
+        ) # card_body
       ) # card
+
     ) # gridcontainer
   ) # navpanel
 }
