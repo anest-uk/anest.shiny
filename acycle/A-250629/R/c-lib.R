@@ -32,6 +32,98 @@ Ccus <- #--------------RES for custom : rescxR----
   }
 
 
+CC4111 <- #-------------rc3t{} blobs : D4311a ----
+  function(
+      statics = "resS",
+      rc6tx = rc6tG) {
+    x1 <-
+      resS$geo %>%
+      .[resS$lab[grep("^L", lab)][grep(substr(rc6tx, 1, 3), lab)], on = c(nx = "nx")] %>%
+      .[apva(resS)[, .(rc6, rc6P = log(pv / m2), pv, m2, rc6ppm2 = round(pv / m2), rc6nid = nid)], on = c(rc6 = "rc6"), nomatch = NULL] %>%
+      .[, rc6col := color_price(rc6P, min(rc6P), max(rc6P))]
+    x1[]
+    x2 <-
+      x1 %>%
+      .[, .(grpppm2 = sum(pv) / sum(m2)), .(lab, nx)] %>%
+      .[, .(grpppm2, lab, nx, grpP = log(grpppm2))] %>%
+      .[, .(grpppm2, lab, nx, grpP, grpcol = color_price(grpP, x1[, min(rc6P)], x1[, max(rc6P)]))] %>%
+      .[, .(grpppm2, lab = paste0(substr(lab, 1, 4), "xx", substr(lab, 7, 9)), nx, grpP, grpcol)]
+    x2[, ]
+
+    x3 <-
+      x2[, .(nx, lab, grpcol, grpppm2)] %>%
+      .[x1[, .(nx, rc6, rc6nid, rc6ppm2, rc6col)], on = c(nx = "nx"), mult = "first"] %>%
+      .[order(nx, rc6ppm2)] %>%
+      resS$f250713a[., on = c(rc6 = "rc6")]
+    x3[]
+    x4 <-
+      x3 %>%
+      dcast(., rc6 + rc6ppm2 + rc6nid + rc6col + locality ~ lab, value.var = "grpcol") %>%
+      .[order(-rc6ppm2)]
+    x4[]
+    setnames(x4, c("rc6", "ppm2", "nid", "q0", "locality", "q1", "q2", "q3"))
+    x4[, .(rc6, locality, ppm2, nid, q0, q3, q2, q1), with = T]
+  }
+
+CC4211 <- #------------------summary : D4131a #----
+  function(
+      static = "resS",
+      tslidex = tslideG,
+      rc6tx = rc6tG,
+      rescxx = rescxG) {
+    x1 <-
+      CC4231x(
+        tslidex = tslidex,
+        rc6tx = rc6tx,
+        rescxx = rescxx
+      )[, .(
+        nx, col, i.n, q2, nid.est, minppm2, maxppm2, aggppm2
+      )]
+    x2 <- rbind(
+      aestdt3(nx = 0, resx = rescxG) %>% # custom
+        .[ii > tslidex] %>%
+        .[, .(year = substr(date, 1, 4), xdotd), nx] %>%
+        .[, .(xdotan = sum(xdotd), ndays = .N), .(year, nx)] %>%
+        .[ndays >= 365, .(meanan = mean(xdotan), minan = min(xdotan), maxan = max(xdotan)), nx], # full calendar years
+      aestdt3(nx = CC4231x()[, unique(nx)], res = resS) %>% # local
+        .[ii > tslidex] %>%
+        .[, .(year = substr(date, 1, 4), xdotd), nx] %>%
+        .[, .(xdotan = sum(xdotd), ndays = .N), .(year, nx)] %>%
+        .[ndays >= 365, .(meanan = mean(xdotan), minan = min(xdotan), maxan = max(xdotan)), nx]
+    )
+    x1[x2, on = c(nx = "nx")][order(-aggppm2)]
+  }
+
+CC4212 <- #-------- trade summary(2) : D4132x ----
+  function(
+      geox = geoqG,
+      steprip = stepripG,
+      estdtlx = estdtlG, # only used for its date(ii) relation
+      tmin = 20 # tmin=input$tslider
+      ) {
+    x0 <-
+      geox[, grepstring(rc6)] %>%
+      coread2(., steprip) %>% # or rc6tc
+      .[, .(N = .N, mean = round(mean(as.numeric(retsa)), 4)), .(buy = substr(as.Date(buydate), 1, 4), sell = substr(as.Date(selldate), 1, 4))] %>%
+      .[(buy >= estdtlx[ii >= tmin, substr(min(as.character(date)), 1, 4)])]
+    x1 <-
+      x0 %>%
+      dcast(.,
+        buy ~ sell,
+        value.var = "mean" # the value is unique so any aggregator function is ok
+      )
+    for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
+    x2 <-
+      x0 %>%
+      dcast(.,
+        buy ~ sell,
+        value.var = "N"
+      )
+    for (i in 2:length(x2)) x2[[i]] <- ifelse(is.na(x2[[i]]), "", x2[[i]])
+    x3 <- list(x1, x2)
+    x3
+  }
+
 CC4221 <- # -----------------winding : D4121x ----
   function(
       rcx = rc6tG,
@@ -149,66 +241,7 @@ CC4231x <- #-characteristics and summary : D4131x ----
       .[]
   }
 
-CC4211 <- #------------------summary : D4131a #----
-  function(
-      static = "resS",
-      tslidex = tslideG,
-      rc6tx = rc6tG,
-      rescxx = rescxG) {
-    x1 <-
-      CC4231x(
-        tslidex = tslidex,
-        rc6tx = rc6tx,
-        rescxx = rescxx
-      )[, .(
-        nx, col, i.n, q2, nid.est, minppm2, maxppm2, aggppm2
-      )]
-    x2 <- rbind(
-      aestdt3(nx = 0, resx = rescxG) %>% # custom
-        .[ii > tslidex] %>%
-        .[, .(year = substr(date, 1, 4), xdotd), nx] %>%
-        .[, .(xdotan = sum(xdotd), ndays = .N), .(year, nx)] %>%
-        .[ndays >= 365, .(meanan = mean(xdotan), minan = min(xdotan), maxan = max(xdotan)), nx], # full calendar years
-      aestdt3(nx = CC4231x()[, unique(nx)], res = resS) %>% # local
-        .[ii > tslidex] %>%
-        .[, .(year = substr(date, 1, 4), xdotd), nx] %>%
-        .[, .(xdotan = sum(xdotd), ndays = .N), .(year, nx)] %>%
-        .[ndays >= 365, .(meanan = mean(xdotan), minan = min(xdotan), maxan = max(xdotan)), nx]
-    )
-    x1[x2, on = c(nx = "nx")][order(-aggppm2)]
-  }
-
-CC4212 <- #-------- trade summary(2) : D4132x ----
-  function(
-      geox = geoqG,
-      steprip = stepripG,
-      estdtlx = estdtlG, # only used for its date(ii) relation
-      tmin = 20 # tmin=input$tslider
-      ) {
-    x0 <-
-      geox[, grepstring(rc6)] %>%
-      coread2(., steprip) %>% # or rc6tc
-      .[, .(N = .N, mean = round(mean(as.numeric(retsa)), 4)), .(buy = substr(as.Date(buydate), 1, 4), sell = substr(as.Date(selldate), 1, 4))] %>%
-      .[(buy >= estdtlx[ii >= tmin, substr(min(as.character(date)), 1, 4)])]
-    x1 <-
-      x0 %>%
-      dcast(.,
-        buy ~ sell,
-        value.var = "mean" # the value is unique so any aggregator function is ok
-      )
-    for (i in 2:length(x1)) x1[[i]] <- ifelse(is.na(x1[[i]]), "", as.character(round(x1[[i]], 3)))
-    x2 <-
-      x0 %>%
-      dcast(.,
-        buy ~ sell,
-        value.var = "N"
-      )
-    for (i in 2:length(x2)) x2[[i]] <- ifelse(is.na(x2[[i]]), "", x2[[i]])
-    x3 <- list(x1, x2)
-    x3
-  }
-
-C4211a <- #-----summary all listings : D4211a ----
+CC4311 <- #-----summary all listings : D4211a ----
   function(
       statics = c("resS", "salS"),
       estdtlx = estdtlG, # l=aestdt1(areso(rc6tx)) c=aestdt1(rescxG)
@@ -252,39 +285,6 @@ C4211a <- #-----summary all listings : D4211a ----
         perday = round(tot / days, 1)
       )]
     x2
-  }
-
-CC4111 <- #-------------rc3t{} blobs : D4311a ----
-  function(
-      statics = "resS",
-      rc6tx = rc6tG) {
-    x1 <-
-      resS$geo %>%
-      .[resS$lab[grep("^L", lab)][grep(substr(rc6tx, 1, 3), lab)], on = c(nx = "nx")] %>%
-      .[apva(resS)[, .(rc6, rc6P = log(pv / m2), pv, m2, rc6ppm2 = round(pv / m2), rc6nid = nid)], on = c(rc6 = "rc6"), nomatch = NULL] %>%
-      .[, rc6col := color_price(rc6P, min(rc6P), max(rc6P))]
-    x1[]
-    x2 <-
-      x1 %>%
-      .[, .(grpppm2 = sum(pv) / sum(m2)), .(lab, nx)] %>%
-      .[, .(grpppm2, lab, nx, grpP = log(grpppm2))] %>%
-      .[, .(grpppm2, lab, nx, grpP, grpcol = color_price(grpP, x1[, min(rc6P)], x1[, max(rc6P)]))] %>%
-      .[, .(grpppm2, lab = paste0(substr(lab, 1, 4), "xx", substr(lab, 7, 9)), nx, grpP, grpcol)]
-    x2[, ]
-
-    x3 <-
-      x2[, .(nx, lab, grpcol, grpppm2)] %>%
-      .[x1[, .(nx, rc6, rc6nid, rc6ppm2, rc6col)], on = c(nx = "nx"), mult = "first"] %>%
-      .[order(nx, rc6ppm2)] %>%
-      resS$f250713a[., on = c(rc6 = "rc6")]
-    x3[]
-    x4 <-
-      x3 %>%
-      dcast(., rc6 + rc6ppm2 + rc6nid + rc6col + locality ~ lab, value.var = "grpcol") %>%
-      .[order(-rc6ppm2)]
-    x4[]
-    setnames(x4, c("rc6", "ppm2", "nid", "q0", "locality", "q1", "q2", "q3"))
-    x4[, .(rc6, locality, ppm2, nid, q0, q3, q2, q1), with = T]
   }
 
 C4311b <- # {rc6,locality,ppm2,nid} peer*----

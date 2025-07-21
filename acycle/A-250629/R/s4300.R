@@ -2,7 +2,7 @@
 
 s4300 <-
   function(input, output, session, common) {
-    R4211a <- #-4211a timebin,local, custom table list----
+    RR4311 <- #-4211a timebin,local, custom table list----
       eventReactive(
         list(
           rescx = common$rescxR(),
@@ -10,9 +10,9 @@ s4300 <-
           tslidex = common$tslideR()
         ),
         {
-          if (verbose) print("enter R4211a")
+          if (verbose) print("enter RR4311")
           x <-
-            D4211b(
+            DD4311(
               rescx = common$rescxR(),
               rc6tx = common$rc6tR(),
               tslidex = common$tslideR()
@@ -22,7 +22,7 @@ s4300 <-
         }
       )
 
-    output$O4211 <- gt::render_gt(R4211a()[[1]]) # timebins #----
-    output$O4212 <- gt::render_gt(R4211a()[[2]]) # local    #----
-    output$O4213 <- gt::render_gt(R4211a()[[3]]) # custom   #----
+    output$OO4311 <- gt::render_gt(RR4311()[[1]]) # timebins #----
+    output$OO4312 <- gt::render_gt(RR4311()[[2]]) # local    #----
+    output$OO4313 <- gt::render_gt(RR4311()[[3]]) # custom   #----
   }

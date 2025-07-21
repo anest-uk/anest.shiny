@@ -198,7 +198,8 @@ areso <- function( #access optimum local(rcx) where x can be 3 or 6
 
 aestdt3 <- #daily x
   function(
-    nx=C4131x()[,unique(nx)],
+    #nx=C4131x()[,unique(nx)], #C4131x no longer exists
+    nx=CC4231x()[,unique(nx)], #not sure if this is the right default
     resx=resS
   ) {
     x0 <- aresn(nx=nx,resx=resx)

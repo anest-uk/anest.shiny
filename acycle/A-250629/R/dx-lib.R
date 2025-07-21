@@ -311,20 +311,23 @@ DD4231 <- #------------------- trade : R4132x ----
       tslidex = tslideG, #                        C control rc6tG rc6cG tslideG
       rescxx = rescxG #                           R reactive gen2
       ) {
+    x0 <- data.table(date=aestdt2()$BA)[,ii:=1:.N]
     x1 <- setNames(as.list(1:2), c("local", "custom"))
     x1[[1]] <-
       areso(rc6tx) %>% # opt loc
       ageo(.) %>% # geo
       CC4212(
         geo = .,
-        tmin = tslidex
+        tmin = tslidex,
+        estdt=x0
       ) %>%
       setNames(., c("return", "count"))
     x1[[2]] <-
-      ageo(rescxx) %>%
+      ageo(rescxx) %>% #cus
       CC4212(
         geo = .,
-        tmin = tslidex
+        tmin = tslidex,
+        estdt=x0
       ) %>%
       setNames(., c("return", "count"))
     x2 <- copy(x1)
@@ -371,7 +374,7 @@ DD4231 <- #------------------- trade : R4132x ----
     x2
   }
 
-D4211a <- # summary utility called in all 3 listings ----
+DD4311a <- # summary utility called in all 3 listings ----
   function(
       statics = c("resS", "salS"),
       resx = aresn(resS, nx = resS$lab[grep(rc6tx, lab), nx]),
@@ -392,7 +395,7 @@ D4211a <- # summary utility called in all 3 listings ----
         perday = "per day",
         total = "total"
       ),
-      c211x = C4211a(
+      c211x = CC4311(
         statics = statics,
         estdtlx = estdtlx, # l=aestdt1(areso(rc6tx)) c=aestdt1(rescxG)
         geoqx = ageo(resx), # geoqx, #l=ageo(areso(rc6tx)) c=ageo(rescxG)
@@ -472,7 +475,7 @@ D4211a <- # summary utility called in all 3 listings ----
   }
 
 
-D4211b <- #----------------3 listings: R4211a ----
+DD4311 <- #----------------3 listings: R4211a ----
   function(
       statics = "resS",
       rescx = rescxG,
@@ -480,7 +483,7 @@ D4211b <- #----------------3 listings: R4211a ----
       tslidex = 0) {
     list(
       date = # shared data
-        D4211a(
+        DD4311a(
           res = areso(rc6tx),
           jlist = list(
             date = "end date",
@@ -495,12 +498,12 @@ D4211b <- #----------------3 listings: R4211a ----
           tslidex = tslidex
         ),
       local = # local index
-        D4211a(
+        DD4311a(
           res = areso(rc6tx),
           tslidex = tslidex
         ),
       custom = # custom index
-        D4211a(
+        DD4311a(
           res = rescx, typex = "C",
           tslidex = tslidex
         )
