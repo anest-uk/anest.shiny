@@ -511,8 +511,8 @@ DD4111 <- #--------blobs for rc3/rc6 : R4311x ----
   function(
       rc6tx = rc6tG,
       rc6cx = rc6cG,
-      #x1 = CC4111(rc6 = rc6tx), # it returns entire rc3  <<<<replace this with a call to generalised (C4311b) which exposes geo,and adapt the idiom:
-      x1 = C4311b(rc6 = rc6tx), # it returns entire rc3  <<<<replace this with a call to generalised (C4311b) which exposes geo,and adapt the idiom:
+      x1 = CC4111(rc6 = rc6tx), # it returns entire rc3  <<<<replace this with a call to generalised (C4311b) which exposes geo,and adapt the idiom:
+      #x1 = C4311b(rc6 = rc6tx), # it returns entire rc3  <<<<replace this with a call to generalised (C4311b) which exposes geo,and adapt the idiom:
       cols_to_paint = names(x1)[5:8],
       shadecol1 = "#D3D3D3", # matches grid
       shadecolblock = "#D3D3D3", ## EEEEFF nice pale blue
