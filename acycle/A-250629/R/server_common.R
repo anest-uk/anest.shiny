@@ -19,10 +19,13 @@ server_common <-
           data.table(rc9 = rc6cx, nx = 0, lab = "CU00")
         x
       }
+    
+    verbose=T
 
     #----reactive----
     dfnxR <- # -----------4-col table with NA----
       reactive({
+        if (verbose) print("enter common-dfnxR")
         x <-
           dcast(f241021ad$estdt[, .(tbin, date)] %>% unique(.) %>% .[order(tbin, date)], date ~ tbin, value.var = "date") %>% # lo, hi, an
           rbind(as.data.table(as.list(rep(as.Date("1994-12-31"), 4))), ., use.names = F) %>%
@@ -33,6 +36,7 @@ server_common <-
 
     dfnyR <- #---------vector of current date----
       reactive({
+        if (verbose) print("enter common-dfnyR")
         x <-
           dfnxR()[, paste0("tbin", tbinC), with = F] %>%
           setnames(., "x") %>%
@@ -41,55 +45,55 @@ server_common <-
         x
       })
 
-    estdtcR <- #---------custom estdt select ----
-      eventReactive(
-        list(
-          rescR()
-        ),
-        {
-          if (verbose) print("enter estdtcR")
-          x <- rescR()$estdt
-          estdtcG <<- copy(x)
-          x
-        }
-      )
-
-    estdtlR <- #---------local estdt compute  ----
-      eventReactive(
-        nxqR(),
-        {
-          if (verbose) print("enter estdtlR")
-          x <-
-            copy(f241021ad$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)] %>%
-            .[nxqR(), on = c(nx = "nx")] %>%
-            .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
-          estdtlG <<- copy(x)
-          x
-        }
-      )
-
-    estdtxR <- #---------------------112 x(t)----
-      eventReactive(
-        list(estdtcR(), nxaR(), geocR()),
-        {
-          print("enter estdtxR")
-          x <-
-            festdty(
-              estdtcx = estdtcR(),
-              estdtax = f241021ad$estdt[nxaR(), on = c(nx = "nx"), .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)], # was estdtaR()
-              geocx = geocR()
-            )
-          estdtxG <<- copy(x)
-          print("exit estdtxR")
-          x
-        }
-      )
+    # estdtcR <- #---------custom estdt select ----
+    #   eventReactive(
+    #     list(
+    #       rescR()
+    #     ),
+    #     {
+    #       if (verbose) print("enter common-estdtcR")
+    #       x <- rescR()$estdt
+    #       estdtcG <<- copy(x)
+    #       x
+    #     }
+    #   )
+    # 
+    # estdtlR <- #---------local estdt compute  ----
+    #   eventReactive(
+    #     nxqR(),
+    #     {
+    #       if (verbose) print("enter common-estdtlR")
+    #       x <-
+    #         copy(f241021ad$estdt)[, .(nx, ii, date, xdotd, days, xdot, x)] %>%
+    #         .[nxqR(), on = c(nx = "nx")] %>%
+    #         .[, .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)]
+    #       estdtlG <<- copy(x)
+    #       x
+    #     }
+    #   )
+    # 
+    # estdtxR <- #---------------------112 x(t)----
+    #   eventReactive(
+    #     list(estdtcR(), nxaR(), geocR()),
+    #     {
+    #       print("enter common-estdtxR")
+    #       x <-
+    #         festdty(
+    #           estdtcx = estdtcR(),
+    #           estdtax = f241021ad$estdt[nxaR(), on = c(nx = "nx"), .(nx, date, ii, lab, rc3, qtile, xdotd, days, xdot, x)], # was estdtaR()
+    #           geocx = geocR()
+    #         )
+    #       estdtxG <<- copy(x)
+    #       print("exit estdtxR")
+    #       x
+    #     }
+    #   )
 
     geoaR <- #----------------area geo compute----
       eventReactive(
         rc6tR(),
         {
-          if (verbose) print("enter geoaR")
+          if (verbose) print("enter common-geoaR")
           x <-
             copy(f241021ad$geoplus) %>%
             .[type == "L"] %>%
@@ -115,7 +119,7 @@ server_common <-
       eventReactive(
         rc6cR(),
         {
-          if (verbose) print("enter geocR")
+          if (verbose) print("enter common-geocR")
           x <-
             fgeocx(rc6cx = rc6cR())
           geocG <<- copy(x)
@@ -123,72 +127,72 @@ server_common <-
         }
       )
 
-    geoqR <- #----------------qtile geo select----
-      eventReactive(
-        list(
-          geoaR(), rc6tR() # ,
-        ),
-        {
-          if (verbose) print("enter geoqR")
-          x <- geoaR() %>%
-            # .[geotR()[, .(qtile)],
-            .[geoaR()[rc6 == rc6tR()][, .(qtile)],
-              on = c(qtile = "qtile")
-            ]
-          geoqG <<- copy(x)
-          x
-        }
-      )
-
-    labxR <- #-------------optimum index label----
-      eventReactive(
-        rc6tR(),
-        {
-          if (verbose) print("enter labxR")
-          x <-
-            f250509ed$geo %>%
-            .[rc9 %in% rc6tR()] %>%
-            .[grep("^L", lab)] %>%
-            .[f250509ed$kfoldsse, on = c(nx = "nx"), nomatch = NULL] %>% # local only
-            .[rc6 == rc6tR()] %>% # target rc6
-            .[order(ssek), .(rc6, ssek, n, nx, lab)]
-          labxG <<- copy(x)
-          x
-        }
-      )
-
-    nxaR <- #------------------area nx select----
-      eventReactive(
-        geoaR(),
-        {
-          if (verbose) print("enter nxaR")
-          x <-
-            geoaR()[, .(nx, rc3, qtile, lab)] %>%
-            unique(.)
-          nxaG <<- copy(x)
-          if (verbose) print("exit nxaR")
-          x
-        }
-      )
-
-    nxqR <- #-----------------qtile nx compute----
-      eventReactive(
-        geoqR(),
-        {
-          if (verbose) print("enter nxqR")
-          x <-
-            geoqR()[, .(nx, rc3, qtile, lab)] %>%
-            unique(.)
-          nxqG <<- copy(x)
-          x
-        }
-      )
+    # geoqR <- #----------------qtile geo select----
+    #   eventReactive(
+    #     list(
+    #       geoaR(), rc6tR() # ,
+    #     ),
+    #     {
+    #       if (verbose) print("enter common-geoqR")
+    #       x <- geoaR() %>%
+    #         # .[geotR()[, .(qtile)],
+    #         .[geoaR()[rc6 == rc6tR()][, .(qtile)],
+    #           on = c(qtile = "qtile")
+    #         ]
+    #       geoqG <<- copy(x)
+    #       x
+    #     }
+    #   )
+# 
+#     labxR <- #-------------optimum index label----
+#       eventReactive(
+#         rc6tR(),
+#         {
+#           if (verbose) print("enter common-labxR")
+#           x <-
+#             f250509ed$geo %>%
+#             .[rc9 %in% rc6tR()] %>%
+#             .[grep("^L", lab)] %>%
+#             .[f250509ed$kfoldsse, on = c(nx = "nx"), nomatch = NULL] %>% # local only
+#             .[rc6 == rc6tR()] %>% # target rc6
+#             .[order(ssek), .(rc6, ssek, n, nx, lab)]
+#           labxG <<- copy(x)
+#           x
+#         }
+#       )
+# 
+#     nxaR <- #------------------area nx select----
+#       eventReactive(
+#         geoaR(),
+#         {
+#           if (verbose) print("enter common-nxaR")
+#           x <-
+#             geoaR()[, .(nx, rc3, qtile, lab)] %>%
+#             unique(.)
+#           nxaG <<- copy(x)
+#           if (verbose) print("exit nxaR")
+#           x
+#         }
+#       )
+# 
+#     nxqR <- #-----------------qtile nx compute----
+#       eventReactive(
+#         geoqR(),
+#         {
+#           if (verbose) print("enter common-nxqR")
+#           x <-
+#             geoqR()[, .(nx, rc3, qtile, lab)] %>%
+#             unique(.)
+#           nxqG <<- copy(x)
+#           x
+#         }
+#       )
 
     rc6cR <- #-------------custom rc6 control----
       eventReactive(
         list(rc6tR(), input$rctreeC), #+control
         {
-          if (verbose) print("enter rc6cR")
+          if (verbose) print("enter common-rc6cR")
           x <- sort(unique(c(rc6tR(), input$rctreeC))) %>% .[nchar(.) == 6]
           rc6cG <<- copy(x)
           x
@@ -199,7 +203,7 @@ server_common <-
       eventReactive(
         input$rc6tC,
         {
-          if (verbose) print("enter rc6tR")
+          if (verbose) print("enter common-rc6tR")
           x <-
             regpcode(input$rc6tC)[1]
           rc6tG <<- copy(x)
@@ -213,7 +217,7 @@ server_common <-
           input$docusabC
         ),
         {
-          if (verbose) print("enter rescR")
+          if (verbose) print("enter common-rescR")
           geox <- isolate(geocR())
           dfnx <- isolate(dfnyR()) # source of truth
           rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
@@ -254,7 +258,7 @@ server_common <-
           rescR()
         ),
         {
-          if (verbose) print("enter rescxR")
+          if (verbose) print("enter common-rescxR")
           x <-
             Ccus(
               rescx = rescR(),
@@ -265,62 +269,66 @@ server_common <-
         }
       )
 
-    rssaR <- #---------------area rss compute----
-      eventReactive(
-        nxaR(),
-        {
-          if (verbose) print("enter rssaR")
-          x <-
-            rssR()[nxaR(), on = c(nx = "nx")]
-          rssaG <<- copy(x)
-          x
-        }
-      )
-
-    rsscR <- # ------------custom rss select----
-      eventReactive(
-        list(
-          rescR()
-        ),
-        {
-          if (verbose) print("enter rsscR")
-          x <- cbind(rescR()$kfoldsse, rescR()$all)
-          rsscG <<- copy(x)
-          x
-        }
-      )
-
-    rssR <- #-----------------------------rss----
-      reactive({
-        x <- copy(f241021ad$rss)
-        rssG <<- copy(x)
-        x
-      })
+    # rssaR <- #---------------area rss compute----
+    #   eventReactive(
+    #     nxaR(),
+    #     {
+    #       if (verbose) print("enter common-rssaR")
+    #       x <-
+    #         rssR()[nxaR(), on = c(nx = "nx")]
+    #       rssaG <<- copy(x)
+    #       x
+    #     }
+    #   )
+    # 
+    # rsscR <- # ------------custom rss select----
+    #   eventReactive(
+    #     list(
+    #       rescR()
+    #     ),
+    #     {
+    #       if (verbose) print("enter common-rsscR")
+    #       x <- cbind(rescR()$kfoldsse, rescR()$all)
+    #       rsscG <<- copy(x)
+    #       x
+    #     }
+    #   )
+    # 
+    # rssR <- #-----------------------------rss----
+    #   reactive({
+    #     if (verbose) print("enter common-rssR")
+    #     x <- copy(f241021ad$rss)
+    #     rssG <<- copy(x)
+    #     x
+    #   })
 
     tslideR <- # --------------control-slider----
       reactive({
+        if (verbose) print("enter common-tslideR")
         x <- input$tslider
         tslideG <<- copy(x)
         x
       })
 
-    tdateR <- # --------------slider as date ----
-      reactive({
-        x <- dfnyR()[input$tslider]
-        tdateG <<- copy(x)
-        x
-      })
-
-    ylimR <- #--------------------------ylim ----
-      eventReactive(
-        estdtxR(),
-        {
-          x <-
-            estdtxR()[, range(x)] * 1.1
-          ylimG <<- copy(x)
-          x
-        }
-      )
+    # tdateR <- # --------------slider as date ----
+    #   reactive({
+    #     if (verbose) print("enter common-tdateR")
+    #     x <- dfnyR()[input$tslider]
+    #     tdateG <<- copy(x)
+    #     x
+    #   })
+    # 
+    # ylimR <- #--------------------------ylim ----
+    #   eventReactive(
+    #     estdtxR(),
+    #     {
+    #     if (verbose) print("enter common-ylimR")
+    #       x <-
+    #         estdtxR()[, range(x)] * 1.1
+    #       ylimG <<- copy(x)
+    #       x
+    #     }
+    #   )
 
 
 
@@ -329,24 +337,24 @@ server_common <-
     list( # ---------------------common list #----
       dfnxR = dfnxR,
       dfnyR = dfnyR,
-      estdtcR = estdtcR,
-      estdtlR = estdtlR,
-      estdtxR = estdtxR,
+      # estdtcR = estdtcR,
+      # estdtlR = estdtlR,
+      # estdtxR = estdtxR,
       geoaR = geoaR,
       geocR = geocR,
-      geoqR = geoqR,
-      labxR = labxR,
-      nxaR = nxaR,
-      nxqR = nxqR,
+      # geoqR = geoqR,
+      # labxR = labxR,
+      # nxaR = nxaR,
+      # nxqR = nxqR,
       rescxR = rescxR,
       rc6cR = rc6cR,
       rc6tR = rc6tR,
       rescR = rescR,
-      rssaR = rssaR,
-      rsscR = rsscR,
-      rssR = rssR,
-      tslideR = tslideR,
-      ylimR = ylimR
+      #rssaR = rssaR,
+      #rsscR = rsscR,
+      #rssR = rssR,
+      tslideR = tslideR#,
+      #ylimR = ylimR
     )
   }
 
