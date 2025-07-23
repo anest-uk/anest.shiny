@@ -52,7 +52,7 @@ ui4200 <- function(id = NULL) {
         area = "A4221",
         full_screen = TRUE,
         card_body(
-          id = "table_tabs",
+          id = "A4221tabs",
           bslib::navset_tab( # navset_tab within grid_card
             nav_panel(
               title = "custom",
@@ -73,14 +73,74 @@ ui4200 <- function(id = NULL) {
         card_header(
           "A4231"
         ),
+        
+        
         card_body(
-          gt::gt_output("OO4231a"),
-          gt::gt_output("OO4231b"),
-          gt::gt_output("OO4231c"),
-          gt::gt_output("OO4231d"),
-          height = gridheight2
-        )
+          id = "A4231tabs",
+          bslib::navset_tab( # custom/local
+            nav_panel(#outer nav_panel 1
+              title = "custom",
+              bslib::navset_pill_list( # navset_tab
+                widths = c(2,12),
+                #placement='start',
+                nav_panel(
+                  title = "return",
+                  gt::gt_output("OO4231c")
+                ),
+                nav_panel(
+                  title = "count",
+                  gt::gt_output("OO4231d")
+                )
+              ) # inner navset_tab 1
+            ), # outer nav_panel 1
+            nav_panel(#outer nav_panel 2
+              title = "local",
+              bslib::navset_pill_list( # navset_tab
+                widths = c(2,12),
+                nav_panel(
+                  title = "return",
+                  gt::gt_output("OO4231a")
+                ),
+                nav_panel(
+                  title = "count",
+                  gt::gt_output("OO4231b")
+                )
+              ) # inner navset_tab 2
+            ) # outer nav_panel 2
+          ) # outer navset_tab
+        ) # , # card_body
+        
+        
+        
+        # card_body(
+        #   gt::gt_output("OO4231a"),
+        #   gt::gt_output("OO4231b"),
+        #   gt::gt_output("OO4231c"),
+        #   gt::gt_output("OO4231d"),
+        #   height = gridheight2
+        # ) #card_body
       ) # gridcard
     ) # gridcontainer
   ) # navpanel
 }
+
+
+
+#       ,
+#       grid_card(
+#         area = "A4231",
+#         full_screen = TRUE,
+#         card_header(
+#           "A4231"
+#         ),
+#         card_body(
+#           gt::gt_output("OO4231a"),
+#           gt::gt_output("OO4231b"),
+#           gt::gt_output("OO4231c"),
+#           gt::gt_output("OO4231d"),
+#           height = gridheight2
+#         )
+#       ) # gridcard
+#     ) # gridcontainer
+#   ) # navpanel
+# }

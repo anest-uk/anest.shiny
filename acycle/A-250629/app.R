@@ -37,7 +37,7 @@ if (T) { # revisit this
   resS$f250618c <- resS$f250618c %>% sco(., F)
   #---------valid global data--2.1----
   vres(resS)
-
+  
   #--------------------------=parameters--3----
   stepripG <<- "data/smallrip/"
   gridheight <<- "630px"
@@ -70,26 +70,35 @@ if (T) { # revisit this
 }
 
 #---ui-grid of 4-----------------------------5----
-ui <- grid_page(
-  layout = c(
-    "A1000  A2000", # actionbutton    text-heading
-    "A3000  A4000 " # sidebar-control nav_panel
-  ),
-  row_sizes = c(
-    "200px",
-    "1fr"
-  ),
-  col_sizes = c(
-    "250px",
-    "1fr"
-  ),
-  gap_size = ".1rem",
-  ui1000(),
-  ui3000(),
-  ui2000(),
-  ui4000()
+ui <- tagList(
+  # Theme and CSS
+  bslib::bs_theme_dependencies(bs_theme()),
+  tags$style(HTML("
+    /* Target vertical pills globally */
+    .nav-pills.flex-column .nav-link {
+      background-color: red !important;  /* sanity check */
+      flex: 0 0 auto !important;
+      width: auto !important;
+      padding-left: 0.5rem !important;
+      padding-right: 0.5rem !important;
+    }
+  ")),
+  
+  # Actual page
+  grid_page(
+    layout = c(
+      "A1000  A2000", # actionbutton text-heading
+      "A3000  A4000"  # sidebar-control nav_panel
+    ),
+    row_sizes = c("200px", "1fr"),
+    col_sizes = c("250px", "1fr"),
+    gap_size = ".1rem",
+    ui1000(),
+    ui3000(),
+    ui2000(),
+    ui4000()
+  )
 )
-
 #---server-----------------------------------6----
 server <- function(
     input,
@@ -98,7 +107,7 @@ server <- function(
   #--------------------------------server
   source("R/server_common.R") # leave with full name
   source("R/s3000.R") # 0-sidebar
-
+  
   # gen1 pages
   source("R/server_listing.R") # 2-lis
   source("R/server_timeseries.R") # 1-tim
@@ -108,7 +117,7 @@ server <- function(
   source("R/s4100.R") # 5-tim1
   source("R/s4200.R") # 6-lis1
   source("R/s4300.R") # 7-con1
-
+  
   # make_price_colormap <- function(light = FALSE) {
   #   base_palette <- c( #from cobalt() which is sampled from the Rstudio theme
   #     "#FF628C", # punk
@@ -116,7 +125,7 @@ server <- function(
   #     "#B5C800", # best-shot yellow-green (new)
   #     "#35CA05", # green
   #     "#0082F4", # blue
-  #     "#7B2FF7", # midnight  
+  #     "#7B2FF7", # midnight
   #     "#9434F8"  # 250715 add
   #   )
   #   light_palette <- c(
@@ -126,36 +135,34 @@ server <- function(
   #     "#66B2F7", # blue
   #     "#BBA3F9"  # midnight
   #   )
-  #   
+  #
   #   colors <- if (light) light_palette else base_palette
   #   grDevices::colorRampPalette(colors, space = "Lab")
   # }
-  # 
+  #
   
   common <- server_common(input, output, session)
-
-
+  
+  
   server_timeseries(input, output, session, common)
   server_listing(input, output, session, common)
   server_constituents(input, output, session, common)
   server_accuracy(input, output, session, common)
-
+  
   # gen2 servers named s[gpij] g=grid p=page i=row j=col
   s3000(input, output, session, common) # sidepanel
   s4100(input, output, session, common) # timeseries
   s4200(input, output, session, common) # listing
   s4300(input, output, session, common) # constituent
-
+  
   # ===-output: controls select/compute/suggest----
   selectedrc6R <- reactive({ # --rc6 selected----
     x0 <- sort(unique(input$rctreeC))
     x1 <- # exclude non-rc6 higher tree nodes
-      x0[
-        which(
-          (nchar(x0) == 6) &
-            (substr(x0, 3, 3) == "-")
-        )
-      ]
+      x0 %>%
+      .[(nchar(.) == 6) &
+          (substr(., 3, 3) == "-") &
+          (substr(., 6, 6) == "-")]
     x <- paste0(paste0(x1, collapse = ","))
     print(paste0("selectedrc6R: ", x))
     selectedrc6G <<- copy(x)
@@ -163,7 +170,7 @@ server <- function(
   })
   computedrc6R <- reactive({ # ---rc6 computed----
     rsicX <- common$rescR()
-    x1 <- rsicX$kfoldsse[, rc6] %>% .[nchar(.) == 6]
+    x1 <- rsicX$kfoldsse[, rc6] %>% .[(nchar(.) == 6) & (substr(., 3, 3) == "-") & (substr(., 6, 6) == "-")]
     x <- paste0(paste0(sort(unique(x1)), collapse = ","))
     print(paste0("computedrc6R: ", x))
     computedrc6G <<- copy(x)
@@ -190,62 +197,66 @@ server <- function(
   output$cusnecom <- renderText({ #------recalc----
     "Recalc for selected districts"
   }) # span(, style="size:8")
-
-
+  
+  
   observe( #-----observe target, update custom----
-    x = {
-      if (verbose) {
-        print("enter updateTreeInput")
-      }
-      if ( # guard against invalid selection
-        (!is.null(input$rc6tC)) & # empty tree
-          (all(nchar(input$rc6tC) == 6)) # non-leaf selection
-      ) {
-        rc6c <-
-          rc6deR()
-        if (verbose) {
-          print("treeinput update with custom peers:")
-          print(rc6c)
-        }
-        updateTreeInput(
-          inputId = "rctreeC",
-          label = NULL,
-          selected = rc6c,
-          session = shiny::getDefaultReactiveDomain()
-        )
-        if (verbose) {
-          print("updateTreeInput complete")
-        }
-      } else {
-        print("no updateTreeInput")
-      }
-    }
+           x = {
+             if (any(nchar(input$rc6tC) != 6)) {
+             }
+             
+             if (verbose) {
+               print("enter updateTreeInput")
+             }
+             if ( # guard against invalid selection
+               (!is.null(input$rc6tC)) # & # empty tree
+             ) {
+               rc6c <-
+                 rc6deR()
+               if (verbose) {
+                 print("treeinput update with custom peers:")
+                 print(rc6c)
+               }
+               updateTreeInput(
+                 inputId = "rctreeC",
+                 label = NULL,
+                 selected = rc6c,
+                 session = shiny::getDefaultReactiveDomain()
+               )
+               if (verbose) {
+                 print("updateTreeInput complete")
+               }
+             } else {
+               print("no updateTreeInput")
+             }
+           }
   )
-
+  
   rc6deR <- eventReactive( # default custom rc6 ----
-    list(
-      input$rc6tC, # target
-      common$rc6tR()
-    ),
-    {
-      if (verbose) {
-        print("enter updateTreeInput")
-      }
-      if ( # guard against invalid selection
-        (!is.null(input$rc6tC)) & # empty tree
-          (all(nchar(input$rc6tC) == 6)) # non-leaf selection
-      ) {
-        x <-
-          f241229bd[common$rc6tR() == target, f240920b(id)]
-        if (verbose) {
-          print("custom peers:")
-          print(x)
-        }
-        rc6deG <<- copy(x)
-        x
-      }
-    }
+                           list(
+                             input$rc6tC, # target
+                             common$rc6tR()
+                           ),
+                           {
+                             if (verbose) {
+                               print("enter updateTreeInput")
+                             }
+                             if (!is.null(input$rc6tC)) # guard against empty tree
+                             {
+                               x <-
+                                 f241229bd[common$rc6tR() == target, f240920b(id)]
+                               if (verbose) {
+                                 print("custom peers:")
+                                 print(x)
+                               }
+                               rc6deG <<- copy(x)
+                               x
+                             }
+                           }
   )
+  
+  
+  
+  
 } # end server
 
 shinyApp(ui, server)

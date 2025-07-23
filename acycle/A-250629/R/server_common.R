@@ -123,6 +123,7 @@ server_common <-
           x <-
             fgeocx(rc6cx = rc6cR())
           geocG <<- copy(x)
+          if (verbose) print("exit common-geocR")
           x
         }
       )
@@ -188,24 +189,50 @@ server_common <-
 #         }
 #       )
 
-    rc6cR <- #-------------custom rc6 control----
+    # rc6cR <- #-------------custom rc6 control----
+    #   eventReactive(
+    #     list(rc6tR(), input$rctreeC), #+control
+    #     {
+    #       if (verbose) print("enter common-rc6cR")
+    #       x <- sort(unique(c(rc6tR(), input$rctreeC))) %>% .[nchar(.) == 6] 
+    #       rc6cG <<- copy(x)
+    #       x
+    #     }
+    #   )
+
+  rc6cR <- #-------------custom rc6 control----
       eventReactive(
         list(rc6tR(), input$rctreeC), #+control
         {
           if (verbose) print("enter common-rc6cR")
-          x <- sort(unique(c(rc6tR(), input$rctreeC))) %>% .[nchar(.) == 6]
+          #browser()
+          x <- 
+            sort(unique(c(rc6tR(), input$rctreeC))) %>% 
+            .[
+              (nchar(.) == 6)&
+                (substr(.,3,3)=='-')&
+                (substr(.,6,6)=='-')
+              ] #%>% .[substr(.,3,3)=='-'] %>% .[substr(.,6,6)=='-']
           rc6cG <<- copy(x)
           x
         }
-      )
-
+      )  
+    
+  
     rc6tR <- #-------------target rc6 reformat----
       eventReactive(
         input$rc6tC,
         {
           if (verbose) print("enter common-rc6tR")
           x <-
-            regpcode(input$rc6tC)[1]
+            #regpcode(input$rc6tC)[1]
+            input$rc6tC %>% 
+            .[
+              (nchar(.) == 6) & 
+                (substr(.,3,3)=='-') & 
+                (substr(.,6,6)=='-')
+              ] %>% 
+            .[1]
           rc6tG <<- copy(x)
           x
         }
@@ -220,7 +247,8 @@ server_common <-
           if (verbose) print("enter common-rescR")
           geox <- isolate(geocR())
           dfnx <- isolate(dfnyR()) # source of truth
-          rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
+          #rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
+          rc6tx <- toupper(isolate(irregpcode(rc6tR())))
           rc6valid <- f241021ad$geoplus[, unique(rc9)]
           if (
             (irregpcode(regpcode(rc6tx)) == rc6tx) &

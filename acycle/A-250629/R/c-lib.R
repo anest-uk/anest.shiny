@@ -91,10 +91,11 @@ CC4111 <- #-------------rc3t{} blobs : D4311a ----
 CC4131 <-   #-------------custom blobs : D4131 ----
   function(
     statics='resS',
-    rc6tx=rc6tG,
+    rc6tx=rc6tG,  #selectedrc6R
     rc6cx=rc6cG,
     x0=CC4111(rc6 = rc6tx)[,range(log(ppm2))] #P-range for color
 ) {
+  #browser()
   x1 <- 
     apva(resS)%>%
     .[data.table(rc6=rc6cx),on=c(rc6='rc6')]%>% #select custom

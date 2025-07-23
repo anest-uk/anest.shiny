@@ -493,6 +493,7 @@ DD4311 <- #----------------3 listings: R4211a ----
       statics = "resS",
       rescx = rescxG,
       rc6tx = rc6tG,
+      rc6cx = rc6cG,
       tslidex = 0) {
     list(
       # date = # shared data
@@ -512,13 +513,17 @@ DD4311 <- #----------------3 listings: R4211a ----
       #   ),
       local = # local index
         DD4311a(
+          rc6tx=rc6tx,
           res = areso(rc6tx),
           tslidex = tslidex,
           addt0=T
         ),
       custom = # custom index
         DD4311a(
-          res = rescx, typex = "C",
+          rc6tx=rc6cx,
+          #rc6cx=rc6cx,
+          res = rescx, 
+          typex = "C",
           tslidex = tslidex,
           addt0=T
         )
