@@ -117,6 +117,7 @@ server <- function(
   source("R/s4100.R") # 5-tim1
   source("R/s4200.R") # 6-lis1
   source("R/s4300.R") # 7-con1
+  source("R/s4400.R") # 8-acc1
 
   # make_price_colormap <- function(light = FALSE) {
   #   base_palette <- c( #from cobalt() which is sampled from the Rstudio theme
@@ -154,6 +155,7 @@ server <- function(
   s4100(input, output, session, common) # timeseries
   s4200(input, output, session, common) # listing
   s4300(input, output, session, common) # constituent
+  s4400(input, output, session, common) # accuracy
 
   # ===-output: controls select/compute/suggest----
   # selectedrc6R <- reactive({ # --rc6 selected----

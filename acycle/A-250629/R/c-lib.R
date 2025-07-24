@@ -343,6 +343,23 @@ C4311b <- # {rc6,locality,ppm2,nid} peer*----
       .[, .(rc6, locality, ppm2 = pv / m2, nid), nomatch = NULL]
   }
 
+CC4411 <- #RSI accuracy report 
+  function(rc6tx=rc6tG){
+    x1 <- resS$f250723a%>%resS$f250713a[.,on=c(rc6='rc6')]
+    x3 <- x1[rc6==rc6tx]
+    x2 <- x1[b=='*']
+    x4 <- data.table(msg=
+                       c(paste0('RMS error of ',round(x2[rc6==rc6tx,rmse],4),' is below ',round(100*mean(x2[rc6==rc6tx,rmse]<x1[,rmse])), '% of districts nationally'),
+                         paste0('R-squared of ',round(x2[rc6==rc6tx,rsqk],4),' is above ',round(100*mean(x2[rc6==rc6tx,rsqk]>x1[,rsqk])), '% of districts nationally')
+                         )
+                       )%>%
+      setnames(., paste0(x1[rc6==rc6tx][1,paste0(irregpcode(rc6),' (',locality,') RSI summary')]))
+    list(all=x1,base=x2,irc6=x3,ijselect=x3[,c('b','geo','tbin','trim','rsqk','rmse','over')],summary=x4)
+  }
+#CC4411('NG-7--')
+#CC4111()
+
+
 # CC4112 <- # CC4112 combines this with CC4111
 #   function(
 #       rc6tx = rc6tG,

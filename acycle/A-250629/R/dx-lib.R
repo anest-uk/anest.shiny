@@ -225,7 +225,7 @@ DD4222x <- #-------------------- char : R4122x ----
       cols_hide(columns = col) %>%
       cols_label(key = "") %>%
       cols_move_to_start(
-        columns = c("key")
+      columns = c("key")
       )
   }
 
@@ -818,3 +818,66 @@ DD4121 <- #-'identifies as' message : R4321x ----
       ") based on minimisation of out of sample error"
     )
   }
+
+
+DD4411 <- function(
+    rc6t="TN-10-",
+    shadecol1 = "#D3D3D3" 
+    ) {
+  x1 <- 
+    CC4411(rc6t)[["ijselect"]]%>%
+    .[, b := ifelse(b == "", "", "base case")]%>%
+    gt::gt(.) %>%
+    cols_label(
+      b = gt::html(""),
+      geo = gt::html("peer group"),
+      tbin = gt::html("time bin"),
+      trim = gt::html("outlier reject"),
+      rsqk = gt::html(
+        "<div style='text-align:center; line-height:1.2;'>
+         R<sup style='font-size:70%; position:relative; top:-0.2em;'>2</sup>
+       </div>"
+      ),
+      rmse = gt::html("RMS error"),
+      over = gt::html("overfit")
+    )%>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(columns = trim)
+  ) %>%
+    fmt_number(
+      columns = c(rsqk, rmse, over),
+      decimals = 4
+    ) %>%
+    tab_spanner(
+      label = gt::html("parameter"),
+      columns = c(geo, tbin, trim)
+    ) %>%
+    tab_spanner(
+      label = gt::html("accuracy metric"),
+      columns = c(rsqk, rmse, over)
+    ) %>%
+    gt::tab_style(
+      style = gt::cell_fill(color = shadecol1),
+      locations = gt::cells_body(rows = (b == "base case"))
+    )
+  x1
+}
+#DD4411()
+
+DD4412 <- function(
+    rc6t="TN-10-",
+    shadecol1 = "#D3D3D3" 
+    ) {
+  x1 <- 
+    CC4411(rc6t)[['summary']]%>%
+    gt::gt(.) %>%
+    #cols_label(msg = gt::html(""))%>%
+  tab_style(
+    style = cell_text(align = "left"),
+    locations = cells_body(columns = 1)
+  )
+  x1
+}
+#DD4412()
+
