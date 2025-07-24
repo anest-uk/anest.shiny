@@ -22,7 +22,9 @@ saveRDS(x101,file=file.path(base_dir, "data", "x101.rds"))
 
 #gen2
 #f250713aFun() #this part of dataprep in the prod environment
-saveRDS(f250618ad,file=file.path(base_dir, "data", "f250618ad.rds")) #now includes locality
+#saveRDS(f250618ad,file=file.path(base_dir, "data", "f250618ad.rds")) #now includes locality
+saveRDS(f250723ad,file=file.path(base_dir, "data", "f250723ad.rds")) #now includes locality
 saveRDS(f250706bd,file=file.path(base_dir, "data", "f250706bd.rds"))
 saveRDS(f250713ad,file=file.path(base_dir, "data", "f250713ad.rds"))
+saveRDS(f250723ad,file=file.path(base_dir, "data", "f250723ad.rds"))
 

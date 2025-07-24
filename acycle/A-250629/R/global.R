@@ -19,7 +19,7 @@ z110 <- readRDS(file = file.path(app_dirG, "data", "z110.rds"))
 # res <- readRDS(file = file.path(app_dirG, "data", "f250618ad.rds")) #res
 # dat <- list(pva=res$pva,pol=pxosrdo2dd)
 
-resS <- readRDS(file = file.path(app_dirG, "data", "f250618ad.rds")) # res
+resS <- readRDS(file = file.path(app_dirG, "data", "f250723ad.rds")) # res
 
 datS <- list(pva = resS$pva, pol = pxosrdo2dd, polrc3 = pxosrdo1dd) #poly
 
@@ -47,3 +47,4 @@ resS$kss <- resS$kss %>% sco(., F)
 resS$f250618b <- resS$f250618b %>% sco(., F)
 resS$f250618c <- resS$f250618c %>% sco(., F)
 resS$f250713a <- resS$f250713a %>% sco(., F)
+resS$f250723a <- resS$f250723a %>% sco(., F)
