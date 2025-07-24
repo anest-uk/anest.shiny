@@ -229,14 +229,13 @@ DD4222x <- #-------------------- char : R4122x ----
       )
   }
 
-
 DD4211 <- #-------------------- summ : R4131x ----
   function(
       static = "resS", # statics                  S static
       rescxx = rescxG, #                          R reactive gen2
       rc6tx = rc6tG, #                            C control
-      tslidex = tslideG #                         C
-      ) {
+      tslidex = tslideG, #                         C
+      symbolsize = ".8em") {
     roundx <- -2
     x1 <-
       CC4211(
@@ -248,7 +247,8 @@ DD4211 <- #-------------------- summ : R4131x ----
       .[order(-aggppm2), .(q2, q1 = paste0("(", gsub("\\.", " of ", i.n), ")"), col, minppm2 = round(minppm2, roundx), maxppm2 = round(maxppm2, roundx), aggppm2 = round(aggppm2, roundx), meanan, minan, maxan, key = "\u2589")] %>%
       .[q2 == "custom", q1 := ""]
     x2 <- paste0("annual log returns : ", as.integer(substr(aestdt2(resS)$BA[c(tslidex + 1)], 1, 4)) + 1, " - ", as.integer(substr(max(aestdt2(resS)$BA), 1, 4)) - 1)
-    x1 %>%
+    x <-
+      x1 %>%
       gt::gt(.) %>%
       cols_label(
         q2 = gt::html(""),
@@ -283,25 +283,31 @@ DD4211 <- #-------------------- summ : R4131x ----
         label = gt::html("district £/m<sup>2</sup>"),
         columns = c(minppm2, aggppm2, maxppm2)
       ) %>%
-      text_transform(
-        locations = cells_body(columns = key),
-        fn = function(codes) {
-          purrr::imap_chr(codes, function(code, i) {
-            colval <- x1[i, col]
-            is_target <- (x1[i, q2 == "custom"]) # <- change this condition as needed
-            outline <- if (is_target) "border:4px solid black;" else ""
-            paste0(
-              "<div style='display:inline-block; width:1em; height:1em; background-color:", colval, "; ",
-              outline, "'></div>"
+      gt::text_transform(
+        locations = gt::cells_body(columns = "col"),
+        fn = function(hexvec) {
+          purrr::imap(hexvec, function(val, i) {
+            # Check whether this row should be highlighted
+            is_target <- x1$q2[i] == "custom"
+            outline <- if (is_target) "border:3px solid black;" else ""
+            # Circle with optional border
+            htmltools::HTML(
+              paste0(
+                "<div style='display:inline-block; width:", symbolsize,
+                "; height:", symbolsize,
+                "; background-color:", val,
+                "; border-radius:50%; ",
+                outline, "'></div>"
+              )
             )
-          }) %>%
-            purrr::map(htmltools::HTML)
+          }) # returns a vector of HTML (not a list of lists)
         }
       ) %>%
-      cols_hide(columns = col) %>%
+      cols_hide(columns = key) %>%
       cols_label(key = "") %>%
       cols_move_to_start(columns = c("q2")) %>%
       cols_move_to_start(columns = c("key"))
+    x
   }
 
 DD4231 <- #------------------- trade : R4132x ----

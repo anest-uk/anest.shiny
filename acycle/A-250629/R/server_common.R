@@ -19,8 +19,8 @@ server_common <-
           data.table(rc9 = rc6cx, nx = 0, lab = "CU00")
         x
       }
-    
-    verbose=T
+
+    verbose <- T
 
     #----reactive----
     dfnxR <- # -----------4-col table with NA----
@@ -57,7 +57,7 @@ server_common <-
     #       x
     #     }
     #   )
-    # 
+    #
     # estdtlR <- #---------local estdt compute  ----
     #   eventReactive(
     #     nxqR(),
@@ -71,7 +71,7 @@ server_common <-
     #       x
     #     }
     #   )
-    # 
+    #
     # estdtxR <- #---------------------112 x(t)----
     #   eventReactive(
     #     list(estdtcR(), nxaR(), geocR()),
@@ -144,95 +144,92 @@ server_common <-
     #       x
     #     }
     #   )
-# 
-#     labxR <- #-------------optimum index label----
-#       eventReactive(
-#         rc6tR(),
-#         {
-#           if (verbose) print("enter common-labxR")
-#           x <-
-#             f250509ed$geo %>%
-#             .[rc9 %in% rc6tR()] %>%
-#             .[grep("^L", lab)] %>%
-#             .[f250509ed$kfoldsse, on = c(nx = "nx"), nomatch = NULL] %>% # local only
-#             .[rc6 == rc6tR()] %>% # target rc6
-#             .[order(ssek), .(rc6, ssek, n, nx, lab)]
-#           labxG <<- copy(x)
-#           x
-#         }
-#       )
-# 
-#     nxaR <- #------------------area nx select----
-#       eventReactive(
-#         geoaR(),
-#         {
-#           if (verbose) print("enter common-nxaR")
-#           x <-
-#             geoaR()[, .(nx, rc3, qtile, lab)] %>%
-#             unique(.)
-#           nxaG <<- copy(x)
-#           if (verbose) print("exit nxaR")
-#           x
-#         }
-#       )
-# 
-#     nxqR <- #-----------------qtile nx compute----
-#       eventReactive(
-#         geoqR(),
-#         {
-#           if (verbose) print("enter common-nxqR")
-#           x <-
-#             geoqR()[, .(nx, rc3, qtile, lab)] %>%
-#             unique(.)
-#           nxqG <<- copy(x)
-#           x
-#         }
-#       )
+    #
+    #     labxR <- #-------------optimum index label----
+    #       eventReactive(
+    #         rc6tR(),
+    #         {
+    #           if (verbose) print("enter common-labxR")
+    #           x <-
+    #             f250509ed$geo %>%
+    #             .[rc9 %in% rc6tR()] %>%
+    #             .[grep("^L", lab)] %>%
+    #             .[f250509ed$kfoldsse, on = c(nx = "nx"), nomatch = NULL] %>% # local only
+    #             .[rc6 == rc6tR()] %>% # target rc6
+    #             .[order(ssek), .(rc6, ssek, n, nx, lab)]
+    #           labxG <<- copy(x)
+    #           x
+    #         }
+    #       )
+    #
+    #     nxaR <- #------------------area nx select----
+    #       eventReactive(
+    #         geoaR(),
+    #         {
+    #           if (verbose) print("enter common-nxaR")
+    #           x <-
+    #             geoaR()[, .(nx, rc3, qtile, lab)] %>%
+    #             unique(.)
+    #           nxaG <<- copy(x)
+    #           if (verbose) print("exit nxaR")
+    #           x
+    #         }
+    #       )
+    #
+    #     nxqR <- #-----------------qtile nx compute----
+    #       eventReactive(
+    #         geoqR(),
+    #         {
+    #           if (verbose) print("enter common-nxqR")
+    #           x <-
+    #             geoqR()[, .(nx, rc3, qtile, lab)] %>%
+    #             unique(.)
+    #           nxqG <<- copy(x)
+    #           x
+    #         }
+    #       )
 
     # rc6cR <- #-------------custom rc6 control----
     #   eventReactive(
-    #     list(rc6tR(), input$rctreeC), #+control
+    #     list(rc6tR(), input$rc6cC), #+control
     #     {
     #       if (verbose) print("enter common-rc6cR")
-    #       x <- sort(unique(c(rc6tR(), input$rctreeC))) %>% .[nchar(.) == 6] 
+    #       x <- sort(unique(c(rc6tR(), input$rc6cC))) %>% .[nchar(.) == 6]
     #       rc6cG <<- copy(x)
     #       x
     #     }
     #   )
 
-  rc6cR <- #-------------custom rc6 control----
+    rc6cR <- #-------------custom rc6 accessor----
       eventReactive(
-        list(rc6tR(), input$rctreeC), #+control
+        list(rc6tR(), input$rc6cC), #+control
         {
           if (verbose) print("enter common-rc6cR")
-          #browser()
-          x <- 
-            sort(unique(c(rc6tR(), input$rctreeC))) %>% 
-            .[
-              (nchar(.) == 6)&
-                (substr(.,3,3)=='-')&
-                (substr(.,6,6)=='-')
-              ] #%>% .[substr(.,3,3)=='-'] %>% .[substr(.,6,6)=='-']
+          x <-
+            sort(unique(c(rc6tR(), input$rc6cC))) %>% # combine
+            .[ # test
+              (nchar(.) == 6) &
+                (substr(., 3, 3) == "-") &
+                (substr(., 6, 6) == "-")
+            ] # return all
           rc6cG <<- copy(x)
           x
         }
-      )  
-    
-  
-    rc6tR <- #-------------target rc6 reformat----
+      )
+
+    rc6tR <- #-------------target rc6 accessor----
       eventReactive(
         input$rc6tC,
         {
           if (verbose) print("enter common-rc6tR")
           x <-
-            #regpcode(input$rc6tC)[1]
-            input$rc6tC %>% 
-            .[
-              (nchar(.) == 6) & 
-                (substr(.,3,3)=='-') & 
-                (substr(.,6,6)=='-')
-              ] %>% 
-            .[1]
+            input$rc6tC %>%
+            .[ #test
+              (nchar(.) == 6) &
+                (substr(., 3, 3) == "-") &
+                (substr(., 6, 6) == "-")
+            ] %>%
+            .[1] #return first
           rc6tG <<- copy(x)
           x
         }
@@ -247,7 +244,7 @@ server_common <-
           if (verbose) print("enter common-rescR")
           geox <- isolate(geocR())
           dfnx <- isolate(dfnyR()) # source of truth
-          #rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
+          # rc6tx <- toupper(isolate(irregpcode(input$rc6tC[1])))
           rc6tx <- toupper(isolate(irregpcode(rc6tR())))
           rc6valid <- f241021ad$geoplus[, unique(rc9)]
           if (
@@ -308,7 +305,7 @@ server_common <-
     #       x
     #     }
     #   )
-    # 
+    #
     # rsscR <- # ------------custom rss select----
     #   eventReactive(
     #     list(
@@ -321,7 +318,7 @@ server_common <-
     #       x
     #     }
     #   )
-    # 
+    #
     # rssR <- #-----------------------------rss----
     #   reactive({
     #     if (verbose) print("enter common-rssR")
@@ -345,7 +342,7 @@ server_common <-
     #     tdateG <<- copy(x)
     #     x
     #   })
-    # 
+    #
     # ylimR <- #--------------------------ylim ----
     #   eventReactive(
     #     estdtxR(),
@@ -378,11 +375,10 @@ server_common <-
       rc6cR = rc6cR,
       rc6tR = rc6tR,
       rescR = rescR,
-      #rssaR = rssaR,
-      #rsscR = rsscR,
-      #rssR = rssR,
-      tslideR = tslideR#,
-      #ylimR = ylimR
+      # rssaR = rssaR,
+      # rsscR = rsscR,
+      # rssR = rssR,
+      tslideR = tslideR # ,
+      # ylimR = ylimR
     )
   }
-

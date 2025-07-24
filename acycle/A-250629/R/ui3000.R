@@ -33,7 +33,7 @@ ui3000 <- function(id = NULL) {
       ),
       card(
         shinyWidgets::treeInput( # district---custom
-          inputId = "rctreeC",
+          inputId = "rc6cC",
           label = "Custom selection",
           choices =
             create_tree(
@@ -46,7 +46,8 @@ ui3000 <- function(id = NULL) {
           returnValue = "text",
           closeDepth = 0
         ),
-        fill = FALSE
+        fill = FALSE,
+        htmltools::p("custom includes target")
       ),
       span(
         textOutput("selrc6forjstest"),
