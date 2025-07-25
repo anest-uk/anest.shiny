@@ -109,10 +109,10 @@ server <- function(
   source("R/s3000.R") # 0-sidebar
 
   # gen1 pages
-  source("R/server_listing.R") # 2-lis
-  source("R/server_timeseries.R") # 1-tim
-  source("R/server_constituents.R") # 3-con
-  source("R/server_accuracy.R") # 4-acc
+  # source("R/server_listing.R") # 2-lis
+  # source("R/server_timeseries.R") # 1-tim
+  # source("R/server_constituents.R") # 3-con
+  # source("R/server_accuracy.R") # 4-acc
   # gen2 pages
   source("R/s4100.R") # 5-tim1
   source("R/s4200.R") # 6-lis1
@@ -145,10 +145,10 @@ server <- function(
   common <- server_common(input, output, session)
 
 
-  server_timeseries(input, output, session, common)
-  server_listing(input, output, session, common)
-  server_constituents(input, output, session, common)
-  server_accuracy(input, output, session, common)
+  # server_timeseries(input, output, session, common)
+  # server_listing(input, output, session, common)
+  # server_constituents(input, output, session, common)
+  # server_accuracy(input, output, session, common)
 
   # gen2 servers named s[gpij] g=grid p=page i=row j=col
   s3000(input, output, session, common) # sidepanel
@@ -158,18 +158,6 @@ server <- function(
   s4400(input, output, session, common) # accuracy
 
   # ===-output: controls select/compute/suggest----
-  # selectedrc6R <- reactive({ # --rc6 selected----
-  #   x0 <- sort(unique(input$rc6cC))
-  #   x1 <- # exclude non-rc6 higher tree nodes
-  #     x0 %>%
-  #     .[(nchar(.) == 6) &
-  #       (substr(., 3, 3) == "-") &
-  #       (substr(., 6, 6) == "-")]
-  #   x <- paste0(paste0(x1, collapse = ","))
-  #   print(paste0("selectedrc6R: ", x))
-  #   selectedrc6G <<- copy(x)
-  #   x
-  # })
   selectedrc6R <- reactive({ # --rc6 selected----
     x1 <- 
       common$rc6cR()%>% #rc6c: includes rc6t

@@ -3,7 +3,7 @@ ui4400 <-
   function(
       id = NULL) {
     nav_panel(
-      title = "4411",
+      title = "4400",
       grid_container(
         layout = c(
           "AA4411 ."
@@ -19,7 +19,7 @@ ui4400 <-
           area = "AA4411",
           full_screen = TRUE,
           gt::gt_output("OO4411a"),
-          gt::gt_output("OO4411b")
+          gt::gt_output("OO4411b") #summary
         ) # grid_card
       ) # grid_container
     ) # nav_panel

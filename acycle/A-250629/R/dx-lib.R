@@ -808,8 +808,9 @@ DD4121 <- #-'identifies as' message : R4321x ----
     x2 <- areso(rcxtx = rc6tx)$f250618b[1, .(i.n)]
     paste0(
       "target district ",
-      rc6tx,
-      " identifies as **",
+      irregpcode(rc6tx),
+      " (",resS$f250713a[rc6==rc6tx,locality],") ",
+      "identifies as **",
       x1[x2, on = c(i.n = "i.n")][, meaning],
       " price bin** (",
       substr(x2[, i.n], 1, 1),
