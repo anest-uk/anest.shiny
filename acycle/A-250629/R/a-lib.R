@@ -61,30 +61,32 @@ function(
 #aestdt1()
 
 aestdt2 <- #date accessor: list of 2 vectors ----
-function(
+function( #DUPLICATED  HERE: f250728b - need to break this out as a new package, for now accept duplication
     x=resS,
     adddatum=T
 ){
   x0 <- x$lab[resS$rsi,on=c(nx='nx')]
   x1 <- as.Date('1994-12-31')
-  x2 <- 
+  x2 <-
     x0[date!=x1]%>%
     .[substr(lab,8,9)=='AN',sort(unique(date))]
-  x3 <- 
+  x3 <-
     x0[date!=x1]%>%
     .[substr(lab,8,9)!='AN',sort(unique(date))]
   if(adddatum==T) {
     x2 <- c(x1,x2)
     x3 <- c(x1,x3)
   }
-  x4 <- 
+  x4 <-
     list(
       AN=x2, #yearends
       BA=x3  #DRC
     )
   x4
 }
-#aestdt2()
+# aestdt2 <- function(...) {
+#     f250728b{...} #not sure I like this
+# }
 
 akss <- # kfoldsse accessor ----
 function(
