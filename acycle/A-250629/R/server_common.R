@@ -151,6 +151,7 @@ server_common <-
                 newused = c("."),
                 houseflat = c(".")
               )
+            x1[['all']] <- NULL
             x <- copy(x1)
             rescG <<- copy(x)
           } else {
