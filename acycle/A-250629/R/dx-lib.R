@@ -414,6 +414,7 @@ DD4311a <- # summary utility called in all 3 listings ----
       headadd = T,
       addt0 = F,
       tslidex = 0) {
+
     x2 <- c211x[date > aestdt2(resS)[[2]][tslidex + 1]]
     x3 <- x2[, names(jlist), with = F]
     if (addt0) { # add data for the row for 1994-12-31 t=0
@@ -821,13 +822,19 @@ DD4121 <- #-'identifies as' message : R4321x ----
   }
 
 
-DD4411 <- function(
+DD4411 <-  #----------------accuracy : R4411 ----
+  function(
     rc6t="TN-10-",
-    shadecol1 = "#D3D3D3" 
+    shadecol1 = "#D3D3D3",
+    x0 = copy(CC4411(rc6t)[["ijselect"]][b=='*'])[,b:=''][,geo:='bespoke.dummy'][]
     ) {
+    map <- c("custom" = "default")
+    #browser()
   x1 <- 
     CC4411(rc6t)[["ijselect"]]%>%
-    .[, b := ifelse(b == "", "", "base case")]%>%
+    .[geo %in% names(map), geo := map[geo]]%>%
+    rbind(.,x0)%>%
+    .[, b := ifelse(b == "", "", "base case")]%>%.[order(rmse)]%>%
     gt::gt(.) %>%
     cols_label(
       b = gt::html(""),
@@ -866,7 +873,8 @@ DD4411 <- function(
 }
 #DD4411()
 
-DD4412 <- function(
+DD4412 <-   #----------------accuracy : R4411 ----
+  function(
     rc6t="TN-10-",
     shadecol1 = "#D3D3D3" 
     ) {

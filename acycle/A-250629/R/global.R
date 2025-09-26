@@ -6,7 +6,7 @@ print(paste0("data_dirG : ", data_dirG))
 
 # gen1
 f241021ad <- readRDS(file = file.path(app_dirG, "data", "f241021ad.rds"))
-f250519ad <- readRDS(file = file.path(app_dirG, "data", "f250519ad.rds"))
+#f250519ad <- readRDS(file = file.path(app_dirG, "data", "f250519ad.rds"))
 pxosrdo1dd <- readRDS(file = file.path(app_dirG, "data", "pxosrdo1dd.rds"))
 pxosrdo2dd <- readRDS(file = file.path(app_dirG, "data", "pxosrdo2dd.rds"))
 f241229bd <- readRDS(file = file.path(app_dirG, "data", "f241229bd.rds"))
@@ -19,7 +19,7 @@ z110 <- readRDS(file = file.path(app_dirG, "data", "z110.rds"))
 # res <- readRDS(file = file.path(app_dirG, "data", "f250618ad.rds")) #res
 # dat <- list(pva=res$pva,pol=pxosrdo2dd)
 
-resS <- readRDS(file = file.path(app_dirG, "data", "f250723ad.rds")) # res
+resS <- readRDS(file = file.path(app_dirG, "data", "f250723ad.rds")) # res : produced in datatords
 
 datS <- list(pva = resS$pva, pol = pxosrdo2dd, polrc3 = pxosrdo1dd) #poly
 

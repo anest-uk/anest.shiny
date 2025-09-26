@@ -151,6 +151,8 @@ server_common <-
                 newused = c("."),
                 houseflat = c(".")
               )
+            #f250909b(nxx=0,steprod=,geo,outthresh,kfold,sectorwise) #but this would use pra i.e. steprod='drc-acc'
+            
             x1[['all']] <- NULL
             x <- copy(x1)
             rescG <<- copy(x)

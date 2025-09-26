@@ -1,6 +1,6 @@
 #requires first slow preamble and header, then dbg
 #get data
-nn <- c('f241021ad','f250519ad','f250509ed','f250618ad','f250706bd','f250713ad')
+nn <- c('f241021ad','f250519ad','f250509ed','f250618ad','f250706bd','f250713ad','f250723ad','f250924ad')
 rmifgl(nn)
 pxosrdo2dd <- getlast('pxosrdo2dd') #district
 load('data/pxosrdo1d.Rdata')
@@ -26,5 +26,5 @@ saveRDS(x101,file=file.path(base_dir, "data", "x101.rds"))
 saveRDS(f250723ad,file=file.path(base_dir, "data", "f250723ad.rds")) #now includes locality
 saveRDS(f250706bd,file=file.path(base_dir, "data", "f250706bd.rds"))
 saveRDS(f250713ad,file=file.path(base_dir, "data", "f250713ad.rds"))
-saveRDS(f250723ad,file=file.path(base_dir, "data", "f250723ad.rds"))
+#saveRDS(f250723ad,file=file.path(base_dir, "data", "f250723ad.rds"))
 
